@@ -1,7 +1,6 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
-import { FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -143,21 +142,22 @@ function EventCard({ event }) {
 
                     {event.location && (
                         <p className="flex items-center mt-2 font-bold text-blue-600 text-xl">
-                            <FaMapMarkerAlt className="mr-2" />
+                            <i class="fa-solid fa-map-pin"></i>
                             {event.location}
                         </p>
                     )}
 
                     {event.max_participants && (
                         <p className="flex items-center mt-2 font-bold text-gray-800 text-xl">
-                            <FaUsers className="mr-2 text-gray-600" />
+                            <i class="fa-solid fa-users"></i>
                             {event.max_participants} PARTICIPANTS MAX
                         </p>
                     )}
 
                     <div className="pt-6">
                         <button className="bg-gradient-to-r from-purple-600 to-pink-500 hover:opacity-90 px-8 py-4 rounded-xl font-bold text-white text-2xl transition">
-                            🎫 GET TICKETS
+                            <i class="fa-solid fa-ticket"></i>
+                            GET TICKETS
                         </button>
                     </div>
                 </div>

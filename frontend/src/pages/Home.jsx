@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Header from "../components/Header";
 // import BannerEvent from "../components/BannerEvent";
 // import AboutEvent from "../components/About";
-// import EventsList from "../components/EventsList";
+import EventsList from "../components/EventsList";
 
 import useEventDetails from "../hooks/Events/useEventDetails";
 import useEvents from "../hooks/Events/useEvents";
@@ -38,13 +38,13 @@ function Home() {
 	return (
 		<>
 			<Header />
-			{/* <main>
-				{bannerEvent && <BannerEvent event={bannerEvent} commentsCount={comments ? comments.length : 0} />}
+			<main>
+				{/* {bannerEvent && <BannerEvent event={bannerEvent} commentsCount={comments ? comments.length : 0} />} */}
 				<EventsList events={events} />
 
-				{eventDetails && <AboutEvent event={eventDetails} comments={comments} />}
-				{events && <EventsList events={events.slice(0, 10)} />}
-			</main> */}
+				{/* {eventDetails && <AboutEvent event={eventDetails} comments={comments} />}
+				{events && <EventsList events={events.slice(0, 10)} />} */}
+			</main>
 
 			<Footer />
 		</>
