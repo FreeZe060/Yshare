@@ -1,0 +1,195 @@
+.et-header {
+    transition: background-color 0.4s ease;
+
+    &.et-sticky {
+        background-color: #18377e;
+    }
+
+    &-nav {
+        @include md {
+            width: 100%;
+        }
+
+        >li>a {
+            color: var(--white);
+
+            @include md {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+                padding-bottom: 6px;
+                margin-bottom: 6px;
+            }
+        }
+
+        a {
+            display: block;
+            line-height: 3;
+
+            @include md {
+                line-height: 1.8;
+            }
+
+            &:hover {
+                color: var(--et-blue);
+            }
+        }
+
+
+        .has-sub-menu {
+            display: grid;
+            grid-template-rows: max-content 0fr;
+            transition: 0.4s ease;
+
+            &:hover {
+                .et-header-submenu {
+                    transform: translateY(0) translateX(-50%);
+                    opacity: 1;
+                    pointer-events: all;
+
+                    @include lg {
+                        transform: translateY(0) translateX(0);
+                    }
+                }
+            }
+
+            &.active {
+                @include md {
+                    grid-template-rows: max-content 1fr;
+                }
+
+                >a {
+                    margin-bottom: 0;
+                }
+
+                .et-header-submenu {
+                    transform: translateY(0) translateX(-50%);
+                    opacity: 1;
+                    border-color: #ddd;
+                    pointer-events: all;
+
+                    @include md {
+                        transform: translateY(0) translateX(0);
+                    }
+                }
+            }
+        }
+    }
+
+    &-submenu {
+        position: absolute;
+        min-width: 200px;
+        background-color: var(--white);
+        box-shadow: 0 15px 15px rgba(0, 0, 0, 0.03);
+        top: 100%;
+        left: 50%;
+        opacity: 0;
+        transform: translateY(10px) translateX(-50%);
+        transition: 0.4s ease, pointer-events 0s;
+        pointer-events: none;
+
+        @include md {
+            position: static;
+            transform: translateY(0) translateX(0);
+            opacity: 1;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: none;
+            // border: 1px solid transparent;
+        }
+
+        &.active {
+            transform: translateY(0) translateX(-50%);
+            opacity: 1;
+        }
+
+        a {
+            padding: 14px 20px;
+            border-bottom: 1px solid #ddd;
+            line-height: 1;
+        }
+
+        li:last-child {
+            a {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    &-search {
+        &.active {
+            .et-header-search-open-btn {
+                color: var(--et-Lpink);
+            }
+
+            form {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
+        }
+
+        form {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.4s ease;
+
+            @include lg {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
+        }
+    }
+
+    &-location-dropdown {
+        min-width: max-content;
+
+        .ss-list {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+
+            .ss-option {
+
+                &:hover,
+                &:not(.ss-disabled).ss-selected {
+                    background-color: var(--et-Lpink);
+                }
+            }
+        }
+    }
+}
+
+.et-3-header {
+
+    &.et-sticky {
+        position: fixed;
+        background-color: var(--white);
+
+        .et-3-header-nav>li>a {
+            // color: var(--white);
+        }
+    }
+
+    &-nav {
+        >li>a {
+            color: var(--black);
+
+            @include md {
+                color: var(--white);
+            }
+        }
+    }
+}
+
+// index-4 header
+.et-4-header {
+    &.et-sticky {
+        background-color: var(--et-blue);
+    }
+
+    &-nav {
+        >li>a:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    }
+}

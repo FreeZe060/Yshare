@@ -1,0 +1,52 @@
+/*!
+Template Name: Eventics - Event & Conference HTML Template
+Author: temptics pro
+Version: 1.0
+
+-----------------------------------------------------------------------------------
+Front End is Developed By Shaikh Abu Amer on bahalf of temptics pro
+-----------------------------------------------------------------------------------
+
+
+CSS INDEX
+=================== 
+01. CUSTOM PROPERTIES
+02. GLOBAL
+03. Header
+04. About
+05. Countdown
+06. Schedule
+07. Stats
+08. Categories
+09. Features
+10. Artists
+11. Upcoming Events
+12. Blog
+
+// pages
+13. About page
+14. Events Page
+15. Event Details Page
+*/
+
+
+// main
+@import "main/breakpoints";
+@import "main/global";
+
+// sections
+@import "sections/header";
+@import "sections/about";
+@import "sections/countdown";
+@import "sections/schedule";
+@import "sections/stats";
+@import "sections/categories";
+@import "sections/feature";
+@import "sections/artists";
+@import "sections/upcoming-events";
+@import "sections/blog";
+
+// pages
+@import "pages/about";
+@import "pages/events";
+@import "pages/event-details"

@@ -1,0 +1,66 @@
+.et-upcoming-events {
+    background: url(../img/upcomng-events-bg.jpg) no-repeat center center;
+    background-size: cover;
+
+    &-heading {
+        .et-section-sub-title {
+            &::before {
+                background-color: var(--white);
+            }
+        }
+    }
+
+    &-timer {
+        position: relative;
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            width: 265px;
+            height: 1px;
+            background-color: rgb(255, 255, 255, 0.2);
+            top: 50%;
+            left: calc(100% + 20px);
+            transform: translateY(-50%);
+        }
+
+        &::after {
+            left: auto;
+            right: calc(100% + 20px);
+        }
+    }
+}
+
+.et-upcoming-event {
+    &:hover {
+        .et-upcoming-event__img img {
+            scale: 1.08;
+        }
+    }
+
+    &__img {
+        mask: url(../img/upcoming-event-mask.svg) no-repeat center center;
+        mask-size: cover;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(0deg, rgba(var(--et-purple-rgb), 1) 0%, transparent 100%);
+        }
+
+        img {
+            transition: 0.4s ease;
+        }
+    }
+
+    a.btn {
+        &:hover {
+            svg path {
+                fill: var(--white);
+            }
+        }
+    }
+}

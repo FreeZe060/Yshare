@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 // import "../css/style.css";
 
 import Header from "../components/Header";
+import Footer from '../components/Footer';
+
 // import BannerEvent from "../components/BannerEvent";
 // import AboutEvent from "../components/About";
 import EventsList from "../components/EventsList";
+import CalendarEventSection from '../components/CalendarEventSection';
 
 import useEventDetails from "../hooks/Events/useEventDetails";
 import useEvents from "../hooks/Events/useEvents";
 import useComments from "../hooks/Comments/useComments";
-import Footer from '../components/Footer';
+
 
 function Home() {
 	const { event: bannerEvent, loading: bannerLoading, error: bannerError } = useEventDetails(3);
@@ -37,16 +40,16 @@ function Home() {
 
 	return (
 		<>
-			<Header />
+			{/* <Header /> */}
 			<main>
 				{/* {bannerEvent && <BannerEvent event={bannerEvent} commentsCount={comments ? comments.length : 0} />} */}
-				<EventsList events={events} />
-
+				{/* <EventsList events={events} /> */}
+				<CalendarEventSection events={events} />
 				{/* {eventDetails && <AboutEvent event={eventDetails} comments={comments} />}
 				{events && <EventsList events={events.slice(0, 10)} />} */}
 			</main>
 
-			<Footer />
+			{/* <Footer /> */}
 		</>
 	);
 }

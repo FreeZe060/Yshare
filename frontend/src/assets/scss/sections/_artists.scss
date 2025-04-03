@@ -1,0 +1,21 @@
+// index-1 speakers
+.et-speaker {
+    &-img {
+        mask: url(../img/team-mask.svg) no-repeat center center;
+        mask-size: cover;
+
+        // clip-path: url('#doad');
+    }
+}
+
+.et-artists-slider {
+    .et-artist {
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.0);
+    }
+
+    .swiper-slide-visible {
+        .et-artist {
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
+        }
+    }
+}

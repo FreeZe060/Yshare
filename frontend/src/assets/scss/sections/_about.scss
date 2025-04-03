@@ -1,0 +1,48 @@
+// index-1 about
+.et-about-vector-1 {
+    animation: etSlideUp 6.5s linear infinite alternate 1s;
+}
+
+.et-about-vector-2 {
+    animation: etSlideUp 6.5s linear infinite alternate;
+}
+
+@keyframes etSlideUp {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(200px);
+    }
+}
+
+
+// index-3 about
+.et-about {
+    &-stat {
+        position: relative;
+
+        h6 span {
+            -webkit-text-stroke: 1px var(--et-Lpink);
+        }
+
+        &:not(:first-child) {
+
+            &::before {
+                content: "";
+                position: absolute;
+                right: 100%;
+                height: 65px;
+                width: 1px;
+                background-color: #d9d9d9;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    }
+
+    &__action {
+        background: url(../img/about-action-bg.jpg);
+    }
+}

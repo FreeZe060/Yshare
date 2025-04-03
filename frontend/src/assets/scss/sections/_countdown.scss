@@ -1,0 +1,18 @@
+// countdown
+.et-countdown {
+    .number {
+        color: transparent;
+        -webkit-text-stroke: 1px var(--white);
+        font-size: 55px;
+        font-weight: 500;
+        width: 67px;
+
+        @include xs {
+            font-size: 50px;
+        }
+
+        @include xxs {
+            font-size: 40px;
+        }
+    }
+}

@@ -1,0 +1,96 @@
+.et-event-details-requirements-list {
+    li {
+        padding-left: 22px;
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 8px;
+            background: url(../img/checkmark-blue.svg) no-repeat center center;
+            background-size: 100% 100%;
+            width: 14px;
+            height: 13px;
+        }
+    }
+}
+
+
+.flatpickr-wrapper {
+    @media screen and (max-width: 379px) {
+        transform: scale(0.85) translateX(-50%);
+        left: 42%;
+    }
+}
+
+.flatpickr-calendar {
+    box-shadow: none;
+    width: 100%;
+}
+
+.flatpickr-months {
+    display: none;
+}
+
+.dayContainer {
+    gap: 8px;
+    max-width: 100%;
+    width: 100%;
+    min-width: 321px;
+    justify-content: center;
+}
+
+.flatpickr-weekdays {
+    height: auto;
+    border-bottom: 1px solid #d9d9d9;
+    padding-bottom: 20px;
+    margin-bottom: 15px;
+}
+
+span.flatpickr-weekday {
+    font-weight: 400;
+    font-size: 16px;
+    color: #232323;
+}
+
+.flatpickr-days {
+    width: 100%;
+    border-bottom: 1px solid #d9d9d9;
+    padding-bottom: 15px;
+}
+
+.flatpickr-day {
+    background-color: rgb(85, 14, 202, 0.06);
+    border-radius: 4px;
+    font-family: var(--font-inter);
+    color: #232323;
+    line-height: 37px;
+    font-size: 16px;
+
+    &.selected {
+
+        &,
+        &:hover {
+            background-color: var(--et-Lpink);
+            border-color: var(--et-Lpink);
+            color: var(--white);
+        }
+    }
+
+    &.today {
+        background-color: var(--et-Lpink);
+        border-color: var(--et-Lpink);
+        color: var(--white);
+    }
+}
+
+input[type="radio"] {
+    &:checked {
+        &+span {
+            &::after {
+                opacity: 1;
+            }
+        }
+    }
+}

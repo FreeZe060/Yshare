@@ -1,0 +1,232 @@
+.et-tab {
+    height: 0;
+    opacity: 0;
+    transition: 0.2s ease;
+    pointer-events: none;
+
+    &.active {
+        height: auto;
+        opacity: 1;
+        pointer-events: all;
+    }
+}
+
+.et-schedules {
+    &-tab-navs {
+        button {
+
+            &:hover,
+            &.active {
+                background-color: var(--et-blue);
+            }
+        }
+    }
+}
+
+.et-schedule {
+    &-date-time {
+        >* {
+            &:not(:last-child) {
+                position: relative;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    left: calc(100% + 12px);
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: 21px;
+                    width: 1px;
+                    background-color: #D9D9D9;
+
+                    @include xxs {
+                        content: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// index-2 schedule
+.et-2-schedules {
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 85% 100%, 15% 100%, 0 80%);
+
+    @include xxl {
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 5% 100%, 0 90%);
+    }
+
+    @include lg {
+        clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 5% 100%, 0 95%);
+    }
+
+    @include md {
+        clip-path: polygon(0 0, 100% 0, 100% 97%, 95% 100%, 5% 100%, 0 97%);
+    }
+}
+
+.et-2-schedule-img {
+    &::before {
+        clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 100%);
+
+    }
+}
+
+// index-3 schedule 
+.et-3-schedules {
+    background: url(../img/schedules-bg.jpg) no-repeat center center;
+    background-size: cover;
+
+    &-tab-navs {
+        button {
+            position: relative;
+            z-index: 1;
+
+            &:hover,
+            &.active {
+                color: var(--white);
+
+                &::before {
+                    opacity: 1;
+                }
+            }
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset: -1px;
+                background: linear-gradient(to right, var(--et-purple), var(--et-Lpink));
+                z-index: -1;
+                opacity: 0;
+                border-radius: 999px;
+                transition: 0.2s linear;
+            }
+        }
+    }
+}
+
+.et-3-schedule {
+    z-index: 1;
+    position: relative;
+
+    &:hover {
+
+        &::before,
+        &::after {
+            opacity: 1;
+        }
+
+        .et-schedule-date-time {
+            span {
+                color: var(--white);
+            }
+
+            svg path {
+                fill: var(--white);
+            }
+        }
+
+        .et-schedule-title {
+            color: var(--white);
+        }
+
+        .et-schedule-loaction {
+            h6 {
+                color: var(--white);
+            }
+
+            svg path {
+                fill: var(--white);
+            }
+        }
+
+        .et-schedule__descr {
+            color: var(--white);
+        }
+
+        .et-schedule-btn {
+            background-color: var(--white);
+
+            &:hover {
+                background-color: var(--et-pink);
+
+                svg path {
+                    fill: var(--white);
+                }
+            }
+        }
+    }
+
+    &::before,
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: 1s ease;
+    }
+
+    &::before {
+        background: linear-gradient(to right, var(--et-pink), rgb(120, 5, 64, 0.6));
+        z-index: -1;
+    }
+
+    &::after {
+        background: url(../img/schedule-bg.jpg) no-repeat center center;
+        background-size: cover;
+        z-index: -2;
+    }
+
+    &-date-time {
+        >* {
+            &:not(:last-child) {
+                position: relative;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    left: calc(100% + 12px);
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: 21px;
+                    width: 1px;
+                    background-color: #D9D9D9;
+
+                    @include xxs {
+                        top: calc(100% + 6px);
+                        height: 1px;
+                        width: 100%;
+                        left: 50%;
+                        transform: translateY(0) translateX(-50%);
+                    }
+                }
+            }
+        }
+    }
+
+    &-btn {
+        background-color: rgba(var(--et-pink-rgb), 0.1);
+    }
+}
+
+// ticker
+.et-schedule-ticker h4 {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: url(../img/ticker-vector.svg) no-repeat center center;
+        background-size: 100% 100%;
+        width: 30px;
+        height: 30px;
+        left: calc(0px - (30px + 15px));
+    }
+
+    a>* {
+        flex-grow: 0;
+        flex-shrink: 1;
+    }
+}
