@@ -12,6 +12,8 @@ import CalendarEventSection from '../components/CalendarEventSection';
 import useEventDetails from "../hooks/Events/useEventDetails";
 import useEvents from "../hooks/Events/useEvents";
 import useComments from "../hooks/Comments/useComments";
+import AboutClub from '../components/AboutClub';
+import EventsListEventics from '../components/EventsListEventics';
 
 
 function Home() {
@@ -43,7 +45,9 @@ function Home() {
 			{/* <Header /> */}
 			<main>
 				{/* {bannerEvent && <BannerEvent event={bannerEvent} commentsCount={comments ? comments.length : 0} />} */}
-				{/* <EventsList events={events} /> */}
+				<EventsList events={events} />
+				<EventsListEventics events={events} />
+				<AboutClub events={events} />
 				<CalendarEventSection events={events} />
 				{/* {eventDetails && <AboutEvent event={eventDetails} comments={comments} />}
 				{events && <EventsList events={events.slice(0, 10)} />} */}

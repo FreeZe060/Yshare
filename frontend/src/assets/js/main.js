@@ -1,3 +1,19 @@
+import Swiper from 'swiper/bundle';
+import 'swiper/css/bundle';
+
+import Splide from '@splidejs/splide';
+import '@splidejs/splide/dist/css/splide.min.css';
+
+import SlimSelect from 'slim-select';
+import 'slim-select/styles';
+
+import Lenis from '@studio-freight/lenis';
+
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
+gsap.registerPlugin(ScrollTrigger);
+
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
     // arists slider 
@@ -126,17 +142,22 @@ document.addEventListener("DOMContentLoaded", () => {
             etOverlay.classList.add("active");
         });
     }
-    etSidebarCloseBtn.addEventListener("click", () => {
-        etSidebar.classList.remove("active");
-        etOverlay.classList.remove("active");
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!etSidebar.contains(e.target)) {
+    if (etSidebarCloseBtn) {
+        etSidebarCloseBtn.addEventListener("click", () => {
             etSidebar.classList.remove("active");
             etOverlay.classList.remove("active");
-        }
-    });
+        });
+    }
+
+    if (etSidebar && etOverlay) {
+        document.addEventListener("click", (e) => {
+            if (!etSidebar.contains(e.target)) {
+                etSidebar.classList.remove("active");
+                etOverlay.classList.remove("active");
+            }
+        });
+    }
+
     // SIDEBAR JS END
 
     // MOBILE MENU SIDEBAR
@@ -163,11 +184,14 @@ document.addEventListener("DOMContentLoaded", () => {
             etHeaderNavContainer.appendChild(etMobileMenuContent);
         };
     });
-    etMobileMenuOpenBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        etSidebar.classList.add("active");
-        etOverlay.classList.add("active");
-    });
+    if (etMobileMenuOpenBtn) {
+        etMobileMenuOpenBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            etSidebar.classList.add("active");
+            etOverlay.classList.add("active");
+        });
+    }
+
     // MOBILE MENU SIDEBAR
 
     // FIXED HEADER =====
@@ -205,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lenis = new Lenis();
 
         lenis.on('scroll', (e) => {
-            wrapper: smoothScrollContainer
+            // wrapper: smoothScrollContainer
         })
 
         function raf(time) {
@@ -283,27 +307,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-
     // slide up on scroll
     function elSlideUpOnScroll(el) {
         const options = {
             root: null,
-            rootMargin: '0px 0px 0px 0px', // Start value of ScrollTrigger as rootMargin
+            rootMargin: '0px 0px 0px 0px',
             threshold: 0
         };
 
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    gsap.from(el, {
-                        y: 50,
-                    })
-                    gsap.to(el, {
-                        duration: 2,
-                        y: 0,
-                        opacity: 1,
-                        ease: "power3.out"
-                    });
+                    gsap.fromTo(entry.target,
+                        { y: 50, opacity: 0 },
+                        { duration: 2, y: 0, opacity: 1, ease: "power3.out" }
+                    );
                     observer.unobserve(entry.target);
                 }
             });
@@ -312,11 +330,10 @@ document.addEventListener("DOMContentLoaded", () => {
         observer.observe(el);
     }
 
-    const elsToSlideUp = document.querySelectorAll(".rev-slide-up");
-    elsToSlideUp.forEach(elToSlideUp => {
-        elSlideUpOnScroll(elToSlideUp);
+    document.addEventListener("DOMContentLoaded", () => {
+        const elsToSlideUp = document.querySelectorAll(".rev-slide-up");
+        elsToSlideUp.forEach(el => elSlideUpOnScroll(el));
     });
-
 
     // speakers slider
     new Swiper(".et-speakers-slider", {

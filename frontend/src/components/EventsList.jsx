@@ -101,7 +101,7 @@ function EventCard({ event }) {
         ? `http://localhost:8080${event.img}`
         : 'https://via.placeholder.com/600x400';
 
-    console.log("event.img =", event.img);
+    // console.log("event.img =", event.img);
 
 
     return (

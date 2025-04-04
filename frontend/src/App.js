@@ -11,6 +11,7 @@ import Home from './pages/Home';
 // import Profil from './pages/Profil';
 
 function App() {
+
 	return (
 		<>
 			<AuthProvider>
