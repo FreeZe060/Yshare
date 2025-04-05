@@ -42,10 +42,9 @@ function Home() {
 
 	return (
 		<>
-			{/* <Header /> */}
+			<Header />
 			<main>
 				{/* {bannerEvent && <BannerEvent event={bannerEvent} commentsCount={comments ? comments.length : 0} />} */}
-				<EventsList events={events} />
 				<EventsListEventics events={events} />
 				<AboutClub events={events} />
 				<CalendarEventSection events={events} />
@@ -53,7 +52,7 @@ function Home() {
 				{events && <EventsList events={events.slice(0, 10)} />} */}
 			</main>
 
-			{/* <Footer /> */}
+			<Footer />
 		</>
 	);
 }

@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 
 import '../assets/css/style.css';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
+import useTextAnimation from '../hooks/Animations/useTextAnimation';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
 
-import { formatEuro } from '../utils/format';
+import { formatEuro, formatDate } from '../utils/format';
 
 import eventBgImage from "../assets/img/et-3-calender-event.jpg";
 import eventArrowIcon from "../assets/img/arrow-down-right.svg";
@@ -18,13 +19,14 @@ function CalendarEventSection({ events }) {
     const [activeIndex, setActiveIndex] = useState(null);
 
     useSlideUpAnimation();
+    useTextAnimation();
 
     return (
         <section
             className="bg-cover bg-no-repeat bg-center py-[120px] md:py-[60px] xl:py-[80px] overflow-hidden"
             style={{ backgroundImage: `url(${eventBgImage})` }}
         >
-            <div className="mx-[19.4vw] xxs:mx-[4.8vw] sm:mx-[7vw]">
+            <div className="mx-[10.4vw] xxs:mx-[4.8vw] sm:mx-[7vw]">
                 <div className="flex justify-between items-end gap-[20px] mb-[60px]">
                     <div className="text-white">
                         <h6 className="anim-text et-3-section-sub-title">Calender Event</h6>
@@ -43,7 +45,7 @@ function CalendarEventSection({ events }) {
                 {/* SLIDER */}
                 <div className="overflow-visible et-3-event-slider swiper rev-slide-up">
                     <Swiper
-                        modules={[Autoplay, FreeMode]}
+                        modules={[Autoplay]}
                         slidesPerView="auto"
                         spaceBetween={30}
                         loop={true}
@@ -51,13 +53,14 @@ function CalendarEventSection({ events }) {
                             delay: 2000,
                             disableOnInteraction: true,
                         }}
-                        speed={2000}
+                        speed={500}
                         allowTouchMove={true}
                     >
                         {displayedEvents.map((event, index) => (
                             <SwiperSlide
                                 key={index}
                                 style={{ width: 'auto', transition: 'width 0.5s ease' }}
+                                className=""
                             >
                                 <div className={`group w-max et-3-cal-event ${activeIndex === index ? 'active' : ''}`}
                                     onMouseEnter={() => setActiveIndex(index)}
@@ -66,10 +69,14 @@ function CalendarEventSection({ events }) {
                                         <div className="group-[.active]:px-[40px] bg-white xxs:!p-[30px] px-0 xs:px-[40px] py-[35px] overflow-hidden duration-[400ms]">
                                             <div className="w-[392px] xxs:w-[230px] sm:w-[342px]">
                                                 <span className="inline-block opacity-25 mb-[8px] et-outlined-text font-semibold text-[48px] leading-[0.7]">{(index + 1).toString().padStart(2, '0')}</span>
-                                                <h3 className="font-semibold text-[30px] text-black sm:text-[28px]"><a href="event-details.html">{event.title.toUpperCase()}</a></h3>
-                                                <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{event.date}</h6>
+                                                <h3 className="font-semibold text-[30px] text-black sm:text-[28px] truncate">
+                                                    <a href="event-details.html">{event.title.toUpperCase()}</a>
+                                                </h3>
+                                                <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{formatDate(event.date, "long")}</h6>
                                                 <h3 className="mb-[10px] font-semibold text-[30px] text-etBlue">{formatEuro(event.price)}</h3>
-                                                <p className="mb-[19px] text-[17px] text-etGray">{event.description}</p>
+                                                <p className="mb-[19px] text-[17px] text-etGray line-clamp-3">
+                                                    {event.description}
+                                                </p>
                                                 <div className="flex items-start gap-[10px] mb-[33px] text-[17px] text-etBlue">
                                                     <span><i class="fa-solid fa-location-dot"></i></span>
                                                     <h6 className="text-[17px]">{event.location}</h6>
@@ -86,12 +93,22 @@ function CalendarEventSection({ events }) {
                                             </div>
                                         </div>
                                         <div className="xs:hidden relative overflow-hidden">
-                                            <img src={eventImage1} alt="event image" className="w-full h-full max-h-[460px] sm:max-h-[482px] object-cover" />
-                                            <div className="-right-[73px] bottom-[136px] absolute w-max text-white -rotate-90 translate-x-0 group-[.active]:translate-x-1/2 duration-[400ms]">
-                                                <h5 className="mb-[4px] font-semibold text-[22px]">{event.title}</h5>
-                                                <h6 className="text-[17px]">{event.date}</h6>
+                                            <img
+                                                src={eventImage1}
+                                                alt="event image"
+                                                className="w-full h-full max-h-[460px] sm:max-h-[482px] object-cover"
+                                            />
+
+                                            <div className="absolute bottom-[30px] left-[30px] text-white transition-transform duration-[400ms] group-[.active]:translate-x-2">
+                                                <h5 className="mb-[4px] font-semibold text-[22px] leading-none uppercase">
+                                                    {event.title}
+                                                </h5>
+                                                <h6 className="text-[17px] leading-none">
+                                                    {formatDate(event.date, "long")}
+                                                </h6>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </SwiperSlide>
