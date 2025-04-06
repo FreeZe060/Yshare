@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 // import logo from "../assets/img/logo-dark.svg"; // Remplace le chemin si besoin
@@ -8,14 +8,30 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [scrolled, setScrolled] = useState(false);
+
     const handleLogout = async () => {
         await logout();
         navigate("/login");
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 0);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll(); // pour init
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <div className="fixed p-4 w-full z-50">
-            <div className="p-5 bg-gray-900 text-gray-500 rounded-lg shadow-lg font-medium capitalize flex items-center gap-4 flex-wrap">
+        <div
+            className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "p-4" : "p-0"
+                }`}
+        >
+            <div className={` bg-gray-900 text-gray-500 shadow-lg font-medium capitalize flex items-center gap-4 flex-wrap ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                 {/* Logo */}
                 <span className="px-3 py-1 pr-4 border-r border-gray-800">
                     <img
