@@ -76,31 +76,32 @@ CREATE TABLE IF NOT EXISTS `events` (
   `city` varchar(100) DEFAULT NULL,
   `postal_code` varchar(20) DEFAULT NULL,
   `start_time` time DEFAULT NULL,
-  `end_time` time DEFAULT NULL,
+  `end_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_user` (`id_org`) USING BTREE,
   CONSTRAINT `FK_event_user` FOREIGN KEY (`id_org`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.events : ~12 rows (environ)
+-- Listage des données de la table yshare.events : ~17 rows (environ)
 DELETE FROM `events`;
 INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date`, `max_participants`, `status`, `street`, `street_number`, `city`, `postal_code`, `start_time`, `end_time`) VALUES
-	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', NULL, '2025-03-23', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(3, NULL, 'vinculum sub nobis', 'Super capitulus corpus suscipio. Ambitus commodo volva.', 10, '2025-02-10', 10, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(4, NULL, 'spectaculum autus pauper', 'Dolore pecus tyrannus accusantium argentum torqueo coruscus provident. Cresco verus tempora adopto.', NULL, '2024-12-09', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(5, 13, 'sustineo culpa laboriosam', 'Pecus amissio alter tredecim vinculum. Supplanto crastinus bellum.', 0, '2024-12-21', 5, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(6, NULL, 'amplexus adulatio amaritudo', 'Baiulus clibanus curtus socius victoria thymbra consequatur bis aspernatur adiuvo. Abscido umbra quod deleniti titulus defungo accusator.', NULL, '2025-01-24', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(7, NULL, 'cubicularis ciminatio depromo', 'Cubo tres praesentium comprehendo color adhaero aestivus comes. Vicissitudo celebrer carmen tonsor ex.', NULL, '2025-01-12', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(8, NULL, 'argumentum carbo blanditiis', 'Defaeco reiciendis creta tyrannus. Antea spectaculum admoneo terga despecto desino bibo laboriosam solio utrum.', NULL, '2025-03-29', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(9, NULL, 'sponte veritatis consectetur', 'Cui templum talis teres causa clementia iusto. Theca conor velit temperantia.', NULL, '2025-07-24', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(10, NULL, 'tener tardus candidus', 'Porro repellat accusantium arceo tibi pectus addo atrox. Ocer clarus sophismata vulnero subseco contabesco clarus ulciscor volubilis.', NULL, '2025-06-26', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(11, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(12, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(13, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31', NULL, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(14, 15, 'Conférence Tech 2025 - Mise à Jour', 'Un événement sur les nouvelles technologies', 50, '2025-06-15', 200, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(15, 15, 'Conférence Tech 2025', 'Un événement sur les nouvelles technologies', 50, '2025-06-15', 100, 'Annulé', NULL, NULL, NULL, NULL, NULL, NULL),
-	(16, NULL, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15', 10, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL),
-	(17, NULL, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15', 10, 'En Cours', NULL, NULL, NULL, NULL, NULL, NULL);
+	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', 0, '2025-03-23', 30, 'En Cours', 'place du marche', '3', 'Argenteuil', '95100', '10:03:08', '2025-04-07 20:03:08'),
+	(3, NULL, 'vinculum sub nobis', 'Super capitulus corpus suscipio. Ambitus commodo volva.', 10, '2025-02-10', 10, 'En Cours', 'avenue de la paix', '15', 'Paris', '75000', '10:03:17', '2025-04-07 20:03:08'),
+	(4, NULL, 'spectaculum autus pauper', 'Dolore pecus tyrannus accusantium argentum torqueo coruscus provident. Cresco verus tempora adopto.', 15, '2024-12-09', 80, 'En Cours', 'place du marche', '8', 'Argenteuil', '95100', '10:03:20', '2025-04-27 10:03:20'),
+	(5, 13, 'sustineo culpa laboriosam', 'Pecus amissio alter tredecim vinculum. Supplanto crastinus bellum.', 0, '2024-12-21', 5, 'En Cours', 'avenue de la paix', '3', 'Paris', '75000', '10:03:20', '2025-04-27 10:03:20'),
+	(6, NULL, 'amplexus adulatio amaritudo', 'Baiulus clibanus curtus socius victoria thymbra consequatur bis aspernatur adiuvo. Abscido umbra quod deleniti titulus defungo accusator.', 0, '2025-01-24', 50, 'En Cours', 'rue du velodrome', '1', 'Marseille', '13000', '10:03:20', '2025-04-17 18:03:20'),
+	(7, NULL, 'cubicularis ciminatio depromo', 'Cubo tres praesentium comprehendo color adhaero aestivus comes. Vicissitudo celebrer carmen tonsor ex.', 5, '2025-01-12', 100, 'En Cours', 'rue de la plage', '8', 'Antibes', '06650', '10:03:20', '2025-04-17 18:03:20'),
+	(8, NULL, 'argumentum carbo blanditiis', 'Defaeco reiciendis creta tyrannus. Antea spectaculum admoneo terga despecto desino bibo laboriosam solio utrum.', 0, '2025-03-29', 20, 'En Cours', 'avenue de la paix', '9', 'Paris', '75000', '10:03:53', '2025-05-03 10:03:53'),
+	(9, NULL, 'sponte veritatis consectetur', 'Cui templum talis teres causa clementia iusto. Theca conor velit temperantia.', 0, '2025-07-24', 50, 'En Cours', 'place sophie-laffite', '5', 'Sophia-Antipolis', '06560', '10:03:53', '2025-05-03 10:03:53'),
+	(10, NULL, 'tener tardus candidus', 'Porro repellat accusantium arceo tibi pectus addo atrox. Ocer clarus sophismata vulnero subseco contabesco clarus ulciscor volubilis.', 35, '2025-06-26', 30, 'En Cours', 'place massena', '5', 'Nice', NULL, '10:03:53', '2025-05-03 10:03:53'),
+	(11, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31', 15, 'En Cours', 'place du marche', '10', 'Argenteuil', '95100', '10:03:53', '2025-05-03 10:03:53'),
+	(12, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31', 50, 'En Cours', 'place massena', '5', 'Nice', NULL, '10:03:20', '2025-04-27 10:03:20'),
+	(13, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31', 10, 'En Cours', 'avenue de la paix', '9', 'Paris', '75000', '10:04:09', '2025-05-14 10:04:09'),
+	(14, 15, 'Conférence Tech 2025 - Mise à Jour', 'Un événement sur les nouvelles technologies', 50, '2025-06-15', 200, 'En Cours', 'rue de la plage', '6', 'Antibes', '06650', '10:04:09', '2025-05-14 10:04:09'),
+	(15, 15, 'Conférence Tech 2025', 'Un événement sur les nouvelles technologies', 50, '2025-06-15', 100, 'Annulé', 'place massena', '5', 'Nice', NULL, '10:04:09', '2025-05-14 10:04:09'),
+	(16, NULL, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15', 10, 'En Cours', 'velodrome', '1', 'Marseille', '13000', '10:04:09', '2025-05-14 10:04:09'),
+	(17, NULL, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15', 10, 'En Cours', 'place sophie-laffite', '1', 'Sophia-Antipolis', '06560', '10:04:09', '2025-05-14 10:04:09'),
+	(18, 15, 'Concert Open Air', 'Un concert en plein air exceptionnel.', 25, '2025-07-20', 10, 'En Cours', 'Avenue de la Musique', '19', 'Lyon', '69000', '19:00:00', '2025-07-20 23:00:00');
 
 -- Listage de la structure de table yshare. event_categories
 CREATE TABLE IF NOT EXISTS `event_categories` (
@@ -124,10 +125,22 @@ CREATE TABLE IF NOT EXISTS `event_images` (
   PRIMARY KEY (`id`),
   KEY `event_id` (`event_id`),
   CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_images : ~0 rows (environ)
+-- Listage des données de la table yshare.event_images : ~11 rows (environ)
 DELETE FROM `event_images`;
+INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
+	(1, 3, '/event-images/1743067245365-575734556.png', 1),
+	(2, 11, 'https://example.com/image.jpg', 1),
+	(3, 12, 'https://example.com/image.jpg', 1),
+	(4, 13, 'https://example.com/image.jpg', 1),
+	(5, 14, 'https://example.com/event-image.jpg', 1),
+	(6, 15, 'https://example.com/event-image.jpg', 1),
+	(7, 16, '/event-images/1743067245365-575734556.png', 1),
+	(8, 17, '/event-images/1743067245365-575734556.png', 1),
+	(9, 18, '/event-images/1744018849512-657157196.jpg', 1),
+	(10, 18, '/event-images/1744018849514-268068843.jpg', 0),
+	(11, 18, '/event-images/1744018849516-824274093.png', 0);
 
 -- Listage de la structure de table yshare. favoris
 CREATE TABLE IF NOT EXISTS `favoris` (

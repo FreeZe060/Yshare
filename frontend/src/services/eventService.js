@@ -7,7 +7,7 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 	const queryParams = new URLSearchParams();
 
 	if (filters.title) queryParams.append('title', filters.title);
-	if (filters.location) queryParams.append('location', filters.location);
+	if (filters.city) queryParams.append('city', filters.city);
 	if (filters.date) queryParams.append('date', filters.date);
 	if (filters.categoryId) queryParams.append('categoryId', filters.categoryId);
 
@@ -31,7 +31,6 @@ export async function getCreatedEvents(token) {
 	const response = await fetch(`${API_BASE_URL}/events/created`, {
 		credentials: 'include',
 		headers: {
-			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
 	});
@@ -47,7 +46,6 @@ export async function getCreatedEvents(token) {
  */
 export async function getEventById(eventId, token) {
 	const headers = {
-		'Content-Type': 'application/json',
 		...(token && { Authorization: `Bearer ${token}` }),
 	};
 
@@ -62,40 +60,64 @@ export async function getEventById(eventId, token) {
 }
 
 /**
- * POST /events (requires auth)
+ * POST /events (multipart/form-data)
  */
 export async function createEvent(eventData, token) {
+	const formData = new FormData();
+
+	for (const key in eventData) {
+		if (key === 'images') {
+			eventData.images.forEach(file => formData.append('images', file));
+		} else if (Array.isArray(eventData[key])) {
+			formData.append(key, JSON.stringify(eventData[key]));
+		} else {
+			formData.append(key, eventData[key]);
+		}
+	}
+
 	const response = await fetch(`${API_BASE_URL}/events`, {
 		method: 'POST',
 		credentials: 'include',
 		headers: {
-			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify(eventData),
+		body: formData,
 	});
 
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la création de l'événement");
+
 	return result;
 }
 
 /**
- * PUT /events/:eventId (requires auth)
+ * PUT /events/:eventId (multipart/form-data)
  */
 export async function updateEvent(eventId, eventData, token) {
+	const formData = new FormData();
+
+	for (const key in eventData) {
+		if (key === 'images') {
+			eventData.images.forEach(file => formData.append('images', file));
+		} else if (Array.isArray(eventData[key])) {
+			formData.append(key, JSON.stringify(eventData[key]));
+		} else {
+			formData.append(key, eventData[key]);
+		}
+	}
+
 	const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
-			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify(eventData),
+		body: formData,
 	});
 
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour de l'événement");
+
 	return result;
 }
 
@@ -115,5 +137,6 @@ export async function deleteEvent(eventId, status = 'Annulé', token) {
 
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression de l'événement");
+
 	return result;
 }

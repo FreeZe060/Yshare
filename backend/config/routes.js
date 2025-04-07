@@ -11,18 +11,26 @@ const notificationController = require('../controllers/NotificationController');
 const reportController = require('../controllers/ReportController');
 const favorisController = require('../controllers/FavorisController');
 const ratingController = require('../controllers/RatingController');
+const newsController = require('../controllers/NewsController');
 const authenticateToken = require('../middlewares/authMiddleware');
-const { profileUpload, eventUpload } = require('../middlewares/upload');
+const { profileUpload, eventUpload, newsUpload } = require('../middlewares/upload');
+const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
+const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
+const isProfileOwnerOrAdmin = require('../middlewares/isProfileOwnerOrAdmin');
+const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 
 
 //////// EVENTS ROUTES ////////
 
 router.get('/events', eventController.getAllEvents);
 router.get('/events/:id', eventController.getEventById);        
-router.post('/events', eventUpload.single('img'), authenticateToken, eventController.createEvent);
-router.put('/events/:eventId', eventUpload.single('img'), authenticateToken, eventController.updateEvent);
+router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
+router.put('/events/:eventId', eventUpload.array('images'), authenticateToken, eventController.updateEvent);
 router.delete('/events/:eventId', authenticateToken, eventController.deleteEvent);
 router.get('/events/created', authenticateToken, eventController.getCreatedEvents);
+router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
+router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
+router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
 
 //////// USER ROUTES ////////
 
@@ -90,6 +98,15 @@ router.post('/favoris/:eventId', authenticateToken, favorisController.addFavoris
 router.delete('/favoris/:eventId', authenticateToken, favorisController.removeFavoris);
 router.get('/favoris', authenticateToken, favorisController.getAllFavoris);
 router.get('/favoris/:eventId', authenticateToken, favorisController.getFavorisById);
+
+//////// NEWS ROUTES ////////
+
+router.post('/news', authenticateToken, newsUpload.single('image'), newsController.createNews);
+router.get('/news', newsController.getAllNews);
+router.get('/news/event/:eventId', newsController.getNewsByEventId);
+router.get('/news/my', authenticateToken, newsController.getNewsByUserId);
+router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.single('image'), newsController.updateNews);
+router.delete('/news/:newsId', isNewsOwnerOrAdmin, newsController.deleteNews);
 
 //////// RATING ROUTES ////////
 

@@ -54,8 +54,7 @@ app.use((err, req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use('/profile-images', express.static(path.join(__dirname, 'static', 'profile-images')));
-app.use('/event-images', express.static(path.join(__dirname, 'static', 'event-images')));
+app.use('/', express.static(path.join(__dirname, 'media')));
 
 // EJS
 app.set('view engine', 'ejs');
