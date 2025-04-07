@@ -6,31 +6,35 @@ class EventService {
     const { title, city, date, categoryId } = filters;
     const { page = 1, limit = 10 } = pagination;
     const offset = (page - 1) * limit;
-
+  
     const whereClause = {};
-
     if (title) whereClause.title = { [Op.like]: `%${title}%` };
     if (city) whereClause.city = { [Op.like]: `%${city}%` };
     if (date) whereClause.date = date;
-
-    const categoryFilter = categoryId ? {
-      model: Category,
-      where: { id: categoryId },
-      through: { attributes: [] }
-    } : {
-      model: Category,
-      through: { attributes: [] }
-    };
-
+  
+    const include = [
+      {
+        model: Category,
+        through: { attributes: [] },
+        ...(categoryId && {
+          where: { id: categoryId },
+          required: true, 
+        }),
+      },
+      {
+        model: EventImage,
+      },
+    ];
+  
     const { rows: events, count } = await Event.findAndCountAll({
       where: whereClause,
-      include: [categoryFilter, { model: EventImage }],
+      include,
       offset,
       limit: parseInt(limit),
     });
-
+  
     return { events, total: count };
-  }
+  }  
 
   async getEventById(eventId) {
     return await Event.findByPk(eventId, {

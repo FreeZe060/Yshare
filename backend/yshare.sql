@@ -30,10 +30,13 @@ CREATE TABLE IF NOT EXISTS `categories` (
   CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.categories : ~0 rows (environ)
+-- Listage des données de la table yshare.categories : ~4 rows (environ)
 DELETE FROM `categories`;
 INSERT INTO `categories` (`id`, `name`, `parent_id`, `display_order`) VALUES
-	(1, 'sport', NULL, 0);
+	(1, 'Sport', NULL, 0),
+	(2, 'Musique', NULL, 0),
+	(3, 'Fête', NULL, 0),
+	(4, 'Foot', 1, 0);
 
 -- Listage de la structure de table yshare. comments
 CREATE TABLE IF NOT EXISTS `comments` (
@@ -53,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   CONSTRAINT `FK_comments_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.comments : ~5 rows (environ)
+-- Listage des données de la table yshare.comments : ~4 rows (environ)
 DELETE FROM `comments`;
 INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_comment`, `date_posted`) VALUES
 	(1, 2, 13, NULL, 'Ceci est le contenu du commen.', NULL, '2025-03-13 14:32:12'),
@@ -113,8 +116,27 @@ CREATE TABLE IF NOT EXISTS `event_categories` (
   CONSTRAINT `FK_event_categories_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_categories : ~0 rows (environ)
+-- Listage des données de la table yshare.event_categories : ~18 rows (environ)
 DELETE FROM `event_categories`;
+INSERT INTO `event_categories` (`id_event`, `id_category`) VALUES
+	(3, 2),
+	(2, 2),
+	(6, 3),
+	(18, 3),
+	(8, 1),
+	(15, 3),
+	(14, 2),
+	(11, 2),
+	(7, 2),
+	(12, 2),
+	(13, 2),
+	(16, 3),
+	(17, 1),
+	(4, 1),
+	(4, 4),
+	(9, 3),
+	(5, 2),
+	(10, 2);
 
 -- Listage de la structure de table yshare. event_images
 CREATE TABLE IF NOT EXISTS `event_images` (
@@ -127,20 +149,28 @@ CREATE TABLE IF NOT EXISTS `event_images` (
   CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_images : ~11 rows (environ)
+-- Listage des données de la table yshare.event_images : ~19 rows (environ)
 DELETE FROM `event_images`;
 INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(1, 3, '/event-images/1743067245365-575734556.png', 1),
-	(2, 11, 'https://example.com/image.jpg', 1),
-	(3, 12, 'https://example.com/image.jpg', 1),
-	(4, 13, 'https://example.com/image.jpg', 1),
-	(5, 14, 'https://example.com/event-image.jpg', 1),
-	(6, 15, 'https://example.com/event-image.jpg', 1),
+	(2, 11, '/event-images/1744018474927-631654287.jpg', 1),
+	(3, 12, '/event-images/1744018474927-631654287.jpg', 1),
+	(4, 13, '/event-images/1744018853425-34622827.jpg', 1),
+	(5, 14, '/event-images/1744018853425-34622827.jpg', 1),
+	(6, 15, '/event-images/1744018474927-631654287.jpg', 1),
 	(7, 16, '/event-images/1743067245365-575734556.png', 1),
 	(8, 17, '/event-images/1743067245365-575734556.png', 1),
 	(9, 18, '/event-images/1744018849512-657157196.jpg', 1),
 	(10, 18, '/event-images/1744018849514-268068843.jpg', 0),
-	(11, 18, '/event-images/1744018849516-824274093.png', 0);
+	(11, 18, '/event-images/1744018849516-824274093.png', 0),
+	(18, 6, '/event-images/1744018853425-34622827.jpg', 1),
+	(19, 4, '/event-images/1744018853425-34622827.jpg', 1),
+	(20, 2, '/event-images/1744018849512-657157196.jpg', 1),
+	(21, 5, '/event-images/1744018849512-657157196.jpg', 1),
+	(22, 8, '/event-images/1744018849512-657157196.jpg', 1),
+	(23, 9, '/event-images/1744018849512-657157196.jpg', 1),
+	(24, 10, '/event-images/1744018849512-657157196.jpg', 1),
+	(25, 7, '/event-images/1744018849512-657157196.jpg', 1);
 
 -- Listage de la structure de table yshare. favoris
 CREATE TABLE IF NOT EXISTS `favoris` (
@@ -152,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `favoris` (
   CONSTRAINT `favoris_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.favoris : ~0 rows (environ)
+-- Listage des données de la table yshare.favoris : ~1 rows (environ)
 DELETE FROM `favoris`;
 INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
 	(17, 3);
@@ -189,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.notifications : ~4 rows (environ)
+-- Listage des données de la table yshare.notifications : ~3 rows (environ)
 DELETE FROM `notifications`;
 INSERT INTO `notifications` (`id`, `id_user`, `title`, `message`, `date_sent`, `read_status`) VALUES
 	(2, 13, 'Nouvelle demande - sustineo culpa laboriosam', 'Johnny souhaite rejoindre votre événement "sustineo culpa laboriosam".', '2025-03-17 16:15:51', 0),
@@ -209,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `participants` (
   CONSTRAINT `FK_participants_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.participants : ~8 rows (environ)
+-- Listage des données de la table yshare.participants : ~7 rows (environ)
 DELETE FROM `participants`;
 INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`) VALUES
 	(3, 13, 9, 'En Attente'),
@@ -236,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   CONSTRAINT `chk_rating_range` CHECK (((`rating` >= 0) and (`rating` <= 5)))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.ratings : ~0 rows (environ)
+-- Listage des données de la table yshare.ratings : ~1 rows (environ)
 DELETE FROM `ratings`;
 INSERT INTO `ratings` (`id`, `id_event`, `id_user`, `rating`, `message`, `date_rated`) VALUES
 	(1, 5, 15, 4.50, 'Très bon événemen !', '2025-03-18 10:22:25');
@@ -263,7 +293,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null)) or ((`id_event` is null) and (`id_reported_user` is not null))))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.reports : ~0 rows (environ)
+-- Listage des données de la table yshare.reports : ~1 rows (environ)
 DELETE FROM `reports`;
 INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`) VALUES
 	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'En Attente', '2025-03-17 16:38:10');
@@ -280,7 +310,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.users : ~5 rows (environ)
+-- Listage des données de la table yshare.users : ~6 rows (environ)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `profile_image`) VALUES
 	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL),

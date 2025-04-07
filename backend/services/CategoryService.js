@@ -1,78 +1,50 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+const { Category } = require('../models');
 
-/**
- * GET /categories
- */
-export async function getAllCategories(token) {
-	const response = await fetch(`${API_BASE_URL}/categories`, {
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la récupération des catégories");
-	}
-	return result;
+class CategoryService {
+  async getAllCategories() {
+    try {
+      const categories = await Category.findAll();
+      return categories;
+    } catch (error) {
+      throw new Error('Erreur lors de la récupération des catégories : ' + error.message);
+    }
+  }
+
+  async createCategory(name) {
+    try {
+      const category = await Category.create({ name });
+      return category;
+    } catch (error) {
+      throw new Error('Erreur lors de la création de la catégorie : ' + error.message);
+    }
+  }
+
+  async updateCategory(id, name) {
+    try {
+      const category = await Category.findByPk(id);
+      if (!category) {
+        throw new Error('Catégorie non trouvée');
+      }
+      category.name = name;
+      await category.save();
+      return category;
+    } catch (error) {
+      throw new Error('Erreur lors de la mise à jour de la catégorie : ' + error.message);
+    }
+  }
+
+  async deleteCategory(id) {
+    try {
+      const category = await Category.findByPk(id);
+      if (!category) {
+        throw new Error('Catégorie non trouvée');
+      }
+      await category.destroy();
+      return { message: "Catégorie supprimée avec succès." };
+    } catch (error) {
+      throw new Error('Erreur lors de la suppression de la catégorie : ' + error.message);
+    }
+  }
 }
 
-/**
- * POST /categories
- */
-export async function createCategorie({ name, parent_id = null, display_order = 0 }, token) {
-	const response = await fetch(`${API_BASE_URL}/categories`, {
-		method: "POST",
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({ name, parent_id, display_order }),
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la création de la catégorie");
-	}
-	return result;
-}
-
-/**
- * PUT /categories/:id
- */
-export async function updateCategorie(id, { name, parent_id = null, display_order = 0 }, token) {
-	const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-		method: "PUT",
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({ name, parent_id, display_order }),
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la mise à jour de la catégorie");
-	}
-	return result;
-}
-
-/**
- * DELETE /categories/:id
- */
-export async function deleteCategorie(id, token) {
-	const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-		method: "DELETE",
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la suppression de la catégorie");
-	}
-	return result;
-}
+module.exports = new CategoryService();
