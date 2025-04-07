@@ -1,6 +1,6 @@
 const sequelize = require('../config/dbManager');
 const User = require('./UserModel');
-const Event = require('./eventModel');
+const Event = require('./EventModel');
 const Participant = require('./ParticipantModel');
 const Comment = require('./CommentModel');
 const Rating = require('./RatingModel');
@@ -8,22 +8,63 @@ const Category = require('./CategoryModel');
 const Report = require('./ReportModel');
 const Notification = require('./NotificationModel');
 const Favoris = require('./FavorisModel');
+const EventImage = require('./EventImageModel');
+const News = require('./NewsModel');
 
-
-User.hasMany(Participant, { foreignKey: 'id_user' });
-Participant.belongsTo(User, { foreignKey: 'id_user' });
-
-Event.hasMany(Participant, { foreignKey: 'id_event' });
-Participant.belongsTo(Event, { foreignKey: 'id_event' });
-
-Event.belongsToMany(Category, { through: 'event_categories', foreignKey: 'id_event' });
-Category.belongsToMany(Event, { through: 'event_categories', foreignKey: 'id_category' });
-
+// Associations
 User.hasMany(Event, { foreignKey: 'id_org' });
 Event.belongsTo(User, { foreignKey: 'id_org' });
 
 Event.hasMany(Comment, { foreignKey: 'id_event' });
+Comment.belongsTo(Event, { foreignKey: 'id_event' });
 
+User.hasMany(Comment, { foreignKey: 'id_user' });
+Comment.belongsTo(User, { foreignKey: 'id_user' });
+
+Comment.hasMany(Comment, { as: 'replies', foreignKey: 'id_comment' });
+Comment.belongsTo(Comment, { as: 'parent', foreignKey: 'id_comment' });
+
+Event.hasMany(Participant, { foreignKey: 'id_event' });
+Participant.belongsTo(Event, { foreignKey: 'id_event' });
+
+User.hasMany(Participant, { foreignKey: 'id_user' });
+Participant.belongsTo(User, { foreignKey: 'id_user' });
+
+Event.belongsToMany(Category, { through: 'event_categories', foreignKey: 'id_event' });
+Category.belongsToMany(Event, { through: 'event_categories', foreignKey: 'id_category' });
+
+Event.hasMany(EventImage, { foreignKey: 'event_id' });
+EventImage.belongsTo(Event, { foreignKey: 'event_id' });
+
+Event.hasMany(Rating, { foreignKey: 'id_event' });
 Rating.belongsTo(Event, { foreignKey: 'id_event' });
 
-module.exports = { sequelize, User, Event, Participant, Comment, Rating, Category, Report, Notification, Favoris };
+User.hasMany(Rating, { foreignKey: 'id_user' });
+Rating.belongsTo(User, { foreignKey: 'id_user' });
+
+User.hasMany(News, { foreignKey: 'user_id' });
+News.belongsTo(User, { foreignKey: 'user_id' });
+
+Event.hasMany(News, { foreignKey: 'event_id' });
+News.belongsTo(Event, { foreignKey: 'event_id' });
+
+User.hasMany(Notification, { foreignKey: 'id_user' });
+Notification.belongsTo(User, { foreignKey: 'id_user' });
+
+Event.belongsToMany(User, { through: Favoris, foreignKey: 'id_event', otherKey: 'id_user', as: 'favoritedBy' });
+User.belongsToMany(Event, { through: Favoris, foreignKey: 'id_user', otherKey: 'id_event', as: 'favorites' });
+
+module.exports = {
+  sequelize,
+  User,
+  Event,
+  Participant,
+  Comment,
+  Rating,
+  Category,
+  Report,
+  Notification,
+  Favoris,
+  EventImage,
+  News,
+};

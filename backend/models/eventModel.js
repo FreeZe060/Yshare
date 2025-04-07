@@ -7,33 +7,25 @@ const Event = sequelize.define('Event', {
     primaryKey: true,
     autoIncrement: true,
   },
-  id_org: {              
+  id_org: {
     type: DataTypes.INTEGER,
-    allowNull: true,     
+    allowNull: true,
   },
   title: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: false,
-    field: 'desc'
-  },
-  date: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
-  location: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    field: 'desc',
   },
   price: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
-  img: {
-    type: DataTypes.STRING,
+  date: {
+    type: DataTypes.DATEONLY,
     allowNull: true,
   },
   max_participants: {
@@ -43,7 +35,31 @@ const Event = sequelize.define('Event', {
   status: {
     type: DataTypes.ENUM('En Cours', 'Terminé', 'Annulé'),
     defaultValue: 'En Cours',
-  }
+  },
+  street: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  street_number: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  postal_code: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  start_time: {
+    type: DataTypes.TIME,
+    allowNull: true,
+  },
+  end_time: {
+    type: DataTypes.TIME,
+    allowNull: true,
+  },
 }, {
   tableName: 'events',
   timestamps: false,
