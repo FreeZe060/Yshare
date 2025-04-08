@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react";
 import { getAllCategories } from "../../services/categorieService";
-import { useAuth } from "../../context/AuthContext";
 
 function useCategories() {
 	const [categories, setCategories] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-	const { user } = useAuth();
 
 	useEffect(() => {
 		const fetchCategories = async () => {
-			if (!user?.token) return; 
-
 			setLoading(true);
 			try {
-				const data = await getAllCategories(user.token);
+				const data = await getAllCategories(); 
 				setCategories(data);
 			} catch (err) {
 				setError(err.message);
@@ -24,7 +20,7 @@ function useCategories() {
 		};
 
 		fetchCategories();
-	}, [user]);
+	}, []); 
 
 	return { categories, loading, error };
 }

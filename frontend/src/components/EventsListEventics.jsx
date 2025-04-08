@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 
 import '../assets/css/style.css';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
@@ -8,56 +8,32 @@ import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
 
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
-import { getAllCategories } from '../services/categorieService';
-import { fetchEvents } from '../services/eventService';
-import { useAuth } from '../context/AuthContext';
+import useCategories from '../hooks/Categorie/useCategories';
+import useEvents from '../hooks/Events/useEvents';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function EventsListEventics() {
-	const { user } = useAuth();
-	const [categories, setCategories] = useState([]);
-	const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-	const [events, setEvents] = useState([]);
-	const [loading, setLoading] = useState(false);
-
 	useSlideUpAnimation();
 	useTextAnimation();
 
-	// Charger les 3 premières catégories
-	useEffect(() => {
-		const loadCategories = async () => {
-			try {
-				const cats = await getAllCategories(user?.token);
-				setCategories(cats.slice(0, 3));
-				if (cats.length > 0) {
-					setSelectedCategoryId(cats[0].id); // Sélectionner la première par défaut
-				}
-			} catch (err) {
-				console.error("Erreur lors du chargement des catégories :", err);
-			}
-		};
-		loadCategories();
-	}, [user]);
+	const { categories: allCategories, loading: catLoading } = useCategories();
+	const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
-	// Charger les événements liés à la catégorie sélectionnée
+	const displayedCategories = allCategories.slice(0, 3);
+
 	useEffect(() => {
-		if (!selectedCategoryId) return;
-		const loadEvents = async () => {
-			setLoading(true);
-			try {
-				const { events } = await fetchEvents({ categoryId: selectedCategoryId }, 1, 10);
-                const data = await fetchEvents({ categoryId: selectedCategoryId }, 1, 10);
-                console.log("DATA EVENTS", data);
-				setEvents(events);
-			} catch (err) {
-				console.error("Erreur lors du chargement des événements :", err);
-			} finally {
-				setLoading(false);
-			}
-		};
-		loadEvents();
+		if (allCategories.length > 0 && !selectedCategoryId) {
+			setSelectedCategoryId(allCategories[0].id);
+		}
+	}, [allCategories]); 
+	
+	const filters = useMemo(() => {
+		return selectedCategoryId ? { categoryId: selectedCategoryId } : {};
 	}, [selectedCategoryId]);
+	
+	const { events, loading: eventsLoading } = useEvents(filters, 1, 10);
+	
 
 	return (
 		<section className="z-[1] relative py-[120px] md:py-[60px] xl:py-[80px] overflow-hidden">
@@ -69,7 +45,7 @@ function EventsListEventics() {
 					<h2 className="anim-text mb-[26px] text-center et-3-section-title">Upcoming Events</h2>
 
 					<div className="*:before:-z-[1] *:z-[1] *:before:absolute *:relative *:before:inset-0 flex flex-wrap justify-center gap-[30px] xxs:gap-[15px] *:before:bg-gradient-to-r *:before:from-[#550ECA] *:before:to-[#F929BB] *:before:opacity-0 *:px-[25px] *:border *:border-[#8E8E93] *:h-[30px] *:text-[17px] et-3-event-tab-navs rev-slide-up">
-						{categories.map((cat, i) => (
+						{displayedCategories.map((cat, i) => (
 							<button
 								key={cat.id}
 								className={`tab-nav ${selectedCategoryId === cat.id ? 'active' : ''}`}
@@ -82,8 +58,8 @@ function EventsListEventics() {
 					</div>
 				</div>
 
-				{loading ? (
-					<p className="text-center text-lg">Chargement des événements...</p>
+				{catLoading || eventsLoading ? (
+					<p className="text-center text-lg">Chargement...</p>
 				) : events.length === 0 ? (
 					<p className="text-center text-lg">Aucun événement trouvé.</p>
 				) : (
@@ -94,7 +70,7 @@ function EventsListEventics() {
 							: `${API_BASE_URL}${mainImage?.image_url || ''}`;
 
 						return (
-							<div key={index} className="flex flex-nowrap lg:flex-wrap items-center gap-[40px] py-[30px] border-b border-[#8E8E93]/25 rev-slide-up">
+							<div key={index} className="flex flex-nowrap opacity-1 lg:flex-wrap items-center gap-[40px] py-[30px] border-b border-[#8E8E93]/25 rev-slide-up">
 								<h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
 									<span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
 										{getFormattedDayAndMonthYear(event.date).day}
@@ -139,6 +115,7 @@ function EventsListEventics() {
 				)}
 			</div>
 
+			{/* VECTORS + BACKGROUND */}
 			<div className="*:-z-[1] *:absolute">
 				<h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] anim-text et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] et-vertical-txt">upcoming events</h3>
 				<div className="-top-[195px] -left-[519px] bg-gradient-to-b from-etPurple to-etPink blur-[230px] rounded-full w-[688px] aspect-square"></div>

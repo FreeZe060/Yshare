@@ -3,20 +3,22 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:808
 /**
  * GET /categories
  */
-export async function getAllCategories(token) {
+export async function getAllCategories() {
 	const response = await fetch(`${API_BASE_URL}/categories`, {
-		credentials: "include",
 		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json"
 		},
 	});
+
 	const result = await response.json();
+
 	if (!response.ok) {
 		throw new Error(result.message || "Erreur lors de la récupération des catégories");
 	}
+
 	return result;
 }
+
 
 /**
  * POST /categories
