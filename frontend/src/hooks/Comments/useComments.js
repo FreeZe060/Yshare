@@ -1,20 +1,18 @@
 import { useState, useEffect } from "react";
 import { getCommentsWithReplies } from "../../services/commentService";
-import { useAuth } from "../../context/AuthContext";
 
 function useComments(eventId) {
 	const [comments, setComments] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-	const { user } = useAuth();
 
 	useEffect(() => {
-		if (!eventId || !user?.token) return;
+		if (!eventId) return;
 
 		const fetchComments = async () => {
 			setLoading(true);
 			try {
-				const data = await getCommentsWithReplies(eventId, user.token);
+				const data = await getCommentsWithReplies(eventId); // ✅ pas de token ici
 				setComments(data);
 			} catch (err) {
 				setError(err.message);
@@ -24,7 +22,7 @@ function useComments(eventId) {
 		};
 
 		fetchComments();
-	}, [eventId, user?.token]);
+	}, [eventId]);
 
 	return { comments, loading, error };
 }

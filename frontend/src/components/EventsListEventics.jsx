@@ -10,6 +10,7 @@ import vector2 from "../assets/img/et-3-event-vector-2.svg";
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 import useCategories from '../hooks/Categorie/useCategories';
 import useEvents from '../hooks/Events/useEvents';
+import ParticipantAvatars from './ParticipantAvatars';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -100,11 +101,8 @@ function EventsListEventics() {
 									</h4>
 								</div>
 								<div className="text-center border-l border-[#8E8E93]/25 pl-[40px] shrink-0">
-									<div className="flex justify-center mb-[20px] -space-x-[20px]">
-										<img src="assets/img/reviewer-1.png" alt="Person" className="border-[3px] border-white rounded-full w-[40px]" />
-										<img src="assets/img/reviewer-2.png" alt="Person" className="border-[3px] border-white rounded-full w-[40px]" />
-										<img src="assets/img/reviewer-3.png" alt="Person" className="border-[3px] border-white rounded-full w-[40px]" />
-									</div>
+									<ParticipantAvatars eventId={event.id} />
+
 									<a href="#" className="et-3-btn">
 										<span className="icon">🎟️</span>
 										Get Tickets

@@ -39,6 +39,17 @@ exports.getParticipant = async (req, res) => {
   }
 };
 
+exports.getAllParticipantsForEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const participants = await participantService.getAllParticipantsForEvent(eventId);
+    res.status(200).json(participants);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 exports.addParticipant = async (req, res) => {
   try {
     if (!req.user) {

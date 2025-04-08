@@ -18,7 +18,7 @@ import EventsListEventics from '../components/EventsListEventics';
 
 function Home() {
 	const { event: bannerEvent, loading: bannerLoading, error: bannerError } = useEventDetails(3);
-	const { event: aboutEvent, loading: aboutLoading, error: aboutError } = useEventDetails(5);
+	const { event: aboutClub, loading: aboutLoading, error: aboutError } = useEventDetails(18);
 	const { comments, loading: commentsLoading } = useComments(3);
 	const [filters, setFilters] = useState({});
 	const [page, setPage] = useState(1);
@@ -46,7 +46,7 @@ function Home() {
 			<main>
 				{/* {bannerEvent && <BannerEvent event={bannerEvent} commentsCount={comments ? comments.length : 0} />} */}
 				<EventsListEventics events={events} />
-				<AboutClub events={events} />
+				<AboutClub event={aboutClub} />
 				<CalendarEventSection events={events} />
 				{/* {eventDetails && <AboutEvent event={eventDetails} comments={comments} />}
 				{events && <EventsList events={events.slice(0, 10)} />} */}

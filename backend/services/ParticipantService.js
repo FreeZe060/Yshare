@@ -1,4 +1,4 @@
-const { Event, Category, Participant } = require('../models'); 
+const { Event, Category, Participant, User } = require('../models'); 
 
 class ParticipantService {
     async getAllParticipantsWithUserInfo() {
@@ -17,14 +17,35 @@ class ParticipantService {
     
     async getParticipantsByEventId(eventId) {
         try {
+          const participants = await Participant.findAll({
+            where: { id_event: eventId, status: 'Inscrit' },
+            include: [{
+              model: User,
+              attributes: ['id', 'name', 'profile_image']
+            }],
+            order: [['id', 'ASC']]
+          });
+          return participants;
+        } catch (error) {
+          throw new Error("Erreur lors de la récupération des participants : " + error.message);
+        }
+    }
+
+    async getAllParticipantsForEvent(eventId) {
+        try {
             const participants = await Participant.findAll({
-                where: { id_event: eventId }
+                where: { id_event: eventId },
+                include: [{
+                    model: User,
+                    attributes: ['id', 'name', 'profile_image', 'email']
+                }],
+                order: [['id', 'ASC']]
             });
             return participants;
         } catch (error) {
             throw new Error("Erreur lors de la récupération des participants : " + error.message);
         }
-    }
+    }    
 
     async getParticipantByUserAndEvent(id_event, id_user) {
         try {

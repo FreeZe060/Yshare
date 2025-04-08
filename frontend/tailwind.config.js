@@ -33,5 +33,5 @@ module.exports = {
       'xxs': { 'max': '479px' },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/line-clamp')],
 }

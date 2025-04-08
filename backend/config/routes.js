@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const userService = require('../services/UserService');
 
 const userController = require('../controllers/UserController');
 const eventController = require('../controllers/EventController');
@@ -67,6 +68,7 @@ router.put('/reports/:reportId/status', authenticateToken, reportController.upda
 
 router.get('/users/:userId/events', authenticateToken, userController.getUserEventsAdmin);
 router.get('/events/:eventId/participants', participantController.AllParticipant);
+router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
 router.get('/events/:eventId/participants/:index', authenticateToken, participantController.getParticipant);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant); 
 router.put('/events/:eventId/participants/:index', authenticateToken, participantController.updateParticipantStatus);
@@ -123,12 +125,32 @@ router.get('/reports', authenticateToken, reportController.getReports);
 
 //////// AUTH ROUTES FRONT ////////
 
-router.get('/auth/check', authenticateToken, (req, res) => {
-    res.status(200).json({ authenticated: true, user: req.user });
+router.get('/auth/check', authenticateToken, async (req, res) => {
+  try {
+    const userFromDb = await userService.findById(req.user.id);
+    if (!userFromDb) {
+      return res.status(404).json({ authenticated: false });
+    }
+
+    res.status(200).json({
+      authenticated: true,
+      user: {
+        id: userFromDb.id,
+        name: userFromDb.name,
+        lastname: userFromDb.lastname,
+        email: userFromDb.email,
+        profileImage: userFromDb.profileImage,
+        role: userFromDb.role,
+      },
+    });
+  } catch (err) {
+    console.error("Erreur lors de l'auth check :", err.message);
+    res.status(500).json({ authenticated: false, error: "Erreur serveur" });
+  }
 });
 
 router.post('/logout', (req, res) => {
-    res.clearCookie('token');
+    res.clearCookie('auth_token'); 
     res.status(200).json({ message: 'Déconnexion réussie' });
 });
 

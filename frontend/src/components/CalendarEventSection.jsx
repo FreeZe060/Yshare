@@ -71,19 +71,19 @@ function CalendarEventSection({ events }) {
                                     style={{ width: 'auto', transition: 'width 0.5s ease' }}
                                     className=""
                                 >
-                                    <div className={`group w-max et-3-cal-event ${activeIndex === index ? 'active' : ''}`}
+                                    <div className={`group w-max et-3-cal-event min-h-[500px] max-h-[500px] ${activeIndex === index ? 'active' : ''}`}
                                         onMouseEnter={() => setActiveIndex(index)}
                                         onMouseLeave={() => setActiveIndex(null)}>
                                         <div className="grid grid-cols-[0fr_242px] xs:grid-cols-[1fr_0] xs:group-[.active]:grid-cols-[1fr_0] group-[.active]:grid-cols-[1fr_362px] duration-[400ms]">
                                             <div className="group-[.active]:px-[40px] bg-white xxs:!p-[30px] px-0 xs:px-[40px] py-[35px] overflow-hidden duration-[400ms]">
                                                 <div className="w-[392px] xxs:w-[230px] sm:w-[342px]">
                                                     <span className="inline-block opacity-25 mb-[8px] et-outlined-text font-semibold text-[48px] leading-[0.7]">{(index + 1).toString().padStart(2, '0')}</span>
-                                                    <h3 className="font-semibold text-[30px] text-black sm:text-[28px] truncate">
+                                                    <h3 className="font-semibold text-[30px] text-black sm:text-[28px] line-clamp-2">
                                                         <a href="event-details.html">{event.title.toUpperCase()}</a>
                                                     </h3>
                                                     <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{formatDate(event.date, "long")}</h6>
                                                     <h3 className="mb-[10px] font-semibold text-[30px] text-etBlue">{formatEuro(event.price)}</h3>
-                                                    <p className="mb-[19px] text-[17px] text-etGray line-clamp-3">
+                                                    <p className="mb-[19px] text-[17px] text-etGray line-clamp-2">
                                                         {event.description}
                                                     </p>
                                                     <div className="flex items-start text-[17px] text-etBlue">
@@ -94,8 +94,9 @@ function CalendarEventSection({ events }) {
                                                     </div>
 
                                                     <p className="text-[16px] text-gray-600 mt-3">
-                                                        Participants : {event.participants?.length || 0}/{event.max_participants || 0}
+                                                        Participants : {event.nb_participants} / {event.max_participants}
                                                     </p>
+
 
                                                     <p className="text-[16px] text-gray-600">
                                                         Commentaires : {event.comments?.length || 0}
@@ -116,7 +117,7 @@ function CalendarEventSection({ events }) {
                                                 <img
                                                     src={imageUrl || fallbackImage}
                                                     alt="event image"
-                                                    className="w-full h-full max-h-[460px] sm:max-h-[482px] object-cover"
+                                                    className="w-full h-full min-h-[500px] max-h-[500px] sm:max-h-[482px] object-cover"
                                                 />
 
                                                 <div className="absolute bottom-[30px] left-[30px] text-white transition-transform duration-[400ms] group-[.active]:translate-x-2">
