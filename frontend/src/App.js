@@ -8,7 +8,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 // import AllEvents from './pages/AllEvents';
-// import Profil from './pages/Profil';
+import Profil from './pages/Profil';
 
 function App() {
 
@@ -19,9 +19,9 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Register />} />
-					{/* <Route path="/all-events" element={<AllEvents />} />
 					<Route path="/profile/:userId" element={<Profil />} />
-					<Route path="/profile" element={<Profil />} />
+					<Route path="/profil" element={<Profil />} />
+					{/* <Route path="/all-events" element={<AllEvents />} />
 					<Route path="*" element={<Navigate to="/" />} /> */}
 				</Routes>
 			</AuthProvider>
