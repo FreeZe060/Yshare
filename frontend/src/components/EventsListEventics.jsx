@@ -14,6 +14,7 @@ import useEvents from '../hooks/Events/useEvents';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function EventsListEventics() {
+
 	useSlideUpAnimation();
 	useTextAnimation();
 
@@ -70,7 +71,7 @@ function EventsListEventics() {
 							: `${API_BASE_URL}${mainImage?.image_url || ''}`;
 
 						return (
-							<div key={index} className="flex flex-nowrap opacity-1 lg:flex-wrap items-center gap-[40px] py-[30px] border-b border-[#8E8E93]/25 rev-slide-up">
+							<div key={index} className="flex flex-nowrap opacity-1 lg:flex-wrap items-center gap-[40px] py-[30px] border-b border-[#8E8E93]/25 rev-up">
 								<h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
 									<span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
 										{getFormattedDayAndMonthYear(event.date).day}
