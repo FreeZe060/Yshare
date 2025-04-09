@@ -59,9 +59,24 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
   
 
-  const login = (userData) => {
-    setUser(userData); 
+  const login = async (userData) => {
+    try {
+      if (userData?.token) {
+        localStorage.setItem('token', userData.token); 
+        const { authenticated, user } = await checkAuthStatus();
+        if (authenticated) {
+          setUser(user);
+          return;
+        }
+      }
+  
+      setUser(userData);
+    } catch (err) {
+      console.error("Erreur lors de la récupération de l'utilisateur OAuth :", err.message);
+      setUser({});
+    }
   };
+  
 
   const logoutUser = async () => {
     await logout();

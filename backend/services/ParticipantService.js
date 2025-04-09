@@ -112,6 +112,20 @@ class ParticipantService {
             throw new Error("Erreur lors de la récupération de l'historique des événements : " + error.message);
         }
     }
+
+    async getParticipationCount(userId) {
+        try {
+          const count = await Participant.count({
+            where: {
+              id_user: userId,
+              status: 'Inscrit'
+            }
+          });
+          return count;
+        } catch (error) {
+          throw new Error("Erreur lors du comptage des participations : " + error.message);
+        }
+    }
     
     async updateParticipantStatus(eventId, userId, status) {
         try {

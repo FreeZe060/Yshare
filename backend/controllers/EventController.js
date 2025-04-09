@@ -145,13 +145,20 @@ exports.deleteEvent = async (req, res) => {
   }
 };
 
-exports.getCreatedEvents = async (req, res) => {
+exports.getCreatedEventsPublic = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.params;
+
     const createdEvents = await eventService.getCreatedEventsByUserId(userId);
-    res.status(200).json(createdEvents);
+    const count = createdEvents.length;
+
+    return res.status(200).json({
+      userId,
+      count,
+      events: createdEvents
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: "Erreur lors de la récupération des événements", error: error.message });
   }
 };
 

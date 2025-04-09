@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useLogin from '../hooks/User/useLogin';
 import Swal from 'sweetalert2';
 import 'animate.css';
@@ -13,7 +13,20 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading, error } = useLogin();
   const navigate = useNavigate();
+  const location = useLocation();
   const { login: loginContext } = useAuth() || {};
+
+  // 🔑 Handle OAuth token in URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+
+    if (token) {
+      localStorage.setItem('token', token);
+      loginContext({ token });
+      navigate('/');
+    }
+  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,9 +84,6 @@ const Login = () => {
             <p className="text-base font-normal text-gray-600 mb-6 text-center">Welcome Back</p>
 
             <div className="flex items-center border-2 py-3 px-4 rounded-2xl mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12l-4 4-4-4m8-4l-4 4-4-4" />
-              </svg>
               <input
                 className="pl-3 pr-6 outline-none border-none w-full text-sm bg-transparent"
                 type="email"
@@ -86,9 +96,6 @@ const Login = () => {
             </div>
 
             <div className="relative flex items-center border-2 py-3 px-4 rounded-2xl mb-5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0-1.657-1.343-3-3-3S6 9.343 6 11m6 0c0 1.657 1.343 3 3 3s3-1.343 3-3m-9 0v1a1 1 0 001 1h2a1 1 0 001-1v-1" />
-              </svg>
               <input
                 className="pl-3 pr-6 outline-none border-none w-full text-sm bg-transparent"
                 type={showPassword ? "text" : "password"}
@@ -103,17 +110,7 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 text-gray-500 focus:outline-none"
               >
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10a9.959 9.959 0 014.073-7.073m2.156-1.84A9.953 9.953 0 0112 3c5.523 0 10 4.477 10 10 0 1.364-.27 2.657-.764 3.855M15 12a3 3 0 11-6 0 3 3 0 016 0" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3l18 18" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                )}
+                {showPassword ? '🙈' : '👁️'}
               </button>
             </div>
 
@@ -124,9 +121,22 @@ const Login = () => {
             >
               {loading ? 'Loading...' : 'Login'}
             </button>
+
             <span className="text-sm text-center hover:text-blue-500 cursor-pointer block mb-3">
               Forgot Password?
             </span>
+
+            {/* 👇 OAuth Google login */}
+            <div className="flex justify-center items-center mt-4 mb-2">
+              <a
+                href="http://localhost:8080/api/auth/google"
+                className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
+              >
+                <img src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" />
+                <span className="text-sm text-gray-700 font-medium">Se connecter avec Google</span>
+              </a>
+            </div>
+
             {error && <p className="text-center mt-2 text-red-500 text-sm">{error}</p>}
           </form>
         </div>

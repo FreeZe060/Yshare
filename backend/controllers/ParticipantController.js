@@ -49,6 +49,15 @@ exports.getAllParticipantsForEvent = async (req, res) => {
   }
 };
 
+exports.getParticipationCountPublic = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const count = await participantService.getParticipationCount(userId);
+    return res.status(200).json({ userId, participationCount: count });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 exports.addParticipant = async (req, res) => {
   try {

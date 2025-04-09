@@ -16,10 +16,9 @@ const newsController = require('../controllers/NewsController');
 const authenticateToken = require('../middlewares/authMiddleware');
 const { profileUpload, eventUpload, newsUpload } = require('../middlewares/upload');
 const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
-const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
-const isProfileOwnerOrAdmin = require('../middlewares/isProfileOwnerOrAdmin');
+const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
-
+const isAdmin = require('../middlewares/Admin');
 
 //////// EVENTS ROUTES ////////
 
@@ -28,7 +27,6 @@ router.get('/events/:id', eventController.getEventById);
 router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
 router.put('/events/:eventId', eventUpload.array('images'), authenticateToken, eventController.updateEvent);
 router.delete('/events/:eventId', authenticateToken, eventController.deleteEvent);
-router.get('/events/created', authenticateToken, eventController.getCreatedEvents);
 router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
@@ -37,9 +35,13 @@ router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin,
 
 router.post('/register', profileUpload.single('profileImage'), userController.register);
 router.post('/login', userController.login);
-router.get('/profile', authenticateToken, userController.getProfile);
-router.put('/profile', authenticateToken, profileUpload.single('profileImage'), userController.updateProfile);
-router.delete('/users/:userId', authenticateToken, userController.deleteUser);
+router.get('/profile/:userId', authenticateToken, UserOrAdmin, userController.getProfile);
+router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
+router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
+router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
+router.get('/users/:userId/public', userController.getPublicProfile);
+router.get('/users/:userId/created-events', eventController.getCreatedEventsPublic);
+
 
 //////// OAuth ROUTES ////////
 
@@ -55,10 +57,9 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', { sessio
 //////// ADMIN ROUTES ////////
 
 router.get('/participants', authenticateToken, participantController.getAllParticipantsForAdmin);
-router.get('/users', authenticateToken, userController.getAllUsersByAdmin);
-router.get('/profile/:userId', authenticateToken, userController.getProfile);
-router.post('/admin/users', authenticateToken, userController.adminCreateUser);
-router.put('/profile/:userId', authenticateToken, profileUpload.single('profileImage'), userController.updateProfile);
+router.get('/users', authenticateToken, isAdmin, userController.getAllUsersByAdmin);
+router.get('/users/:userId/events', authenticateToken, isAdmin, userController.getUserEventsAdmin);
+router.post('/admin/users', authenticateToken, isAdmin, userController.adminCreateUser);
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
@@ -68,6 +69,7 @@ router.put('/reports/:reportId/status', authenticateToken, reportController.upda
 
 router.get('/users/:userId/events', authenticateToken, userController.getUserEventsAdmin);
 router.get('/events/:eventId/participants', participantController.AllParticipant);
+router.get('/users/:userId/participation-count', participantController.getParticipationCountPublic);
 router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
 router.get('/events/:eventId/participants/:index', authenticateToken, participantController.getParticipant);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant); 
