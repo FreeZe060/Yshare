@@ -64,7 +64,7 @@ const Header = () => {
                             }`}
                     >
                         <i className="w-8 fas fa-music p-2 bg-gray-800 rounded-full" />
-                        <span className="mx-1">Musiques</span>
+                        <span className="mx-1">Events</span>
                         <span className="absolute left-0 ml-8 -mt-2 text-xs bg-gray-700 font-medium px-2 shadow-lg rounded-full">
                             12
                         </span>
@@ -77,7 +77,7 @@ const Header = () => {
                             }`}
                     >
                         <i className="w-8 fas fa-th p-2 bg-gray-800 rounded-full" />
-                        <span className="mx-1">Artistes</span>
+                        <span className="mx-1">News</span>
                         <span className="absolute left-0 ml-8 -mt-2 text-xs bg-gray-700 font-medium px-2 shadow-lg rounded-full">
                             5
                         </span>
@@ -90,7 +90,31 @@ const Header = () => {
                             }`}
                     >
                         <i className="w-8 fas fa-briefcase p-2 bg-gray-800 rounded-full" />
-                        <span className="mx-1">Albums</span>
+                        <span className="mx-1">Créer des Evénements</span>
+                        <span className="absolute left-0 ml-8 -mt-2 text-xs bg-gray-700 font-medium px-2 shadow-lg rounded-full">
+                            8
+                        </span>
+                    </Link>
+
+                    <Link
+                        to="/albums"
+                        className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
+                            }`}
+                    >
+                        <i className="w-8 fas fa-briefcase p-2 bg-gray-800 rounded-full" />
+                        <span className="mx-1">About Us</span>
+                        <span className="absolute left-0 ml-8 -mt-2 text-xs bg-gray-700 font-medium px-2 shadow-lg rounded-full">
+                            8
+                        </span>
+                    </Link>
+
+                    <Link
+                        to="/albums"
+                        className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
+                            }`}
+                    >
+                        <i className="w-8 fas fa-briefcase p-2 bg-gray-800 rounded-full" />
+                        <span className="mx-1">Aide</span>
                         <span className="absolute left-0 ml-8 -mt-2 text-xs bg-gray-700 font-medium px-2 shadow-lg rounded-full">
                             8
                         </span>
