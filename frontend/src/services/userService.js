@@ -166,3 +166,13 @@ export async function adminCreateUser(userData, token) {
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la création de l'utilisateur");
 	return result;
 }
+
+export async function getParticipationCount(userId) {
+	const response = await fetch(`${API_BASE_URL}/users/${userId}/participation-count`, {
+		credentials: 'include',
+		headers: { 'Content-Type': 'application/json' },
+	});
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur récupération participation");																					
+	return result.count;
+}									

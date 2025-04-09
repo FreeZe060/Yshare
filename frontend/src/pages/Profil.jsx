@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import ProfileCard from '../components/Profil/ProfileCard';
 import EventsSection from '../components/Profil/EventsSection';
 import useProfile from '../hooks/User/useProfile';
-import { getCreatedEvents } from '../services/eventService';
-import { getEventHistory } from '../services/userService';
+import useFavoris from '../hooks/Favoris/useFavoris';
+import { getCreatedEventsStats } from '../services/eventService';
+import { getEventHistory, getParticipationCount} from '../services/userService';
 import { getAllFavoris } from '../services/favorisService';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
@@ -15,7 +16,8 @@ const Profil = () => {
     const { profile, accessLevel, loading, error } = useProfile(userId);
     const [participatedEvents, setParticipatedEvents] = useState([]);
     const [createdEvents, setCreatedEvents] = useState([]);
-    const [favoriteEvents, setFavoriteEvents] = useState([]);
+    const [stats, setStats] = useState({ created: 0, participated: 0 });
+    const { favoris, loading: favorisLoading } = useFavoris();
 
     const { user: currentUser } = useAuth();
 
@@ -25,49 +27,35 @@ const Profil = () => {
     const isOwner = accessLevel === 'private';
 
     useEffect(() => {
-        if (!isOwner) return;
+		if (!userId) return;
 
-        const fetchParticipatedEvents = async () => {
-            try {
-                const data = await getEventHistory();
-                setParticipatedEvents(data.slice(0, 5));
-            } catch (err) {
-                console.error(err);
-            }
-        };
+		const fetchData = async () => {
+			try {
+				const [createdStats, participationCount] = await Promise.all([
+					getCreatedEventsStats(userId),
+					getParticipationCount(userId)
+				]);
 
-        const fetchFavoriteEvents = async () => {
-            try {
-                const data = await getAllFavoris();
-                const formatted = data.map(favori => ({
-                    id: favori.Event.id,
-                    title: favori.Event.title,
-                    date: favori.Event.date,
-                    status: "Favori",
-                    image: favori.Event.img
-                }));
-                setFavoriteEvents(formatted.slice(0, 5));
-            } catch (err) {
-                console.error(err);
-            }
-        };
+				setCreatedEvents(createdStats.events.slice(0, 5));
 
-        fetchParticipatedEvents();
-        fetchFavoriteEvents();
-    }, [isOwner]);
+				if (isOwner) {
+					const history = await getEventHistory(currentUser?.token);
+					setParticipatedEvents(history.slice(0, 5));
+				}
 
-    useEffect(() => {
-        const fetchCreatedEvents = async () => {
-            try {
-                const data = await getCreatedEvents(userId);
-                setCreatedEvents(data.slice(0, 5));
-            } catch (err) {
-                console.error(err);
-            }
-        };
+				setStats({
+					created: createdStats.count,
+					participated: isOwner ? participationCount : undefined
+				});
+			} catch (err) {
+				console.error("Erreur lors de la récupération des données du profil :", err);
+			}
+		};
 
-        fetchCreatedEvents();
-    }, [userId]);
+		fetchData();
+	}, [userId, isOwner, currentUser?.token]);
+
+    
 
     const handleUpdateProfileImage = (file) => {
         console.log('Mise à jour de l’image avec :', file);
@@ -89,23 +77,27 @@ const Profil = () => {
                     user={{
                         ...profile,
                         rating: profile.rating, 
-                        eventsParticipated: isOwner ? participatedEvents.length : undefined,
-                        eventsCreated: createdEvents.length
+                        eventsParticipated: stats.participated,
+                        eventsCreated: stats.created
                     }} 
                     editable={isOwner} 
                     onUpdateProfileImage={handleUpdateProfileImage}
                     onUpdateProfileField={handleUpdateProfileField}
                 />
 
+
                 {isOwner && (
                     <EventsSection 
                         title="Événements Participés"
-                        linkText="Voir tous l’historique"
                         events={participatedEvents}
                         emptyMessage="Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
-                        buttonLink="/allevents"
+                        {...(participatedEvents.length > 0 && {
+                            linkText: "Voir tous l’historique",
+                            buttonLink: "/allevents"
+                        })}
                     />
                 )}
+
 
                 {createdEvents.length > 0 && (
                     <EventsSection 
@@ -125,13 +117,21 @@ const Profil = () => {
                     />
                 )}
 
-                {isOwner && favoriteEvents.length > 0 && (
-                    <EventsSection 
+                {isOwner && (
+                    <EventsSection
                         title="Favoris"
-                        linkText="Voir tous les favoris"
-                        events={favoriteEvents}
+                        events={favoris.slice(0, 5).map(favori => ({
+                            id: favori.Event.id,
+                            title: favori.Event.title,
+                            date: favori.Event.date,
+                            status: "Favori",
+                            image: favori.Event.img || favori.Event.image || null 
+                        }))}
                         emptyMessage="Vous n'avez pas encore de favoris."
-                        buttonLink="/allevents"
+                        {...(favoris.length > 0 && {
+                            linkText: "Voir tous les favoris",
+                            buttonLink: "/allevents"
+                        })}
                     />
                 )}
             </section>

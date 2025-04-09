@@ -11,7 +11,7 @@ const EventCard = ({ event }) => {
         >
             <div className="w-full h-40 bg-gray-200 rounded-md overflow-hidden">
                 
-                {event.img ? (
+                {event.image ? (
                     <img src={`http://localhost:8080/${event.image}`} alt={event.title} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-500">

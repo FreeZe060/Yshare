@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { deleteUser } from "../services/userService";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../config/authHeader"; 
 
 function useDeleteUser() {
 	const [loading, setLoading] = useState(false);

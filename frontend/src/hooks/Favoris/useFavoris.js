@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAllFavoris } from "../../services/favorisService";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../config/authHeader";
 
 function useFavoris() {
 	const [favoris, setFavoris] = useState([]);
