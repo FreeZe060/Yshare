@@ -47,11 +47,11 @@ router.get('/users/:userId/created-events', eventController.getCreatedEventsPubl
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), (req, res) => {
-    res.redirect(`/dashboard?token=${req.user.token}`);
+  res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
 });
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), (req, res) => {
-    res.redirect(`/dashboard?token=${req.user.token}`);
+  res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
 });
 
 //////// ADMIN ROUTES ////////

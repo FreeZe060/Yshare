@@ -7,6 +7,7 @@ const passport = require('passport');
 const cors = require("cors");
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('./config/passport'); 
 
 const app = express();
 const port = process.env.PORT || 8080;
