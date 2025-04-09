@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthProvider } from './config/authHeader';
 
 import './index.css';
 
@@ -13,19 +12,14 @@ import Profil from './pages/Profil';
 function App() {
 
 	return (
-		<>
-			<AuthProvider>
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/register" element={<Register />} />
-					<Route path="/profile/:userId" element={<Profil />} />
-					<Route path="/profil" element={<Profil />} />
-					{/* <Route path="/all-events" element={<AllEvents />} />
-					<Route path="*" element={<Navigate to="/" />} /> */}
-				</Routes>
-			</AuthProvider>
-		</>
+		<Routes>
+			<Route path="/" element={<Home />} />
+			<Route path="/login" element={<Login />} />
+			<Route path="/register" element={<Register />} />
+			<Route path="/profile/:userId" element={<Profil />} />
+			{/* <Route path="/all-events" element={<AllEvents />} />
+			<Route path="*" element={<Navigate to="/" />} /> */}
+		</Routes>
 	);
 }
 

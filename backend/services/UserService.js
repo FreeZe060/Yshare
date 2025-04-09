@@ -17,8 +17,8 @@ class UserService {
     return await User.findByPk(id);
   }
 
-  async createUser(name, lastname, email, password, profileImage) {
-    return await User.create({ name, lastname, email, password, profileImage });
+  async createUser(name, lastname, email, password, profileImage, provider = null) {
+    return await User.create({ name, lastname, email, password, profileImage, provider });
   }
 
   async updateUser(userId, updatedData) {

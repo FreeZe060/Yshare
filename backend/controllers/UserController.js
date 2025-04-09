@@ -34,7 +34,8 @@ exports.register = async (req, res) => {
       lastname,
       email,
       hashedPassword,
-      profileImage
+      profileImage,
+      null
     );
 
     if (newUser) {

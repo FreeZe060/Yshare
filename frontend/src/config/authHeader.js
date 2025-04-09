@@ -4,16 +4,15 @@ import { checkAuthStatus, logout } from '../services/authService'; // tes foncti
 const AuthContext = createContext();
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-      console.warn("useAuth() must be used within AuthProvider");
-      return null;
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
   
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // null = pas encore chargé / {} = non connecté
+  const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

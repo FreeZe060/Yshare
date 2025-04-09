@@ -54,6 +54,16 @@ export async function getProfile(token) {
 	return result;
 }
 
+export async function getPublicProfile(userId) {
+	const response = await fetch(`${API_BASE_URL}/users/${userId}/public`, {
+		credentials: 'include',
+	});
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération du profil public");
+	return result;
+}
+
+
 /**
  * GET /profile/:userId
  */

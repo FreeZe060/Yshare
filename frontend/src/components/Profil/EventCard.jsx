@@ -2,14 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const EventCard = ({ event }) => {
+    console.log(event.img);
+
     return (
         <motion.div 
             className="bg-white rounded-lg shadow-md p-4 w-64 cursor-pointer hover:scale-105 transition-transform"
             whileHover={{ scale: 1.05 }}
         >
             <div className="w-full h-40 bg-gray-200 rounded-md overflow-hidden">
-                {event.image ? (
-                    <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+                
+                {event.img ? (
+                    <img src={`http://localhost:8080/${event.image}`} alt={event.title} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-500">
                         Pas d'image

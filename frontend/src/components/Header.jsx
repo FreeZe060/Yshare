@@ -167,11 +167,12 @@ const Header = () => {
                                         className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg animate-fade-in p-3 font-medium z-50"
                                     >
                                         <Link
-                                            to="/profil"
+                                            to={`/profile/${user?.id}`}
                                             className="block px-4 py-2 text-gray-800 hover:bg-gray-100 rounded transition"
                                         >
                                             Profil
                                         </Link>
+
                                         <hr className="my-2 border-gray-300" />
                                         <Link
                                             to="/favoris"

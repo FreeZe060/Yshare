@@ -2,10 +2,12 @@ import React from 'react';
 import StarRating from '../StarRating';
 import { FiUser, FiEdit2 } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../config/authHeader'; // Assurez-vous que le chemin est correct
 
 const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
-	const { user: currentUser, isAdmin } = useAuth();
+	const auth = useAuth();
+    const currentUser = auth?.user;
+    const isAdmin = auth?.isAdmin;
 
 	const editable = currentUser?.id === user.id || isAdmin;
 
@@ -24,7 +26,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 
 	return (
         <motion.div
-        className="bg-white shadow-lg rounded-lg p-8 flex flex-col md:flex-row md:justify-between items-center"
+        className="bg-white shadow-lg rounded-lg p-8 flex flex-col md:justify-between items-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -34,9 +36,9 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
           <div className="relative">
             {user.profileImage ? (
               <img
-                src={user.profileImage}
+                src={`http://localhost:8080${user.profileImage}`}
                 alt="Profile"
-                className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover cursor-pointer"
+                className="w-40 h-40 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full object-cover cursor-pointer"
                 onClick={() =>
                   editable && document.getElementById('profileImageInput').click()
                 }
@@ -80,38 +82,45 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
         {/* Partie droite : infos */}
         <div className="flex-1 mt-6 md:mt-0 md:ml-12 w-full">
           <div className="space-y-6">
-            {['name', 'lastname', 'email'].map((field) => (
-              <div
-                key={field}
-                className="flex items-center border-b border-gray-300 pb-2"
-              >
-                <label className="w-40 font-bold capitalize text-lg">
-                  {field} :
-                </label>
-                {editable ? (
-                  <input
-                    type={field === 'email' ? 'email' : 'text'}
-                    defaultValue={user[field]}
-                    className="flex-1 text-2xl outline-none"
-                    onBlur={(e) => handleFieldChange(field, e.target.value)}
-                  />
-                ) : (
-                  <span className="text-2xl">{user[field]}</span>
-                )}
-              </div>
+            {['name', 'lastname'].map((field) => (
+                <div key={field} className="flex items-center border-b border-gray-300 pb-2">
+                    <label className="w-40 font-bold capitalize text-lg">
+                        {field} :
+                    </label>
+                    {editable ? (
+                        <input
+                            type="text"
+                            defaultValue={user[field]}
+                            className="flex-1 text-base sm:text-lg md:text-3xl outline-none"
+                            onBlur={(e) => handleFieldChange(field, e.target.value)}
+                        />
+                    ) : (
+                        <span className="text-base sm:text-lg md:text-3xl">{user[field]}</span>
+                    )}
+                </div>
             ))}
-  
+
+            {/* Email visible seulement si editable */}
+            {editable && (
+              <div className="flex items-center border-b border-gray-300 pb-2">
+                <label className="w-40 font-bold capitalize text-lg">email :</label>
+                <input
+                  type="email"
+                  defaultValue={user.email}
+                  className="flex-1 text-base sm:text-lg md:text-2xl outline-none"
+                  onBlur={(e) => handleFieldChange('email', e.target.value)}
+                />
+              </div>
+            )}
+
             <div className="flex items-center border-b border-gray-300 pb-2">
-              <label className="w-40 font-bold text-lg">
-                Événements Participés :
-              </label>
-              <span className="text-2xl">{user.eventsParticipated || 0}</span>
+              <label className="w-40 font-bold text-lg">Événements Participés :</label>
+              <span className="text-base sm:text-lg md:text-2xl">{user.eventsParticipated || 0}</span>
             </div>
+
             <div className="flex items-center">
-              <label className="w-40 font-bold text-lg">
-                Événements Créés :
-              </label>
-              <span className="text-2xl">{user.eventsCreated || 0}</span>
+              <label className="w-40 font-bold text-lg">Événements Créés :</label>
+              <span className="text-base sm:text-lg md:text-2xl">{user.eventsCreated || 0}</span>
             </div>
           </div>
         </div>

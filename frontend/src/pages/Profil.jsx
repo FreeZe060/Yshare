@@ -6,46 +6,39 @@ import { getCreatedEvents } from '../services/eventService';
 import { getEventHistory } from '../services/userService';
 import { getAllFavoris } from '../services/favorisService';
 import { useParams } from 'react-router-dom';
+import { useAuth } from '../config/authHeader';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
-
 const Profil = () => {
     const { userId } = useParams();
-    const { profile, loading, error } = useProfile(userId);
+    const { profile, accessLevel, loading, error } = useProfile(userId);
     const [participatedEvents, setParticipatedEvents] = useState([]);
     const [createdEvents, setCreatedEvents] = useState([]);
     const [favoriteEvents, setFavoriteEvents] = useState([]);
 
-    const isEditable = !userId;
+    const { user: currentUser } = useAuth();
+
+    console.log("userId param:", userId);
+    console.log("currentUser:", currentUser);
+
+    const isOwner = accessLevel === 'private';
 
     useEffect(() => {
+        if (!isOwner) return;
+
         const fetchParticipatedEvents = async () => {
             try {
                 const data = await getEventHistory();
-                setParticipatedEvents(data.slice(0, 5)); 
+                setParticipatedEvents(data.slice(0, 5));
             } catch (err) {
                 console.error(err);
             }
         };
-
-        fetchParticipatedEvents();
-
-        const fetchCreatedEvents = async () => {
-            try {
-                const data = await getCreatedEvents();
-                setCreatedEvents(data.slice(0, 5));
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        fetchCreatedEvents();
 
         const fetchFavoriteEvents = async () => {
             try {
                 const data = await getAllFavoris();
-            
                 const formatted = data.map(favori => ({
                     id: favori.Event.id,
                     title: favori.Event.title,
@@ -53,15 +46,28 @@ const Profil = () => {
                     status: "Favori",
                     image: favori.Event.img
                 }));
-            
                 setFavoriteEvents(formatted.slice(0, 5));
             } catch (err) {
                 console.error(err);
             }
         };
 
+        fetchParticipatedEvents();
         fetchFavoriteEvents();
-    }, []);
+    }, [isOwner]);
+
+    useEffect(() => {
+        const fetchCreatedEvents = async () => {
+            try {
+                const data = await getCreatedEvents(userId);
+                setCreatedEvents(data.slice(0, 5));
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchCreatedEvents();
+    }, [userId]);
 
     const handleUpdateProfileImage = (file) => {
         console.log('Mise à jour de l’image avec :', file);
@@ -77,21 +83,21 @@ const Profil = () => {
 
     return (
         <>
-			<Header />
-            <div className="container mx-auto p-8 space-y-12">
+            <Header />
+            <section className="container mx-auto pt-32 md:pt-32 p-8 space-y-12">
                 <ProfileCard 
                     user={{
                         ...profile,
                         rating: profile.rating, 
-                        eventsParticipated: profile.eventsParticipated,
-                        eventsCreated: profile.eventsCreated
+                        eventsParticipated: isOwner ? participatedEvents.length : undefined,
+                        eventsCreated: createdEvents.length
                     }} 
-                    editable={isEditable} 
+                    editable={isOwner} 
                     onUpdateProfileImage={handleUpdateProfileImage}
                     onUpdateProfileField={handleUpdateProfileField}
                 />
 
-                <div>
+                {isOwner && (
                     <EventsSection 
                         title="Événements Participés"
                         linkText="Voir tous l’historique"
@@ -99,33 +105,36 @@ const Profil = () => {
                         emptyMessage="Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
                         buttonLink="/allevents"
                     />
-                </div>
+                )}
 
                 {createdEvents.length > 0 && (
-                    <div>
-                        <EventsSection 
-                            title="Événements Créés"
-                            linkText="Voir tous l’historique"
-                            events={createdEvents}
-                            emptyMessage="Vous n'avez pas encore créé d'événement."
-                            buttonLink="/allevents"
-                        />
-                    </div>
+                    <EventsSection 
+                        title="Événements Créés"
+                        linkText="Voir tous l’historique"
+                        events={createdEvents}
+                        emptyMessage="Vous n'avez pas encore créé d'événement."
+                        buttonLink="/allevents"
+                    />
                 )}
 
-                {favoriteEvents.length > 0 && (
-                    <div>
-                        <EventsSection 
-                            title="Favoris"
-                            linkText="Voir tous les favoris"
-                            events={favoriteEvents}
-                            emptyMessage="Vous n'avez pas encore de favoris."
-                            buttonLink="/allevents"
-                        />
-                    </div>
+                {createdEvents.length === 0 && (
+                    <EventsSection 
+                        title="Événements Créés"
+                        events={createdEvents}
+                        emptyMessage="Cet utilisateur n'a pas encore créé d'événement."
+                    />
                 )}
-            </div>
 
+                {isOwner && favoriteEvents.length > 0 && (
+                    <EventsSection 
+                        title="Favoris"
+                        linkText="Voir tous les favoris"
+                        events={favoriteEvents}
+                        emptyMessage="Vous n'avez pas encore de favoris."
+                        buttonLink="/allevents"
+                    />
+                )}
+            </section>
             <Footer />
         </>
     );

@@ -27,16 +27,18 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 /**
  * GET /events/created (requires auth)
  */
-export async function getCreatedEvents(token) {
-	const response = await fetch(`${API_BASE_URL}/events/created`, {
-		credentials: 'include',
+export async function getCreatedEvents(userId) {
+	if (!userId) throw new Error("Aucun utilisateur spécifié");
+
+	const response = await fetch(`${API_BASE_URL}/users/${userId}/created-events`, {
+		credentials: "include",
 		headers: {
-			Authorization: `Bearer ${token}`,
+			"Content-Type": "application/json",
 		},
 	});
 
 	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des événements créés");
+	if (!response.ok) throw new Error(result.message || "Événement non trouvé");
 
 	return result;
 }

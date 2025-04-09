@@ -13,10 +13,16 @@ passport.use(new GoogleStrategy({
         let user = await userModel.getUserByEmail(email);
 
         if (!user) {
-            const firstName = profile.name.givenName;
-            const lastName = profile.name.familyName;
-            user = await userModel.createUser(firstName, lastName, email, null);
-        }
+            const firstName = profile.name?.givenName || 'Prénom';
+            const lastName = profile.name?.familyName || 'Nom';
+          
+            user = await userModel.createUser({
+                name: firstName,
+                lastname: lastName,
+                email,
+                provider: 'google'
+            });              
+        }          
 
         const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '10h' });
         user.token = token;

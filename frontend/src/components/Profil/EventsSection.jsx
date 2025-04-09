@@ -13,7 +13,7 @@ const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink }) =>
                 </Link>
             </div>
             {events && events.length > 0 ? (
-                <div className="flex space-x-4 overflow-x-auto">
+                <div className="flex space-x-4">
                     {events.map(event => (
                         <EventCard key={event.id} event={event} />
                     ))}
