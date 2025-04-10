@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createEvent } from '../../services/eventService';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../config/authHeader';
 
 function useCreateEvent() {
 	const [loading, setLoading] = useState(false);

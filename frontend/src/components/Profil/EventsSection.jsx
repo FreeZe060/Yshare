@@ -3,14 +3,18 @@ import EventCard from './EventCard';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink }) => {
+const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink, emptyButtonText }) => {
+    const isEmpty = !events || events.length === 0;
+
     return (
         <div className="mt-8">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold">{title}</h2>
-                <Link to={buttonLink} className="text-blue-500 hover:underline">
-                    {linkText}
-                </Link>
+                {!isEmpty && linkText && (
+                    <Link to={buttonLink} className="text-blue-500 hover:underline">
+                        {linkText}
+                    </Link>
+                )}
             </div>
             {events && events.length > 0 ? (
                 <div className="flex space-x-4">
@@ -29,10 +33,10 @@ const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink }) =>
                         {emptyMessage}
                     </p>
                     <Link 
-                        to="/allevents" 
+                        to={buttonLink} 
                         className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                     >
-                        Rejoindre
+                        {emptyButtonText || "Explorer"}
                     </Link>
                 </motion.div>
             )}

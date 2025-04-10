@@ -1,4 +1,4 @@
-const { Event, Category, Participant, User } = require('../models'); 
+const { Event, Category, Participant, User, EventImage } = require('../models'); 
 
 class ParticipantService {
     async getAllParticipantsWithUserInfo() {
@@ -100,18 +100,42 @@ class ParticipantService {
     }
     
     async getUserEventHistory(userId) {
-        try {
-            const participants = await Participant.findAll({
-                where: { id_user: userId },
-                include: [{
-                model: Event
-                }]
-            });
-            return participants;
-        } catch (error) {
-            throw new Error("Erreur lors de la récupération de l'historique des événements : " + error.message);
-        }
-    }
+        const participants = await Participant.findAll({
+          where: { id_user: userId },
+          include: [{
+            model: Event,
+            include: [{
+              model: EventImage,
+              as: 'EventImages',
+              where: { is_main: true },
+              required: false 
+            }]
+          }]
+        });
+      
+        return participants.map(p => {
+          const event = p.Event;
+          const image = event?.EventImages?.[0]?.image_url || null;
+      
+          return {
+            id: event.id,
+            id_org: event.id_org,
+            title: event.title,
+            description: event.description,
+            price: event.price,
+            date: event.date,
+            max_participants: event.max_participants,
+            status: p.status,
+            street: event.street,
+            street_number: event.street_number,
+            city: event.city,
+            postal_code: event.postal_code,
+            start_time: event.start_time,
+            end_time: event.end_time,
+            image 
+          };
+        });
+    }      
 
     async getParticipationCount(userId) {
         try {

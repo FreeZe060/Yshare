@@ -31,23 +31,39 @@ exports.getEventById = async (req, res) => {
 
 exports.createEvent = async (req, res) => {
   try {
-    if (!req.user) return res.status(403).json({ message: "Utilisateur non authentifié." });
+    if (!req.user) {
+      return res.status(403).json({ message: "Utilisateur non authentifié." });
+    }
 
     const {
       title, description, date, price, street, street_number, city, postal_code,
-      start_time, end_time, categories, max_participants
+      start_time, end_time, max_participants
     } = req.body;
+
+    let { categories } = req.body;
+
+    if (typeof categories === 'string') {
+      try {
+        categories = JSON.parse(categories);
+      } catch (err) {
+        return res.status(400).json({ message: "Format de catégories invalide." });
+      }
+    }
 
     const images = req.files?.map((file, index) => ({
       image_url: `/event-images/${file.filename}`,
-      is_main: index === 0 
+      is_main: index === 0
     })) || [];
 
     const id_org = req.user.id;
 
-    if (!title || !description || !date || !city || !price) {
+    if (!title || !date || !city || !street || !street_number || !postal_code || !start_time || !end_time) {
       return res.status(400).json({ message: "Tous les champs requis doivent être remplis." });
     }
+
+    console.log("📥 Données reçues dans le backend :");
+    console.log("body:", req.body);
+    console.log("files:", req.files);
 
     const event = await eventService.createEvent({
       title, description, date, id_org, price,
@@ -56,10 +72,12 @@ exports.createEvent = async (req, res) => {
     }, images);
 
     res.status(201).json({ message: "Événement créé avec succès", event });
+
   } catch (error) {
     res.status(500).json({ message: "Erreur lors de la création de l'événement", error: error.message });
   }
 };
+
 
 exports.updateEvent = async (req, res) => {
   try {
@@ -148,19 +166,25 @@ exports.deleteEvent = async (req, res) => {
 exports.getCreatedEventsPublic = async (req, res) => {
   try {
     const { userId } = req.params;
-
     const createdEvents = await eventService.getCreatedEventsByUserId(userId);
     const count = createdEvents.length;
+
+    const eventsWithImage = createdEvents.map(event => {
+      const plain = event.get({ plain: true });
+      const image = plain.EventImages?.[0]?.image_url || null;
+      return { ...plain, image };
+    });
 
     return res.status(200).json({
       userId,
       count,
-      events: createdEvents
+      events: eventsWithImage
     });
   } catch (error) {
     return res.status(500).json({ message: "Erreur lors de la récupération des événements", error: error.message });
   }
 };
+
 
 exports.addImagesToEvent = async (req, res) => {
   try {

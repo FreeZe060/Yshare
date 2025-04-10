@@ -19,7 +19,8 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const { authenticated, user } = await checkAuthStatus();
-        setUser(authenticated ? user : {});
+        const token = localStorage.getItem('token');
+        setUser(authenticated ? { ...user, token } : {});
       } catch (err) {
         console.error("Auth check failed:", err);
         setUser({});
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     };
   
     checkAuth();
-  }, []);
+  }, []);  
   
 
   useEffect(() => {

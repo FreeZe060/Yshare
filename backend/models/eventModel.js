@@ -17,7 +17,7 @@ const Event = sequelize.define('Event', {
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: true,
     field: 'desc',
   },
   price: {
@@ -57,7 +57,7 @@ const Event = sequelize.define('Event', {
     allowNull: true,
   },
   end_time: {
-    type: DataTypes.TIME,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 }, {

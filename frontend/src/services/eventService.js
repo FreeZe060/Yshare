@@ -69,29 +69,40 @@ export async function getEventById(eventId, token) {
  */
 export async function createEvent(eventData, token) {
 	const formData = new FormData();
-
+  
 	for (const key in eventData) {
 		if (key === 'images') {
-			eventData.images.forEach(file => formData.append('images', file));
+		  eventData.images.forEach(img => formData.append('images', img.file));
 		} else if (Array.isArray(eventData[key])) {
-			formData.append(key, JSON.stringify(eventData[key]));
+		  formData.append(key, JSON.stringify(eventData[key]));
 		} else {
+		  if (eventData[key] !== '') {
 			formData.append(key, eventData[key]);
+		  }
 		}
+	}	  
+  
+	console.log('📦 FormData envoyée :');
+	for (let [key, value] of formData.entries()) {
+	  console.log(`${key}:`, value);
 	}
-
+  
 	const response = await fetch(`${API_BASE_URL}/events`, {
-		method: 'POST',
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-		body: formData,
+	  method: 'POST',
+	  credentials: 'include',
+	  headers: {
+		Authorization: `Bearer ${token}`,
+	  },
+	  body: formData,
 	});
-
+  
 	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la création de l'événement");
-
+  
+	if (!response.ok) {
+	  console.error('❌ Erreur backend :', result);
+	  throw new Error(result.message || "Erreur lors de la création de l'événement");
+	}
+  
 	return result;
 }
 

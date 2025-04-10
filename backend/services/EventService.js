@@ -74,26 +74,41 @@ class EventService {
   }
 
   async createEvent(data, images = []) {
-    const {
+    let {
       title, description, date, id_org, price,
       street, street_number, city, postal_code,
       start_time, end_time, categories, max_participants
     } = data;
-
+  
+    if (typeof categories === 'string') {
+      categories = JSON.parse(categories);
+    }
+  
     const event = await Event.create({
-      title, description, date, id_org, price,
-      street, street_number, city, postal_code,
-      start_time, end_time, max_participants
+      title,
+      description,
+      date,
+      id_org,
+      price: price === '' ? null : parseInt(price),
+      max_participants: max_participants === '' ? null : parseInt(max_participants),
+      street,
+      street_number,
+      city,
+      postal_code,
+      start_time,
+      end_time
     });
-
-    if (categories?.length > 0) await event.setCategories(categories);
-
+  
+    if (categories?.length > 0) {
+      await event.setCategories(categories);
+    }
+  
     if (images?.length > 0) {
       await EventImage.bulkCreate(
         images.map(img => ({ ...img, event_id: event.id }))
       );
     }
-
+  
     return await this.getEventById(event.id);
   }
 
@@ -136,7 +151,18 @@ class EventService {
   async getCreatedEventsByUserId(userId) {
     return await Event.findAll({
       where: { id_org: userId },
-      include: [{ model: Category, through: { attributes: [] } }],
+      include: [
+        {
+          model: Category,
+          through: { attributes: [] }
+        },
+        {
+          model: EventImage,
+          as: 'EventImages',
+          order: [['is_main', 'DESC']],
+          limit: 1 
+        }
+      ],
       order: [['date', 'DESC']]
     });
   }

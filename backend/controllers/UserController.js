@@ -100,7 +100,7 @@ exports.updateProfile = async (req, res) => {
     const currentUser = await userService.findById(userId);
     if (!currentUser) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-    const name = req.body.name || currentUser.name;
+    const name = req.body.name ?? currentUser.name;
     const lastname = req.body.lastname || currentUser.lastname;
     const email = req.body.email || currentUser.email;
 

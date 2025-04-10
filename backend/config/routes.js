@@ -118,7 +118,7 @@ router.post('/ratings', authenticateToken, ratingController.rateEvent);
 
 //////// HISTORIQUE ROUTES ////////
 
-router.get('/event-history', authenticateToken, userController.getEventHistory);
+// router.get('/event-history', authenticateToken, userController.getEventHistory);
 
 //////// REPORT ROUTES ////////
 

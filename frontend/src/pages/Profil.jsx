@@ -5,6 +5,7 @@ import useProfile from '../hooks/User/useProfile';
 import useFavoris from '../hooks/Favoris/useFavoris';
 import { getCreatedEventsStats } from '../services/eventService';
 import { getEventHistory, getParticipationCount} from '../services/userService';
+import useUpdateProfile from '../hooks/User/useUpdateProfile';
 import { getAllFavoris } from '../services/favorisService';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
@@ -18,6 +19,8 @@ const Profil = () => {
     const [createdEvents, setCreatedEvents] = useState([]);
     const [stats, setStats] = useState({ created: 0, participated: 0 });
     const { favoris, loading: favorisLoading } = useFavoris();
+    const { update, loading: updateLoading, error: updateError } = useUpdateProfile();
+    
 
     const { user: currentUser } = useAuth();
 
@@ -55,14 +58,29 @@ const Profil = () => {
 		fetchData();
 	}, [userId, isOwner, currentUser?.token]);
 
+    const handleUpdateProfileImage = async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append('profileImage', file);
     
+            const userIdToUpdate = isOwner ? currentUser.id : userId;
+            await update(formData, userIdToUpdate);
+    
+            window.location.reload();
+        } catch (err) {
+            console.error("Erreur mise à jour image :", err.message);
+        }
+    };    
 
-    const handleUpdateProfileImage = (file) => {
-        console.log('Mise à jour de l’image avec :', file);
-    };
-
-    const handleUpdateProfileField = (field, value) => {
-        console.log(`Mise à jour de ${field} avec :`, value);
+    const handleUpdateProfileField = async (field, value) => {
+        try {
+            if (!value.trim()) return;
+    
+            const userIdToUpdate = isOwner ? currentUser.id : userId;
+            await update({ [field]: value }, userIdToUpdate);
+        } catch (err) {
+            console.error(`Erreur mise à jour ${field} :`, err.message);
+        }
     };
 
     if (loading) return <div className="text-center text-2xl">Chargement...</div>;
@@ -91,9 +109,10 @@ const Profil = () => {
                         title="Événements Participés"
                         events={participatedEvents}
                         emptyMessage="Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
+                        buttonLink="/allevents"
+                        emptyButtonText="Voir tous les événements"
                         {...(participatedEvents.length > 0 && {
-                            linkText: "Voir tous l’historique",
-                            buttonLink: "/allevents"
+                            linkText: "Voir tous l’historique"
                         })}
                     />
                 )}
@@ -109,11 +128,25 @@ const Profil = () => {
                     />
                 )}
 
-                {createdEvents.length === 0 && (
+                {!isOwner && createdEvents.length === 0 && (
                     <EventsSection 
                         title="Événements Créés"
                         events={createdEvents}
                         emptyMessage="Cet utilisateur n'a pas encore créé d'événement."
+                    />
+                )}
+
+                {isOwner && createdEvents.length === 0 && (
+                    <EventsSection 
+                        title="Événements Créés"
+                        events={createdEvents}
+                        emptyMessage="Vous n'avez pas encore créé d'événement."
+                        buttonLink="/createevent"
+                        emptyButtonText="Créer un événement"
+                        {...(createdEvents.length > 0 && {
+                            linkText: "Voir tous l’historique",
+                            buttonLink: "/allevents"
+                        })}
                     />
                 )}
 
@@ -128,9 +161,10 @@ const Profil = () => {
                             image: favori.Event.img || favori.Event.image || null 
                         }))}
                         emptyMessage="Vous n'avez pas encore de favoris."
+                        buttonLink="/allevents"
+                        emptyButtonText="Voir tous les événements"
                         {...(favoris.length > 0 && {
-                            linkText: "Voir tous les favoris",
-                            buttonLink: "/allevents"
+                            linkText: "Voir tous les favoris"
                         })}
                     />
                 )}

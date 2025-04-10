@@ -8,6 +8,7 @@ const Category = require('./CategoryModel');
 const Report = require('./ReportModel');
 const Notification = require('./NotificationModel');
 const Favoris = require('./FavorisModel');
+const EventCategory = require('./EventCategoryModel');
 const EventImage = require('./EventImageModel');
 const News = require('./NewsModel');
 
@@ -30,10 +31,10 @@ Participant.belongsTo(Event, { foreignKey: 'id_event' });
 User.hasMany(Participant, { foreignKey: 'id_user' });
 Participant.belongsTo(User, { foreignKey: 'id_user' });
 
-Event.belongsToMany(Category, { through: 'event_categories', foreignKey: 'id_event' });
-Category.belongsToMany(Event, { through: 'event_categories', foreignKey: 'id_category' });
+Event.belongsToMany(Category, { through: EventCategory, foreignKey: 'id_event' });
+Category.belongsToMany(Event, { through: EventCategory, foreignKey: 'id_category' });
 
-Event.hasMany(EventImage, { foreignKey: 'event_id' });
+Event.hasMany(EventImage, { foreignKey: 'event_id', as: 'EventImages' });
 EventImage.belongsTo(Event, { foreignKey: 'event_id' });
 
 Event.hasMany(Rating, { foreignKey: 'id_event' });

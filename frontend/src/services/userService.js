@@ -83,8 +83,11 @@ export async function getProfileById(userId, token) {
 /**
  * PUT /profile or /profile/:userId
  */
-export async function updateProfile(userData, token, userId = null) {
-	const url = userId ? `${API_BASE_URL}/profile/${userId}` : `${API_BASE_URL}/profile`;
+export async function updateProfile(userData, token, userId) {
+	if (!userId) throw new Error("L'ID utilisateur est requis pour mettre à jour le profil");
+
+	const url = `${API_BASE_URL}/profile/${userId}`;
+
 	const response = await fetch(url, {
 		method: 'PUT',
 		credentials: 'include',
@@ -98,6 +101,7 @@ export async function updateProfile(userData, token, userId = null) {
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour du profil");
 	return result;
 }
+
 
 /**
  * DELETE /users/:userId
@@ -119,8 +123,8 @@ export async function deleteUser(userId, token) {
 /**
  * GET /event-history
  */
-export async function getEventHistory(token) {
-	const response = await fetch(`${API_BASE_URL}/event-history`, {
+export async function getEventHistory(token, userId) {
+	const response = await fetch(`${API_BASE_URL}/users/${userId}/event-history`, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { updateProfile } from "../services/userService";
-import { useAuth } from "../config/authHeader";
+import { updateProfile } from "../../services/userService";
+import { useAuth } from "../../config/authHeader";
 
 function useUpdateProfile() {
 	const [loading, setLoading] = useState(false);
