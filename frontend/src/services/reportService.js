@@ -1,4 +1,3 @@
-import { getToken } from "./authService";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
@@ -10,11 +9,11 @@ export async function createReport(reportData) {
 		method: "POST",
 		credentials: "include",
 		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${getToken()}`
+			Authorization: `Bearer ${localStorage.getItem("token")}`, 
 		},
-		body: JSON.stringify(reportData)
+		body: reportData,
 	});
+
 	const result = await response.json();
 	if (!response.ok) {
 		throw new Error(result.message || "Erreur lors de la création du signalement");
@@ -25,12 +24,12 @@ export async function createReport(reportData) {
 /**
  * Récupérer les signalements (GET /reports)
  */
-export async function getReports() {
+export async function getReports(token) {
 	const response = await fetch(`${API_BASE_URL}/reports`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${getToken()}`
+			Authorization: `Bearer ${token}`
 		}
 	});
 	const result = await response.json();
@@ -44,13 +43,13 @@ export async function getReports() {
  * Mettre à jour le statut d'un signalement (PUT /reports/:reportId/status)
  * Le body doit contenir { status }
  */
-export async function updateReportStatus(reportId, status) {
+export async function updateReportStatus(reportId, status, token) {
 	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/status`, {
 		method: "PUT",
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${getToken()}`
+			Authorization: `Bearer ${token}`
 		},
 		body: JSON.stringify({ status })
 	});

@@ -11,6 +11,7 @@ const Favoris = require('./FavorisModel');
 const EventCategory = require('./EventCategoryModel');
 const EventImage = require('./EventImageModel');
 const News = require('./NewsModel');
+const ReportFile = require('./ReportFileModel');
 
 // Associations
 User.hasMany(Event, { foreignKey: 'id_org' });
@@ -55,6 +56,9 @@ Notification.belongsTo(User, { foreignKey: 'id_user' });
 Event.belongsToMany(User, { through: Favoris, foreignKey: 'id_event', otherKey: 'id_user', as: 'favoritedBy' });
 User.belongsToMany(Event, { through: Favoris, foreignKey: 'id_user', otherKey: 'id_event', as: 'favorites' });
 
+Report.hasMany(ReportFile, { foreignKey: 'report_id', as: 'files' });
+ReportFile.belongsTo(Report, { foreignKey: 'report_id' });
+
 module.exports = {
   sequelize,
   User,
@@ -68,4 +72,5 @@ module.exports = {
   Favoris,
   EventImage,
   News,
+  ReportFile,
 };

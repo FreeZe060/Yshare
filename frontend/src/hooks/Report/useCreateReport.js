@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createReport } from "../services/reportService";
+import { createReport } from "../../services/reportService";
 
 function useCreateReport() {
 	const [loading, setLoading] = useState(false);

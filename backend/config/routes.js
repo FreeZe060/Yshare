@@ -123,7 +123,7 @@ router.post('/ratings', authenticateToken, ratingController.rateEvent);
 
 //////// REPORT ROUTES ////////
 
-router.post('/reports', authenticateToken, reportUpload.single('file'), reportController.createReport);
+router.post( '/reports', authenticateToken, reportUpload.array('files', 6),  reportController.createReport);
 router.get('/reports', authenticateToken, reportController.getReports);
 
 //////// AUTH ROUTES FRONT ////////

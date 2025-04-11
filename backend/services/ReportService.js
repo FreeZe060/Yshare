@@ -1,10 +1,11 @@
-const { Report } = require('../models');
+const { Report, ReportFile } = require('../models');
 
 class ReportService {
-  async createReport(userId, { id_event, id_reported_user, id_comment, message }) {
+  async createReport(userId, { id_event, id_reported_user, id_comment, message }, files = []) {
     if (!id_event && !id_reported_user && !id_comment) {
       throw new Error("Vous devez signaler un événement, un utilisateur ou un commentaire.");
     }
+  
     try {
       const report = await Report.create({
         id_user: userId,
@@ -13,8 +14,20 @@ class ReportService {
         id_comment: id_comment || null,
         message
       });
-      return { message: "Signalement envoyé avec succès." };
+  
+      if (files.length > 0) {
+        const uploads = files.map(file => ReportFile.create({
+          report_id: report.id,
+          file_path: `/report-files/${file.filename}`
+        }));
+        await Promise.all(uploads);
+        console.log(`[createReport] ${files.length} fichiers attachés au signalement ID ${report.id}`);
+      }
+  
+      return report;
+  
     } catch (error) {
+      console.error("[createReport] Erreur lors de la création :", error);
       throw new Error("Erreur lors de la création du signalement : " + error.message);
     }
   }

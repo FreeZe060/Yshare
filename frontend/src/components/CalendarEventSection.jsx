@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import '../assets/css/style.css';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
@@ -13,6 +13,8 @@ import { formatEuro, formatDate, capitalizeFirstLetter } from '../utils/format';
 import eventBgImage from "../assets/img/et-3-calender-event.jpg";
 import eventArrowIcon from "../assets/img/arrow-down-right.svg";
 import fallbackImage from "../assets/img/et-3-event-1.jpg";
+
+import ReportDropdown from './Report/EventReport';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -76,6 +78,11 @@ function CalendarEventSection({ events }) {
                                         onMouseLeave={() => setActiveIndex(null)}>
                                         <div className="grid grid-cols-[0fr_242px] xs:grid-cols-[1fr_0] xs:group-[.active]:grid-cols-[1fr_0] group-[.active]:grid-cols-[1fr_362px] duration-[400ms]">
                                             <div className="group-[.active]:px-[40px] bg-white xxs:!p-[30px] px-0 xs:px-[40px] py-[35px] overflow-hidden duration-[400ms]">
+                                                <ReportDropdown
+                                                    contextType="event"
+                                                    eventId={event.id}
+                                                    organizerId={event.id_org}
+                                                />
                                                 <div className="w-[392px] xxs:w-[230px] sm:w-[342px]">
                                                     <span className="inline-block opacity-25 mb-[8px] et-outlined-text font-semibold text-[48px] leading-[0.7]">{(index + 1).toString().padStart(2, '0')}</span>
                                                     <h3 className="font-semibold text-[30px] text-black sm:text-[28px] line-clamp-2">
