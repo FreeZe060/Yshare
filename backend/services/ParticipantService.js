@@ -122,7 +122,7 @@ class ParticipantService {
               image: EventImages?.[0]?.image_url || null
             };
         });
-      }         
+    }         
 
     async getParticipationCount(userId) {
         try {

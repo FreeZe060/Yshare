@@ -16,7 +16,10 @@ const Login = () => {
   const location = useLocation();
   const { login: loginContext } = useAuth() || {};
 
-  // 🔑 Handle OAuth token in URL
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');

@@ -45,7 +45,7 @@ const ReportDropdown = ({ contextType, eventId, commentId, organizerId }) => {
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="absolute top-2 right-2 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition"
+        className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200 transition"
       >
         <FiMoreVertical size={20} />
       </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useRegister from '../hooks/User/useRegister';
 import Swal from 'sweetalert2';
 import 'animate.css';
@@ -14,6 +14,10 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { register, loading, error } = useRegister();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleFileChange = (e) => {
     setProfileImage(e.target.files[0]);

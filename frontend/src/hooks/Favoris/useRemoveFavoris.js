@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { removeFavoris } from "../../services/favorisService";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../config/authHeader";
 
 function useRemoveFavoris() {
 	const [loading, setLoading] = useState(false);

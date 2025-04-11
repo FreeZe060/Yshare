@@ -6,11 +6,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:808
 export async function addFavoris(eventId, token) {
 	const response = await fetch(`${API_BASE_URL}/favoris/${eventId}`, {
 		method: "POST",
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
+		credentials: "include", 
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de l'ajout aux favoris");
@@ -24,10 +20,6 @@ export async function removeFavoris(eventId, token) {
 	const response = await fetch(`${API_BASE_URL}/favoris/${eventId}`, {
 		method: "DELETE",
 		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors du retrait des favoris");
@@ -39,11 +31,8 @@ export async function removeFavoris(eventId, token) {
  */
 export async function getAllFavoris(token) {
 	const response = await fetch(`${API_BASE_URL}/favoris`, {
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
+		method: "GET",
+		credentials: "include", 
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des favoris");
@@ -55,11 +44,8 @@ export async function getAllFavoris(token) {
  */
 export async function getFavorisById(eventId, token) {
 	const response = await fetch(`${API_BASE_URL}/favoris/${eventId}`, {
-		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
+		method: "GET",
+		credentials: "include", 
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération du favori");

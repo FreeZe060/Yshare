@@ -8,25 +8,24 @@ function useFavoris() {
 	const [error, setError] = useState(null);
 	const { user } = useAuth();
 
-	useEffect(() => {
+	const fetchFavoris = async () => {
 		if (!user?.token) return;
+		setLoading(true);
+		try {
+			const data = await getAllFavoris(user.token);
+			setFavoris(data || []);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-		const fetchFavoris = async () => {
-			setLoading(true);
-			try {
-				const data = await getAllFavoris(user.token);
-				setFavoris(data || []);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
-
+	useEffect(() => {
 		fetchFavoris();
 	}, [user?.token]);
 
-	return { favoris, loading, error };
+	return { favoris, loading, error, refreshFavoris: fetchFavoris };
 }
 
 export default useFavoris;
