@@ -157,7 +157,7 @@ const Profil = () => {
                     <EventsSection
                         title="Favoris"
                         events={favoris.slice(0, 5).map(favori => ({
-                        id: favori.id, // pas favori.Event.id
+                        id: favori.id, 
                         title: favori.title,
                         date: favori.date,
                         status: "Favori",
