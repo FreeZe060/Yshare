@@ -14,7 +14,7 @@ const favorisController = require('../controllers/FavorisController');
 const ratingController = require('../controllers/RatingController');
 const newsController = require('../controllers/NewsController');
 const authenticateToken = require('../middlewares/authMiddleware');
-const { profileUpload, eventUpload, newsUpload } = require('../middlewares/upload');
+const { profileUpload, eventUpload, newsUpload, reportUpload } = require('../middlewares/upload');
 const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
@@ -114,6 +114,7 @@ router.delete('/news/:newsId', isNewsOwnerOrAdmin, newsController.deleteNews);
 
 //////// RATING ROUTES ////////
 
+router.get('/ratings/user/:userId', ratingController.getUserAverageRating);
 router.post('/ratings', authenticateToken, ratingController.rateEvent);
 
 //////// HISTORIQUE ROUTES ////////
@@ -122,7 +123,7 @@ router.post('/ratings', authenticateToken, ratingController.rateEvent);
 
 //////// REPORT ROUTES ////////
 
-router.post('/reports', authenticateToken, reportController.createReport);
+router.post('/reports', authenticateToken, reportUpload.single('file'), reportController.createReport);
 router.get('/reports', authenticateToken, reportController.getReports);
 
 //////// AUTH ROUTES FRONT ////////

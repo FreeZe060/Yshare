@@ -21,24 +21,24 @@ const Header = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-          setScrolled(window.scrollY > 0);
-          setMenuOpen(false); // ← ferme le menu au scroll
+            setScrolled(window.scrollY > 0);
+            // ⚠️ ne ferme PAS automatiquement le menu ici
         };
-      
+    
         const handleClickOutside = (e) => {
-          if (menuRef.current && !menuRef.current.contains(e.target)) {
-            setMenuOpen(false); // ← ferme le menu si on clique à l’extérieur
-          }
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setMenuOpen(false);
+            }
         };
-      
+    
         window.addEventListener("scroll", handleScroll);
         window.addEventListener("mousedown", handleClickOutside);
-      
+    
         return () => {
-          window.removeEventListener("scroll", handleScroll);
-          window.removeEventListener("mousedown", handleClickOutside);
+            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, []);    
       
 
     return (
@@ -56,13 +56,15 @@ const Header = () => {
             >
                 <div className={` bg-gray-900 text-gray-500 shadow-lg font-medium capitalize flex items-center gap-4 flex-wrap ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     {/* Logo */}
-                    <span className="px-3 py-1 pr-4 border-r border-gray-800">
-                        <img
-                            src="../assets/img/yshare.png"
-                            alt="Logo Yshare"
-                            className="w-8 h-8 -mt-1 inline mx-auto"
-                        />
-                    </span>
+                    <Link to="/" className="flex items-center gap-2">
+                        <span className="px-3 py-1 pr-4 border-r border-gray-800">
+                            <img
+                                src="../assets/img/yshare.png"
+                                alt="Logo Yshare"
+                                className="w-8 h-8 -mt-1 inline mx-auto"
+                            />
+                        </span>
+                    </Link>
 
                     
                     <div className="flex gap-6 ml-20">

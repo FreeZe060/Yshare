@@ -37,3 +37,13 @@ exports.rateEvent = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.getUserAverageRating = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const avg = await ratingService.getUserAverageRating(userId);
+    return res.status(200).json({ rating: parseFloat(avg).toFixed(1) });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération de la note", error: error.message });
+  }
+};

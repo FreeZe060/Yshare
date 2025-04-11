@@ -37,7 +37,11 @@ const Report = sequelize.define('Report', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW,
-  }
+  },
+  file_path: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  }  
 }, {
   tableName: 'reports',
   timestamps: false,

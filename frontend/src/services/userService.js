@@ -87,20 +87,23 @@ export async function updateProfile(userData, token, userId) {
 	if (!userId) throw new Error("L'ID utilisateur est requis pour mettre à jour le profil");
 
 	const url = `${API_BASE_URL}/profile/${userId}`;
+	const isFormData = userData instanceof FormData;
 
 	const response = await fetch(url, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
-			'Content-Type': 'application/json',
+			...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify(userData),
+		body: isFormData ? userData : JSON.stringify(userData),
 	});
+
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour du profil");
 	return result;
 }
+
 
 
 /**

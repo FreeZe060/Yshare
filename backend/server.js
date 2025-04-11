@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const passport = require('passport');
 const cors = require("cors");
+const sequelize = require('./config/dbManager');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('./config/passport'); 
@@ -12,7 +13,7 @@ require('./config/passport');
 const app = express();
 const port = process.env.PORT || 8080;
 
-// CORS (doit venir en haut)
+// Middleware CORS
 app.use(cors({
     origin: "http://localhost:3000",
     credentials: true,
@@ -21,13 +22,13 @@ app.use(cors({
 }));
 app.options("*", cors());
 
-// JSON + URL parser
+// Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Cookies et Sessions
+// Cookies & sessions
 app.use(cookieParser());
 app.use(session({
     secret: 'secret',
@@ -35,23 +36,17 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Passport init
+// Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Log user dans res.locals (optionnel)
+// Log user in views
 app.use((req, res, next) => {
     res.locals.logUser = req.session.logUser;
     next();
 });
 
-// Gestion des erreurs
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: "Erreur interne du serveur" });
-});
-
-// Dossiers statiques
+// Static folders
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/static', express.static(path.join(__dirname, 'static')));
@@ -61,11 +56,33 @@ app.use('/', express.static(path.join(__dirname, 'media')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Routes API
+// Routes
 const routes = require('./config/routes');
 app.use('/api/', routes);
 
-// Lancer le serveur
-app.listen(port, () => {
-    console.log(`✅ Serveur lancé : http://localhost:${port}`);
+// Error handler
+app.use((err, req, res, next) => {
+    console.error("[Express] Stack error:", err.stack);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+});
+
+sequelize.authenticate()
+    .then(() => {
+        console.log("✅ Connexion à la base de données établie.");
+        app.listen(port, () => {
+            console.log(`🚀 Serveur lancé sur http://localhost:${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error("❌ Erreur de connexion à la base de données :", err.message);
+        process.exit(1); 
+    });
+
+process.on('uncaughtException', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`❌ Le port ${port} est déjà utilisé. Veuillez en choisir un autre.`);
+    } else {
+        console.error("❌ Erreur non capturée :", err);
+    }
+    process.exit(1);
 });

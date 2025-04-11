@@ -7,6 +7,7 @@ import { getCreatedEventsStats } from '../services/eventService';
 import { getEventHistory, getParticipationCount} from '../services/userService';
 import useUpdateProfile from '../hooks/User/useUpdateProfile';
 import { getAllFavoris } from '../services/favorisService';
+import { getUserAverageRating } from '../services/ratingService';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
 import Footer from '../components/Footer';
@@ -34,10 +35,11 @@ const Profil = () => {
 
 		const fetchData = async () => {
 			try {
-				const [createdStats, participationCount] = await Promise.all([
-					getCreatedEventsStats(userId),
-					getParticipationCount(userId)
-				]);
+				const [createdStats, participationCount, rating] = await Promise.all([
+                    getCreatedEventsStats(userId),
+                    getParticipationCount(userId),
+                    getUserAverageRating(userId) // 👈 récupère la note ici
+                ]);
 
 				setCreatedEvents(createdStats.events.slice(0, 5));
 
@@ -48,7 +50,8 @@ const Profil = () => {
 
 				setStats({
 					created: createdStats.count,
-					participated: isOwner ? participationCount : undefined
+					participated: isOwner ? participationCount : undefined,
+                    rating: rating || 0
 				});
 			} catch (err) {
 				console.error("Erreur lors de la récupération des données du profil :", err);
@@ -94,7 +97,7 @@ const Profil = () => {
                 <ProfileCard 
                     user={{
                         ...profile,
-                        rating: profile.rating, 
+                        rating: stats.rating ?? 0,
                         eventsParticipated: stats.participated,
                         eventsCreated: stats.created
                     }} 

@@ -1,17 +1,16 @@
-import { getToken } from "./authService";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
  * Noter un événement (POST /ratings)
  * Attendu dans le body : { id_event, rating, message }
  */
-export async function rateEvent(ratingData) {
+export async function rateEvent(ratingData, token) {
 	const response = await fetch(`${API_BASE_URL}/ratings`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${getToken()}`
+			Authorization: `Bearer ${token}`,
 		},
 		body: JSON.stringify(ratingData)
 	});
@@ -22,20 +21,20 @@ export async function rateEvent(ratingData) {
 	return result;
 }
 
-/**
- * Récupérer l'historique d'événements du user (GET /event-history)
- */
-export async function getEventHistory() {
-	const response = await fetch(`${API_BASE_URL}/event-history`, {
-		credentials: "include",
+export async function getUserAverageRating(userId) {
+	const response = await fetch(`${API_BASE_URL}/ratings/user/${userId}`, {
+		method: "GET",
+		credentials: "include", 
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${getToken()}`
 		}
 	});
+
 	const result = await response.json();
+
 	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la récupération de l'historique");
+		throw new Error(result.message || "Erreur lors de la récupération de la note utilisateur");
 	}
-	return result;
+
+	return parseFloat(result.rating);
 }

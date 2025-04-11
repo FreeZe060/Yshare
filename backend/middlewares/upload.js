@@ -25,16 +25,28 @@ const generateStorage = (folderName) => multer.diskStorage({
   }
 });
 
+const reportFileFilter = (req, file, cb) => {
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Seuls les fichiers image ou PDF sont autorisés.'), false);
+  }
+};
+
 const profileStorage = generateStorage('profile-images');
 const eventStorage = generateStorage('event-images');
 const newsStorage = generateStorage('news-images');
+const reportStorage = generateStorage('report-files');
 
 const profileUpload = multer({ storage: profileStorage, fileFilter });
 const eventUpload = multer({ storage: eventStorage, fileFilter });
 const newsUpload = multer({ storage: newsStorage, fileFilter });
+const reportUpload = multer({ storage: reportStorage, fileFilter: reportFileFilter });
 
 module.exports = {
   profileUpload,
   eventUpload,
-  newsUpload
+  newsUpload,
+  reportUpload, 
 };

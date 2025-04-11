@@ -122,7 +122,7 @@ const CreateEventPage = () => {
     return (
         <>
             <Header />
-            <div className="min-h-screen bg-gray-50 pt-28 md:pt-32 px-6">
+            <div className="min-h-screen bg-gray-50 pt-28 md:pt-32 px-6 pb-20">
                 <h1 className="text-4xl font-extrabold text-center mb-12 font-sans">Création d'événement</h1>
 
                 <Stepper currentStep={step} />

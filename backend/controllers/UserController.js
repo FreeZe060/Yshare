@@ -15,85 +15,117 @@ const generateToken = (user) => {
 };
 
 exports.register = async (req, res) => {  
-  try {
-    const { name, lastname, email, password } = req.body;
-
-    const userExists = await userService.getUserByEmail(email);
-    if (userExists) {
-      return res.status(400).json({ message: "Cet utilisateur existe déjà." });
-    }
-
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
-
-    let profileImage = null;
-    if (req.file) {
-      profileImage = `/profile-images/${req.file.filename}`;
-    }
-
-    const newUser = await userService.createUser(
-      name,
-      lastname,
-      email,
-      hashedPassword,
-      profileImage,
-      null
-    );
-
-    if (newUser) {
-      const token = generateToken(newUser); 
-      res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
+    try {
+        const { name, lastname, email, password } = req.body;
+        console.log(`[register] Tentative d'inscription pour ${email}`);
     
-      res.status(201).json({
-        id: newUser.id,
-        name: newUser.name,
-        lastname: newUser.lastname,
-        email: newUser.email,
-        profileImage: newUser.profileImage,
-        token
-      });
-    } else {
-      res.status(400).json({ message: "Échec de l'inscription" });
+        const userExists = await userService.getUserByEmail(email);
+        if (userExists) {
+            console.warn(`[register] Utilisateur déjà existant avec l'email : ${email}`);
+            return res.status(400).json({ message: "Cet utilisateur existe déjà." });
+        }
+    
+        const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    
+        let profileImage = null;
+        if (req.file) {
+            profileImage = `/profile-images/${req.file.filename}`;
+            console.log(`[register] Image de profil enregistrée : ${profileImage}`);
+        }
+    
+        const newUser = await userService.createUser(
+            name,
+            lastname,
+            email,
+            hashedPassword,
+            profileImage,
+            null
+        );
+    
+        if (newUser) {
+            let token;
+            try {
+                token = generateToken(newUser);
+                res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
+            } catch (jwtError) {
+                console.error("[register] Erreur lors de la génération du token JWT :", jwtError);
+                return res.status(500).json({ message: "Erreur lors de la création du token." });
+            }
+    
+            console.log(`[register] Utilisateur créé avec succès : ID ${newUser.id}`);
+            res.status(201).json({
+                id: newUser.id,
+                name: newUser.name,
+                lastname: newUser.lastname,
+                email: newUser.email,
+                profileImage: newUser.profileImage,
+                token
+            });
+        } else {
+            console.warn("[register] La création de l'utilisateur a échoué.");
+            res.status(400).json({ message: "Échec de l'inscription" });
+        }
+    } catch (error) {
+        console.error("[register] Erreur serveur :", error);
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
-  }
 };
 
 exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await userService.getUserByEmail(email);
-    if (user && await bcrypt.compare(password, user.password)) {
-      const token = generateToken(user);
-      res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
-      return res.json({
-        id: user.id,
-        name: user.name,
-        lastname: user.lastname,
-        email: user.email,
-        role: user.role,
-        token,  
-      });
-    } else {
-      return res.status(401).json({ message: "Identifiants invalides" });
+    try {
+        const { email, password } = req.body;
+        console.log(`[login] Tentative de connexion pour ${email}`);
+    
+        const user = await userService.getUserByEmail(email);
+        if (user && await bcrypt.compare(password, user.password)) {
+            let token;
+            try {
+                token = generateToken(user);
+                res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
+            } catch (jwtError) {
+                console.error("[login] Erreur lors de la génération du token JWT :", jwtError);
+                return res.status(500).json({ message: "Erreur lors de la création du token." });
+            }
+    
+            console.log(`[login] Connexion réussie pour l'utilisateur ID ${user.id}`);
+            return res.json({
+                id: user.id,
+                name: user.name,
+                lastname: user.lastname,
+                email: user.email,
+                role: user.role,
+                token,
+            });
+        } else {
+            console.warn(`[login] Échec de connexion pour ${email} : identifiants invalides`);
+            return res.status(401).json({ message: "Identifiants invalides" });
+        }
+    } catch (error) {
+        console.error("[login] Erreur serveur :", error);
+        return res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
-  } catch (error) {
-    return res.status(500).json({ message: "Erreur serveur", error: error.message });
-  }
 };
 
 exports.getProfile = async (req, res) => {
-  try {
-    const userId = req.params.userId || req.user.id;
-    const userProfile = await userService.findById(userId);
+    try {
+        const userId = req.params.userId || req.user.id;
+        console.log(`[getProfile] Récupération du profil pour l'utilisateur ID : ${userId}`);
 
-    if (!userProfile) return res.status(404).json({ message: "Utilisateur non trouvé" });
+        const userProfile = await userService.findById(userId);
 
-    return res.status(200).json(userProfile);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+        if (!userProfile) {
+            console.warn(`[getProfile] Utilisateur non trouvé pour l'ID : ${userId}`);
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+
+        console.log(`[getProfile] Profil récupéré avec succès pour l'ID : ${userId}`);
+        return res.status(200).json(userProfile);
+    } catch (error) {
+        console.error("[getProfile] Erreur serveur :", error);
+        return res.status(500).json({ message: error.message });
+    }
 };
+
 
 exports.updateProfile = async (req, res) => {
   try {
@@ -121,7 +153,7 @@ exports.updateProfile = async (req, res) => {
       profileImage = `/profile-images/${req.file.filename}`;
     }
 
-    const updatedUser = await userService.updateUser(userId, {
+    const updatedUser = await userService.updateUser(userId, {  
       name, lastname, email, password, profileImage
     });
 
@@ -145,32 +177,44 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.getEventHistory = async (req, res) => {
-  try {
-    const userId = req.params.userId || req.user.id;
-    const events = await ParticipantService.getUserEventHistory(userId);
-    return res.status(200).json(events);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+    try {
+        const userId = req.params.userId || req.user.id;
+        console.log(`[getEventHistory] Récupération de l'historique d'événements pour l'utilisateur ID: ${userId}`);
+
+        const events = await ParticipantService.getUserEventHistory(userId);
+        console.log(`[getEventHistory] ${events.length} événements trouvés.`);
+
+        return res.status(200).json(events);
+    } catch (error) {
+        console.error("[getEventHistory] Erreur :", error);
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 exports.getPublicProfile = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const user = await userService.findById(userId);
-
-    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
-
-    return res.json({
-      id: user.id,
-      name: user.name,
-      lastname: user.lastname,
-      profileImage: user.profileImage,
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Erreur serveur", error: error.message });
-  }
-};
+    try {
+        const { userId } = req.params;
+        console.log(`[getPublicProfile] Récupération du profil public pour l'utilisateur ID: ${userId}`);
+    
+        const user = await userService.findById(userId);
+    
+        if (!user) {
+            console.warn(`[getPublicProfile] Utilisateur non trouvé pour l'ID ${userId}`);
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
+    
+        console.log(`[getPublicProfile] Utilisateur trouvé : ${user.name} ${user.lastname}`);
+        return res.json({
+            id: user.id,
+            name: user.name,
+            lastname: user.lastname,
+            profileImage: user.profileImage,
+        });
+    } catch (error) {
+        console.error("[getPublicProfile] Erreur serveur :", error);
+        return res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+};  
 
 exports.getUserEventsAdmin = async (req, res) => {
   try {
