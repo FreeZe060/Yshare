@@ -42,7 +42,7 @@ const Profil = () => {
 				setCreatedEvents(createdStats.events.slice(0, 5));
 
 				if (isOwner) {
-					const history = await getEventHistory(currentUser?.token);
+					const history = await getEventHistory(currentUser?.token, currentUser?.id);
 					setParticipatedEvents(history.slice(0, 5));
 				}
 

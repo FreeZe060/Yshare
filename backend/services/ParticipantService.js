@@ -108,34 +108,21 @@ class ParticipantService {
               model: EventImage,
               as: 'EventImages',
               where: { is_main: true },
-              required: false 
+              required: false
             }]
           }]
         });
       
         return participants.map(p => {
-          const event = p.Event;
-          const image = event?.EventImages?.[0]?.image_url || null;
-      
-          return {
-            id: event.id,
-            id_org: event.id_org,
-            title: event.title,
-            description: event.description,
-            price: event.price,
-            date: event.date,
-            max_participants: event.max_participants,
-            status: p.status,
-            street: event.street,
-            street_number: event.street_number,
-            city: event.city,
-            postal_code: event.postal_code,
-            start_time: event.start_time,
-            end_time: event.end_time,
-            image 
-          };
+            const event = p.Event?.get({ plain: true }) || {};
+            const { EventImages, ...rest } = event; 
+            return {
+              ...rest,
+              status: p.status,
+              image: EventImages?.[0]?.image_url || null
+            };
         });
-    }      
+      }         
 
     async getParticipationCount(userId) {
         try {

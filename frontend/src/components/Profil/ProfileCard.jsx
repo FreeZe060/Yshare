@@ -119,7 +119,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
             </div>
 
             <div className="flex items-center">
-              <label className="w-40 font-bold text-lg">Événements Créés :</label>
+              <label className="w-40 font-bold text-lg">Événements <br /> Créés :</label>
               <span className="text-base sm:text-lg md:text-2xl">{user.eventsCreated || 0}</span>
             </div>
           </div>

@@ -12,7 +12,7 @@ export function useEventHistory() {
     const fetchHistory = async () => {
       setLoading(true);
       try {
-        const data = await getEventHistory(user?.token);
+        const data = await getEventHistory(user?.token, user?.id);
         setEvents(data);
       } catch (err) {
         setError(err.message);

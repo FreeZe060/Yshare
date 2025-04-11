@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const userService = require('../services/UserService');
 const path = require('path');
 const fs = require('fs');
+const ParticipantService = require('../services/ParticipantService');
 
 const generateToken = (user) => {
   const payload = {
@@ -146,7 +147,7 @@ exports.deleteUser = async (req, res) => {
 exports.getEventHistory = async (req, res) => {
   try {
     const userId = req.params.userId || req.user.id;
-    const events = await userService.getAllUserEvents(userId);
+    const events = await ParticipantService.getUserEventHistory(userId);
     return res.status(200).json(events);
   } catch (error) {
     return res.status(500).json({ message: error.message });

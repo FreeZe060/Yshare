@@ -23,6 +23,7 @@ class EventService {
       },
       {
         model: EventImage,
+        as: 'EventImages',
       },
       {
         model: Participant,
@@ -68,7 +69,10 @@ class EventService {
     return await Event.findByPk(eventId, {
       include: [
         { model: Category, through: { attributes: [] } },
-        { model: EventImage }
+        {
+          model: EventImage,
+          as: 'EventImages',
+        }        
       ]
     });
   }
