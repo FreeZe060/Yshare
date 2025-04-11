@@ -83,9 +83,9 @@ CREATE TABLE IF NOT EXISTS `events` (
   PRIMARY KEY (`id`),
   KEY `id_user` (`id_org`) USING BTREE,
   CONSTRAINT `FK_event_user` FOREIGN KEY (`id_org`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.events : ~18 rows (environ)
+-- Listage des données de la table yshare.events : ~19 rows (environ)
 DELETE FROM `events`;
 INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date`, `max_participants`, `status`, `street`, `street_number`, `city`, `postal_code`, `start_time`, `end_time`) VALUES
 	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', 0, '2025-03-23', 30, 'En Cours', 'place du marche', '3', 'Argenteuil', '95100', '10:03:08', '2025-04-07 20:03:08'),
@@ -104,7 +104,8 @@ INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date`, `max_par
 	(15, 15, 'Conférence Tech 2025', 'Un événement sur les nouvelles technologies', 50, '2025-06-15', 100, 'Annulé', 'place massena', '5', 'Nice', NULL, '10:04:09', '2025-05-14 10:04:09'),
 	(16, NULL, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15', 10, 'En Cours', 'velodrome', '1', 'Marseille', '13000', '10:04:09', '2025-05-14 10:04:09'),
 	(17, NULL, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15', 10, 'En Cours', 'place sophie-laffite', '1', 'Sophia-Antipolis', '06560', '10:04:09', '2025-05-14 10:04:09'),
-	(18, 15, 'Concert Open Air', 'Un concert en plein air exceptionnel.', 25, '2025-07-20', 10, 'En Cours', 'Avenue de la Musique', '19', 'Lyon', '69000', '19:00:00', '2025-07-20 23:00:00');
+	(18, 15, 'Concert Open Air', 'Un concert en plein air exceptionnel.', 25, '2025-07-20', 10, 'En Cours', 'Avenue de la Musique', '19', 'Lyon', '69000', '19:00:00', '2025-07-20 23:00:00'),
+	(27, 28, 'dzdadadada', NULL, 0, '2025-04-12', 0, 'En Cours', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '15:25:00', '2025-04-13 13:25:00');
 
 -- Listage de la structure de table yshare. event_categories
 CREATE TABLE IF NOT EXISTS `event_categories` (
@@ -136,7 +137,8 @@ INSERT INTO `event_categories` (`id_event`, `id_category`) VALUES
 	(4, 4),
 	(9, 3),
 	(5, 2),
-	(10, 2);
+	(10, 2),
+	(27, 1);
 
 -- Listage de la structure de table yshare. event_images
 CREATE TABLE IF NOT EXISTS `event_images` (
@@ -147,9 +149,9 @@ CREATE TABLE IF NOT EXISTS `event_images` (
   PRIMARY KEY (`id`),
   KEY `event_id` (`event_id`),
   CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_images : ~18 rows (environ)
+-- Listage des données de la table yshare.event_images : ~24 rows (environ)
 DELETE FROM `event_images`;
 INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(1, 3, '/event-images/1743067245365-575734556.png', 1),
@@ -170,7 +172,9 @@ INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(22, 8, '/event-images/1744018849512-657157196.jpg', 1),
 	(23, 9, '/event-images/1744018849512-657157196.jpg', 1),
 	(24, 10, '/event-images/1744018849512-657157196.jpg', 1),
-	(25, 7, '/event-images/1744018849512-657157196.jpg', 1);
+	(25, 7, '/event-images/1744018849512-657157196.jpg', 1),
+	(32, 27, '/event-images/1744291551391-920419951.png', 1),
+	(33, 27, '/event-images/1744291551426-844961258.png', 0);
 
 -- Listage de la structure de table yshare. favoris
 CREATE TABLE IF NOT EXISTS `favoris` (
@@ -185,7 +189,9 @@ CREATE TABLE IF NOT EXISTS `favoris` (
 -- Listage des données de la table yshare.favoris : ~0 rows (environ)
 DELETE FROM `favoris`;
 INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
-	(17, 3);
+	(17, 3),
+	(28, 8),
+	(28, 17);
 
 -- Listage de la structure de table yshare. news
 CREATE TABLE IF NOT EXISTS `news` (
@@ -247,7 +253,7 @@ INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`) VALUES
 	(5, 13, 7, 'En Attente'),
 	(6, 13, 8, 'En Attente'),
 	(7, 13, 3, 'En Attente'),
-	(10, 28, 5, 'En Attente'),
+	(10, 28, 5, 'Inscrit'),
 	(11, 15, 5, 'Inscrit');
 
 -- Listage de la structure de table yshare. ratings
@@ -264,12 +270,14 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   CONSTRAINT `FK_ratings_event` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_ratings_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_rating_range` CHECK (((`rating` >= 0) and (`rating` <= 5)))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.ratings : ~0 rows (environ)
 DELETE FROM `ratings`;
 INSERT INTO `ratings` (`id`, `id_event`, `id_user`, `rating`, `message`, `date_rated`) VALUES
-	(1, 5, 15, 4.50, 'Très bon événemen !', '2025-03-18 10:22:25');
+	(1, 5, 15, 4.50, 'Très bon événemen !', '2025-03-18 10:22:25'),
+	(2, 27, 29, 4.50, 'Un event vraiment super', '2025-04-11 09:45:10'),
+	(3, 27, 16, 5.00, 'Jamais eu un event aussi bien', '2025-04-11 09:45:56');
 
 -- Listage de la structure de table yshare. reports
 CREATE TABLE IF NOT EXISTS `reports` (
@@ -281,6 +289,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `message` text NOT NULL,
   `status` enum('En Attente','Rejeté','Validé') DEFAULT 'En Attente',
   `date_reported` datetime DEFAULT CURRENT_TIMESTAMP,
+  `file_path` text,
   PRIMARY KEY (`id`),
   KEY `id_user` (`id_user`),
   KEY `id_event` (`id_event`),
@@ -291,12 +300,29 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `reports_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reports_ibfk_3` FOREIGN KEY (`id_reported_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null)) or ((`id_event` is null) and (`id_reported_user` is not null))))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.reports : ~0 rows (environ)
+-- Listage des données de la table yshare.reports : ~2 rows (environ)
 DELETE FROM `reports`;
-INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`) VALUES
-	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'En Attente', '2025-03-17 16:38:10');
+INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`, `file_path`) VALUES
+	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'En Attente', '2025-03-17 16:38:10', NULL),
+	(3, 28, 5, NULL, NULL, '[Titre offensant] Le titre m\'offense entant que char de combat ', 'En Attente', '2025-04-11 11:56:22', NULL);
+
+-- Listage de la structure de table yshare. report_files
+CREATE TABLE IF NOT EXISTS `report_files` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `report_id` int NOT NULL,
+  `file_path` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `report_id` (`report_id`),
+  CONSTRAINT `report_files_ibfk_1` FOREIGN KEY (`report_id`) REFERENCES `reports` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table yshare.report_files : ~2 rows (environ)
+DELETE FROM `report_files`;
+INSERT INTO `report_files` (`id`, `report_id`, `file_path`) VALUES
+	(1, 3, '/report-files/1744372582714-914572905.png'),
+	(2, 3, '/report-files/1744372582722-206264008.pdf');
 
 -- Listage de la structure de table yshare. users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -319,7 +345,7 @@ INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `pro
 	(15, 'Johnny', 'user@example.com', 'Doe', '$2a$10$.uBsQluiOs8o58tj5K.m8exfzfu9ilpnoMm7tsIcJQfR/Zs35UZZu', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
 	(16, 'User', 'user@exampdddle.com', 'Test', '$2a$10$fpMIJMeb7ZZdI1TpyQDQYO6WPAGYaCzwE/NUdxDst6eCkZZ/7vS9G', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
 	(17, 'alexandre', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
-	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1743171049352-327821772.jpg'),
+	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1744360917246-308792308.png'),
 	(29, 'alexxxx', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
