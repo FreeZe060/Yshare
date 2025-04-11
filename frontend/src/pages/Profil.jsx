@@ -38,7 +38,7 @@ const Profil = () => {
 				const [createdStats, participationCount, rating] = await Promise.all([
                     getCreatedEventsStats(userId),
                     getParticipationCount(userId),
-                    getUserAverageRating(userId) // 👈 récupère la note ici
+                    getUserAverageRating(userId)
                 ]);
 
 				setCreatedEvents(createdStats.events.slice(0, 5));
@@ -157,19 +157,19 @@ const Profil = () => {
                     <EventsSection
                         title="Favoris"
                         events={favoris.slice(0, 5).map(favori => ({
-                            id: favori.Event.id,
-                            title: favori.Event.title,
-                            date: favori.Event.date,
-                            status: "Favori",
-                            image: favori.Event.img || favori.Event.image || null 
+                        id: favori.id, // pas favori.Event.id
+                        title: favori.title,
+                        date: favori.date,
+                        status: "Favori",
+                        image: favori.image || null 
                         }))}
                         emptyMessage="Vous n'avez pas encore de favoris."
                         buttonLink="/allevents"
                         emptyButtonText="Voir tous les événements"
                         {...(favoris.length > 0 && {
-                            linkText: "Voir tous les favoris"
+                        linkText: "Voir tous les favoris"
                         })}
-                    />
+                  />
                 )}
             </section>
             <Footer />

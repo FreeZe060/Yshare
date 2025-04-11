@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { addFavoris } from "../../services/favorisService";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../config/authHeader";
 
 function useAddFavoris() {
 	const [loading, setLoading] = useState(false);
@@ -8,7 +8,7 @@ function useAddFavoris() {
 	const { user } = useAuth();
 
 	const add = async (eventId) => {
-		if (!user?.token) throw new Error("Authentification requise");
+		if (!user?.id) throw new Error("Authentification requise");
 		setLoading(true);
 		setError(null);
 		try {
