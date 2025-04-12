@@ -4,6 +4,8 @@ import useParticipantAvatars from '../hooks/Participant/useParticipantAvatars';
 function ParticipantAvatars({ eventId }) {
 	const avatars = useParticipantAvatars(eventId);
 
+	console.log("Avatars:", avatars);
+
 	return (
 		<div className="flex justify-center mb-[20px] -space-x-[20px]">
 			{avatars.map((src, index) => (

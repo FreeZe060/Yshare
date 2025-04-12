@@ -22,8 +22,30 @@ const isAdmin = require('../middlewares/Admin');
 
 //////// EVENTS ROUTES ////////
 
+router.post('/log-suspicious', (req, res) => {
+	console.log('🚨 Suspicious input detected:');
+	const ip =
+		req.headers['x-forwarded-for']?.split(',')[0] ||
+		req.socket?.remoteAddress ||
+		req.connection?.remoteAddress ||
+		'IP inconnue';
+
+	const userAgent = req.headers['user-agent'] || 'Inconnu';
+
+	const { type, value, path, timestamp } = req.body;
+
+	console.log(`🧠 Type: ${type}`);
+	console.log(`📍 Page: ${path}`);
+	console.log(`💬 Input: ${value}`);
+	console.log(`⏰ Time: ${timestamp}`);
+	console.log(`📡 IP: ${ip}`);
+	console.log(`🧭 User-Agent: ${userAgent}`);
+
+	res.status(200).json({ message: 'OK logged' });
+});
+
 router.get('/events', eventController.getAllEvents);
-router.get('/events/:id', eventController.getEventById);        
+router.get('/events/:id', eventController.getEventById);
 router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
 router.put('/events/:eventId', eventUpload.array('images'), authenticateToken, eventController.updateEvent);
 router.delete('/events/:eventId', authenticateToken, eventController.deleteEvent);
@@ -47,11 +69,11 @@ router.get('/users/:userId/created-events', eventController.getCreatedEventsPubl
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), (req, res) => {
-  res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
+	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
 });
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), (req, res) => {
-  res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
+	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
 });
 
 //////// ADMIN ROUTES ////////
@@ -72,7 +94,7 @@ router.get('/events/:eventId/participants', participantController.AllParticipant
 router.get('/users/:userId/participation-count', participantController.getParticipationCountPublic);
 router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
 router.get('/events/:eventId/participants/:index', authenticateToken, participantController.getParticipant);
-router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant); 
+router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
 router.put('/events/:eventId/participants/:index', authenticateToken, participantController.updateParticipantStatus);
 router.delete('/events/:eventId/participants/:index', authenticateToken, participantController.removeParticipant);
 
@@ -123,38 +145,38 @@ router.post('/ratings', authenticateToken, ratingController.rateEvent);
 
 //////// REPORT ROUTES ////////
 
-router.post( '/reports', authenticateToken, reportUpload.array('files', 6),  reportController.createReport);
+router.post('/reports', authenticateToken, reportUpload.array('files', 6), reportController.createReport);
 router.get('/reports', authenticateToken, reportController.getReports);
 
 //////// AUTH ROUTES FRONT ////////
 
 router.get('/auth/check', authenticateToken, async (req, res) => {
-  try {
-    const userFromDb = await userService.findById(req.user.id);
-    if (!userFromDb) {
-      return res.status(404).json({ authenticated: false });
-    }
+	try {
+		const userFromDb = await userService.findById(req.user.id);
+		if (!userFromDb) {
+			return res.status(404).json({ authenticated: false });
+		}
 
-    res.status(200).json({
-      authenticated: true,
-      user: {
-        id: userFromDb.id,
-        name: userFromDb.name,
-        lastname: userFromDb.lastname,
-        email: userFromDb.email,
-        profileImage: userFromDb.profileImage,
-        role: userFromDb.role,
-      },
-    });
-  } catch (err) {
-    console.error("Erreur lors de l'auth check :", err.message);
-    res.status(500).json({ authenticated: false, error: "Erreur serveur" });
-  }
+		res.status(200).json({
+			authenticated: true,
+			user: {
+				id: userFromDb.id,
+				name: userFromDb.name,
+				lastname: userFromDb.lastname,
+				email: userFromDb.email,
+				profileImage: userFromDb.profileImage,
+				role: userFromDb.role,
+			},
+		});
+	} catch (err) {
+		console.error("Erreur lors de l'auth check :", err.message);
+		res.status(500).json({ authenticated: false, error: "Erreur serveur" });
+	}
 });
 
 router.post('/logout', (req, res) => {
-    res.clearCookie('auth_token'); 
-    res.status(200).json({ message: 'Déconnexion réussie' });
+	res.clearCookie('auth_token');
+	res.status(200).json({ message: 'Déconnexion réussie' });
 });
 
 module.exports = router;

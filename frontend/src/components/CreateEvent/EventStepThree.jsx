@@ -2,13 +2,13 @@ import React from "react";
 import { X } from "lucide-react";
 
 const formatValue = (key, value) => {
-  if (Array.isArray(value)) {
-    return value.join(", ");
-  }
-  if (typeof value === "object" && value !== null) {
-    return "[objet]";
-  }
-  return value;
+    if (Array.isArray(value)) {
+        return value.join(", ");
+    }
+    if (typeof value === "object" && value !== null) {
+        return "[objet]";
+    }
+    return value;
 };
 
 const EventStepThree = ({ data, images, onFieldClick, onRemoveImage }) => {
@@ -20,9 +20,9 @@ const EventStepThree = ({ data, images, onFieldClick, onRemoveImage }) => {
                     if (!value || (Array.isArray(value) && value.length === 0) || key === "images") return null;
                     return (
                         <div
-                        key={key}
-                        onClick={() => onFieldClick?.(key)}
-                        className="bg-gray-100 p-4 rounded-lg shadow-sm cursor-pointer hover:bg-gray-200 transition"
+                            key={key}
+                            onClick={() => onFieldClick?.(key)}
+                            className="bg-gray-100 p-4 rounded-lg shadow-sm cursor-pointer hover:bg-gray-200 transition"
                         >
                             <strong className="capitalize inline-block mr-1">
                                 {key.replace(/_/g, " ")}:
@@ -40,17 +40,17 @@ const EventStepThree = ({ data, images, onFieldClick, onRemoveImage }) => {
                         {images.map((img, index) => (
                             <div key={index} className="relative">
                                 <img
-                                src={img.preview}
-                                alt={`img-${index}`}
-                                className="h-32 w-48 object-cover rounded-lg shadow"
+                                    src={img.preview}
+                                    alt={`img-${index}`}
+                                    className="h-32 w-48 object-cover rounded-lg shadow"
                                 />
                                 {images.length > 1 && (
-                                <button
-                                    onClick={() => onRemoveImage?.(index)}
-                                    className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 transition-colors"
-                                >
-                                    <X className="w-4 h-4 text-red-600" />
-                                </button>
+                                    <button
+                                        onClick={() => onRemoveImage?.(index)}
+                                        className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-500 transition-colors"
+                                    >
+                                        <X className="w-4 h-4 text-red-600" />
+                                    </button>
                                 )}
                             </div>
                         ))}

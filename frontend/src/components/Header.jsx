@@ -44,18 +44,16 @@ const Header = () => {
     return (
 
         <>
-            {/* Bouton burger visible uniquement sur mobile */}
-            <button
+            {/* <button
             className="ml-auto md:hidden text-white"
             onClick={() => setMenuOpen(prev => !prev)}
             >
             <i className="fas fa-bars text-2xl" />
-            </button>
+            </button> */}
             <div
                 className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "p-4" : "p-0"}`}
             >
                 <div className={` bg-gray-900 text-gray-500 shadow-lg font-medium capitalize flex items-center gap-4 flex-wrap ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
-                    {/* Logo */}
                     <Link to="/" className="flex items-center gap-2">
                         <span className="px-3 py-1 pr-4 border-r border-gray-800">
                             <img
@@ -67,17 +65,14 @@ const Header = () => {
                     </Link>
 
                     
-                    <div className="flex gap-6 ml-20">
+                    <div className="flex gap-6 ">
                         <Link
-                            to="/songs"
-                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/songs" ? "text-gray-300" : ""
+                            to="/"
+                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/" ? "text-gray-300" : ""
                                 }`}
                         >
-                            <i className="w-8 fas fa-music p-2 bg-gray-800 rounded-full" />
-                            <span className="mx-1">Events</span>
-                            <span className="absolute left-0 ml-8 -mt-2 text-xs bg-gray-700 font-medium px-2 shadow-lg rounded-full">
-                                12
-                            </span>
+                            <i className="w-8 flex items-center justify-center fas fa-home p-2 bg-gray-800 rounded-full" />
+                            <span className="mx-1">Home</span>
                         </Link>
 
                         {/* Artists */}
@@ -135,22 +130,12 @@ const Header = () => {
                         {isAuthenticated && user ? (
                             <>
                                 <span className="px-1 hover:text-white cursor-pointer w-8 relative ml-auto transition-all duration-300">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-8 h-8 p-2 bg-gray-800 rounded-full text-white"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth={1.5}
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M14.25 17.25v.75a2.25 2.25 0 01-4.5 0v-.75m9.6-4.95A6.75 6.75 0 005.625 7.5v3.586c0 .414-.168.81-.465 1.102l-1.29 1.268a.75.75 0 00.54 1.284h17.28a.75.75 0 00.54-1.284l-1.29-1.268a1.5 1.5 0 01-.465-1.102V7.5z"
-                                        />
-                                    </svg>
-                                    <span className="absolute right-0 top-0 -mt-2 -mr-1 text-xs bg-red-500 text-white font-medium px-2 shadow-lg rounded-full">
-                                        3
+                                    <i class="fa-solid fa-bell w-8 h-8 flex items-center justify-center bg-gray-800 rounded-full text-gray-200"></i>
+                                    <span class="top-0 -left-0 absolute flex size-3.5">
+                                        <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                        <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
+                                            3
+                                        </span>
                                     </span>
                                 </span>
                                 <div className="relative ml-4">
@@ -203,15 +188,18 @@ const Header = () => {
                             <>
                                 <Link
                                     to="/login"
-                                    className="text-white font-semibold bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-xl shadow-md transition"
+                                        className="px-4 py-2 bg-[#C621C0] hover:bg-[#c621c0d4] text-gray-50 rounded-xl flex items-center gap-2"
                                 >
-                                    Se connecter
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span>Se Connecter</span>
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="text-white font-semibold bg-green-600 hover:bg-green-700 px-5 py-2 rounded-xl shadow-md transition"
+                                        className="px-4 py-2 bg-white hover:bg-gray-200 rounded-xl flex items-center gap-2"
                                 >
-                                    S'inscrire
+                                        <span class="text-black">S'inscrire</span>
                                 </Link>
                             </>
                         )}

@@ -35,7 +35,7 @@ function Home() {
 		fetchData();
 	}, [fetchData]);
 
-	if (bannerLoading || aboutLoading || eventsLoading) return <p>Chargement...</p>;
+	// if (bannerLoading || aboutLoading || eventsLoading) return <p>Chargement...</p>;
 	if (bannerError) return <p>Erreur Banner: {bannerError}</p>;
 	if (aboutError) return <p>Erreur About: {aboutError}</p>;
 	if (eventsError) return <p>Erreur Events: {eventsError}</p>;
