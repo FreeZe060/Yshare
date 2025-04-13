@@ -207,11 +207,10 @@ const Header = () => {
                 </div>
             </div>
 
-            {menuOpen && (
+            {/* {menuOpen && (
             <div className="w-full mt-4 flex flex-col gap-4 md:hidden">
-                {/* tes <Link /> ici aussi */}
             </div>
-            )}
+            )} */}
         </>
     );
 };

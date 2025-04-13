@@ -242,7 +242,7 @@ const Register = () => {
 										className="w-full h-full object-cover"
 									/>
 								) : (
-									<div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:text-[#C421C0] text-sm">
+										<div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 group-hover:text-[#C421C0] transition duration-300 text-sm">
 										<i className="fas fa-camera text-xl" />
 									</div>
 								)}
