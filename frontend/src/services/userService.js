@@ -63,7 +63,6 @@ export async function getPublicProfile(userId) {
 	return result;
 }
 
-
 /**
  * GET /profile/:userId
  */
@@ -105,7 +104,6 @@ export async function updateProfile(userData, token, userId) {
 }
 
 
-
 /**
  * DELETE /users/:userId
  */
@@ -144,6 +142,8 @@ export async function getEventHistory(token, userId) {
  * GET /users
  */
 export async function getAllUsers(token) {
+	console.log("🔐 token reçu dans getAllUsers :", token); // ✅ Correct
+
 	const response = await fetch(`${API_BASE_URL}/users`, {
 		credentials: 'include',
 		headers: {
@@ -155,6 +155,7 @@ export async function getAllUsers(token) {
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des utilisateurs");
 	return result;
 }
+
 
 /**
  * POST /admin/users

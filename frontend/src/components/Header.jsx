@@ -22,7 +22,6 @@ const Header = () => {
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 0);
-            // ⚠️ ne ferme PAS automatiquement le menu ici
         };
     
         const handleClickOutside = (e) => {

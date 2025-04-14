@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getAllUsers } from "../services/userService";
-import { useAuth } from "../context/AuthContext";
+import { getAllUsers } from "../../services/userService";
+import { useAuth } from "../../config/authHeader";
 
 function useAllUsers() {
 	const [users, setUsers] = useState([]);

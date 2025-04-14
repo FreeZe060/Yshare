@@ -20,7 +20,8 @@ const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
 
-//////// EVENTS ROUTES ////////
+
+//////// LOGS ROUTES ////////
 
 router.post('/log-suspicious', (req, res) => {
 	console.log('🚨 Suspicious input detected:');
@@ -44,6 +45,8 @@ router.post('/log-suspicious', (req, res) => {
 	res.status(200).json({ message: 'OK logged' });
 });
 
+//////// EVENTS ROUTES ////////
+
 router.get('/events', eventController.getAllEvents);
 router.get('/events/:id', eventController.getEventById);
 router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
@@ -61,6 +64,7 @@ router.get('/profile/:userId', authenticateToken, UserOrAdmin, userController.ge
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
 router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
+router.patch('/status/:userId', authMiddleware, isAdmin, userController.updateUserStatus);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
 router.get('/users/:userId/public', userController.getPublicProfile);
 router.get('/users/:userId/created-events', eventController.getCreatedEventsPublic);

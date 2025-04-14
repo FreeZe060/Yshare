@@ -65,6 +65,10 @@ const User = sequelize.define('User', {
     type: DataTypes.TEXT, 
     allowNull: true, 
     field: 'banner_image' 
+  },
+  status: {
+    type: DataTypes.ENUM('Approved', 'Suspended'),
+    defaultValue: 'Approved'
   }
 
 }, {

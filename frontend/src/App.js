@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import Profil from './pages/Profil';
 import PrivateRoute from './components/PrivateRoute';
 import CreateEventPage from './pages/CreateEventPage';
+import Admin from './pages/DashboardPage';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
 			<Route path="/profile/:userId" element={<Profil />} />
+			<Route path="/admin" element={<Admin />} />
 			<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 			{/* <Route path="/all-events" element={<AllEvents />} />
 			<Route path="*" element={<Navigate to="/" />} /> */}

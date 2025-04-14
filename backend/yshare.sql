@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS `favoris` (
   CONSTRAINT `favoris_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.favoris : ~0 rows (environ)
+-- Listage des données de la table yshare.favoris : ~3 rows (environ)
 DELETE FROM `favoris`;
 INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
 	(17, 3),
@@ -272,7 +272,7 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   CONSTRAINT `chk_rating_range` CHECK (((`rating` >= 0) and (`rating` <= 5)))
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.ratings : ~0 rows (environ)
+-- Listage des données de la table yshare.ratings : ~3 rows (environ)
 DELETE FROM `ratings`;
 INSERT INTO `ratings` (`id`, `id_event`, `id_user`, `rating`, `message`, `date_rated`) VALUES
 	(1, 5, 15, 4.50, 'Très bon événemen !', '2025-03-18 10:22:25'),
@@ -302,7 +302,7 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null)) or ((`id_event` is null) and (`id_reported_user` is not null))))
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.reports : ~2 rows (environ)
+-- Listage des données de la table yshare.reports : ~3 rows (environ)
 DELETE FROM `reports`;
 INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`, `file_path`) VALUES
 	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'En Attente', '2025-03-17 16:38:10', NULL),
@@ -334,19 +334,24 @@ CREATE TABLE IF NOT EXISTS `users` (
   `role` enum('Utilisateur','Administrateur') DEFAULT 'Utilisateur',
   `provider` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `profile_image` text,
+  `bio` text,
+  `city` varchar(255) DEFAULT NULL,
+  `street` varchar(255) DEFAULT NULL,
+  `street_number` varchar(50) DEFAULT NULL,
+  `banner_image` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.users : ~7 rows (environ)
 DELETE FROM `users`;
-INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `provider`, `profile_image`) VALUES
-	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
-	(14, 'Admin', 'admin@example.com', 'Master', '$2a$10$8rhd4a8O1l4aB1zty8FXV.d4RCzKmVGvXGwdhR9luJw0SQRq7WVUq', 'Administrateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
-	(15, 'Johnny', 'user@example.com', 'Doe', '$2a$10$.uBsQluiOs8o58tj5K.m8exfzfu9ilpnoMm7tsIcJQfR/Zs35UZZu', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
-	(16, 'User', 'user@exampdddle.com', 'Test', '$2a$10$fpMIJMeb7ZZdI1TpyQDQYO6WPAGYaCzwE/NUdxDst6eCkZZ/7vS9G', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
-	(17, 'alexandre', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg'),
-	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1744360917246-308792308.png'),
-	(29, 'alexxxx', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png');
+INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `provider`, `profile_image`, `bio`, `city`, `street`, `street_number`, `banner_image`) VALUES
+	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL),
+	(14, 'Admin', 'admin@example.com', 'Master', '$2a$10$8rhd4a8O1l4aB1zty8FXV.d4RCzKmVGvXGwdhR9luJw0SQRq7WVUq', 'Administrateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL),
+	(15, 'Johnny', 'user@example.com', 'Doe', '$2a$10$.uBsQluiOs8o58tj5K.m8exfzfu9ilpnoMm7tsIcJQfR/Zs35UZZu', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL),
+	(16, 'User', 'user@exampdddle.com', 'Test', '$2a$10$fpMIJMeb7ZZdI1TpyQDQYO6WPAGYaCzwE/NUdxDst6eCkZZ/7vS9G', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL),
+	(17, 'alexandre', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL),
+	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1744360917246-308792308.png', NULL, 'Argenteuil', 'avenue maria ', '6', '/banner-images/1744624628380-55255588.jpg'),
+	(29, 'alexxxx', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png', NULL, NULL, NULL, NULL, NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

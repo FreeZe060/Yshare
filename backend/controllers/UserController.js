@@ -184,6 +184,33 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
+exports.updateUserStatus = async (req, res) => {
+    const { userId } = req.params;
+    const { status } = req.body;
+
+    if (!['Approved', 'Suspended'].includes(status)) {
+        return res.status(400).json({ message: "Status invalide. Utiliser 'Approved' ou 'Suspended'." });
+    }
+
+    try {
+        const user = await userService.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur non trouvé." });
+        }
+
+        await user.update({ status });
+
+        res.status(200).json({
+            message: `Statut mis à jour : ${status}`,
+            userId: user.id,
+            status: user.status
+        });
+    } catch (error) {
+        console.error("[updateUserStatus] Erreur :", error);
+        res.status(500).json({ message: "Erreur serveur", error: error.message });
+    }
+};
+
 exports.getEventHistory = async (req, res) => {
     try {
         const userId = req.params.userId || req.user.id;
