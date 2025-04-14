@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 import 'animate.css';
 
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';

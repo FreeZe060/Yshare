@@ -38,15 +38,18 @@ const profileStorage = generateStorage('profile-images');
 const eventStorage = generateStorage('event-images');
 const newsStorage = generateStorage('news-images');
 const reportStorage = generateStorage('report-files');
+const bannerStorage = generateStorage('banner-images');
 
 const profileUpload = multer({ storage: profileStorage, fileFilter });
 const eventUpload = multer({ storage: eventStorage, fileFilter });
 const newsUpload = multer({ storage: newsStorage, fileFilter });
 const reportUpload = multer({ storage: reportStorage, fileFilter: reportFileFilter });
+const bannerUpload = multer({ storage: bannerStorage, fileFilter });
 
 module.exports = {
   profileUpload,
   eventUpload,
   newsUpload,
-  reportUpload, 
+  reportUpload,
+  bannerUpload
 };

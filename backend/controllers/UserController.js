@@ -6,52 +6,56 @@ const fs = require('fs');
 const ParticipantService = require('../services/ParticipantService');
 
 const generateToken = (user) => {
-  const payload = {
-    id: user.id,
-    role: user.role,
-    lastActivity: Date.now()
-  };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10h' });
+    const payload = {
+        id: user.id,
+        role: user.role,
+        lastActivity: Date.now()
+    };
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10h' });
 };
 
 exports.register = async (req, res) => {  
     try {
-        const { name, lastname, email, password } = req.body;
+        const { name, lastname, email, password, bio, city, street, streetNumber } = req.body;
         console.log(`[register] Tentative d'inscription pour ${email}`);
-    
+
         const userExists = await userService.getUserByEmail(email);
         if (userExists) {
             console.warn(`[register] Utilisateur déjà existant avec l'email : ${email}`);
             return res.status(400).json({ message: "Cet utilisateur existe déjà." });
         }
-    
+
         const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
-    
-        let profileImage = null;
-        if (req.file) {
-            profileImage = `/profile-images/${req.file.filename}`;
-            console.log(`[register] Image de profil enregistrée : ${profileImage}`);
-        }
-    
+
+        let profileImage = req.file ? `/profile-images/${req.file.filename}` : null;
+        console.log(`[register] Image de profil : ${profileImage}`);
+
+        const bannerImage = req.body.bannerImage || null;
+
         const newUser = await userService.createUser(
             name,
             lastname,
             email,
             hashedPassword,
             profileImage,
-            null
+            null,
+            bio || null,
+            city || null,
+            street || null,
+            streetNumber || null,
+            bannerImage
         );
-    
+
         if (newUser) {
             let token;
             try {
                 token = generateToken(newUser);
                 res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
             } catch (jwtError) {
-                console.error("[register] Erreur lors de la génération du token JWT :", jwtError);
+                console.error("[register] Erreur JWT :", jwtError);
                 return res.status(500).json({ message: "Erreur lors de la création du token." });
             }
-    
+
             console.log(`[register] Utilisateur créé avec succès : ID ${newUser.id}`);
             res.status(201).json({
                 id: newUser.id,
@@ -62,11 +66,11 @@ exports.register = async (req, res) => {
                 token
             });
         } else {
-            console.warn("[register] La création de l'utilisateur a échoué.");
+            console.warn("[register] Création utilisateur échouée");
             res.status(400).json({ message: "Échec de l'inscription" });
         }
     } catch (error) {
-        console.error("[register] Erreur serveur :", error);
+        console.error("[register] Erreur :", error);
         res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
 };
@@ -126,54 +130,58 @@ exports.getProfile = async (req, res) => {
     }
 };
 
-
 exports.updateProfile = async (req, res) => {
-  try {
-    const userId = req.params.userId || req.user.id;
-    const currentUser = await userService.findById(userId);
-    if (!currentUser) return res.status(404).json({ message: "Utilisateur non trouvé" });
+    try {
+        const userId = req.params.userId || req.user.id;
+        const currentUser = await userService.findById(userId);
+        if (!currentUser) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-    const name = req.body.name ?? currentUser.name;
-    const lastname = req.body.lastname || currentUser.lastname;
-    const email = req.body.email || currentUser.email;
+        const updates = {
+            name: req.body.name ?? currentUser.name,
+            lastname: req.body.lastname ?? currentUser.lastname,
+            email: req.body.email ?? currentUser.email,
+            password: req.body.password
+                ? await bcrypt.hash(req.body.password, 10)
+                : currentUser.password,
+            bio: req.body.bio ?? currentUser.bio,
+            city: req.body.city ?? currentUser.city,
+            street: req.body.street ?? currentUser.street,
+            streetNumber: req.body.streetNumber ?? currentUser.streetNumber
+        };
 
-    const password = req.body.password
-      ? await bcrypt.hash(req.body.password, 10)
-      : currentUser.password;
+        if (req.file) {
+            const fileField = req.file.fieldname === 'bannerImage' ? 'bannerImage' : 'profileImage';
+            const uploadPath = fileField === 'profileImage' ? 'profile-images' : 'banner-images';
+            const oldFile = currentUser[fileField];
 
-    let profileImage = currentUser.profileImage;
-    if (req.file) {
-      if (profileImage) {
-        const oldImageFilename = path.basename(profileImage);
-        const oldImagePath = path.join(__dirname, '..', 'static', 'profile-images', oldImageFilename);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+            if (oldFile) {
+                const oldPath = path.join(__dirname, '..', 'media', uploadPath, path.basename(oldFile));
+                if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+            }
+
+            updates[fileField] = `/${uploadPath}/${req.file.filename}`;
         }
-      }
-      profileImage = `/profile-images/${req.file.filename}`;
+
+        const updatedUser = await userService.updateUser(userId, updates);
+
+        res.status(200).json({
+            message: "Profil mis à jour avec succès",
+            user: updatedUser
+        });
+    } catch (error) {
+        console.error("[updateProfile] Erreur :", error);
+        res.status(500).json({ message: error.message });
     }
-
-    const updatedUser = await userService.updateUser(userId, {  
-      name, lastname, email, password, profileImage
-    });
-
-    res.status(200).json({
-      message: "Profil mis à jour avec succès",
-      user: updatedUser
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
 exports.deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const result = await userService.deleteUser(userId);
-    return res.status(200).json(result);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+    try {
+        const userId = req.params.userId;
+        const result = await userService.deleteUser(userId);
+        return res.status(200).json(result);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 exports.getEventHistory = async (req, res) => {
@@ -217,41 +225,41 @@ exports.getPublicProfile = async (req, res) => {
 };  
 
 exports.getUserEventsAdmin = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const events = await userService.getAllUserEvents(userId);
-    return res.status(200).json(events);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+    try {
+        const { userId } = req.params;
+        const events = await userService.getAllUserEvents(userId);
+        return res.status(200).json(events);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 exports.getAllUsersByAdmin = async (req, res) => {
-  try {
-    const users = await userService.getAllUsers();
-    return res.status(200).json(users);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+    try {
+        const users = await userService.getAllUsers();
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 exports.adminCreateUser = async (req, res) => {
-  try {
-    const { name, lastname, email, password } = req.body;
+    try {
+        const { name, lastname, email, password } = req.body;
 
-    const userExists = await userService.getUserByEmail(email);
-    if (userExists) {
-      return res.status(400).json({ message: "Cet utilisateur existe déjà." });
+        const userExists = await userService.getUserByEmail(email);
+        if (userExists) {
+            return res.status(400).json({ message: "Cet utilisateur existe déjà." });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await userService.createUser(name, lastname, email, hashedPassword);
+
+        return res.status(201).json({
+            message: "Utilisateur créé avec succès par l'administrateur.",
+            user: newUser
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Erreur serveur", error: error.message });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userService.createUser(name, lastname, email, hashedPassword);
-
-    return res.status(201).json({
-      message: "Utilisateur créé avec succès par l'administrateur.",
-      user: newUser
-    });
-  } catch (error) {
-    return res.status(500).json({ message: "Erreur serveur", error: error.message });
-  }
 };

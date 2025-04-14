@@ -14,7 +14,7 @@ const favorisController = require('../controllers/FavorisController');
 const ratingController = require('../controllers/RatingController');
 const newsController = require('../controllers/NewsController');
 const authenticateToken = require('../middlewares/authMiddleware');
-const { profileUpload, eventUpload, newsUpload, reportUpload } = require('../middlewares/upload');
+const { profileUpload, eventUpload, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
 const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
@@ -59,6 +59,7 @@ router.post('/register', profileUpload.single('profileImage'), userController.re
 router.post('/login', userController.login);
 router.get('/profile/:userId', authenticateToken, UserOrAdmin, userController.getProfile);
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
+router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
 router.get('/users/:userId/public', userController.getPublicProfile);

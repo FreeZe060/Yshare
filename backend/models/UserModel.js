@@ -2,23 +2,23 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/dbManager');
 
 const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+  id: { 
+    type: DataTypes.INTEGER, 
+    primaryKey: true, 
+    autoIncrement: true 
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  name: { 
+    type: DataTypes.STRING, 
+    allowNull: false 
   },
-  lastname: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  lastname: { 
+    type: DataTypes.STRING, 
+    allowNull: false 
   },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
+  email: { 
+    type: DataTypes.STRING, 
+    allowNull: false, 
+    unique: true 
   },
   password: {
     type: DataTypes.STRING,
@@ -31,19 +31,42 @@ const User = sequelize.define('User', {
       }
     }
   },
-  role: {
-    type: DataTypes.STRING,
-    defaultValue: 'Utilisateur',
+  role: { 
+    type: DataTypes.STRING, 
+    defaultValue: 'Utilisateur' 
   },
-  profileImage: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    field: 'profile_image'
+  profileImage: { 
+    type: DataTypes.TEXT, 
+    allowNull: true, 
+    field: 'profile_image' 
   },
-  provider: {
-    type: DataTypes.STRING,
-    allowNull: true,
+  provider: { 
+    type: DataTypes.STRING, 
+    allowNull: true 
+  },
+  bio: { 
+    type: DataTypes.TEXT, 
+    allowNull: true 
+  },
+  city: { 
+    type: DataTypes.STRING, 
+    allowNull: true 
+  },
+  street: { 
+    type: DataTypes.STRING, 
+    allowNull: true 
+  },
+  streetNumber: { 
+    type: DataTypes.STRING, 
+    allowNull: true, 
+    field: 'street_number' 
+  },
+  bannerImage: { 
+    type: DataTypes.TEXT, 
+    allowNull: true, 
+    field: 'banner_image' 
   }
+
 }, {
   tableName: 'users',
   timestamps: false,
