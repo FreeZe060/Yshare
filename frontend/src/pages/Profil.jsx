@@ -86,13 +86,25 @@ const Profil = () => {
         }
     };
 
-    if (loading) return <div className="text-center text-2xl">Chargement...</div>;
+    // if (loading) return <div className="text-center text-2xl">Chargement...</div>;
     if (error) return <div className="text-center text-red-500">Erreur : {error}</div>;
     if (!profile) return null;
 
     return (
         <>
             <Header />
+
+            <section class="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
+                <div class="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
+                    <h1 class="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Profile</h1>
+                    <ul class="inline-flex items-center gap-[10px] font-medium text-[16px]">
+                        <li class="opacity-80"><a class="hover:text-etBlue">Home</a></li>
+                        <li><i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-angle-right"></i></li>
+                        <li class="current-page">Profile</li>
+                    </ul>
+                </div>
+            </section>
+
             <section className="container mx-auto pt-32 md:pt-32 p-8 space-y-12">
                 <ProfileCard 
                     user={{
