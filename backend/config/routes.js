@@ -64,7 +64,7 @@ router.get('/profile/:userId', authenticateToken, UserOrAdmin, userController.ge
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
 router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
-router.patch('/status/:userId', authMiddleware, isAdmin, userController.updateUserStatus);
+router.patch('/status/:userId', authenticateToken, isAdmin, userController.updateUserStatus);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
 router.get('/users/:userId/public', userController.getPublicProfile);
 router.get('/users/:userId/created-events', eventController.getCreatedEventsPublic);
@@ -150,8 +150,12 @@ router.post('/ratings', authenticateToken, ratingController.rateEvent);
 
 //////// REPORT ROUTES ////////
 
-router.post('/reports', authenticateToken, reportUpload.array('files', 6), reportController.createReport);
-router.get('/reports', authenticateToken, reportController.getReports);
+router.post('/reports', authenticateToken, isAdmin, reportUpload.array('files', 6), reportController.createReport);
+router.get('/reports', authenticateToken, isAdmin, reportController.getReports);
+router.get('/reports/:reportId', authenticateToken, isAdmin, reportController.getReportDetails);
+router.post('/reports/:reportId/reply', authenticateToken, isAdmin, reportController.replyToReport);
+router.get('/reports/:reportId/messages', authenticateToken, isAdmin, reportController.getReportMessages);
+router.put('/reports/:reportId/status', authenticateToken, isAdmin, reportController.updateReportStatus);
 
 //////// AUTH ROUTES FRONT ////////
 

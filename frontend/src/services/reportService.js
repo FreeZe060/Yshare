@@ -21,16 +21,13 @@ export async function createReport(reportData) {
 	return result;
 }
 
-/**
- * Récupérer les signalements (GET /reports)
- */
 export async function getReports(token) {
 	const response = await fetch(`${API_BASE_URL}/reports`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`
-		}
+			Authorization: `Bearer ${token}`,
+		},
 	});
 	const result = await response.json();
 	if (!response.ok) {
@@ -40,8 +37,64 @@ export async function getReports(token) {
 }
 
 /**
- * Mettre à jour le statut d'un signalement (PUT /reports/:reportId/status)
- * Le body doit contenir { status }
+ * Récupérer les détails complets d’un signalement (GET /reports/:reportId)
+ */
+export async function getReportDetails(reportId, token) {
+	const response = await fetch(`${API_BASE_URL}/reports/${reportId}`, {
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération du signalement");
+	}
+	return result;
+}
+
+/**
+ * Récupérer tous les messages liés à un signalement (GET /reports/:reportId/messages)
+ */
+export async function getReportMessages(reportId, token) {
+	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/messages`, {
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération des messages");
+	}
+	return result;
+}
+
+/**
+ * Répondre à un signalement (POST /reports/:reportId/reply)
+ * Body attendu : { message }
+ */
+export async function replyToReport(reportId, message, token) {
+	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/reply`, {
+		method: "POST",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({ message }),
+	});
+	const result = await response.json();
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de l'envoi de la réponse");
+	}
+	return result;
+}
+
+/**
+ * Mettre à jour le statut d’un signalement (PUT /reports/:reportId/status)
  */
 export async function updateReportStatus(reportId, status, token) {
 	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/status`, {
@@ -49,9 +102,9 @@ export async function updateReportStatus(reportId, status, token) {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`
+			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify({ status })
+		body: JSON.stringify({ status }),
 	});
 	const result = await response.json();
 	if (!response.ok) {

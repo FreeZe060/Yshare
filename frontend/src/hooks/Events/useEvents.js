@@ -21,10 +21,16 @@ function useEvents(filters, page, limit) {
 	}, [filters, page, limit]);
 
 	useEffect(() => {
-		fetchData();
+		fetchData(); 
 	}, [fetchData]);
 
-	return { events, total, loading, error, fetchData };
+	return {
+		events,
+		total,
+		loading,
+		error,
+		fetchData 
+	};
 }
 
 export default useEvents;

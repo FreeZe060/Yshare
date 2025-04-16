@@ -3,9 +3,9 @@ const { User, Participant, Event } = require('../models');
 class UserService {
     async getAllUsers() {
         return await User.findAll({
-            attributes: ['id', 'name', 'lastname', 'email']
+            attributes: ['id', 'name', 'lastname', 'email', 'role', 'status', 'profileImage']
         });
-    }
+    }    
 
     async getUserByEmail(email) {
         return await User.findOne({

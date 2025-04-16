@@ -7,7 +7,6 @@ const authenticateToken = (req, res, next) => {
     const token = req.cookies?.auth_token || (authHeader && authHeader.split(" ")[1]);
 
     if (!token) {
-        console.warn("[Auth] Aucun token fourni.");
         return res.status(401).json({ error: "Accès refusé. Aucun token fourni." });
     }
 

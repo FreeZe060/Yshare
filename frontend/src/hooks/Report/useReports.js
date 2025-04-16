@@ -1,18 +1,16 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../../config/authHeader"; 
-import { getReports } from "../../services/reportService";
+import { useState, useEffect } from 'react';
+import { getReports } from '../../services/reportService';
+import { useAuth } from '../../config/authHeader';
 
 function useReports() {
-	const [reports, setReports] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
 	const { user } = useAuth();
+	const [reports, setReports] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		if (!user?.token) return;
-
 		const fetchReports = async () => {
-			setLoading(true);
+			if (!user?.token) return;
 			try {
 				const data = await getReports(user.token);
 				setReports(data);

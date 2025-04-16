@@ -1,4 +1,4 @@
-const { Event, Category, EventImage, Participant } = require('../models');
+const { Event, Category, EventImage, Participant, User } = require('../models');
 const { Op, fn, col } = require('sequelize');
 
 class EventService {
@@ -6,12 +6,12 @@ class EventService {
     const { title, city, date, categoryId } = filters;
     const { page = 1, limit = 10 } = pagination;
     const offset = (page - 1) * limit;
-
+  
     const whereClause = {};
     if (title) whereClause.title = { [Op.like]: `%${title}%` };
     if (city) whereClause.city = { [Op.like]: `%${city}%` };
     if (date) whereClause.date = date;
-
+  
     const include = [
       {
         model: Category,
@@ -32,38 +32,46 @@ class EventService {
         where: { status: 'Inscrit' },
         required: false,
       },
+      {
+        model: User,
+        as: 'organizer',
+        attributes: ['id', 'name', 'lastname'],
+      },
     ];
-
+  
     const events = await Event.findAll({
       where: whereClause,
       include,
       attributes: {
-        include: [[fn('COUNT', col('participants.id')), 'nb_participants']]
+        include: [[fn('COUNT', col('participants.id')), 'nb_participants']],
       },
       group: [
         'Event.id',
         'Categories.id',
         'EventImages.id',
+        'organizer.id',
       ],
       offset,
       limit: parseInt(limit),
       subQuery: false,
     });
-
+  
     const total = await Event.count({
       where: whereClause,
-      include: categoryId ? [
-        {
-          model: Category,
-          through: { attributes: [] },
-          where: { id: categoryId },
-          required: true
-        }
-      ] : []
+      include: categoryId
+        ? [
+            {
+              model: Category,
+              through: { attributes: [] },
+              where: { id: categoryId },
+              required: true,
+            },
+          ]
+        : [],
     });
-
+  
     return { events, total };
-  }
+  }  
 
   async getEventById(eventId) {
     return await Event.findByPk(eventId, {

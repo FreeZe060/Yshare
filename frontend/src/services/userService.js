@@ -156,6 +156,20 @@ export async function getAllUsers(token) {
 	return result;
 }
 
+export async function updateUserStatus(userId, status, token) {
+	const res = await fetch(`${API_BASE_URL}/status/${userId}`, {
+		method: 'PATCH',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({ status }),
+	});
+	const result = await res.json();
+	if (!res.ok) throw new Error(result.message || 'Erreur lors de la mise à jour du statut');
+	return result;
+}
 
 /**
  * POST /admin/users
