@@ -7,7 +7,7 @@ function ParticipantAvatars({ eventId }) {
 	console.log("Avatars:", avatars);
 
 	return (
-		<div className="flex justify-center mb-[20px] -space-x-[20px]">
+		<div className="flex justify-center -space-x-[20px] mb-[20px]">
 			{avatars.map((src, index) => (
 				<img
 					key={index}
