@@ -66,6 +66,21 @@ ReportMessage.belongsTo(Report, { foreignKey: 'report_id' });
 User.hasMany(ReportMessage, { foreignKey: 'sender_id', as: 'sentMessages' });
 ReportMessage.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
 
+User.hasMany(Report, { foreignKey: 'id_user', as: 'reportingUser' });
+Report.belongsTo(User, { foreignKey: 'id_user', as: 'reportingUser' });
+
+User.hasMany(Report, { foreignKey: 'id_reported_user', as: 'reportedUser' });
+Report.belongsTo(User, { foreignKey: 'id_reported_user', as: 'reportedUser' });
+
+Event.hasMany(Report, { foreignKey: 'id_event', as: 'eventReports' });
+Report.belongsTo(Event, { foreignKey: 'id_event', as: 'event' });
+
+Comment.hasMany(Report, { foreignKey: 'id_comment', as: 'commentReports' });
+Report.belongsTo(Comment, { foreignKey: 'id_comment', as: 'comment' });
+
+// User.hasMany(Report, { foreignKey: 'id_user', as: 'userReports' });
+// Report.belongsTo(User, { foreignKey: 'id_user', as: 'user'Reports' });
+
 module.exports = {
   sequelize,
   User,

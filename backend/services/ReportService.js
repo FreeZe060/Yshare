@@ -53,8 +53,8 @@ class ReportService {
                 include: [
                     { model: User, as: 'reportingUser' },
                     { model: User, as: 'reportedUser' },
-                    { model: Event },
-                    { model: Comment },
+                    { model: Event, as: 'event' },
+                    { model: Comment, as: 'comment' },
                     { model: ReportFile, as: 'files' },
                     {
                         model: ReportMessage,

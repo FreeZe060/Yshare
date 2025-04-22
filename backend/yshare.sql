@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   CONSTRAINT `FK_comments_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.comments : ~4 rows (environ)
+-- Listage des données de la table yshare.comments : ~5 rows (environ)
 DELETE FROM `comments`;
 INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_comment`, `date_posted`) VALUES
 	(1, 2, 13, NULL, 'Ceci est le contenu du commen.', NULL, '2025-03-13 14:32:12'),
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `events` (
   CONSTRAINT `FK_event_user` FOREIGN KEY (`id_org`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.events : ~18 rows (environ)
+-- Listage des données de la table yshare.events : ~19 rows (environ)
 DELETE FROM `events`;
 INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date`, `max_participants`, `status`, `street`, `street_number`, `city`, `postal_code`, `start_time`, `end_time`) VALUES
 	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', 0, '2025-03-23', 30, 'En Cours', 'place du marche', '3', 'Argenteuil', '95100', '10:03:08', '2025-04-07 20:03:08'),
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS `event_categories` (
   CONSTRAINT `FK_event_categories_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_categories : ~19 rows (environ)
+-- Listage des données de la table yshare.event_categories : ~18 rows (environ)
 DELETE FROM `event_categories`;
 INSERT INTO `event_categories` (`id_event`, `id_category`) VALUES
 	(3, 2),
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `event_images` (
   CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_images : ~21 rows (environ)
+-- Listage des données de la table yshare.event_images : ~24 rows (environ)
 DELETE FROM `event_images`;
 INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(1, 3, '/event-images/1743067245365-575734556.png', 1),
@@ -186,12 +186,13 @@ CREATE TABLE IF NOT EXISTS `favoris` (
   CONSTRAINT `favoris_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.favoris : ~3 rows (environ)
+-- Listage des données de la table yshare.favoris : ~4 rows (environ)
 DELETE FROM `favoris`;
 INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
 	(17, 3),
 	(28, 8),
-	(28, 17);
+	(28, 17),
+	(30, 17);
 
 -- Listage de la structure de table yshare. news
 CREATE TABLE IF NOT EXISTS `news` (
@@ -225,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.notifications : ~3 rows (environ)
+-- Listage des données de la table yshare.notifications : ~4 rows (environ)
 DELETE FROM `notifications`;
 INSERT INTO `notifications` (`id`, `id_user`, `title`, `message`, `date_sent`, `read_status`) VALUES
 	(2, 13, 'Nouvelle demande - sustineo culpa laboriosam', 'Johnny souhaite rejoindre votre événement "sustineo culpa laboriosam".', '2025-03-17 16:15:51', 0),
@@ -245,7 +246,7 @@ CREATE TABLE IF NOT EXISTS `participants` (
   CONSTRAINT `FK_participants_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.participants : ~7 rows (environ)
+-- Listage des données de la table yshare.participants : ~8 rows (environ)
 DELETE FROM `participants`;
 INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`) VALUES
 	(3, 13, 9, 'En Attente'),
@@ -302,11 +303,11 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null)) or ((`id_event` is null) and (`id_reported_user` is not null))))
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.reports : ~2 rows (environ)
+-- Listage des données de la table yshare.reports : ~3 rows (environ)
 DELETE FROM `reports`;
 INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`, `file_path`) VALUES
 	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'En Attente', '2025-03-17 16:38:10', NULL),
-	(3, 28, 5, NULL, NULL, '[Titre offensant] Le titre m\'offense entant que char de combat ', 'En Attente', '2025-04-11 11:56:22', NULL);
+	(3, 28, 5, NULL, NULL, '[Titre offensant] Le titre m\'offense entant que char de combat ', 'Validé', '2025-04-11 11:56:22', NULL);
 
 -- Listage de la structure de table yshare. report_files
 CREATE TABLE IF NOT EXISTS `report_files` (
@@ -360,7 +361,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.users : ~8 rows (environ)
+-- Listage des données de la table yshare.users : ~7 rows (environ)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `provider`, `profile_image`, `bio`, `city`, `street`, `street_number`, `banner_image`, `status`) VALUES
 	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved'),
