@@ -69,13 +69,13 @@ export function capitalizeFirstLetter(str) {
 }
 
 export function formatAvatars(participants, max = 3) {
-	const base = "/assets/img/reviewer-";
-	const defaultImgs = Array.from({ length: max }, (_, i) => `${base}${i + 1}.png`);
+	// const base = "/assets/img/reviewer-";
+	// const defaultImgs = Array.from({ length: max }, (_, i) => `${base}${i + 1}.png`);
 	const valid = participants
 		.filter(p => p.status === 'Inscrit' && p.User?.profile_image)
 		.slice(0, max)
 		.map(p => `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080'}${p.User.profile_image}`);
 
-	while (valid.length < max) valid.push(defaultImgs[valid.length]);
+	// while (valid.length < max) valid.push(defaultImgs[valid.length]);
 	return valid;
 }
