@@ -27,7 +27,7 @@ class FavorisService {
 
     async getFavorisByUser(userId) {
         console.log(`[FavorisService] Récupérer favoris pour userId=${userId}`);
-        
+
         const favoris = await Favoris.findAll({
             where: { id_user: userId },
             include: [{
@@ -43,16 +43,16 @@ class FavorisService {
             }],
             order: [[Event, 'date', 'DESC']]
         });
-      
+
         if (!favoris || favoris.length === 0) {
             console.warn(`[FavorisService] Aucun favori trouvé pour userId=${userId}`);
             return [];
         }
-      
+
         return favoris.map(fav => {
             const event = fav.Event?.get({ plain: true }) || {};
             const { EventImages, ...eventData } = event;
-        
+
             return {
                 id_user: fav.id_user,
                 id_event: fav.id_event,
@@ -64,7 +64,7 @@ class FavorisService {
 
     async getFavorisById(userId, eventId) {
         console.log(`[FavorisService] Récupération du favori: userId=${userId}, eventId=${eventId}`);
-    
+
         const favoris = await Favoris.findOne({
             where: { id_user: userId, id_event: eventId },
             include: [{
@@ -77,12 +77,12 @@ class FavorisService {
                 }]
             }]
         });
-    
+
         if (!favoris) throw new Error("Favori non trouvé.");
-    
+
         const event = favoris.Event?.get({ plain: true }) || {};
         const { EventImages, ...eventData } = event;
-    
+
         return {
             id_user: favoris.id_user,
             id_event: favoris.id_event,
