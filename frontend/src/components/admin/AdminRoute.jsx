@@ -21,8 +21,6 @@ const AdminRoute = ({ children }) => {
         }
     }, [user, loading, navigate]);
 
-    if (loading) return <p>Chargement...</p>;
-
     return user ? children : null;
 };
 
