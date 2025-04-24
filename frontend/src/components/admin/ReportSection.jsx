@@ -12,6 +12,7 @@ import { Dialog } from '@headlessui/react';
 import { XIcon, ReplyIcon, EyeIcon } from 'lucide-react';
 import useReportMessages from '../../hooks/Report/useReportMessages';
 import useReplyToReport from '../../hooks/Report/useReplyToReport';
+import RowSkeletonReport from '../SkeletonLoading/RowSkeletonReport';
 
 const isImage = (file) => /\.(jpg|jpeg|png|gif)$/i.test(file.file_path);
 const isPdf = (file) => /\.pdf$/i.test(file.file_path);
@@ -138,7 +139,28 @@ const ReportSection = () => {
 
   const openPopup = (report) => setPopupReport(report);
 
-  if (loading) return <p>Chargement des signalements...</p>;
+  if (loading) {
+		return (
+			<div className="overflow-x-auto rounded-lg shadow-md bg-white">
+				<table className="w-full whitespace-nowrap text-sm sm:text-xs">
+					<thead className="bg-indigo-100 text-indigo-700">
+						<tr>
+							{['Type', 'Signalé par', 'Contenu', 'Fichiers', 'Réponses', 'Statut', 'Date', 'Actions'].map((field, i) => (
+								<th key={i} className={`text-left py-3 px-2 ${i === 0 ? 'rounded-l-lg' : ''}`}>
+									{field}
+								</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{Array.from({ length: 5 }).map((_, i) => (
+							<RowSkeletonReport key={i} />
+						))}
+					</tbody>
+				</table>
+			</div>
+		);
+	}
   if (error) return <p className="text-red-500">Erreur : {error}</p>;
 
   return (
