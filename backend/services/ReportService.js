@@ -1,4 +1,4 @@
-const { Report, ReportFile, ReportMessage, User, Event, Comment } = require('../models');
+const { Report, ReportFile, ReportMessage, User, Event, Comment, EventImage } = require('../models');
 
 class ReportService {
     async createReport(userId, { id_event, id_reported_user, id_comment, message }, files = []) {
@@ -32,48 +32,100 @@ class ReportService {
         }
     }
 
-    async getReportsByUser(userId, isAdmin) {
+    async getReportsByUser() {
         try {
-            if (isAdmin) {
-                return await Report.findAll({ order: [['date_reported', 'DESC']] });
-            } else {
-                return await Report.findAll({
-                    where: { id_user: userId },
-                    order: [['date_reported', 'DESC']]
-                });
-            }
+          const reports = await Report.findAll({
+            include: [
+              { model: User, as: 'reportingUser', attributes: ['id', 'name'] },
+              { model: User, as: 'reportedUser', attributes: ['id', 'name'] },
+              { model: Event, as: 'event', attributes: ['id', 'title'] },
+              { model: Comment, as: 'comment', attributes: ['id', 'message'] },
+              { model: ReportFile, as: 'files' },
+              {
+                model: ReportMessage,
+                as: 'messages',
+                attributes: ['id'], 
+              },
+            ],
+            order: [['date_reported', 'DESC']],
+          });
+      
+          return reports.map(report => ({
+            id: report.id,
+            message: report.message,
+            status: report.status,
+            date_reported: report.date_reported,
+            reportingUser: report.reportingUser && {
+              id: report.reportingUser.id,
+              name: report.reportingUser.name,
+            },
+            reportedUser: report.reportedUser && {
+              id: report.reportedUser.id,
+              name: report.reportedUser.name,
+            },
+            event: report.event && {
+              id: report.event.id,
+              title: report.event.title,
+            },
+            comment: report.comment && {
+              id: report.comment.id,
+              content: report.comment.content,
+            },
+            type:
+              report.id_event ? 'event' :
+              report.id_comment ? 'comment' :
+              report.id_reported_user ? 'user' : 'autre',
+            files: report.files || [],
+            messageCount: report.messages?.length || 0,
+          }));
         } catch (error) {
-            throw new Error("Erreur lors de la récupération des signalements : " + error.message);
+          throw new Error("Erreur lors de la récupération des signalements : " + error.message);
         }
     }
 
     async getReportDetails(reportId) {
         try {
-            const report = await Report.findByPk(reportId, {
+          const report = await Report.findByPk(reportId, {
+            include: [
+              { model: User, as: 'reportingUser' },
+              { model: User, as: 'reportedUser' },
+              {
+                model: Event,
+                as: 'event',
                 include: [
-                    { model: User, as: 'reportingUser' },
-                    { model: User, as: 'reportedUser' },
-                    { model: Event, as: 'event' },
-                    { model: Comment, as: 'comment' },
-                    { model: ReportFile, as: 'files' },
-                    {
-                        model: ReportMessage,
-                        as: 'messages',
-                        include: [{ model: User, as: 'sender' }],
-                        order: [['date_sent', 'ASC']]
-                    }
+                  {
+                    model: EventImage,
+                    as: 'EventImages',
+                    where: { is_main: true },
+                    required: false,
+                  },
+                  {
+                    model: User,
+                    as: 'organizer', // <-- Ajout ici
+                    attributes: ['id', 'name', 'profileImage'], // Ajoute ici les champs nécessaires
+                  }
                 ]
-            });
-
-            if (!report) {
-                throw new Error("Signalement non trouvé.");
-            }
-
-            return report;
+              },
+              { model: Comment, as: 'comment' },
+              { model: ReportFile, as: 'files' },
+              {
+                model: ReportMessage,
+                as: 'messages',
+                include: [{ model: User, as: 'sender' }],
+                order: [['date_sent', 'ASC']],
+              },
+            ],
+          });
+      
+          if (!report) {
+            throw new Error("Signalement non trouvé.");
+          }
+      
+          return report;
         } catch (error) {
-            throw new Error("Erreur lors de la récupération du signalement : " + error.message);
+          throw new Error("Erreur lors de la récupération du signalement : " + error.message);
         }
-    }
+    }      
 
     async updateReportStatus(reportId, newStatus, isAdmin) {
         if (!isAdmin) {

@@ -8,7 +8,7 @@ const Report = sequelize.define('Report', {
     primaryKey: true,
     autoIncrement: true,
   },
-  id_user: { // l'utilisateur qui fait le signalement
+  id_user: { 
     type: DataTypes.INTEGER,
     allowNull: false,
   },
@@ -37,11 +37,7 @@ const Report = sequelize.define('Report', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW,
-  },
-  file_path: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  }  
+  }
 }, {
   tableName: 'reports',
   timestamps: false,
