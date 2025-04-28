@@ -21,10 +21,12 @@ const LastUsersSection = ({ showAll = false }) => {
 	const updateStatus = useUpdateUserStatus(authUser?.token);
 	const deleteUser = useDeleteUser(authUser?.token);
 
-	const { users, loading, error, refetch: fetchUsers } = useAllUsers(); 
+	const { users, loading, error, refetch: fetchUsers } = useAllUsers();
 
 	const [sortField, setSortField] = useState(null);
 	const [sortDirection, setSortDirection] = useState('asc');
+	const [currentPage, setCurrentPage] = useState(1);
+	const usersPerPage = 8;
 
 	const theadRef = useRef();
 
@@ -107,9 +109,15 @@ const LastUsersSection = ({ showAll = false }) => {
 		return sorted;
 	}, [users, showAll, sortField, sortDirection]);
 
+	const paginatedUsers = useMemo(() => {
+		const startIndex = (currentPage - 1) * usersPerPage;
+		const endIndex = startIndex + usersPerPage;
+		return sortedUsers.slice(startIndex, endIndex);
+	}, [sortedUsers, currentPage]);
+
 	if (loading) {
 		return (
-			<div className="overflow-x-auto rounded-lg shadow-md bg-white">
+			<div className="overflow-x-auto rounded-lg shadow-md bg-white flex flex-col justify-between min-h-[600px]">
 				<table className="w-full whitespace-nowrap text-sm sm:text-xs">
 					<thead className="bg-indigo-100 text-indigo-700">
 						<tr>
@@ -137,7 +145,7 @@ const LastUsersSection = ({ showAll = false }) => {
 				<h1 className="font-bold py-4 uppercase text-gray-800">Last 5 Users</h1>
 			)}
 
-			<div className="overflow-x-auto rounded-lg shadow-md bg-white">
+			<div className="overflow-x-auto rounded-lg shadow-md bg-white flex flex-col justify-between min-h-[600px]">
 				<table className="w-full whitespace-nowrap text-sm sm:text-xs">
 					<thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
 						<tr>
@@ -158,7 +166,7 @@ const LastUsersSection = ({ showAll = false }) => {
 					</thead>
 					<tbody>
 						<AnimatePresence>
-							{sortedUsers.map((user) => (
+							{paginatedUsers.map((user) => (
 								<motion.tr
 									key={user.id}
 									initial={{ opacity: 0, y: 10 }}
@@ -210,6 +218,27 @@ const LastUsersSection = ({ showAll = false }) => {
 						</AnimatePresence>
 					</tbody>
 				</table>
+
+				{sortedUsers.length > usersPerPage && (
+					<div className="flex justify-center items-center space-x-2 my-4">
+						{Array.from({ length: Math.ceil(sortedUsers.length / usersPerPage) }).map((_, index) => {
+							const page = index + 1;
+							const isActive = currentPage === page;
+							return (
+								<motion.button
+									key={page}
+									whileHover={{ scale: 1.1 }}
+									whileTap={{ scale: 0.95 }}
+									onClick={() => setCurrentPage(page)}
+									className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition
+										${isActive ? 'bg-blue-500 text-white border-blue-500' : 'border-blue-500 text-blue-500 hover:bg-blue-100'}`}
+								>
+									{page}
+								</motion.button>
+							);
+						})}
+					</div>
+				)}
 			</div>
 		</div>
 	);

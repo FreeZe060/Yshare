@@ -1,271 +1,212 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { updateReportStatus } from '../../services/reportService';
-import useReports from '../../hooks/Report/useReports';
-import { useAuth } from '../../config/authHeader';
-import { showConfirmation } from '../../utils/showConfirmation';
+import { Dialog } from '@headlessui/react';
+import { XIcon, EyeIcon, ReplyIcon } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
-import { Dialog } from '@headlessui/react';
-import { XIcon, ReplyIcon, EyeIcon } from 'lucide-react';
-import useReportMessages from '../../hooks/Report/useReportMessages';
-import useReplyToReport from '../../hooks/Report/useReplyToReport';
-import RowSkeletonReport from '../SkeletonLoading/RowSkeletonReport';
+import useReports from '../../hooks/Report/useReports';
+import { updateReportStatus } from '../../services/reportService';
+import { showConfirmation } from '../../utils/showConfirmation';
+import { useAuth } from '../../config/authHeader';
+import ReportReplies from './ReportReplies';
 import ReportDetailsPopup from './ReportDetailsPopup';
 
 const isImage = (file) => /\.(jpg|jpeg|png|gif)$/i.test(file.file_path);
 const isPdf = (file) => /\.pdf$/i.test(file.file_path);
 
-const ReportReplies = ({ reportId }) => {
-    const { messages, loading } = useReportMessages(reportId);
-    const { sendReply, loading: sending } = useReplyToReport();
-    const [newMessage, setNewMessage] = useState('');
-
-    const handleReply = async () => {
-        if (!newMessage.trim()) return;
-        await sendReply(reportId, newMessage);
-        setNewMessage('');
-    };
-
-    return (
-        <div className="bg-gray-50 border-t border-gray-200 p-4">
-            {loading ? <p>Chargement des réponses...</p> : (
-                <div className="space-y-2">
-                    {messages.length === 0 ? (
-                        <p>Aucune réponse pour le moment.</p>
-                    ) : messages.map(msg => (
-                        <div key={msg.id} className="border p-2 rounded">
-                            <p className="text-sm text-gray-600">{new Date(msg.date_sent).toLocaleString()}</p>
-                            <p className="text-sm text-gray-600">{msg.sender.name}</p>
-                            <p>{msg.message}</p>
-                        </div>
-                    ))}
-
-                    <div className="mt-2">
-                        <textarea
-                            className="w-full border rounded p-2"
-                            rows={3}
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Répondre à ce signalement..."
-                        />
-                        <button
-                            onClick={handleReply}
-                            disabled={sending}
-                            className="mt-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-                        >
-                            Envoyer
-                        </button>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+const sortFunctions = {
+  type: (a, b) => a.type.localeCompare(b.type),
+  reportingUser: (a, b) => (a.reportingUser.name || '').localeCompare(b.reportingUser.name || ''),
+  date_reported: (a, b) => new Date(a.date_reported) - new Date(b.date_reported),
+  messageCount: (a, b) => (a.messageCount || 0) - (b.messageCount || 0),
+  status: (a, b) => a.status.localeCompare(b.status),
 };
 
-const getReportContentPreview = (report) => {
-    return report.message?.slice(0, 30) + '...';
+const getStatusColor = (status) => {
+  if (status === 'Validé') return 'text-green-600';
+  if (status === 'En attente') return 'text-orange-500';
+  return 'text-red-500';
 };
 
-const getReportTypeIcon = (report, onClick) => {
-    if (report.type === 'event')
-        return (
-            <i
-                className="fas fa-calendar text-indigo-500 cursor-pointer"
-                title="Événement"
-                onClick={onClick}
-            />
-        );
-    if (report.type === 'comment')
-        return (
-            <i
-                className="fas fa-comment text-indigo-500 cursor-pointer"
-                title="Commentaire"
-                onClick={onClick}
-            />
-        );
-    if (report.type === 'user')
-        return (
-            <i
-                className="fas fa-user text-indigo-500 cursor-pointer"
-                title="Utilisateur"
-                onClick={onClick}
-            />
-        );
-    return null;
+const getReportTypeIcon = (type, onClick) => {
+  const types = {
+    event: 'fas fa-calendar',
+    comment: 'fas fa-comment',
+    user: 'fas fa-user',
+  };
+  return types[type] ? (
+    <i className={`${types[type]} text-indigo-500 cursor-pointer`} title={type} onClick={onClick} />
+  ) : null;
 };
-
 
 const ReportSection = () => {
-    const { user } = useAuth();
-    const { reports, setReports, fetchReports, loading, error } = useReports();
-    const [sortField, setSortField] = useState('date_reported');
-    const [sortDirection, setSortDirection] = useState('desc');
-    const [lightbox, setLightbox] = useState({ open: false, index: 0, images: [] });
-    const [popupReport, setPopupReport] = useState(null);
-    const [openReplies, setOpenReplies] = useState({});
+  const { reports, fetchReports, loading, error } = useReports();
+  const { user } = useAuth();
+  const [sortField, setSortField] = useState('date_reported');
+  const [sortDirection, setSortDirection] = useState('desc');
+  const [lightbox, setLightbox] = useState({ open: false, index: 0, images: [] });
+  const [popupReport, setPopupReport] = useState(null);
+  const [openReplies, setOpenReplies] = useState(null);
+  const [openPopupReplies, setOpenPopupReplies] = useState(null);
 
-    const sortedReports = useMemo(() => {
-        if (!reports) return [];
-        return [...reports].sort((a, b) => {
-            const valA = a[sortField]?.toString().toLowerCase();
-            const valB = b[sortField]?.toString().toLowerCase();
-            if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-            if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
-    }, [reports, sortField, sortDirection]);
+  const sortedReports = useMemo(() => {
+    if (!reports) return [];
+    const sorted = [...reports].sort(sortFunctions[sortField]);
+    return sortDirection === 'asc' ? sorted : sorted.reverse();
+  }, [reports, sortField, sortDirection]);
 
-    const handleUpdateStatus = async (report) => {
-        const newStatus = report.status === 'Validé' ? 'Rejeté' : 'Validé';
-        const { isConfirmed } = await showConfirmation({
-            title: 'Confirmer la mise à jour',
-            text: `Voulez-vous marquer ce signalement comme '${newStatus}' ?`,
-            icon: 'warning',
-            confirmText: `Oui, ${newStatus}`,
-        });
-    
-        if (isConfirmed) {
-            await updateReportStatus(report.id, newStatus, user.token);
-            await fetchReports();
-        }
-    };
+  const toggleSort = (field) => {
+    if (!sortFunctions[field]) return;
+    setSortField(field);
+    setSortDirection(prev => (field === sortField && prev === 'asc') ? 'desc' : 'asc');
+  };
 
-    const openLightbox = (images, index) => {
-        setLightbox({ open: true, index, images });
-    };
+  const handleUpdateStatus = async (report) => {
+    const newStatus = report.status === 'Validé' ? 'Rejeté' : 'Validé';
+    const { isConfirmed } = await showConfirmation({
+      title: 'Confirmer la mise à jour',
+      text: `Voulez-vous marquer ce signalement comme '${newStatus}' ?`,
+      icon: 'warning',
+      confirmText: `Oui, ${newStatus}`,
+    });
+    if (isConfirmed) {
+      await updateReportStatus(report.id, newStatus, user.token);
+      await fetchReports();
+    }
+  };
 
-    const openPopup = (report) => setPopupReport(report);
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p className="text-red-500">Erreur : {error}</p>;
 
-    if (loading) {
-            return (
-                <div className="overflow-x-auto rounded-lg shadow-md bg-white">
-                    <table className="w-full whitespace-nowrap text-sm sm:text-xs">
-                        <thead className="bg-indigo-100 text-indigo-700">
-                            <tr>
-                                {['Type', 'Signalé par', 'Contenu', 'Fichiers', 'Réponses', 'Statut', 'Date', 'Actions'].map((field, i) => (
-                                    <th key={i} className={`text-left py-3 px-2 ${i === 0 ? 'rounded-l-lg' : ''}`}>
-                                        {field}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <RowSkeletonReport key={i} />
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            );
-        }
-    if (error) return <p className="text-red-500">Erreur : {error}</p>;
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Tous les signalements</h2>
 
-    return (
-        <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Tous les signalements</h2>
-            <div className="overflow-x-auto rounded-lg shadow-md bg-white">
-                <table className="w-full whitespace-nowrap text-sm">
-                    <thead className="bg-indigo-100 text-indigo-700">
-                        <tr>
-                            <th className="px-4 py-3">Type</th>
-                            <th className="px-4 py-3">Signalé par</th>
-                            <th className="px-4 py-3">Contenu</th>
-                            <th className="px-4 py-3">Fichiers</th>
-                            <th className="px-4 py-3">Réponses</th>
-                            <th className="px-4 py-3">Statut</th>
-                            <th className="px-4 py-3">Date</th>
-                            <th className="px-4 py-3">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <AnimatePresence>
-                            {sortedReports.map((report, index) => {
-                                const images = report.files?.filter(isImage).map(f => `http://localhost:8080${f.file_path}`) || [];
-                                const pdfs = report.files?.filter(isPdf) || [];
-                                return (
-                                    <>
-                                        <motion.tr
-                                            key={report.id}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.3 }}
-                                            className="border-b border-gray-200 hover:bg-gray-50"
-                                        >
-                                            <td className="px-4 py-3">{getReportTypeIcon(report, () => openPopup(report))}</td>
-                                            <td className="px-4 py-3">{report.reportingUser.name || 'Inconnu'}</td>
-                                            <td className="px-4 py-3">{getReportContentPreview(report)}</td>
-                                            <td className="px-4 py-3 space-x-2">
-                                                {images.length > 0 && (
-                                                    <i
-                                                        className="fas fa-image text-indigo-400 cursor-pointer"
-                                                        onClick={() => openLightbox(images, 0)}
-                                                    />
-                                                )}
-                                                {pdfs.length > 0 && (
-                                                    <a
-                                                        href={`http://localhost:8080${pdfs[0].file_path}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        <i className="fas fa-file-pdf text-red-500 ml-2" />
-                                                    </a>
-                                                )}
-                                                {images.length + pdfs.length === 0 && <span className="text-gray-400">0 fichier</span>}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <button
-                                                    onClick={() => setOpenReplies(prev => ({ ...prev, [report.id]: !prev[report.id] }))}
-                                                    className="text-blue-600 hover:underline"
-                                                >
-                                                    {report.messageCount || 0} réponse{(report.messageCount || 0) > 1 ? 's' : ''}
-                                                </button>
-                                            </td>
-                                            <td className={`px-4 py-3 font-medium ${report.status === 'Validé' ? 'text-green-600' : 'text-yellow-600'}`}>{report.status}</td>
-                                            <td className="px-4 py-3">{new Date(report.date_reported).toLocaleDateString()}</td>
-                                            <td className="px-4 py-3 flex items-center space-x-2">
-                                                <button onClick={() => openPopup(report)} className="text-indigo-500 hover:text-indigo-700">
-                                                    <EyeIcon size={18} />
-                                                </button>
-                                                <button onClick={() => handleUpdateStatus(report)} className="text-yellow-500 hover:text-yellow-600">
-                                                    <i className="fas fa-sync-alt" />
-                                                </button>
-                                                <button
-                                                    onClick={() => setOpenReplies(prev => ({ ...prev, [report.id]: true }))}
-                                                    className="text-green-500 hover:text-green-700"
-                                                >
-                                                    <ReplyIcon size={18} />
-                                                </button>
-                                            </td>
-                                        </motion.tr>
-                                        {openReplies[report.id] && (
-                                            <tr key={`replies-${report.id}`}>
-                                                <td colSpan={8}><ReportReplies reportId={report.id} /></td>
-                                            </tr>
-                                        )}
-                                    </>
-                                );
-                            })}
-                        </AnimatePresence>
-                    </tbody>
-                </table>
-            </div>
+      <div className="overflow-x-auto rounded-lg shadow-md bg-white">
+        <table className="w-full text-sm whitespace-nowrap">
+          <thead className="bg-indigo-100 text-indigo-700">
+            <tr>
+              {[
+                { label: 'Type', field: 'type' },
+                { label: 'Signalé par', field: 'reportingUser' },
+                { label: 'Contenu' },
+                { label: 'Fichiers' },
+                { label: 'Réponses', field: 'messageCount' },
+                { label: 'Statut', field: 'status' },
+                { label: 'Date', field: 'date_reported' },
+                { label: 'Actions' },
+              ].map(({ label, field }) => (
+                <th
+                  key={label}
+                  className={`px-4 py-3 ${field ? 'cursor-pointer hover:underline' : ''}`}
+                  onClick={field ? () => toggleSort(field) : undefined}
+                >
+                  {label}
+                  {field && sortField === field && (
+                    <span>{sortDirection === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <AnimatePresence>
+              {sortedReports.map((report) => {
+                const images = report.files?.filter(isImage).map(f => `http://localhost:8080${f.file_path}`) || [];
+                const pdfs = report.files?.filter(isPdf) || [];
 
-            {lightbox.open && (
-                <Lightbox
-                    open={lightbox.open}
-                    index={lightbox.index}
-                    slides={lightbox.images.map((src) => ({ src }))}
-                    close={() => setLightbox({ open: false, index: 0, images: [] })}
-                />
-            )}
+                return (
+                  <React.Fragment key={report.id}>
+                    <motion.tr
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-b border-gray-200 hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-3">{getReportTypeIcon(report.type, () => setPopupReport(report))}</td>
+                      <td className="px-4 py-3">{report.reportingUser.name || 'Inconnu'}</td>
+                      <td className="px-4 py-3">{report.message.slice(0, 30)}...</td>
+                      <td className="px-4 py-3">
+                        {images.length > 0 && (
+                          <i className="fas fa-image text-indigo-400 cursor-pointer" onClick={() => setLightbox({ open: true, index: 0, images })} />
+                        )}
+                        {pdfs.length > 0 && (
+                          <a href={`http://localhost:8080${pdfs[0].file_path}`} target="_blank" rel="noopener noreferrer">
+                            <i className="fas fa-file-pdf text-red-500 ml-2" />
+                          </a>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <button onClick={() => setOpenPopupReplies(report)} className="text-blue-600 hover:underline">
+                          {report.messageCount || 0} réponse{report.messageCount > 1 ? 's' : ''}
+                        </button>
+                      </td>
+                      <td className={`px-4 py-3 font-semibold ${getStatusColor(report.status)}`}>
+                        {report.status}
+                      </td>
+                      <td className="px-4 py-3">{new Date(report.date_reported).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 flex space-x-2">
+                        <button onClick={() => setPopupReport(report)} className="text-indigo-500 hover:text-indigo-700">
+                          <EyeIcon size={18} />
+                        </button>
+                        <button onClick={() => handleUpdateStatus(report)} className="text-yellow-500 hover:text-yellow-600">
+                          <i className="fas fa-sync-alt" />
+                        </button>
+                        <button onClick={() => setOpenReplies(prev => (prev === report.id ? null : report.id))} className="text-green-500 hover:text-green-700">
+                          <ReplyIcon size={18} />
+                        </button>
+                      </td>
+                    </motion.tr>
 
-            {popupReport && (
-                <ReportDetailsPopup reportId={popupReport.id} onClose={() => setPopupReport(null)} openLightbox={openLightbox} />
-            )}
-        </div>
-    );
+                    {openReplies === report.id && (
+                      <tr>
+                        <td colSpan="8" className="bg-gray-50 p-4">
+                          <ReportReplies reportId={report.id} limit={4} />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </AnimatePresence>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Lightbox */}
+      {lightbox.open && (
+        <Lightbox
+          open={lightbox.open}
+          index={lightbox.index}
+          slides={lightbox.images.map(src => ({ src }))}
+          close={() => setLightbox({ open: false, index: 0, images: [] })}
+        />
+      )}
+
+      {/* Popup détails report */}
+      {popupReport && (
+        <ReportDetailsPopup
+          reportId={popupReport.id}
+          onClose={() => setPopupReport(null)}
+        />
+      )}
+
+      {/* Popup réponses report */}
+      {openPopupReplies && (
+        <Dialog open={true} onClose={() => setOpenPopupReplies(null)} className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="fixed inset-0 bg-black/40" onClick={() => setOpenPopupReplies(null)} />
+          <div className="relative z-10 bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full">
+            <button onClick={() => setOpenPopupReplies(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+              <XIcon size={24} />
+            </button>
+            <h2 className="text-2xl font-bold text-indigo-600 mb-4">Réponses</h2>
+            <ReportReplies reportId={openPopupReplies.id} limit={null} />
+          </div>
+        </Dialog>
+      )}
+    </div>
+  );
 };
 
 export default ReportSection;

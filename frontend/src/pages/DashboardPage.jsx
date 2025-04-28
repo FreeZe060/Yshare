@@ -88,9 +88,9 @@ export default function DashboardPage() {
 		<>
 			<Header />
 			<div className="antialiased bg-gradient-to-br from-white via-indigo-100 to-indigo-300 w-full min-h-screen text-slate-300 relative py-20">
-				<div className="grid xxs:grid-cols-1 grid-cols-12 mx-auto gap-2 xs:gap-4 sm:gap-6 md:gap-10 lg:gap-14 max-w-7xl my-10 px-2">
+				<div className="grid md:grid-cols-1 grid-cols-12 mx-auto gap-2 md:gap-4 sm:gap-6 max-w-7xl my-10 px-2">
 					<Sidebar active={activeSection} setActive={setActiveSection} />
-					<div id="content" className="bg-white shadow-xl col-span-9 rounded-lg p-6">
+					<div id="content" className="bg-white lg:mt-4 shadow-xl col-span-9 rounded-lg p-6">
 						<AnimatePresence mode="wait">
 							{renderContent()}
 						</AnimatePresence>
