@@ -94,7 +94,7 @@ const Profil = () => {
         <>
             <Header />
 
-            <section class="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
+            {/* <section class="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
                 <div class="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
                     <h1 class="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Profile</h1>
                     <ul class="inline-flex items-center gap-[10px] font-medium text-[16px]">
@@ -103,9 +103,9 @@ const Profil = () => {
                         <li class="current-page">Profile</li>
                     </ul>
                 </div>
-            </section>
+            </section> */}
 
-            <section className="container mx-auto space-y-12">
+            <section className="container mx-auto space-y-12 pt-[100px] lg:pt-[190px] sm:pt-[160px]">
                 <ProfileCard 
                     user={{
                         ...profile,

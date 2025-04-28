@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StarRating from '../StarRating';
 import { FiUser, FiEdit2 } from 'react-icons/fi';
+import { FaMapMarkerAlt, FaBriefcase, FaEnvelope } from 'react-icons/fa';
+import { useAuth } from '../../config/authHeader';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../config/authHeader'; // Assurez-vous que le chemin est correct
+
+const calculateProfileCompletion = (user) => {
+	let score = 0;
+	if (user.profileImage) score += 20;
+	if (user.bannerImage) score += 10;
+	if (user.name) score += 10;
+	if (user.lastname) score += 10;
+	if (user.email) score += 10;
+	if (user.street || user.streetNumber || user.city) score += 10;
+	if (user.bio) score += 20;
+	if (user.role) score += 10;
+	return score;
+  };
+  
 
 const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 	const auth = useAuth();
 	const currentUser = auth?.user;
 	const isAdmin = auth?.isAdmin;
-
 	const editable = currentUser?.id === user.id || isAdmin;
+	const profileCompletion = calculateProfileCompletion(user);
+
+
+	const [showFullBio, setShowFullBio] = useState(false);
 
 	const handleImageChange = (e) => {
 		if (onUpdateProfileImage) {
@@ -24,35 +42,52 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 		}
 	};
 
-	return (
-		<>
-			<main className="profile-page">
-				<section className="relative block h-[500px]">
-					<div
-						className="absolute top-0 w-full h-full bg-center bg-cover"
-						style={{
-							backgroundImage: `url('${
-							user.bannerImage
-								? `http://localhost:8080${user.bannerImage}`
-								: 'https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2710&q=80'
-							}')`,
-						}}
-						>
-						<span id="blackOverlay" className="w-full h-full absolute opacity-50 bg-black"></span>
+	const shortBio = (bio) => {
+		if (!bio) return '';
+		const words = bio.split(' ');
+		if (words.length > 30) {
+			return words.slice(0, 30).join(' ') + '...';
+		}
+		return bio;
+	};
 
-						{editable && (
-							<div
-								className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md cursor-pointer z-10 hover:scale-105 transition-transform"
-								onClick={() => document.getElementById('bannerImageInput').click()}
-								title="Modifier la bannière"
-							>
-								<FiEdit2 size={20} className="text-blue-700" />
-							</div>
-						)}
+	return (
+		<main className="profile-page">
+			{/* Section Bannière */}
+			<section className="relative block h-[600px]">
+				<div
+					className="absolute top-0 w-full h-full bg-center bg-cover"
+					style={{
+						backgroundImage: `url('${user.bannerImage
+							? `http://localhost:8080${user.bannerImage}`
+							: 'https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&auto=format&fit=crop&w=2710&q=80'
+							}')`,
+					}}
+				>
+					{/* Navbar contenue au centre */}
+					<div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white pt-12">
+						<h1 className="font-bold text-[56px] md:text-[50px] xs:text-[45px]">Profile</h1>
+						<ul className="inline-flex items-center gap-3 font-medium text-lg mt-2">
+							<li className="opacity-80 cursor-pointer hover:text-blue-400">Home</li>
+							<li><i className="fa-solid fa-angle-right"></i></li>
+							<li className="current-page">Profile</li>
+						</ul>
 					</div>
 
+					{/* Bouton modifier bannière */}
 					{editable && (
-						<input
+						<div
+							className="absolute bottom-4 right-4 bg-white p-2 rounded-full shadow-md cursor-pointer z-10 hover:scale-105 transition-transform"
+							onClick={() => document.getElementById('bannerImageInput').click()}
+							title="Modifier la bannière"
+						>
+							<FiEdit2 size={24} className="text-blue-700" />
+						</div>
+					)}
+				</div>
+
+				{editable && (
+					<input
 						type="file"
 						id="bannerImageInput"
 						accept="image/*"
@@ -60,169 +95,179 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 						onChange={(e) => {
 							const file = e.target.files[0];
 							if (file && onUpdateProfileImage) {
-							onUpdateProfileImage(file, 'bannerImage'); 
+								onUpdateProfileImage(file, 'bannerImage');
 							}
 						}}
-						/>
-					)}
+					/>
+				)}
+			</section>
 
-					<div
-						className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-[70px]"
-						style={{ transform: 'translateZ(0px)' }}
-					>
-						<svg
-							className="absolute bottom-0 overflow-hidden"
-							xmlns="http://www.w3.org/2000/svg"
-							preserveAspectRatio="none"
-							version="1.1"
-							viewBox="0 0 2560 100"
-							x="0"
-							y="0"
-							>
-							<polygon className="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100" />
-						</svg>
-					</div>
-				</section>
-
-				<section className="relative py-16 bg-blueGray-200">
-					<div className="container mx-auto px-4">
-						<div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
-							<div className="px-6">
-								<div className="flex flex-wrap justify-center">
-									<div className="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-									<div className="relative">
-										{user.profileImage ? (
-											<img
+			{/* Section Profil */}
+			<section className="relative py-16 bg-blueGray-200">
+				<div className="container mx-auto px-4">
+					<div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
+						<div className="px-6">
+							<div className="flex flex-col items-center -mt-20 relative">
+								{/* Photo de profil */}
+								<div className="relative">
+									{user.profileImage ? (
+										<img
+											src={`http://localhost:8080${user.profileImage}`}
 											alt="Profile"
-											src={
-												user.profileImage
-												? `http://localhost:8080${user.profileImage}`
-												: "https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg"
-											}
+											className="shadow-xl rounded-full h-40 w-40 object-cover border-4 border-white"
 											onClick={() => editable && document.getElementById('profileImageInput').click()}
-											className="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-[180px]"
-											/>
-										) : (
-											<div
-											className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
-											onClick={() => editable && document.getElementById('profileImageInput').click()}
-											>
-											<FiUser size={48} className="text-white" />
-											</div>
-										)}
-
-										{editable && (
-											<div
-											className="absolute -top-2 -right-2 bg-white rounded-full p-2 shadow-md cursor-pointer z-10 hover:scale-110 transition"
-											onClick={() => document.getElementById('profileImageInput').click()}
-											title="Modifier la photo de profil"
-											>
-											<FiEdit2 size={20} className="text-blue-600" />
-											</div>
-										)}
-
-										<input
-											type="file"
-											id="profileImageInput"
-											className="hidden"
-											accept="image/*"
-											onChange={handleImageChange}
 										/>
-										</div>
-
-										{/* <div className="mt-4 text-center">
-											<StarRating rating={user.rating || 0} />
-											<div className="text-2xl font-bold mt-2">
-												{user.rating !== undefined && user.rating !== null
-													? user.rating.toFixed(1)
-													: 'NA'}
-											</div>
-										</div> */}
-									</div>
-									{/* <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
-										<div className="py-6 px-3 mt-32 sm:mt-0">
-											<button
-												className="bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150"
-												type="button"
-											>
-												Connecter
-											</button>
-										</div>
-									</div> */}
-									<div className="flex flex-col items-center space-y-4 mt-8">
-										<div className="text-center">
-											<span className="text-xl font-bold text-blueGray-600">{user.eventsParticipated || 0}</span>
-											<div className="text-sm text-blueGray-400">Événements Participés</div>
-										</div>
-										<div className="text-center">
-											<span className="text-xl font-bold text-blueGray-600">{user.eventsCreated || 0}</span>
-											<div className="text-sm text-blueGray-400">Événements Créés</div>
-										</div>
-										<div className="text-center">
-											<span className="text-xl font-bold text-blueGray-600">89</span>
-											<div className="text-sm text-blueGray-400">Commentaires Postés</div>
-										</div>
-									</div>
-
-								</div>
-
-								<div className="text-center mt-12">
-									{['name', 'lastname'].map((field) => (
-										<h3 key={field} className="text-4xl font-semibold leading-normal mb-2 text-blueGray-700">
-											{editable ? (
-												<input
-												type="text"
-													defaultValue={user[field]}
-													className="flex-1 text-base sm:text-lg md:text-3xl outline-none"
-													onBlur={(e) => handleFieldChange(field, e.target.value)}
-												/>
-											) : (
-												<span className="text-base sm:text-lg md:text-3xl">{user[field]}</span>
-											)}
-										</h3>
-									))}
-									{editable && (
-										<div className="mb-2 text-blueGray-600 mt-10">
-											<i className="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>
-											<input
-												type="email"
-												defaultValue={user.email}
-												className="flex-1 text-base sm:text-lg md:text-2xl outline-none"
-												onBlur={(e) => handleFieldChange('email', e.target.value)}
-											/>
+									) : (
+										<div
+											className="h-40 w-40 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
+											onClick={() => editable && document.getElementById('profileImageInput').click()}
+										>
+											<FiUser size={48} className="text-white" />
 										</div>
 									)}
-									<div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-										<i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-										Los Angeles, California
-									</div>
-									<div className="mb-2 text-blueGray-600">
-										<i className="fas fa-university mr-2 text-lg text-blueGray-400"></i>
-										University of Computer Science
-									</div>
+									{editable && (
+										<div
+											className="absolute top-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer z-10 hover:scale-110 transition"
+											onClick={() => document.getElementById('profileImageInput').click()}
+											title="Modifier la photo de profil"
+										>
+											<FiEdit2 size={20} className="text-blue-600" />
+										</div>
+									)}
+									<input
+										type="file"
+										id="profileImageInput"
+										className="hidden"
+										accept="image/*"
+										onChange={handleImageChange}
+									/>
 								</div>
 
-								<div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-									<div className="flex flex-wrap justify-center">
-										<div className="w-full lg:w-9/12 px-4">
-											<p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-												Une artiste polyvalente, Jenna, le nom pris par Nick Murphy, élevé à Melbourne
-												et basé à Brooklyn, écrit, interprète et enregistre toute sa musique lui-même,
-												lui donnant une sensation chaleureuse, intime, avec une structure rythmique solide.
+								{/* Rating */}
+								<div className="mt-4">
+									<StarRating rating={user.rating || 0} />
+								</div>
+
+								<motion.div
+									className="w-full max-w-md mt-4"
+									initial={{ width: 0 }}
+									animate={{ width: `${profileCompletion}%` }}
+									transition={{ duration: 0.8 }}
+								>
+									<div className="h-4 bg-gray-300 rounded-full overflow-hidden">
+										<div
+											className="h-full rounded-full"
+											style={{
+												width: `${profileCompletion}%`,
+												background: profileCompletion < 50 ? '#f87171' : profileCompletion < 80 ? '#fbbf24' : '#34d399',
+												transition: 'width 0.8s ease, background 0.5s ease',
+											}}
+										></div>
+									</div>
+									<p className="text-center text-sm mt-2 text-blueGray-600 font-medium">
+										Profil complété à {profileCompletion}%
+									</p>
+								</motion.div>
+
+
+								{/* Nom + Prénom */}
+								<div className="flex space-x-4 mt-4">
+									{['name', 'lastname'].map((field) => (
+										editable ? (
+											<input
+												key={field}
+												type="text"
+												defaultValue={user[field]}
+												className="text-3xl font-bold text-center outline-none"
+												onBlur={(e) => handleFieldChange(field, e.target.value)}
+											/>
+										) : (
+											<span key={field} className="text-3xl font-bold">
+												{user[field]}
+											</span>
+										)
+									))}
+								</div>
+
+								{/* Infos complémentaires */}
+								<div className="mt-8 space-y-4 text-blueGray-600 text-lg w-full max-w-md mx-auto">
+									{(user.street || user.streetNumber || user.city) && (
+										<div className="flex items-center">
+											<FaMapMarkerAlt className="mr-3 text-blue-600" />
+											<span>
+												{user.streetNumber ? `${user.streetNumber} ` : ''}
+												{user.street ? `${user.street}, ` : ''}
+												{user.city || ''}
+											</span>
+										</div>
+									)}
+									{user.email && (
+										<div className="flex items-center">
+											<FaEnvelope className="mr-3 text-blue-600" />
+											<span>{user.email}</span>
+										</div>
+									)}
+									{user.role && (
+										<div className="flex items-center">
+											<FaBriefcase className="mr-3 text-blue-600" />
+											<span>{user.role}</span>
+										</div>
+									)}
+								</div>
+
+								{/* BIO */}
+								<div className="mt-10 px-6 text-center">
+									<h3 className="text-2xl font-semibold mb-4 text-blueGray-700">Bio</h3>
+									{user.bio ? (
+										<>
+											<p className="text-lg text-blueGray-600 leading-relaxed">
+												{showFullBio ? user.bio : shortBio(user.bio)}
 											</p>
-											<a href="#pablo" className="font-normal text-pink-500">
-												En savoir plus
-											</a>
+											{user.bio.split(' ').length > 30 && (
+												<button
+													className="mt-2 text-blue-500 font-semibold"
+													onClick={() => setShowFullBio(!showFullBio)}
+												>
+													{showFullBio ? 'Voir moins' : 'En savoir plus'}
+												</button>
+											)}
+										</>
+									) : (
+										<p className="text-lg text-blueGray-400 italic">
+											Vous n'avez pas encore ajouté de bio, ajoutez-en une dès maintenant pour compléter votre profil.
+										</p>
+									)}
+								</div>
+
+							</div>
+
+							{/* Event stats */}
+							<div className="mt-10 py-10 border-t border-blueGray-200 text-center">
+								<div className="flex flex-wrap justify-center">
+									<div className="w-full lg:w-9/12 px-4">
+										<div className="flex justify-around">
+											<div className="text-center">
+												<span className="block text-xl font-bold">{user.eventsParticipated || 0}</span>
+												<span className="text-sm text-blueGray-400">Événements Participés</span>
+											</div>
+											<div className="text-center">
+												<span className="block text-xl font-bold">{user.eventsCreated || 0}</span>
+												<span className="text-sm text-blueGray-400">Événements Créés</span>
+											</div>
+											<div className="text-center">
+												<span className="block text-xl font-bold">89</span>
+												<span className="text-sm text-blueGray-400">Commentaires Postés</span>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+
 						</div>
 					</div>
-				</section>
-			</main>
-
-		</>
+				</div>
+			</section>
+		</main>
 	);
 };
 
