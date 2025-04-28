@@ -5,7 +5,20 @@ import { useAuth } from '../../config/authHeader';
 const Sidebar = ({ active, setActive }) => {
 	const { user } = useAuth();
 	const [version, setVersion] = useState("");
-	const [openSubMenu, setOpenSubMenu] = useState(false);
+	const [openSubMenu, setOpenSubMenu] = useState(active === 'all-events' || active === 'participants');
+
+	const handleClick = (key, hasSub) => {
+		if (hasSub) {
+			if (active === 'events') {
+				setOpenSubMenu(prev => !prev);
+			} else {
+				setOpenSubMenu(true);
+			}
+		} else {
+			setActive(key);
+			setOpenSubMenu(false);
+		}
+	};
 
 	useEffect(() => {
 		fetch("/version.txt")
@@ -28,6 +41,8 @@ const Sidebar = ({ active, setActive }) => {
 		{ key: 'all-events', label: 'All Events' },
 		{ key: 'participants', label: 'Participants' }
 	];
+
+	const isEventsSubItem = ['all-events', 'participants'].includes(active);
 
 	return (
 		<div className="bg-white shadow-xl col-span-3 xxs:flex xxs:flex-row sm:flex-col xxs:justify-between xxs:items-center rounded-lg p-4">
@@ -55,31 +70,28 @@ const Sidebar = ({ active, setActive }) => {
 					return (
 						<React.Fragment key={key}>
 							<button
-								onClick={() => {
-									if (hasSub) {
-										setOpenSubMenu(prev => !prev);
-										setActive(key);
-									} else {
-										setActive(key);
-										setOpenSubMenu(false);
-									}
-								}}
-								className={`text-left w-full transition duration-300 ease-in-out rounded-lg py-3 px-2 group ${isActive ? 'bg-indigo-50' : 'hover:bg-indigo-50'}`}
+								onClick={() => handleClick(key, hasSub)}
+								className={`text-left w-full transition duration-300 ease-in-out rounded-lg py-3 px-2 group ${
+									key === 'events' && isEventsSubItem ? 'bg-indigo-50' : active === key ? 'bg-indigo-50' : 'hover:bg-indigo-50'
+								}`}
 							>
 								<div className="flex flex-row xxs:flex-col items-center gap-4">
-									{icon ? (
-										<i className={`fa-regular ${icon} text-2xl xxs:text-xl ${isActive ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-500`} />
-									) : (
-										<svg className={`w-6 h-6 ${isActive ? 'text-indigo-500' : 'text-gray-700'} group-hover:text-indigo-500`} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-											<path strokeLinecap="round" strokeLinejoin="round" d="M3 12l8.25-8.25c.3-.3.8-.3 1.1 0L21 12M4.5 10.5v9c0 .414.336.75.75.75H9.75v-3.75c0-.414.336-.75.75-.75h3c.414 0 .75.336.75.75V21h4.5c.414 0 .75-.336.75-.75v-9" />
-										</svg>
-									)}
+									<i className={`fa-regular ${icon} text-2xl xxs:text-xl ${
+										key === 'events' && isEventsSubItem ? 'text-indigo-500' :
+										active === key ? 'text-indigo-500' : 'text-black'
+									} group-hover:text-indigo-500`} />
 									<div className="text-left xxs:text-center">
-										<p className={`font-bold text-lg xxs:text-base ${isActive ? 'text-indigo-500' : 'text-gray-800'} group-hover:text-indigo-500`}>{label}</p>
+										<p className={`font-bold text-lg xxs:text-base ${
+											key === 'events' && isEventsSubItem ? 'text-indigo-500' :
+											active === key ? 'text-indigo-500' : 'text-gray-800'
+										} group-hover:text-indigo-500`}>
+											{label}
+										</p>
 										<p className="text-gray-400 text-sm block sm:hidden">{desc}</p>
 									</div>
 								</div>
 							</button>
+
 
 							{hasSub && openSubMenu && key === 'events' && (
 								<div className="ml-6 mt-1 space-y-1 transition-all">

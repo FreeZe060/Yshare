@@ -105,7 +105,7 @@ const Profil = () => {
                 </div>
             </section>
 
-            <section className="container mx-auto pt-32 md:pt-32 p-8 space-y-12">
+            <section className="container mx-auto space-y-12">
                 <ProfileCard 
                     user={{
                         ...profile,
@@ -118,8 +118,7 @@ const Profil = () => {
                     onUpdateProfileField={handleUpdateProfileField}
                 />
 
-
-                {isOwner && (
+                {/* {isOwner && (
                     <EventsSection 
                         title="Événements Participés"
                         events={participatedEvents}
@@ -131,7 +130,6 @@ const Profil = () => {
                         })}
                     />
                 )}
-
 
                 {createdEvents.length > 0 && (
                     <EventsSection 
@@ -182,7 +180,7 @@ const Profil = () => {
                         linkText: "Voir tous les favoris"
                         })}
                   />
-                )}
+                )} */}
             </section>
             <Footer />
         </>

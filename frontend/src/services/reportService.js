@@ -22,6 +22,7 @@ export async function createReport(reportData) {
 }
 
 export async function getReports(token) {
+	if (!token) return [];
 	const response = await fetch(`${API_BASE_URL}/reports`, {
 		credentials: "include",
 		headers: {

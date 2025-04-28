@@ -142,7 +142,7 @@ export async function getEventHistory(token, userId) {
  * GET /users
  */
 export async function getAllUsers(token) {
-	console.log("🔐 token reçu dans getAllUsers :", token); // ✅ Correct
+	console.log("🔐 token reçu dans getAllUsers :", token);
 
 	const response = await fetch(`${API_BASE_URL}/users`, {
 		credentials: 'include',

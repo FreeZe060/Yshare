@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/admin/Sidebar';
 import StatsSection from '../components/admin/StatsSection';
 import LastEventSection from '../components/admin/LestEventSection';
@@ -10,7 +10,13 @@ import Footer from '../components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DashboardPage() {
-	const [activeSection, setActiveSection] = useState('dashboard');
+	const [activeSection, setActiveSection] = useState(() => {
+		return localStorage.getItem('activeSection') || 'dashboard';
+	});
+
+	useEffect(() => {
+		localStorage.setItem('activeSection', activeSection);
+	}, [activeSection]);
 
 	const renderContent = () => {
 		switch (activeSection) {
@@ -45,11 +51,18 @@ export default function DashboardPage() {
                     <ReportSection />
                     </motion.div>
                 );
-			case 'events':
+			case 'all-events':
 				return (
 					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-						<h2 className="text-2xl font-bold mb-4">Events</h2>
-						<p>Design à venir...</p>
+						<h2 className="text-2xl font-bold mb-4">All Events</h2>
+						<p>Affichage de tous les events ici.</p>
+					</motion.div>
+				);
+			case 'participants':
+				return (
+					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+						<h2 className="text-2xl font-bold mb-4">Participants</h2>
+						<p>Liste des participants ici.</p>
 					</motion.div>
 				);
 			case 'comments':

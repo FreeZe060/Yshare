@@ -219,7 +219,7 @@ const ReportSection = () => {
                                                     onClick={() => setOpenReplies(prev => ({ ...prev, [report.id]: !prev[report.id] }))}
                                                     className="text-blue-600 hover:underline"
                                                 >
-                                                    {report.messages?.length || 0} réponse{(report.messages?.length || 0) > 1 ? 's' : ''}
+                                                    {report.messageCount || 0} réponse{(report.messageCount || 0) > 1 ? 's' : ''}
                                                 </button>
                                             </td>
                                             <td className={`px-4 py-3 font-medium ${report.status === 'Validé' ? 'text-green-600' : 'text-yellow-600'}`}>{report.status}</td>
