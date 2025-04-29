@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../config/authHeader';
 
@@ -6,20 +6,32 @@ const Sidebar = ({ active, setActive }) => {
 	const { user } = useAuth();
 	const [version, setVersion] = useState("");
 	const [openSubMenu, setOpenSubMenu] = useState(active === 'all-events' || active === 'participants');
+	const sidebarRef = useRef(null);
 
 	const handleClick = (key, hasSub) => {
 		if (hasSub) {
-			if (active === 'events') {
-				setOpenSubMenu(prev => !prev);
-			} else {
-				setOpenSubMenu(true);
-			}
+			setOpenSubMenu(prev => key === 'events' ? !prev : true);
 		} else {
 			setActive(key);
-			setOpenSubMenu(false);
+			if (!['all-events', 'participants'].includes(key)) {
+				setOpenSubMenu(false);
+			}
 		}
 	};
 
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+				setOpenSubMenu(false);
+			}
+		};
+	
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+	
 	useEffect(() => {
 		fetch("/version.txt")
 			.then(response => response.text())
@@ -45,9 +57,9 @@ const Sidebar = ({ active, setActive }) => {
 	const isEventsSubItem = ['all-events', 'participants'].includes(active);
 
 	return (
-		<div className="bg-white shadow-xl col-span-3 md:col-span-9 lg:mt-4 md:flex flex-col md:justify-between md:items-center rounded-lg p-4">
-			<div className="md:flex md:justify-between">
-				<div className="flex md:flex-col">
+		<div ref={sidebarRef} className="bg-white shadow-xl col-span-3 md:col-span-9 lg:mt-4 md:flex flex-col md:justify-between md:items-center rounded-lg p-4">
+			<div className="md:flex md:justify-between md:w-full">
+				<div className="flex flex-col">
 					<h1 className="font-bold md:text-lg text-3xl bg-gradient-to-br from-indigo-600 via-indigo-400 to-indigo-300 bg-clip-text text-transparent">
 						Dashboard<span className="text-indigo-500">.</span>
 					</h1>
@@ -55,7 +67,7 @@ const Sidebar = ({ active, setActive }) => {
 				</div>
 				<Link
 					to={`/profile/${user?.id}`}
-					className="flex flex-col md:flex-col items-center justify-center mb-5 md:mb-0 space-y-2 md:space-y-2 hover:bg-indigo-50 group transition duration-150 ease-linear rounded-lg w-full py-3 px-2"
+					className="flex flex-col md:flex-col items-center justify-center mb-5 md:mb-0 space-y-2 md:space-y-2 hover:bg-indigo-50 group transition duration-150 ease-linear rounded-lg w-full pb-[0.75rem] px-2"
 				>
 					<img
 						className="rounded-full w-16 h-16 object-cover"
@@ -73,7 +85,7 @@ const Sidebar = ({ active, setActive }) => {
 
 			<hr className="my-2 border-gray-200" />
 
-			<div className="flex flex-col md:flex-row md:gap-2 md:justify-start space-y-2 my-5 xs:overflow-x-auto xs:whitespace-nowrap">
+			<div className="flex flex-col md:flex-row md:gap-2 md:justify-start md:items-end md:w-full space-y-2 my-5 xs:overflow-x-auto xs:whitespace-nowrap">
 				{navItems.map(({ key, icon, label, desc, hasSub }) => {
 					const isActive = active === key;
 					return (
@@ -84,12 +96,27 @@ const Sidebar = ({ active, setActive }) => {
 									}`}
 							>
 								<div className="flex flex-row md:flex-col items-center gap-4">
-									<i className={`fa-regular ${icon} text-2xl md:text-xl ${key === 'events' && isEventsSubItem ? 'text-indigo-500' :
-											active === key ? 'text-indigo-500' : 'text-black'
-										} group-hover:text-indigo-500`} />
+									{key === 'dashboard' ? (
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className={`w-6 h-6 ${isActive ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-400`}
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+											/>
+										</svg>
+									) : (
+										<i className={`fa-regular ${icon} text-2xl md:text-xl ${isActive || (key === 'events' && isEventsSubItem) ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-500`} />
+									)}
 									<div className="text-left md:text-center">
 										<p className={`font-bold text-lg md:text-base ${key === 'events' && isEventsSubItem ? 'text-indigo-500' :
-												active === key ? 'text-indigo-500' : 'text-gray-800'
+											active === key ? 'text-indigo-500' : 'text-gray-800'
 											} group-hover:text-indigo-500`}>
 											{label}
 										</p>

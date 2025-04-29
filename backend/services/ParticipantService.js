@@ -3,17 +3,33 @@ const { Event, Category, Participant, User, EventImage } = require('../models');
 class ParticipantService {
     async getAllParticipantsWithUserInfo() {
         try {
-            const participants = await Participant.findAll({
-                include: [{
+          const participants = await Participant.findAll({
+            include: [
+              {
                 model: User,
-                attributes: ['name', 'email']
-                }]
-            });
-            return participants;
+                attributes: ['name', 'lastname', 'email']
+              },
+              {
+                model: Event,
+                attributes: ['title']
+              }
+            ],
+            order: [['joined_at', 'DESC']]
+          });
+      
+          return participants.map(p => ({
+            id: p.id,
+            name: p.User.name,
+            lastname: p.User.lastname,
+            email: p.User.email,
+            eventTitle: p.Event?.title || 'Événement supprimé',
+            status: p.status,
+            joinedAt: p.joined_at
+          }));
         } catch (error) {
-            throw new Error("Erreur lors de la récupération des participants : " + error.message);
+          throw new Error("Erreur lors de la récupération des participants : " + error.message);
         }
-    }
+    }      
     
     async getParticipantsByEventId(eventId) {
         try {
@@ -91,7 +107,8 @@ class ParticipantService {
             await Participant.create({
                 id_event: eventId,
                 id_user: userId,
-                status: 'En Attente'
+                status: 'En Attente',
+                joined_at: new Date()
             });
             return { message: "Demande d'inscription envoyée." };
         } catch (error) {

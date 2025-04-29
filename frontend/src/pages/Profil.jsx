@@ -7,6 +7,7 @@ import { getCreatedEventsStats } from '../services/eventService';
 import { getEventHistory, getParticipationCount} from '../services/userService';
 import useUpdateProfile from '../hooks/User/useUpdateProfile';
 import { getAllFavoris } from '../services/favorisService';
+import { useUserComments } from '../hooks/Comments/useUserComments';
 import { getUserAverageRating } from '../services/ratingService';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
@@ -22,8 +23,8 @@ const Profil = () => {
     const { favoris, loading: favorisLoading } = useFavoris();
     const { update, loading: updateLoading, error: updateError } = useUpdateProfile();
     
-
     const { user: currentUser } = useAuth();
+    const { commentsData, loading: commentsLoading } = useUserComments(userId, currentUser?.token);
 
     console.log("userId param:", userId);
     console.log("currentUser:", currentUser);
@@ -86,7 +87,6 @@ const Profil = () => {
         }
     };
 
-    // if (loading) return <div className="text-center text-2xl">Chargement...</div>;
     if (error) return <div className="text-center text-red-500">Erreur : {error}</div>;
     if (!profile) return null;
 
@@ -94,24 +94,14 @@ const Profil = () => {
         <>
             <Header />
 
-            {/* <section class="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
-                <div class="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
-                    <h1 class="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Profile</h1>
-                    <ul class="inline-flex items-center gap-[10px] font-medium text-[16px]">
-                        <li class="opacity-80"><a class="hover:text-etBlue">Home</a></li>
-                        <li><i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-angle-right"></i></li>
-                        <li class="current-page">Profile</li>
-                    </ul>
-                </div>
-            </section> */}
-
             <section className="container mx-auto space-y-12 pt-[100px] lg:pt-[190px] sm:pt-[160px]">
                 <ProfileCard 
                     user={{
                         ...profile,
                         rating: stats.rating ?? 0,
                         eventsParticipated: stats.participated,
-                        eventsCreated: stats.created
+                        eventsCreated: stats.created,
+                        commentsPosted: commentsData?.totalComments ?? 0
                     }} 
                     editable={isOwner} 
                     onUpdateProfileImage={handleUpdateProfileImage}

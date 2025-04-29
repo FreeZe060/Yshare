@@ -109,6 +109,7 @@ router.get('/events/:eventId/comments', commentController.getCommentsWithReplies
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
 router.put('/comments/:commentId', authenticateToken, commentController.updateComment);
+router.get('/users/:userId/comments', commentController.getUserComments);
 router.delete('/comments/:commentId', authenticateToken, commentController.deleteComment);
 
 //////// CATEGORIE ROUTES ////////

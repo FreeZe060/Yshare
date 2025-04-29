@@ -244,6 +244,8 @@ exports.getPublicProfile = async (req, res) => {
             name: user.name,
             lastname: user.lastname,
             profileImage: user.profileImage,
+            bio: user.bio,
+            bannerImage: user.bannerImage,
         });
     } catch (error) {
         console.error("[getPublicProfile] Erreur serveur :", error);

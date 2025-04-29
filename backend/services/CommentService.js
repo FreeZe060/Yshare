@@ -1,4 +1,4 @@
-const { Comment } = require('../models');
+const { Comment, Event } = require('../models');
 
 class CommentService {
     async getTopLevelComments(eventId) {
@@ -61,6 +61,27 @@ class CommentService {
             return comment;
         } catch (error) {
             throw new Error("Erreur lors de la mise à jour du commentaire : " + error.message);
+        }
+    }
+
+    async getCommentsByUser(userId) {
+        try {
+            const comments = await Comment.findAll({
+                where: { id_user: userId },
+                include: [
+                    {
+                        model: Event,
+                        attributes: ['id', 'title'], 
+                    }
+                ],
+                order: [['date_posted', 'DESC']]
+            });
+    
+            const totalComments = comments.length;
+    
+            return { comments, totalComments };
+        } catch (error) {
+            throw new Error("Erreur lors de la récupération des commentaires de l'utilisateur : " + error.message);
         }
     }
 

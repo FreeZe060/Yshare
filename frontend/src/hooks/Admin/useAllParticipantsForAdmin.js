@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAllParticipantsForAdmin } from "../services/participantService";
+import { getAllParticipantsForAdmin } from "../../services/participantService";
 
 function useAllParticipantsForAdmin() {
 	const [participants, setParticipants] = useState([]);
