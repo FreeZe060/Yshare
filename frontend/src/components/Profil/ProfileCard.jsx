@@ -20,7 +20,7 @@ const calculateProfileCompletion = (user) => {
 	return score;
 };
 
-const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
+const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSections }) => {
 	const auth = useAuth();
 	const currentUser = auth?.user;
 	const isAdmin = auth?.isAdmin;
@@ -289,13 +289,13 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 									</>
 								)}
 
-								<div className="flex justify-center mt-8">
+								<div className="flex justify-center mt-8 w-full">
 									{['name', 'lastname'].map((field) =>
 										editable ? (
 											<input
 												type="text"
 												defaultValue={user[field]}
-												className="text-4xl font-serif font-bold text-center outline-none px-0 w-fit"
+												className="text-4xl font-serif font-bold outline-none px-0 w-fit"
 												onBlur={(e) => handleFieldChange(field, e.target.value)}
 												style={{ width: `${user[field]?.length + 1}ch` }}
 											/>
@@ -367,26 +367,26 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 															/>
 
 															<div className="mt-2 text-sm">
-																<span className={`font-medium ${editedBio.length < 30 || editedBio.length > 500 ? 'text-red-500' : 'text-green-600'}`}>
-																	{editedBio.length} / 500 caractères
+																<span className={`font-medium ${editedBio.length < 30 || editedBio.length > 1000 ? 'text-red-500' : 'text-green-600'}`}>
+																	{editedBio.length} / 1000 caractères
 																</span>
 																{editedBio.length < 30 && (
 																	<p className="text-red-500 text-sm mt-1">Minimum 30 caractères requis</p>
 																)}
-																{editedBio.length > 500 && (
-																	<p className="text-red-500 text-sm mt-1">Maximum 500 caractères autorisés</p>
+																{editedBio.length > 1000 && (
+																	<p className="text-red-500 text-sm mt-1">Maximum 1000 caractères autorisés</p>
 																)}
 															</div>
 
 															<div className="mt-4 flex gap-4">
 																<button
 																	onClick={() => {
-																		if (editedBio.length >= 30 && editedBio.length <= 500) {
+																		if (editedBio.length >= 30 && editedBio.length <= 1000) {
 																			handleSaveBio();
 																		}
 																	}}
-																	disabled={editedBio.length < 30 || editedBio.length > 500}
-																	className={`px-6 py-2 rounded-xl transition ${editedBio.length >= 30 && editedBio.length <= 500
+																	disabled={editedBio.length < 30 || editedBio.length > 1000}
+																	className={`px-6 py-2 rounded-xl transition ${editedBio.length >= 30 && editedBio.length <= 1000
 																		? 'bg-blue-600 text-white hover:bg-blue-700'
 																		: 'bg-gray-300 text-gray-500 cursor-not-allowed'
 																		}`}
@@ -406,67 +406,69 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 														</motion.div>
 													) : (
 														<div className="relative">
-															<motion.div
-																initial={false}
-																animate={{ height: showFullBio ? 'auto' : 120 }}
-																transition={{ duration: 0.4, ease: 'easeInOut' }}
-																className="overflow-hidden relative"
-															>
-																<p
-																	className="text-lg text-blueGray-600 leading-relaxed whitespace-pre-wrap px-2 inline-block cursor-default text-left w-full"
+															<div className="mx-auto max-w-xl">
+																<motion.div
+																	initial={false}
+																	animate={{ height: showFullBio ? 'auto' : 120 }}
+																	transition={{ duration: 0.4, ease: 'easeInOut' }}
+																	className="overflow-hidden relative"
+																>
+																	<p
+																		className="text-lg text-start text-blueGray-600 leading-relaxed whitespace-pre-wrap px-2 inline-block cursor-default w-full"
+																		onClick={() => setEditingBio(true)}
+																	>
+																		{user.bio || (
+																			<span className="italic text-blueGray-400">
+																				Cliquez ici pour ajouter une bio à votre profil.
+																			</span>
+																		)}
+																	</p>
+																</motion.div>
+																{user.bio && user.bio.split(' ').length > 30 && (
+																	<button
+																		className="mt-2 text-sm text-blue-500 font-medium"
+																		onClick={() => setShowFullBio(!showFullBio)}
+																	>
+																		{showFullBio ? 'Voir moins' : 'Voir plus'}
+																	</button>
+																)}
+
+																<motion.div
+																	whileHover={{ scale: 1.05 }}
+																	className="absolute top-0 right-0 cursor-pointer"
 																	onClick={() => setEditingBio(true)}
 																>
-																	{user.bio || (
-																		<span className="italic text-blueGray-400">
-																			Cliquez ici pour ajouter une bio à votre profil.
-																		</span>
-																	)}
-																</p>
-															</motion.div>
-															{user.bio && user.bio.split(' ').length > 40 && (
-																<button
-																	className="mt-2 text-sm text-blue-500 font-medium"
-																	onClick={() => setShowFullBio(!showFullBio)}
-																>
-																	{showFullBio ? 'Voir moins' : 'Voir plus'}
-																</button>
-															)}
-
-															<motion.div
-																whileHover={{ scale: 1.05 }}
-																className="absolute top-0 right-0 cursor-pointer"
-																onClick={() => setEditingBio(true)}
-															>
-																<span className="text-sm text-blue-500 italic">Modifier</span>
-															</motion.div>
+																	<span className="text-sm text-blue-500 italic">Modifier</span>
+																</motion.div>
+															</div>
 														</div>
 													)}
 												</div>
 											) : (
-												<motion.div
-													initial={false}
-													animate={{ height: showFullBio ? 'auto' : 120 }}
-													transition={{ duration: 0.4, ease: 'easeInOut' }}
-													className="overflow-hidden relative"
-												>
-													<p className="text-lg text-blueGray-600 leading-relaxed whitespace-pre-wrap px-2 inline-block w-full">
-														{user.bio || (
-															<span className="italic text-blueGray-400">
-																Cet utilisateur n’a pas encore ajouté de bio.
-															</span>
-														)}
-													</p>
-													{user.bio && user.bio.split(' ').length > 40 && (
-														<div className="text-center mt-2">
-															<button
-																className="text-sm text-blue-500 font-medium"
-																onClick={() => setShowFullBio(!showFullBio)}
-															>
-																{showFullBio ? 'Voir moins' : 'Voir plus'}
-															</button>
-														</div>
+												<div className="mx-auto max-w-xl">
+													<motion.div
+														initial={false}
+														animate={{ height: showFullBio ? 'auto' : 120 }}
+														transition={{ duration: 0.4, ease: 'easeInOut' }}
+														className="overflow-hidden relative"
+													>
+														<p className="text-lg text-start text-blueGray-600 leading-relaxed whitespace-pre-wrap px-2 inline-block w-full">
+															{user.bio || (
+																<span className="italic text-blueGray-400">
+																	Cet utilisateur n’a pas encore ajouté de bio.
+																</span>
+															)}
+														</p>
+													</motion.div>
+													{user.bio && user.bio.split(' ').length > 30 && (
+														<button
+															className="mt-2 text-sm text-blue-500 font-medium"
+															onClick={() => setShowFullBio(!showFullBio)}
+														>
+															{showFullBio ? 'Voir moins' : 'Voir plus'}
+														</button>
 													)}
-												</motion.div>
+												</div>
 											)}
 										</motion.div>
 									</div>
@@ -474,43 +476,11 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField }) => {
 							</div>
 
 							<div className="mt-10 pb-[2.5rem] border-t border-blueGray-200 text-center">
-								
-								<div className="flex flex-wrap justify-center">
-									<div className="w-full lg:w-9/12 px-4">
-										<motion.div
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											transition={{ duration: 0.5 }}
-											className="mt-10 px-6 text-center"
-										>
-											<h3 className="text-3xl font-semibold mb-4 text-blueGray-700">Mes événements favoris</h3>
-										</motion.div>
-									</div>
-								</div>		
-								<div className="w-full lg:w-9/12 px-4">
-									<motion.div
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										transition={{ duration: 0.5 }}
-										className="mt-10 px-6 text-center"
-									>
-										<h3 className="text-3xl font-semibold mb-4 text-blueGray-700">Mes événements à venir</h3>
-									</motion.div>
-								</div>
-
-								<div className="flex flex-wrap justify-center">
-									<div className="w-full lg:w-9/12 px-4">
-										<motion.div
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											transition={{ duration: 0.5 }}
-											className="mt-10 px-6 text-center"
-										>
-											<h3 className="text-3xl font-semibold mb-4 text-blueGray-700">Mes événements créés</h3>
-										</motion.div>
-									</div>
+								<div className="mt-10 space-y-10">
+									{extraSections}
 								</div>
 							</div>
+
 						</div>
 					</div>
 				</div>

@@ -43,7 +43,7 @@ function useProfile(userId = null) {
     }
   }, [userId, currentUser, authLoading]);
 
-  return { profile, accessLevel, loading, error };
+  return { profile, setProfile, accessLevel, loading, error };
 }
 
 export default useProfile;
