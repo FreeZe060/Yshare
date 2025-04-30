@@ -18,7 +18,7 @@ import Header from '../components/Header';
 
 const Profil = () => {
     const { userId } = useParams();
-    const { profile, accessLevel, loading, error, setProfile } = useProfile(userId);
+    const { profile, accessLevel, isOwner, isAdmin, loading, error, setProfile } = useProfile(userId);
     const [participatedEvents, setParticipatedEvents] = useState([]);
     const [createdEvents, setCreatedEvents] = useState([]);
     const [stats, setStats] = useState({ created: 0, participated: 0 });
@@ -44,10 +44,8 @@ const Profil = () => {
         </motion.div>
     );
 
-    const isOwner = accessLevel === 'private';
-
     useEffect(() => {
-        if (!userId) return;
+        if (!userId || !currentUser?.token) return;
 
         const fetchData = async () => {
             try {
@@ -59,8 +57,8 @@ const Profil = () => {
 
                 setCreatedEvents(createdStats.events.slice(0, 5));
 
-                if (isOwner) {
-                    const history = await getEventHistory(currentUser?.token, currentUser?.id);
+                if (isOwner || isAdmin) {
+                    const history = await getEventHistory(currentUser.token, userId);
                     setParticipatedEvents(history.slice(0, 5));
                 }
 
@@ -75,7 +73,7 @@ const Profil = () => {
         };
 
         fetchData();
-    }, [userId, isOwner, currentUser?.token]);
+    }, [userId, currentUser?.token, isOwner, isAdmin]);
 
     console.log("STATS →", stats);
 
@@ -112,6 +110,8 @@ const Profil = () => {
     if (error) return <div className="text-center text-red-500">Erreur : {error}</div>;
     if (!profile) return <SkeletonProfileCard />;
 
+    const shouldShowGlobalNoActivityMessage = isAdmin && !isOwner && stats.created === 0 && stats.participated === 0;
+
     return (
         <>
             <Header />
@@ -130,33 +130,57 @@ const Profil = () => {
                     onUpdateProfileField={handleUpdateProfileField}
                     extraSections={
                         <>
-                            {isOwner && (
+                            {shouldShowGlobalNoActivityMessage && (
+                                <SectionWrapper title="Activité de l'utilisateur">
+                                    <p className="text-gray-600 text-lg">
+                                        Cet utilisateur n’a pour l’instant participé à aucun événement ni créé d’événement.
+                                    </p>
+                                </SectionWrapper>
+                            )}
+
+                            {(isOwner || isAdmin) && !shouldShowGlobalNoActivityMessage && (
                                 <SectionWrapper title="Événements Participés">
                                     <EventsSection
                                         events={participatedEvents}
-                                        emptyMessage="Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
-                                        buttonLink="/allevents"
-                                        emptyButtonText="Voir tous les événements"
+                                        emptyMessage={
+                                            stats.participated === 0
+                                                ? isOwner
+                                                    ? "Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
+                                                    : "Cet utilisateur n’a pour l’instant participé à aucun événement."
+                                                : null
+                                        }
+                                        {...(isOwner && stats.participated === 0 && {
+                                            buttonLink: "/allevents",
+                                            emptyButtonText: "Voir tous les événements"
+                                        })}
                                         {...(participatedEvents.length > 0 && {
-                                            linkText: "Voir tous l’historique"
+                                            linkText: "Voir tout l’historique"
                                         })}
                                     />
                                 </SectionWrapper>
                             )}
 
-                            <SectionWrapper title="Événements Créés">
-                                <EventsSection
-                                    linkText={createdEvents.length > 0 ? "Voir tous l’historique" : undefined}
-                                    events={createdEvents}
-                                    emptyMessage={
-                                        isOwner
-                                            ? "Vous n'avez pas encore créé d'événement."
-                                            : "Cet utilisateur n'a pas encore créé d'événement."
-                                    }
-                                    buttonLink={isOwner ? "/createevent" : undefined}
-                                    emptyButtonText={isOwner ? "Créer un événement" : undefined}
-                                />
-                            </SectionWrapper>
+                            {(stats.created > 0 || isOwner || (isAdmin && !shouldShowGlobalNoActivityMessage)) && (
+                                <SectionWrapper title="Événements Créés">
+                                    <EventsSection
+                                        events={createdEvents}
+                                        emptyMessage={
+                                            stats.created === 0
+                                                ? isOwner
+                                                    ? "Vous n'avez pas encore créé d'événement."
+                                                    : isAdmin && !isOwner
+                                                        ? "Cet utilisateur n’a pour l’instant créé aucun événement."
+                                                        : "Cet utilisateur n'a pas encore créé d'événement."
+                                                : null
+                                        }
+                                        buttonLink={isOwner ? "/createevent" : undefined}
+                                        emptyButtonText={isOwner ? "Créer un événement" : undefined}
+                                        {...(createdEvents.length > 0 && {
+                                            linkText: "Voir tout l’historique"
+                                        })}
+                                    />
+                                </SectionWrapper>
+                            )}
 
                             {isOwner && (
                                 <SectionWrapper title="Favoris">

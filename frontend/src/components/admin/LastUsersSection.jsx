@@ -177,11 +177,13 @@ const LastUsersSection = ({ showAll = false }) => {
 								>
 									<td className="py-3 px-2 font-bold text-gray-800">
 										<div className="inline-flex space-x-3 items-center">
-											<img
-												className="rounded-full w-8 h-8 object-cover"
-												src={`http://localhost:8080${user.profileImage || '/default-avatar.png'}`}
-												alt={`${user.name}`}
-											/>
+											<Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`}>
+												<img
+													className="rounded-full w-8 h-8 object-cover hover:scale-105 transition duration-200"
+													src={`http://localhost:8080${user.profileImage || '/default-avatar.png'}`}
+													alt={`${user.name}`}
+												/>
+											</Link>
 											<span>{user.name} {user.lastname}</span>
 										</div>
 									</td>

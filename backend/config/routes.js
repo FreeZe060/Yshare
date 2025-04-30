@@ -94,14 +94,14 @@ router.put('/reports/:reportId/status', authenticateToken, reportController.upda
 
 //////// PARTICIPANT ROUTES ////////
 
-router.get('/users/:userId/events', authenticateToken, userController.getUserEventsAdmin);
+router.get('/users/:userId/events', authenticateToken, UserOrAdmin, userController.getUserEventsAdmin);
 router.get('/events/:eventId/participants', participantController.AllParticipant);
 router.get('/users/:userId/participation-count', participantController.getParticipationCountPublic);
 router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
-router.get('/events/:eventId/participants/:index', authenticateToken, participantController.getParticipant);
+router.get('/events/:eventId/participants/user/:userId', authenticateToken, participantController.getParticipantByUserAndEvent);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
-router.put('/events/:eventId/participants/:index', authenticateToken, participantController.updateParticipantStatus);
-router.delete('/events/:eventId/participants/:index', authenticateToken, participantController.removeParticipant);
+router.put('/events/:eventId/participants/:id', authenticateToken, participantController.updateParticipantStatus);
+router.delete('/events/:eventId/participants/:userId', authenticateToken, participantController.removeParticipant);
 
 //////// COMMENT ROUTES ////////
 

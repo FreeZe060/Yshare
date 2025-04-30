@@ -78,9 +78,6 @@ Report.belongsTo(Event, { foreignKey: 'id_event', as: 'event' });
 Comment.hasMany(Report, { foreignKey: 'id_comment', as: 'commentReports' });
 Report.belongsTo(Comment, { foreignKey: 'id_comment', as: 'comment' });
 
-// User.hasMany(Report, { foreignKey: 'id_user', as: 'userReports' });
-// Report.belongsTo(User, { foreignKey: 'id_user', as: 'user'Reports' });
-
 module.exports = {
   sequelize,
   User,

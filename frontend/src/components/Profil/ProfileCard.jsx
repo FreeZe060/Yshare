@@ -452,7 +452,10 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 														transition={{ duration: 0.4, ease: 'easeInOut' }}
 														className="overflow-hidden relative"
 													>
-														<p className="text-lg text-start text-blueGray-600 leading-relaxed whitespace-pre-wrap px-2 inline-block w-full">
+														<p
+															className={`text-lg leading-relaxed whitespace-pre-wrap px-2 inline-block w-full text-blueGray-600 ${user.bio ? 'text-start' : 'text-center'
+																}`}
+														>
 															{user.bio || (
 																<span className="italic text-blueGray-400">
 																	Cet utilisateur n’a pas encore ajouté de bio.

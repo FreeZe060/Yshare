@@ -1,49 +1,53 @@
-const { Event, Category, Participant, User, EventImage } = require('../models'); 
+const { Event, Category, Participant, User, EventImage } = require('../models');
 
 class ParticipantService {
     async getAllParticipantsWithUserInfo() {
         try {
-          const participants = await Participant.findAll({
-            include: [
-              {
-                model: User,
-                attributes: ['name', 'lastname', 'email']
-              },
-              {
-                model: Event,
-                attributes: ['title']
-              }
-            ],
-            order: [['joined_at', 'DESC']]
-          });
-      
-          return participants.map(p => ({
-            id: p.id,
-            name: p.User.name,
-            lastname: p.User.lastname,
-            email: p.User.email,
-            eventTitle: p.Event?.title || 'Événement supprimé',
-            status: p.status,
-            joinedAt: p.joined_at
-          }));
+            const participants = await Participant.findAll({
+                include: [
+                    {
+                        model: User,
+                        attributes: ['id', 'name', 'lastname', 'email', 'profileImage']
+                    },
+                    {
+                        model: Event,
+                        attributes: ['id', 'title']
+                    }
+                ],
+                order: [['joined_at', 'DESC']]
+            });
+
+            return participants.map(p => ({
+                id: p.id,
+                userId: p.User.id,
+                name: p.User.name,
+                lastname: p.User.lastname,
+                email: p.User.email,
+                profileImage: p.User.profileImage,
+                eventId: p.Event?.id,
+                eventTitle: p.Event?.title || 'Événement supprimé',
+                status: p.status,
+                joinedAt: p.joined_at
+            }));
         } catch (error) {
-          throw new Error("Erreur lors de la récupération des participants : " + error.message);
+            throw new Error("Erreur lors de la récupération des participants : " + error.message);
         }
-    }      
-    
+    }
+
+
     async getParticipantsByEventId(eventId) {
         try {
-          const participants = await Participant.findAll({
-            where: { id_event: eventId, status: 'Inscrit' },
-            include: [{
-              model: User,
-              attributes: ['id', 'name', 'profile_image']
-            }],
-            order: [['id', 'ASC']]
-          });
-          return participants;
+            const participants = await Participant.findAll({
+                where: { id_event: eventId, status: 'Inscrit' },
+                include: [{
+                    model: User,
+                    attributes: ['id', 'name', 'profile_image']
+                }],
+                order: [['id', 'ASC']]
+            });
+            return participants;
         } catch (error) {
-          throw new Error("Erreur lors de la récupération des participants : " + error.message);
+            throw new Error("Erreur lors de la récupération des participants : " + error.message);
         }
     }
 
@@ -61,23 +65,23 @@ class ParticipantService {
         } catch (error) {
             throw new Error("Erreur lors de la récupération des participants : " + error.message);
         }
-    }    
+    }
 
     async getParticipantByUserAndEvent(id_event, id_user) {
         try {
             const participant = await Participant.findOne({
                 where: {
-                id_event,
-                id_user,
-                status: 'Inscrit'
+                    id_event,
+                    id_user,
+                    status: 'Inscrit'
                 }
             });
             return participant;
         } catch (error) {
             throw new Error("Erreur lors de la récupération du participant : " + error.message);
         }
-    }  
-    
+    }
+
     async getParticipantByIndexForEvent(eventId, index) {
         try {
             const offset = parseInt(index) - 1;
@@ -86,8 +90,8 @@ class ParticipantService {
                 order: [['id', 'ASC']],
                 offset: offset,
                 include: [{
-                model: User,
-                attributes: ['id', 'name', 'email', 'lastname']
+                    model: User,
+                    attributes: ['id', 'name', 'email', 'lastname']
                 }]
             });
             return participant;
@@ -95,7 +99,7 @@ class ParticipantService {
             throw new Error("Erreur lors de la récupération du participant : " + error.message);
         }
     }
-    
+
     async addParticipant(eventId, userId) {
         try {
             const existing = await Participant.findOne({
@@ -115,64 +119,68 @@ class ParticipantService {
             throw new Error("Erreur lors de l'inscription : " + error.message);
         }
     }
-    
+
     async getUserEventHistory(userId) {
         const participants = await Participant.findAll({
-          where: { id_user: userId },
-          include: [{
-            model: Event,
+            where: { id_user: userId },
             include: [{
-              model: EventImage,
-              as: 'EventImages',
-              where: { is_main: true },
-              required: false
+                model: Event,
+                include: [{
+                    model: EventImage,
+                    as: 'EventImages',
+                    where: { is_main: true },
+                    required: false
+                }]
             }]
-          }]
         });
-      
+
         return participants.map(p => {
             const event = p.Event?.get({ plain: true }) || {};
-            const { EventImages, ...rest } = event; 
+            const { EventImages, ...rest } = event;
             return {
-              ...rest,
-              status: p.status,
-              image: EventImages?.[0]?.image_url || null
+                ...rest,
+                status: p.status,
+                image: EventImages?.[0]?.image_url || null
             };
         });
-    }         
+    }
 
     async getParticipationCount(userId) {
         try {
-          const count = await Participant.count({
-            where: {
-              id_user: userId,
-              status: 'Inscrit'
-            }
-          });
-          return count;
+            const count = await Participant.count({
+                where: {
+                    id_user: userId,
+                    status: 'Inscrit'
+                }
+            });
+            return count;
         } catch (error) {
-          throw new Error("Erreur lors du comptage des participations : " + error.message);
+            throw new Error("Erreur lors du comptage des participations : " + error.message);
         }
     }
-    
-    async updateParticipantStatus(eventId, userId, status) {
+
+    async updateParticipantStatusById(participantId, status) {
         try {
-            if (!["Inscrit", "Refusé"].includes(status)) {
+            const validStatuses = ["Inscrit", "Refusé", "Annulé", "En Attente"];
+            if (!validStatuses.includes(status)) {
                 throw new Error("Statut invalide.");
             }
-            const [updatedCount] = await Participant.update(
-                { status },
-                { where: { id_event: eventId, id_user: userId } }
-            );
-            if (updatedCount === 0) {
-                throw new Error("Aucune mise à jour effectuée.");
+    
+            const participant = await Participant.findByPk(participantId);
+            if (!participant) {
+                throw new Error("Participant introuvable.");
             }
-            return { message: `Le participant a été ${status.toLowerCase()}.` };
+    
+            await participant.update({ status });
+            return {
+                message: `Le statut du participant a été mis à jour en "${status}".`,
+                participant
+            };
         } catch (error) {
             throw new Error("Erreur lors de la mise à jour du participant : " + error.message);
         }
-    }
-    
+    }    
+
     async removeParticipant(eventId, userId, organizerId, userRole) {
         try {
             const deletedCount = await Participant.destroy({

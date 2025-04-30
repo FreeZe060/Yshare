@@ -10,8 +10,6 @@ export default function useLogin() {
 		setError(null);
 		try {
 			const result = await loginUser({ email, password });
-
-			// Pas besoin de stocker le token car il est en httpOnly cookie
 			return result;
 		} catch (err) {
 			setError(err.message || "Erreur lors de la connexion");

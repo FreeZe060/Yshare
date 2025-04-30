@@ -1,27 +1,43 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import useAllParticipantsForAdmin from '../../hooks/Admin/useAllParticipantsForAdmin';
+import useUpdateParticipantStatus from '../../hooks/Participant/useUpdateParticipantStatus';
+import { useAuth } from '../../config/authHeader';
+
+const getStatusColor = (status) => {
+	const normalized = status.toLowerCase();
+	if (normalized === 'inscrit') return 'text-green-600';
+	if (normalized === 'en attente') return 'text-orange-500';
+	if (normalized === 'refusé') return 'text-red-500';
+	return 'text-gray-600';
+};
 
 const sortIcon = (direction) => (
 	direction === 'asc'
-		? <i className="fas fa-sort-up text-gray-500" />
-		: <i className="fas fa-sort-down text-gray-500" />
+		? <i className="fas fa-sort-up text-gray-800" />
+		: <i className="fas fa-sort-down text-gray-800" />
 );
 
 const ParticipantSection = () => {
-	const { participants, loading, error } = useAllParticipantsForAdmin();
+	const { participants, loading, error, refetch } = useAllParticipantsForAdmin();
 	const [sortField, setSortField] = useState(null);
 	const [sortDirection, setSortDirection] = useState('asc');
 	const [currentPage, setCurrentPage] = useState(1);
 	const participantsPerPage = 8;
 	const [statusFilter, setStatusFilter] = useState('Tous');
+	const { updateStatus, loading: updating, error: updateError } = useUpdateParticipantStatus();
 	const theadRef = useRef();
+	const navigate = useNavigate();
+	const { user } = useAuth();
 
 	useEffect(() => {
-		document.addEventListener('mousedown', (e) => {
+		const handleClickOutside = (e) => {
 			if (theadRef.current && !theadRef.current.contains(e.target)) setSortField(null);
-		});
-		return () => document.removeEventListener('mousedown', () => {});
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
 	}, []);
 
 	const handleSort = (field) => {
@@ -30,6 +46,44 @@ const ParticipantSection = () => {
 		} else {
 			setSortField(field);
 			setSortDirection('asc');
+		}
+	};
+
+	const handleStatusUpdate = async (participant) => {
+		const options = {
+			"En Attente": ["Inscrit", "Refusé"],
+			"Inscrit": ["En Attente", "Refusé"],
+			"Refusé": ["En Attente", "Inscrit"]
+		};
+
+		const choices = options[participant.status] || [];
+
+		const result = await Swal.fire({
+			title: "Mettre à jour le statut",
+			text: "Choisissez un nouveau statut.",
+			icon: "question",
+			showCancelButton: true,
+			showDenyButton: true,
+			confirmButtonText: choices[0],
+			denyButtonText: choices[1],
+			cancelButtonText: "Annuler",
+			reverseButtons: true,
+		});
+
+		let newStatus = null;
+		if (result.isConfirmed) newStatus = choices[0];
+		else if (result.isDenied) newStatus = choices[1];
+
+		if (newStatus) {
+			console.log("Updating participant:", participant.id, "to status:", newStatus);
+			try {
+				await updateStatus(participant.eventId, participant.id, newStatus, user.token); // ✅ appel via hook
+				await refetch();
+				Swal.fire("Succès", `Le statut a été mis à jour en "${newStatus}"`, "success");
+			} catch (err) {
+				console.error("Erreur lors de la mise à jour :", err);
+				Swal.fire("Erreur", "Impossible de mettre à jour le statut.", "error");
+			}
 		}
 	};
 
@@ -80,18 +134,23 @@ const ParticipantSection = () => {
 			</div>
 
 			<div className="overflow-x-auto rounded-lg shadow-md bg-white">
-				<table className="w-full text-sm">
+				<table className="w-full text-sm text-gray-900">
 					<thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
 						<tr>
-							{['Nom', 'Événement', 'Statut', 'Date de demande'].map((field, index) => (
+							{[
+								{ label: 'Nom', key: 'name' },
+								{ label: 'Événement', key: 'eventTitle' },
+								{ label: 'Statut', key: 'status' },
+								{ label: 'Date de demande', key: 'joinedAt' }
+							].map(({ label, key }) => (
 								<th
-									key={field}
+									key={label}
 									className="py-3 px-2 cursor-pointer text-left"
-									onClick={() => handleSort(field.toLowerCase())}
+									onClick={() => handleSort(key)}
 								>
 									<span className="flex items-center gap-x-1.5">
-										{field}
-										{sortField === field.toLowerCase() && sortIcon(sortDirection)}
+										{label}
+										{sortField === key && sortIcon(sortDirection)}
 									</span>
 								</th>
 							))}
@@ -109,13 +168,27 @@ const ParticipantSection = () => {
 									transition={{ duration: 0.3 }}
 									className="border-b hover:bg-gray-50"
 								>
-									<td className="py-3 px-2">{p.name} {p.lastname}</td>
-									<td className="py-3 px-2">{p.eventTitle}</td>
-									<td className="py-3 px-2">{p.status}</td>
+									<td className="py-3 px-2 flex items-center space-x-2">
+										<img
+											src={`http://localhost:8080${p.profileImage || '/default-avatar.png'}`}
+											alt={p.name}
+											className="w-8 h-8 rounded-full object-cover cursor-pointer"
+											onClick={() => navigate(`/profile/${p.userId}`)}
+										/>
+										<span className="hover:underline cursor-pointer" onClick={() => navigate(`/profile/${p.userId}`)}>
+											{p.name} {p.lastname}
+										</span>
+									</td>
+									<td className="py-3 px-2 hover:underline cursor-pointer" onClick={() => navigate(`/event/${p.eventId}`)}>
+										{p.eventTitle}
+									</td>
+									<td className={`py-3 px-2 font-semibold ${getStatusColor(p.status)}`}>{p.status}</td>
 									<td className="py-3 px-2">{new Date(p.joinedAt).toLocaleDateString()}</td>
 									<td className="py-3 px-2 text-indigo-600">
-										<i className="fas fa-check hover:text-green-500 cursor-pointer mr-2"></i>
-										<i className="fas fa-times hover:text-red-500 cursor-pointer"></i>
+										<i
+											className="fas fa-sync-alt hover:text-yellow-600 cursor-pointer"
+											onClick={() => handleStatusUpdate(p)}
+										></i>
 									</td>
 								</motion.tr>
 							))}

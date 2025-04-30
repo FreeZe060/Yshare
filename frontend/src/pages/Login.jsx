@@ -49,7 +49,7 @@ const Login = () => {
 				showConfirmButton: false,
 				timer: 1500,
 			}).then(() => {
-				navigate('/');
+				window.location.href = '/';
 			});
 		} catch (err) {
 			Swal.fire({

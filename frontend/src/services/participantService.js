@@ -83,8 +83,8 @@ export async function addParticipant(eventId, token) {
  * Mettre à jour le statut d'un participant
  * PUT /events/:eventId/participants/:index
  */
-export async function updateParticipantStatus(eventId, index, status, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${index}`, {
+export async function updateParticipantStatus(eventId, id, status, token) {
+	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${id}`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
@@ -94,9 +94,7 @@ export async function updateParticipantStatus(eventId, index, status, token) {
 		body: JSON.stringify({ status }),
 	});
 	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la mise à jour du statut du participant");
-	}
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour du statut du participant");
 	return result;
 }
 
