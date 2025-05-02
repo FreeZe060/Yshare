@@ -197,4 +197,4 @@ export async function getParticipationCount(userId) {
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur récupération participation");																					
 	return result.participationCount;
-}									
+}

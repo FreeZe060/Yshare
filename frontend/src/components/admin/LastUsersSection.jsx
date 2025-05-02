@@ -1,68 +1,62 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Swal from 'sweetalert2';
 
 import { useAuth } from '../../config/authHeader';
 import useAllUsers from '../../hooks/Admin/useAllUsers';
 import useUpdateUserStatus from '../../hooks/Admin/useUpdateUserStatus';
 import useDeleteUser from '../../hooks/Admin/useDeleteUser';
-import { showConfirmation } from '../../utils/showConfirmation';
+import useAdminCreateUser from '../../hooks/Admin/useAdminCreateUser';
 
+import useClickOutside from '../../hooks/Utils/useClickOutside';
+import useSortedAndPaginatedData from '../../hooks/Utils/useSortedAndPaginatedData';
+
+import { showStatusSelection, showConfirmation } from '../../utils/alert';
 import RowSkeleton from '../SkeletonLoading/RowSkeleton';
+import { capitalizeFirstLetter } from '../../utils/format';
 
-const sortIcon = (direction) => {
-	return direction === 'asc'
+const sortIcon = (direction) =>
+	direction === 'asc'
 		? <i className="fas fa-sort-up text-gray-500" />
 		: <i className="fas fa-sort-down text-gray-500" />;
-};
 
 const LastUsersSection = ({ showAll = false }) => {
 	const { user: authUser } = useAuth();
 	const updateStatus = useUpdateUserStatus(authUser?.token);
 	const deleteUser = useDeleteUser(authUser?.token);
+	const { create, loading: creatingUser } = useAdminCreateUser();
 
 	const { users, loading, error, refetch: fetchUsers } = useAllUsers();
 
-	const [sortField, setSortField] = useState(null);
-	const [sortDirection, setSortDirection] = useState('asc');
-	const [currentPage, setCurrentPage] = useState(1);
-	const usersPerPage = 8;
-
 	const theadRef = useRef();
+	useClickOutside(theadRef, () => sort.setSortField(null));
 
-	const handleSort = (field) => {
-		if (sortField === field) {
-			setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-		} else {
-			setSortField(field);
-			setSortDirection('asc');
-		}
-	};
-
-	useEffect(() => {
-		const handleClickOutside = (e) => {
-			if (theadRef.current && !theadRef.current.contains(e.target)) {
-				setSortField(null);
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, []);
+	const {
+		paginatedItems,
+		sort,
+		pagination
+	} = useSortedAndPaginatedData(users || [], user => showAll || true, 8);
 
 	const handleSuspendToggle = async (user) => {
-		const newStatus = user.status === 'Suspended' ? 'Approved' : 'Suspended';
-		const action = newStatus === 'Approved' ? 'débannir' : 'suspendre';
+		const isSuspended = user.status === 'Suspended';
+		const nextStatus = isSuspended ? 'Approved' : 'Suspended';
+		const action = isSuspended ? 'débannir' : 'suspendre';
 
 		const { isConfirmed } = await showConfirmation({
 			title: `Voulez-vous ${action} ${user.name} ${user.lastname} ?`,
-			text: 'Cette action prendra effet immédiatement.',
+			text: `Cette action ${isSuspended ? 'restaurera l’accès' : 'restreindra l’accès'} à l’utilisateur.`,
 			icon: 'warning',
-			confirmText: `Oui, ${action}`,
+			confirmText: `Oui, ${action}`
 		});
 
-		if (isConfirmed) {
-			await updateStatus(user.id, newStatus);
+		if (!isConfirmed) return;
+
+		try {
+			await updateStatus(user.id, nextStatus);
 			await fetchUsers();
+		} catch (err) {
+			console.error(`❌ Erreur lors de la mise à jour du statut de ${user.name} :`, err.message);
 		}
 	};
 
@@ -75,45 +69,51 @@ const LastUsersSection = ({ showAll = false }) => {
 		});
 
 		if (isConfirmed) {
-			await deleteUser(user.id);
-			await fetchUsers();
+			try {
+				await deleteUser(user.id);
+				await fetchUsers();
+			} catch (err) {
+				console.error(`❌ Erreur lors de la suppression de ${user.name} :`, err.message);
+			}
 		}
 	};
 
-	const sortedUsers = useMemo(() => {
-		let sorted = [...(users || [])];
+	const handleCreateUser = async () => {
+		const { value: formValues } = await Swal.fire({
+			title: 'Créer un nouvel utilisateur',
+			html:
+				'<input id="swal-name" class="swal2-input" placeholder="Prénom">' +
+				'<input id="swal-lastname" class="swal2-input" placeholder="Nom">' +
+				'<input id="swal-email" class="swal2-input" placeholder="Email">' +
+				'<input id="swal-password" type="password" class="swal2-input" placeholder="Mot de passe">',
+			focusConfirm: false,
+			showCancelButton: true,
+			confirmButtonText: 'Créer',
+			cancelButtonText: 'Annuler',
+			preConfirm: () => {
+				const name = document.getElementById('swal-name').value;
+				const lastname = document.getElementById('swal-lastname').value;
+				const email = document.getElementById('swal-email').value;
+				const password = document.getElementById('swal-password').value;
 
-		if (!showAll) {
-			sorted = sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
-		}
-
-		if (sortField) {
-			sorted.sort((a, b) => {
-				let valA = a[sortField]?.toString().toLowerCase() || '';
-				let valB = b[sortField]?.toString().toLowerCase() || '';
-
-				if (sortField === 'role' || sortField === 'status') {
-					const order = sortField === 'role'
-						? ['administrateur', 'utilisateur']
-						: ['approved', 'suspended'];
-					valA = order.indexOf(valA);
-					valB = order.indexOf(valB);
+				if (!name || !lastname || !email || !password) {
+					Swal.showValidationMessage('Tous les champs sont requis');
+					return;
 				}
+				return { name, lastname, email, password };
+			}
+		});
 
-				if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-				if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-				return 0;
-			});
+		if (!formValues) return;
+
+		try {
+			await create(formValues);
+			await fetchUsers();
+			Swal.fire('Succès', 'Utilisateur créé avec succès', 'success');
+		} catch (err) {
+			Swal.fire('Erreur', err.message, 'error');
 		}
-
-		return sorted;
-	}, [users, showAll, sortField, sortDirection]);
-
-	const paginatedUsers = useMemo(() => {
-		const startIndex = (currentPage - 1) * usersPerPage;
-		const endIndex = startIndex + usersPerPage;
-		return sortedUsers.slice(startIndex, endIndex);
-	}, [sortedUsers, currentPage]);
+	};
 
 	if (loading) {
 		return (
@@ -122,16 +122,12 @@ const LastUsersSection = ({ showAll = false }) => {
 					<thead className="bg-indigo-100 text-indigo-700">
 						<tr>
 							{['Nom', 'Email', 'Rôle', 'Statut', 'Actions'].map((field, i) => (
-								<th key={i} className={`text-left py-3 px-2 ${i === 0 ? 'rounded-l-lg' : ''}`}>
-									{field}
-								</th>
+								<th key={i} className={`text-left py-3 px-2 ${i === 0 ? 'rounded-l-lg' : ''}`}>{field}</th>
 							))}
 						</tr>
 					</thead>
 					<tbody>
-						{Array.from({ length: 5 }).map((_, i) => (
-							<RowSkeleton key={i} />
-						))}
+						{Array.from({ length: 5 }).map((_, i) => <RowSkeleton key={i} />)}
 					</tbody>
 				</table>
 			</div>
@@ -141,9 +137,17 @@ const LastUsersSection = ({ showAll = false }) => {
 
 	return (
 		<div id="last-users">
-			{!showAll && (
-				<h1 className="font-bold py-4 uppercase text-gray-800">Last 5 Users</h1>
-			)}
+			{!showAll && <h1 className="font-bold py-4 uppercase text-gray-800">Derniers utilisateurs</h1>}
+
+			<div className="flex justify-end mb-4">
+				<button
+					onClick={handleCreateUser}
+					className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
+				>
+					<i className="fas fa-user-plus mr-2" />
+					Ajouter un utilisateur
+				</button>
+			</div>
 
 			<div className="overflow-x-auto rounded-lg shadow-md bg-white flex flex-col justify-between min-h-[600px]">
 				<table className="w-full whitespace-nowrap text-sm sm:text-xs">
@@ -153,11 +157,11 @@ const LastUsersSection = ({ showAll = false }) => {
 								<th
 									key={field}
 									className={`text-left py-3 px-2 cursor-pointer ${index === 0 ? 'rounded-l-lg' : ''}`}
-									onClick={() => handleSort(field)}
+									onClick={() => sort.toggleSort(field)}
 								>
 									<span className="flex items-center gap-x-1.5 capitalize">
-										{field}
-										{sortField === field && sortIcon(sortDirection)}
+										{capitalizeFirstLetter(field)}
+										{sort.sortField === field && sortIcon(sort.sortDirection)}
 									</span>
 								</th>
 							))}
@@ -166,7 +170,7 @@ const LastUsersSection = ({ showAll = false }) => {
 					</thead>
 					<tbody>
 						<AnimatePresence>
-							{paginatedUsers.map((user) => (
+							{paginatedItems.map(user => (
 								<motion.tr
 									key={user.id}
 									initial={{ opacity: 0, y: 10 }}
@@ -188,16 +192,15 @@ const LastUsersSection = ({ showAll = false }) => {
 										</div>
 									</td>
 									<td className="py-3 px-2 text-gray-600">{user.email}</td>
-									<td className="py-3 px-2 text-gray-600">{user.role}</td>
+									<td className="py-3 px-2 text-gray-600">{capitalizeFirstLetter(user.role)}</td>
 									<td className={`py-3 px-2 font-medium ${user.status === 'Approved' ? 'text-green-600' : 'text-red-500'}`}>
-										{user.status}
+										{capitalizeFirstLetter(user.status)}
 									</td>
 									<td className="py-3 px-2">
 										<div className="inline-flex items-center space-x-3 text-indigo-500 text-lg">
-											<Link to={`/profile/${user?.id}`} title="Voir profil" className="hover:text-indigo-700 transition">
+											<Link to={`/profile/${user.id}`} title="Voir profil" className="hover:text-indigo-700 transition">
 												<i className="fas fa-pen" />
 											</Link>
-
 											<button
 												onClick={() => handleSuspendToggle(user)}
 												title={user.status === 'Suspended' ? 'Débannir' : 'Suspendre'}
@@ -205,7 +208,6 @@ const LastUsersSection = ({ showAll = false }) => {
 											>
 												<i className={`fas ${user.status === 'Suspended' ? 'fa-lock-open' : 'fa-ban'}`} />
 											</button>
-
 											<button
 												onClick={() => handleDelete(user)}
 												title="Supprimer"
@@ -221,24 +223,22 @@ const LastUsersSection = ({ showAll = false }) => {
 					</tbody>
 				</table>
 
-				{sortedUsers.length > usersPerPage && (
+				{pagination.totalPages > 1 && (
 					<div className="flex justify-center items-center space-x-2 my-4">
-						{Array.from({ length: Math.ceil(sortedUsers.length / usersPerPage) }).map((_, index) => {
-							const page = index + 1;
-							const isActive = currentPage === page;
-							return (
-								<motion.button
-									key={page}
-									whileHover={{ scale: 1.1 }}
-									whileTap={{ scale: 0.95 }}
-									onClick={() => setCurrentPage(page)}
-									className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition
-										${isActive ? 'bg-blue-500 text-white border-blue-500' : 'border-blue-500 text-blue-500 hover:bg-blue-100'}`}
-								>
-									{page}
-								</motion.button>
-							);
-						})}
+						{Array.from({ length: pagination.totalPages }).map((_, i) => (
+							<motion.button
+								key={i + 1}
+								whileHover={{ scale: 1.1 }}
+								whileTap={{ scale: 0.95 }}
+								onClick={() => pagination.goToPage(i + 1)}
+								className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition
+									${pagination.page === i + 1
+										? 'bg-blue-500 text-white border-blue-500'
+										: 'border-blue-500 text-blue-500 hover:bg-blue-100'}`}
+							>
+								{i + 1}
+							</motion.button>
+						))}
 					</div>
 				)}
 			</div>

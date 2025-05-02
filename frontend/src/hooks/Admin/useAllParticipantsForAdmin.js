@@ -1,27 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getAllParticipantsForAdmin } from "../../services/participantService";
+import { useAuth } from "../../config/authHeader";
 
 function useAllParticipantsForAdmin() {
 	const [participants, setParticipants] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const { user } = useAuth();
+
+	const fetchParticipants = useCallback(async () => {
+		setLoading(true);
+		try {
+			const data = await getAllParticipantsForAdmin(user.token);
+			setParticipants(data);
+			setError(null);
+		} catch (err) {
+			setError(err.message);
+			console.error("❌ useAllParticipantsForAdmin - fetchParticipants:", err.message);
+		} finally {
+			setLoading(false);
+		}
+	}, [user.token]);
 
 	useEffect(() => {
-		const fetchParticipants = async () => {
-			setLoading(true);
-			try {
-				const data = await getAllParticipantsForAdmin();
-				setParticipants(data);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
 		fetchParticipants();
-	}, []);
+	}, [fetchParticipants]);
 
-	return { participants, loading, error };
+	return { participants, loading, error, refetch: fetchParticipants };
 }
 
 export default useAllParticipantsForAdmin;

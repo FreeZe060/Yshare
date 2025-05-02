@@ -110,7 +110,7 @@ const Profil = () => {
     if (error) return <div className="text-center text-red-500">Erreur : {error}</div>;
     if (!profile) return <SkeletonProfileCard />;
 
-    const shouldShowGlobalNoActivityMessage = isAdmin && !isOwner && stats.created === 0 && stats.participated === 0;
+    const shouldShowGlobalNoActivityMessage = isAdmin && !isOwner && createdEvents.length === 0 && participatedEvents.length === 0;
 
     return (
         <>
@@ -129,79 +129,77 @@ const Profil = () => {
                     onUpdateProfileImage={handleUpdateProfileImage}
                     onUpdateProfileField={handleUpdateProfileField}
                     extraSections={
-                        <>
-                            {shouldShowGlobalNoActivityMessage && (
-                                <SectionWrapper title="Activité de l'utilisateur">
-                                    <p className="text-gray-600 text-lg">
-                                        Cet utilisateur n’a pour l’instant participé à aucun événement ni créé d’événement.
-                                    </p>
-                                </SectionWrapper>
-                            )}
+                        shouldShowGlobalNoActivityMessage ? (
+                            <SectionWrapper title="Activité de l'utilisateur">
+                                <p className="text-gray-600 text-lg">
+                                    Cet utilisateur n’a pour l’instant participé à aucun événement ni créé d’événement.
+                                </p>
+                            </SectionWrapper>
+                        ) : (
+                            <>
+                                {(isOwner || isAdmin) && (
+                                    <SectionWrapper title="Événements Participés">
+                                        <EventsSection
+                                            events={participatedEvents}
+                                            emptyMessage={
+                                                participatedEvents.length === 0
+                                                    ? isOwner
+                                                        ? "Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
+                                                        : "Cet utilisateur n’a pour l’instant participé à aucun événement."
+                                                    : null
+                                            }
+                                            {...(isOwner && participatedEvents.length === 0 && {
+                                                buttonLink: "/allevents",
+                                                emptyButtonText: "Voir tous les événements"
+                                            })}
+                                            {...(participatedEvents.length > 0 && {
+                                                linkText: "Voir tout l’historique"
+                                            })}
+                                        />
+                                    </SectionWrapper>
+                                )}
 
-                            {(isOwner || isAdmin) && !shouldShowGlobalNoActivityMessage && (
-                                <SectionWrapper title="Événements Participés">
-                                    <EventsSection
-                                        events={participatedEvents}
-                                        emptyMessage={
-                                            stats.participated === 0
-                                                ? isOwner
-                                                    ? "Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
-                                                    : "Cet utilisateur n’a pour l’instant participé à aucun événement."
-                                                : null
-                                        }
-                                        {...(isOwner && stats.participated === 0 && {
-                                            buttonLink: "/allevents",
-                                            emptyButtonText: "Voir tous les événements"
-                                        })}
-                                        {...(participatedEvents.length > 0 && {
-                                            linkText: "Voir tout l’historique"
-                                        })}
-                                    />
-                                </SectionWrapper>
-                            )}
+                                {(stats.created > 0 || isOwner || isAdmin) && (
+                                    <SectionWrapper title="Événements Créés">
+                                        <EventsSection
+                                            events={createdEvents}
+                                            emptyMessage={
+                                                stats.created === 0
+                                                    ? isOwner
+                                                        ? "Vous n'avez pas encore créé d'événement."
+                                                        : "Cet utilisateur n’a pour l’instant créé aucun événement."
+                                                    : null
+                                            }
+                                            buttonLink={isOwner ? "/createevent" : undefined}
+                                            emptyButtonText={isOwner ? "Créer un événement" : undefined}
+                                            {...(createdEvents.length > 0 && {
+                                                linkText: "Voir tout l’historique"
+                                            })}
+                                        />
+                                    </SectionWrapper>
+                                )}
 
-                            {(stats.created > 0 || isOwner || (isAdmin && !shouldShowGlobalNoActivityMessage)) && (
-                                <SectionWrapper title="Événements Créés">
-                                    <EventsSection
-                                        events={createdEvents}
-                                        emptyMessage={
-                                            stats.created === 0
-                                                ? isOwner
-                                                    ? "Vous n'avez pas encore créé d'événement."
-                                                    : isAdmin && !isOwner
-                                                        ? "Cet utilisateur n’a pour l’instant créé aucun événement."
-                                                        : "Cet utilisateur n'a pas encore créé d'événement."
-                                                : null
-                                        }
-                                        buttonLink={isOwner ? "/createevent" : undefined}
-                                        emptyButtonText={isOwner ? "Créer un événement" : undefined}
-                                        {...(createdEvents.length > 0 && {
-                                            linkText: "Voir tout l’historique"
-                                        })}
-                                    />
-                                </SectionWrapper>
-                            )}
-
-                            {isOwner && (
-                                <SectionWrapper title="Favoris">
-                                    <EventsSection
-                                        events={favoris.slice(0, 5).map(favori => ({
-                                            id: favori.id,
-                                            title: favori.title,
-                                            date: favori.date,
-                                            status: "Favori",
-                                            image: favori.image || null
-                                        }))}
-                                        emptyMessage="Vous n'avez pas encore de favoris."
-                                        buttonLink="/allevents"
-                                        emptyButtonText="Voir tous les événements"
-                                        {...(favoris.length > 0 && {
-                                            linkText: "Voir tous les favoris"
-                                        })}
-                                    />
-                                </SectionWrapper>
-                            )}
-                        </>
+                                {isOwner && (
+                                    <SectionWrapper title="Favoris">
+                                        <EventsSection
+                                            events={favoris.slice(0, 5).map(favori => ({
+                                                id: favori.id,
+                                                title: favori.title,
+                                                date: favori.date,
+                                                status: "Favori",
+                                                image: favori.image || null
+                                            }))}
+                                            emptyMessage="Vous n'avez pas encore de favoris."
+                                            buttonLink="/allevents"
+                                            emptyButtonText="Voir tous les événements"
+                                            {...(favoris.length > 0 && {
+                                                linkText: "Voir tous les favoris"
+                                            })}
+                                        />
+                                    </SectionWrapper>
+                                )}
+                            </>
+                        )
                     }
                 />
             </section>

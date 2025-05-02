@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addParticipant } from "../services/participantService";
+import { addParticipant } from "../../services/participantService";
 
 function useAddParticipant() {
 	const [loading, setLoading] = useState(false);

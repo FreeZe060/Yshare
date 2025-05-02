@@ -83,25 +83,25 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', { sessio
 
 //////// ADMIN ROUTES ////////
 
-router.get('/participants', authenticateToken, participantController.getAllParticipantsForAdmin);
 router.get('/users', authenticateToken, isAdmin, userController.getAllUsersByAdmin);
 router.get('/users/:userId/events', authenticateToken, isAdmin, userController.getUserEventsAdmin);
 router.post('/admin/users', authenticateToken, isAdmin, userController.adminCreateUser);
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
-router.put('/reports/:reportId/status', authenticateToken, reportController.updateReportStatus);
 
 //////// PARTICIPANT ROUTES ////////
 
-router.get('/users/:userId/events', authenticateToken, UserOrAdmin, userController.getUserEventsAdmin);
-router.get('/events/:eventId/participants', participantController.AllParticipant);
-router.get('/users/:userId/participation-count', participantController.getParticipationCountPublic);
-router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
-router.get('/events/:eventId/participants/user/:userId', authenticateToken, participantController.getParticipantByUserAndEvent);
+router.get('/participants/all', authenticateToken, isAdmin, participantController.getAllParticipants);
+router.get('/users/:userId/participation-count', participantController.getParticipationCount);
+router.get('/events/:eventId/participants/all', participantController.getParticipantsForEvent);
+router.get('/events/:eventId/participants/user/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.getParticipantByUser);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
-router.put('/events/:eventId/participants/:id', authenticateToken, participantController.updateParticipantStatus);
-router.delete('/events/:eventId/participants/:userId', authenticateToken, participantController.removeParticipant);
+router.post( '/admin/events/:eventId/participants/:userId', authenticateToken, isAdmin, participantController.adminAddParticipant );
+router.put('/events/:eventId/participants/:participantId', authenticateToken, isEventOwnerOrAdmin, participantController.updateStatus);
+router.delete('/events/:eventId/participants/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.removeParticipant);
+router.get('/participants/history/:userId', authenticateToken, participantController.getUserEventHistory);
+
 
 //////// COMMENT ROUTES ////////
 

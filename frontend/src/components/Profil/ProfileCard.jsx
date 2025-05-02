@@ -23,8 +23,7 @@ const calculateProfileCompletion = (user) => {
 const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSections }) => {
 	const auth = useAuth();
 	const currentUser = auth?.user;
-	const isAdmin = auth?.isAdmin;
-	const editable = currentUser?.id === user.id || isAdmin;
+	const editable = currentUser?.id === user.id || user.role !== "Administrateur";
 	const profileCompletion = calculateProfileCompletion(user);
 	const [showFullBio, setShowFullBio] = useState(false);
 	const [editingBio, setEditingBio] = useState(false);
@@ -184,11 +183,15 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 											</div>
 										</div>
 									) : (
-										<div
-											className="h-40 w-40 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
-											onClick={() => editable && document.getElementById('profileImageInput').click()}
-										>
-											<FiUser size={48} className="text-white" />
+										<div class=" w-4/12 px-4 order-2 flex items-center justify-center">
+											<div class="relative">
+												<div
+													className="h-40 w-40 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
+													onClick={() => editable && document.getElementById('profileImageInput').click()}
+												>
+													<FiUser size={48} className="text-white" />
+												</div>
+											</div>
 										</div>
 									)}
 									<input
