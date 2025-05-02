@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { deleteComment } from "../services/commentService";
-import { useAuth } from "../context/AuthContext";
+import { deleteComment } from "../../services/commentService";
+import { useAuth } from "../../config/authHeader";
 
 function useDeleteComment() {
 	const [loading, setLoading] = useState(false);

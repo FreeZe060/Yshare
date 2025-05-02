@@ -22,6 +22,24 @@ exports.getCommentsWithReplies = async (req, res) => {
     }
 };
 
+exports.getAllComments = async (req, res) => {
+    console.log("🟦 [getAllCommentsDetailed] Requête reçue pour récupérer tous les commentaires détaillés");
+
+    try {
+        const detailedComments = await commentService.getAllCommentsWithUserAndEvent();
+
+        console.log(`🟩 [getAllCommentsDetailed] ${detailedComments.length} commentaire(s) récupéré(s)`);
+        if (detailedComments.length > 0) {
+            console.log("🟢 Exemple de commentaire :", detailedComments[0]);
+        }
+
+        return res.status(200).json(detailedComments);
+    } catch (error) {
+        console.error("🟥 [getAllCommentsDetailed] Erreur attrapée :", error.message);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 exports.addComment = async (req, res) => {
     try {
         if (!req.user) {

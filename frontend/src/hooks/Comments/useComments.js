@@ -12,7 +12,7 @@ function useComments(eventId) {
 		const fetchComments = async () => {
 			setLoading(true);
 			try {
-				const data = await getCommentsWithReplies(eventId); // ✅ pas de token ici
+				const data = await getCommentsWithReplies(eventId);
 				setComments(data);
 			} catch (err) {
 				setError(err.message);

@@ -106,6 +106,7 @@ router.get('/participants/history/:userId', authenticateToken, participantContro
 //////// COMMENT ROUTES ////////
 
 router.get('/events/:eventId/comments', commentController.getCommentsWithReplies);
+router.get('/comments/all', isAdmin, commentController.getAllComments);
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
 router.put('/comments/:commentId', authenticateToken, commentController.updateComment);
