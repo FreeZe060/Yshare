@@ -106,12 +106,13 @@ router.get('/participants/history/:userId', authenticateToken, participantContro
 //////// COMMENT ROUTES ////////
 
 router.get('/events/:eventId/comments', commentController.getCommentsWithReplies);
-router.get('/comments/all', isAdmin, commentController.getAllComments);
+router.get('/comments/all', authenticateToken, isAdmin, commentController.getAllComments);
+router.get( '/comments/:commentId', authenticateToken, isAdmin, commentController.getCommentById);
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
-router.put('/comments/:commentId', authenticateToken, commentController.updateComment);
+router.put('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.updateComment);
 router.get('/users/:userId/comments', commentController.getUserComments);
-router.delete('/comments/:commentId', authenticateToken, commentController.deleteComment);
+router.delete('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.deleteComment);
 
 //////// CATEGORIE ROUTES ////////
 

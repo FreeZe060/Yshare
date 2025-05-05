@@ -53,18 +53,6 @@ class CommentService {
         }
     }
 
-    async getCommentById(commentId) {
-        try {
-            this.log('Fetching comment by ID:', commentId);
-            const comment = await Comment.findByPk(commentId);
-            if (!comment) this.log('Comment not found');
-            return comment || null;
-        } catch (error) {
-            this.log('Error fetching comment by ID:', error);
-            throw new Error("Erreur lors de la récupération du commentaire : " + error.message);
-        }
-    }
-
     async updateComment(commentId, title, message) {
         try {
             this.log('Updating comment:', commentId);
@@ -116,37 +104,69 @@ class CommentService {
         }
     }
 
-    // ✅ Nouvelle méthode complète
     async getAllCommentsWithUserAndEvent() {
+        this.log('Fetching all comments with user, event and parent info…');
+        const comments = await Comment.findAll({
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'lastname', 'profileImage']
+                },
+                {
+                    model: Event,
+                    attributes: ['id', 'title', 'id_org']
+                },
+                {
+                    model: Comment,
+                    as: 'Parent',
+                    attributes: ['id', 'message']
+                },
+                {
+                    model: Comment,
+                    as: 'Replies',
+                    attributes: ['id', 'message', 'date_posted']
+                }
+            ],
+            order: [['date_posted', 'DESC']]
+        });
+
+        return comments.map(c => ({
+            id: c.id,
+            author: `${c.User.name} ${c.User.lastname}`,
+            profileImage: c.User.profileImage,
+            message: c.message,
+            title: c.title,
+            eventTitle: c.Event?.title || null,
+            eventId: c.Event?.id,           
+            eventCreatorId: c.Event?.id_org,        
+            parentCommentId: c.Parent ? c.Parent.id : null, 
+            createdAt: c.date_posted
+        }));
+    }
+
+    
+    async getCommentById(commentId) {
+        this.log('getCommentById() appelé avec ID =', commentId);
         try {
-            this.log('Fetching all comments with user and event data...');
-            const comments = await Comment.findAll({
-                include: [
-                    { model: User, attributes: ['id', 'name', 'lastname', 'profileImage'] },
-                    { model: Event, attributes: ['id', 'title'] },
-                    { model: Comment, as: 'parentComment', attributes: ['id', 'message'] }
-                ],
-                order: [['date_posted', 'DESC']]
+            const comment = await Comment.findByPk(commentId);
+            if (!comment) {
+                this.log('getCommentById() : Aucun enregistrement pour ID =', commentId);
+                return null;
+            }
+            this.log('getCommentById() : Enregistrement trouvé ->', {
+                id: comment.id,
+                id_event: comment.id_event,
+                id_user: comment.id_user,
+                id_comment: comment.id_comment,
+                date_posted: comment.date_posted
             });
-
-            const formatted = comments.map(c => ({
-                id: c.id,
-                author: `${c.User.name} ${c.User.lastname}`,
-                profileImage: c.User.profileImage,
-                message: c.message,
-                title: c.title,
-                eventTitle: c.Event?.title || null,
-                parentComment: c.parentComment?.message || null,
-                createdAt: c.date_posted
-            }));
-
-            this.log('Total comments fetched with details:', formatted.length);
-            return formatted;
-        } catch (error) {
-            this.log('Error fetching enriched comment data:', error);
-            throw new Error("Erreur lors de la récupération enrichie des commentaires : " + error.message);
+            return comment;
+        } catch (err) {
+            this.log('getCommentById() : ERREUR', err);
+            throw new Error("Erreur service getCommentById : " + err.message);
         }
     }
+
 }
 
 module.exports = new CommentService();

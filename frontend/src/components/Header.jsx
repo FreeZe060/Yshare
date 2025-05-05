@@ -110,15 +110,12 @@ const Header = () => {
                             </Link>
 
                             <Link
-                                to="/albums"
+                                to="/team"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1">Aide</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
+                                <span className="mx-1"> Team</span>
                             </Link>
 
                         </div>

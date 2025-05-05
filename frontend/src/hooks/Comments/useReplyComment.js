@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { replyComment } from "../services/commentService";
-import { useAuth } from "../context/AuthContext";
+import { replyComment } from "../../services/commentService";
+import { useAuth } from "../../config/authHeader";
 
 function useReplyComment() {
 	const [loading, setLoading] = useState(false);

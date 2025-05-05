@@ -58,16 +58,16 @@ export async function replyComment(eventId, commentId, data, token) {
 }
 
 export async function getUserComments(userId, token) {
-    const response = await fetch(`${API_BASE_URL}/users/${userId}/comments`, {
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des commentaires utilisateur");
-    return result; 
+	const response = await fetch(`${API_BASE_URL}/users/${userId}/comments`, {
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des commentaires utilisateur");
+	return result;
 }
 
 export async function updateComment(commentId, data, token) {
@@ -97,4 +97,22 @@ export async function deleteComment(commentId, token) {
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression du commentaire");
 	return result;
+}
+
+export async function getCommentById(commentId, token) {
+	console.log(`[commentService] getCommentById: fetch /comments/${commentId}`);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] getCommentById error:', res.status, data);
+		throw new Error(data.message || `Erreur récupération commentaire ${commentId}`);
+	}
+	console.log('[commentService] Commentaire reçu:', data);
+	return data;
 }

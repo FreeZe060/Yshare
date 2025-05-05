@@ -12,12 +12,14 @@ import PrivateRoute from './components/PrivateRoute';
 import CreateEventPage from './pages/CreateEventPage';
 import Admin from './pages/DashboardPage';
 import AdminRoute from './components/admin/AdminRoute';
+import TeamPage from './pages/TeamPage';
 
 function App() {
 
 	return (
 		<Routes>
 			<Route path="/" element={<Home />} />
+			<Route path="/team" element={<TeamPage />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
 			<Route path="/profile/:userId" element={<Profil />} />

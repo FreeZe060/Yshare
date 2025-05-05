@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAllCommentsWithDetails } from "../../services/commentService";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../config/authHeader";
 
 function useAllComments() {
 	const [comments, setComments] = useState([]);
@@ -30,4 +30,4 @@ function useAllComments() {
 	return { comments, loading, error, refetch: fetchComments };
 }
 
-export default useAllComments;
+export default useAllComments;  

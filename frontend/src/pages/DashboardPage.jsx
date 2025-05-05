@@ -6,6 +6,7 @@ import LastUsersSection from '../components/admin/LastUsersSection';
 import ReportSection from '../components/admin/ReportSection';
 import ParticipantSection from '../components/admin/ParticipantSection';
 import CommentSection from '../components/admin/CommentSection';
+import EventSection from '../components/admin/EventSection';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -55,9 +56,12 @@ export default function DashboardPage() {
                 );
 			case 'all-events':
 				return (
-					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-						<h2 className="text-2xl font-bold mb-4">All Events</h2>
-						<p>Affichage de tous les events ici.</p>
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<EventSection />
 					</motion.div>
 				);
 			case 'participants':
