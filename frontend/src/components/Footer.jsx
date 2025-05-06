@@ -33,8 +33,23 @@ const Footer = () => {
 						</a>
 					</div>
 					<div className="px-5 py-2">
-						<a href="#" className="text-base leading-6 text-gray-400 hover:text-white">
-							Conditions
+						<a href="/mentions-legales" className="text-base leading-6 text-gray-400 hover:text-white">
+							Mentions légales
+						</a>
+					</div>
+					<div className="px-5 py-2">
+						<a href="/politique-confidentialite" className="text-base leading-6 text-gray-400 hover:text-white">
+						Politique de confidentialité
+						</a>
+					</div>
+					<div className="px-5 py-2">
+						<a href="/conditions-utilisation" className="text-base leading-6 text-gray-400 hover:text-white">
+						CGU
+						</a>
+					</div>
+					<div className="px-5 py-2">
+						<a href="/conditions-vente" className="text-base leading-6 text-gray-400 hover:text-white">
+						CGV
 						</a>
 					</div>
 				</nav>

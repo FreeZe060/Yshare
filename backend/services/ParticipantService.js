@@ -45,13 +45,17 @@ class ParticipantService {
         return Participant.findOne({ where: { id_event: eventId, id_user: userId } });
     }
 
-    async addParticipant(eventId, userId) {
-        console.log(`➕ [Service] Ajout d’un participant user #${userId} à l’event #${eventId}`);
+    async addParticipant(eventId, userId, requestMessage = '') {
+        console.log(`➕ [Service] Demande de participation - user #${userId} à l’event #${eventId}`);
+        console.log(`💬 Message de l'utilisateur : "${requestMessage}"`);
 
         const existing = await Participant.findOne({
             where: { id_event: eventId, id_user: userId }
         });
-        if (existing) throw new Error("Déjà inscrit ou en attente.");
+        if (existing) {
+            console.warn(`⚠️ Participant déjà existant (status : ${existing.status})`);
+            throw new Error("Déjà inscrit ou en attente.");
+        }
 
         const [user, event] = await Promise.all([
             User.findByPk(userId),
@@ -65,25 +69,27 @@ class ParticipantService {
             id_event: eventId,
             id_user: userId,
             status: 'En Attente',
+            request_message: requestMessage,
             joined_at: new Date()
         });
 
-        const subject = `Demande envoyée pour l'événement "${event.title}"`;
-        const message = `Bonjour ${user.name},\n\nVous avez bien envoyé une demande de participation à l'événement "${event.title}".\n\nVous recevrez une réponse très prochainement. En attendant, vous pouvez continuer à explorer d'autres événements sur Yshare.\n\nVous serez notifié(e) dès qu'une décision sera prise.\n\nMerci pour votre confiance !`;
+        const subject = `Demande envoyée pour "${event.title}"`;
+        const message = `Bonjour ${user.name},\n\nVous avez bien envoyé une demande de participation à l'événement "${event.title}".\n\nMessage : ${requestMessage || '(aucun message fourni)'}\n\nNous vous tiendrons informé(e) dès qu'une décision sera prise.\n\nMerci pour votre confiance !`;
 
-        console.log(`📧 Envoi de confirmation à ${user.email}`);
+        console.log(`📧 Email de confirmation à ${user.email}`);
         await sendEmail(user.email, subject, message);
 
-        console.log(`🔔 Création notification pour user #${user.id}`);
+        console.log(`🔔 Notification créée pour user #${user.id}`);
         await Notification.create({
             id_user: user.id,
-            title: `Demande envoyée à "${event.title}"`,
-            message: `Vous recevrez une réponse prochainement. En attendant, explorez nos autres événements.`
+            title: `Demande envoyée : "${event.title}"`,
+            message: "Votre demande est en attente de validation."
         });
 
-        console.log(`✅ Participant ajouté avec ID #${participant.id}`);
+        console.log(`✅ Participant enregistré (ID #${participant.id})`);
         return participant;
     }
+
 
     async adminAddParticipant(eventId, userId) {
         console.log(`👮 [Admin Service] Ajout user #${userId} à event #${eventId}`);

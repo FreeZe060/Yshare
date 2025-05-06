@@ -41,22 +41,32 @@ exports.getParticipantByUser = async (req, res) => {
 };
 
 exports.addParticipant = async (req, res) => {
-    try {
-        const { eventId } = req.params;
-        const userId = req.user.id;
-        console.log(`📥 [Controller] POST /participants/event/${eventId} by user #${userId}`);
+	try {
+		const { eventId } = req.params;
+		const userId = req.user.id;
+		const { message } = req.body;
 
-        const event = await eventService.getEventById(eventId);
-        if (!event) return res.status(404).json({ message: "Événement introuvable." });
-        if (event.id_org === userId) return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
+		console.log(`📥 [Controller] POST /participants/event/${eventId} by user #${userId}`);
+		console.log(`💬 Message reçu : ${message}`);
 
-        const participant = await participantService.addParticipant(eventId, userId);
-        res.status(201).json({ message: "Demande envoyée.", participant });
-    } catch (err) {
-        console.error('❌ Erreur addParticipant :', err.message);
-        res.status(500).json({ message: err.message });
-    }
+		const event = await eventService.getEventById(eventId);
+		if (!event) return res.status(404).json({ message: "Événement introuvable." });
+
+		if (event.id_org === userId) {
+			console.warn(`⛔ Utilisateur ${userId} tente de rejoindre son propre événement`);
+			return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
+		}
+
+		const participant = await participantService.addParticipant(eventId, userId, message);
+
+		res.status(201).json({ message: "Demande de participation envoyée avec succès.", participant });
+
+	} catch (err) {
+		console.error('❌ [addParticipant] Erreur :', err.message);
+		res.status(500).json({ message: err.message });
+	}
 };
+
 
 exports.adminAddParticipant = async (req, res) => {
     try {

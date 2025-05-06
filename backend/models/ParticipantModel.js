@@ -20,6 +20,10 @@ const Participant = sequelize.define('Participant', {
     allowNull: true,
     defaultValue: 'En Attente',
   },
+  request_message: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },  
   joined_at: {
     type: DataTypes.DATE,
     allowNull: false,

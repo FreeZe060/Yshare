@@ -2,9 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../config/authHeader";
 import logo from "../logo.png";
+import useDetailsNotification from "../hooks/Notification/useDetailsNotification";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
+    const { notifications, loading: notifLoading } = useDetailsNotification();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -49,7 +51,7 @@ const Header = () => {
             >
             <i className="text-2xl fas fa-bars" />
             </button> */}
-            <div id="navbar" className={`fixed w-full z-50 ${ scrolled ? "p-4 md:top-0" : "p-0 md:top-0" } xs:bottom-0 xs:top-auto`} >
+            <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
                         <span className="flex justify-center items-center px-3 py-1 pr-4 border-gray-800 border-r">
@@ -128,7 +130,7 @@ const Header = () => {
                                         <span class="top-0 -left-0 absolute flex size-3.5">
                                             <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
                                             <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
-                                                3
+                                                {notifications?.length || 0}
                                             </span>
                                         </span>
                                     </span>

@@ -149,9 +149,9 @@ function EventsListEventics() {
                                 </div>
                                 <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
                                     <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
-                                        {getFormattedDayAndMonthYear(event.date).day}
-                                    </span>
-                                    {getFormattedDayAndMonthYear(event.date).monthYear}
+                                        {getFormattedDayAndMonthYear(event.start_time).day}
+                                    </span> 
+                                    {getFormattedDayAndMonthYear(event.start_time).monthYear}
                                 </h5>
                                 <div className="shrink-0">
                                     <img

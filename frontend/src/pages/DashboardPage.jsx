@@ -7,6 +7,7 @@ import ReportSection from '../components/admin/ReportSection';
 import ParticipantSection from '../components/admin/ParticipantSection';
 import CommentSection from '../components/admin/CommentSection';
 import EventSection from '../components/admin/EventSection';
+import NewsSection from '../components/admin/NewsSection';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -86,9 +87,12 @@ export default function DashboardPage() {
 				);
 			case 'news':
 				return (
-					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-						<h2 className="text-2xl font-bold mb-4">News</h2>
-						<p>Design à venir...</p>
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<NewsSection />
 					</motion.div>
 				);
 			default:
