@@ -28,8 +28,8 @@ import { useAuth } from '../config/authHeader';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function EventsListEventics() {
-  useSlideUpAnimation();
-  useTextAnimation();
+    useSlideUpAnimation();
+    useTextAnimation();
 
     const { categories: allCategories, loading: catLoading } = useCategories();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -177,9 +177,9 @@ function EventsListEventics() {
                                 <div className="pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
                                     <ParticipantAvatars eventId={event.id} />
 
-                                    <a href="#" className="et-3-btn">
+                                    <Link to={`/event/${event.id}`} className="et-3-btn">
                                         Voir l'event
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         );

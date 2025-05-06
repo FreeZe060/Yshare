@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import '../assets/css/style.css';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
@@ -77,7 +78,7 @@ function CalendarEventSection({ events }) {
                                         onMouseEnter={() => setActiveIndex(index)}
                                         onMouseLeave={() => setActiveIndex(null)}>
                                         <div className="grid grid-cols-[0fr_242px] xs:grid-cols-[1fr_0] xs:group-[.active]:grid-cols-[1fr_0] group-[.active]:grid-cols-[1fr_362px] duration-[400ms]">
-                                            <div className="group-[.active]:px-[40px] bg-white xxs:!p-[30px] px-0 xs:px-[40px] py-[35px] overflow-hidden duration-[400ms]">
+                                            <div className="bg-white xxs:!p-[30px] px-0 xs:px-[40px] group-[.active]:px-[40px] py-[35px] overflow-hidden duration-[400ms]">
                                                 <div className="w-[392px] xxs:w-[230px] sm:w-[342px]">
                                                     <ReportDropdown
                                                         contextType="event"
@@ -96,13 +97,13 @@ function CalendarEventSection({ events }) {
                                                         {event.description}
                                                     </p>
                                                     <div className="flex items-start text-[17px] text-etBlue">
-                                                        <span><i class="fa-solid fa-location-dot mr-2"></i></span>
+                                                        <span><i class="mr-2 fa-solid fa-location-dot"></i></span>
                                                         <h6 className="text-[17px] text-gray-600">
                                                             {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}
                                                         </h6>
                                                     </div>
 
-                                                    {/* <p className="text-[16px] text-gray-600 mt-3">
+                                                    {/* <p className="mt-3 text-[16px] text-gray-600">
                                                         Participants : {event.nb_participants} / {event.max_participants}
                                                     </p>
 
@@ -111,15 +112,9 @@ function CalendarEventSection({ events }) {
                                                         Commentaires : {event.comments?.length || 0}
                                                     </p> */}
 
-                                                    <a className="et-3-btn mt-3 cursor-pointer">
-                                                        <span className="icon">
-                                                            <svg width="27" height="16" viewBox="0 0 27 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M8.02101 0H0.844661C0.378197 0 0 0.378144 0 0.844662V5.12625C0 5.59277 0.378197 5.97091 0.844661 5.97091C1.96347 5.97091 2.8737 6.88114 2.8737 8C2.8737 9.11886 1.96347 10.029 0.844661 10.029C0.378197 10.029 0 10.4071 0 10.8736V15.1553C0 15.6218 0.378197 15.9999 0.844661 15.9999H8.02101V0Z" className="fill-white transition"></path>
-                                                                <path d="M26.0001 5.97091C26.4665 5.97091 26.8447 5.59277 26.8447 5.12625V0.844662C26.8447 0.378144 26.4665 0 26.0001 0H9.71094V16H26.0001C26.4665 16 26.8447 15.6219 26.8447 15.1553V10.8737C26.8447 10.4072 26.4665 10.029 26.0001 10.029C24.8813 10.029 23.971 9.11886 23.971 8C23.971 6.88114 24.8813 5.97091 26.0001 5.97091Z" className="fill-white transition"></path>
-                                                            </svg>
-                                                        </span>
-                                                        Get Tickets
-                                                    </a>
+                                                    <Link to={`/event/${event.id}`} className="mt-3 cursor-pointer et-3-btn">
+                                                        Voir l'event
+                                                    </Link>
                                                 </div>
                                             </div>
                                             <div className="xs:hidden relative overflow-hidden">
@@ -129,8 +124,8 @@ function CalendarEventSection({ events }) {
                                                     className="w-full h-[500px] sm:max-h-[482px] object-cover"
                                                 />
 
-                                                <div className="absolute bottom-[30px] left-[30px] text-white transition-transform duration-[400ms] group-[.active]:translate-x-2">
-                                                    <h5 className="mb-[4px] font-semibold text-[22px] leading-none uppercase">
+                                                <div className="bottom-[30px] left-[30px] absolute text-white transition-transform group-[.active]:translate-x-2 duration-[400ms]">
+                                                    <h5 className="mb-[4px] font-semibold text-[22px] uppercase leading-none">
                                                         {event.title}
                                                     </h5>
                                                     <h6 className="text-[17px] leading-none">

@@ -49,7 +49,7 @@ const Header = () => {
             >
             <i className="text-2xl fas fa-bars" />
             </button> */}
-            <div id="navbar" className={`fixed w-full z-50 ${ scrolled ? "p-4 md:top-0" : "p-0 md:top-0" } xs:bottom-0 xs:top-auto`} >
+            <div id="navbar" className={`fixed w-full z-50 ${ scrolled ? "p-4 md:top-0" : "p-0 md:top-0" } xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
                         <span className="flex justify-center items-center px-3 py-1 pr-4 border-gray-800 border-r">

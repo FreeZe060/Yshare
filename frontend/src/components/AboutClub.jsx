@@ -21,11 +21,19 @@ function AboutClub({ events }) {
                 <div className="flex md:flex-col items-center gap-[60px] xl:gap-[40px]">
                     <div className="flex gap-[30px] -ml-[32px] md:ml-0 max-w-[55%] md:max-w-full shrink-0 rev-slide-up">
                         <div className="z-[1] relative">
-                            <img src={aboutImg1} alt="image" class='rounded-xl' />
+                            <img
+                                src={aboutImg1}
+                                alt="image"
+                                className="rounded-xl w-[300px] h-[300px] object-cover"
+                            />
                             <img src={aboutRoundText} alt="round text" className="top-[8%] left-[8%] -z-[1] absolute max-w-[70%] animate-[etSpin_7s_infinite_linear_forwards_reverse]" />
                         </div>
                         <div className="z-[1] relative">
-                            <img src={aboutImg2} alt="image" class='rounded-xl'/>
+                            <img
+                                src={aboutImg2}
+                                alt="image"
+                                className="rounded-xl w-[300px] h-[300px] object-cover"
+                            />
                             <div className="*:-z-[5] *:absolute">
                                 <img src={aboutVector1} alt="vector" className="-top-[20px] -left-[20px]" />
                                 <img src={aboutVector2} alt="vector" className="bottom-[23px] -left-[42px]" />
