@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,6 +10,13 @@ import useTextAnimation from '../hooks/Animations/useTextAnimation';
 
 import useEventDetails from '../hooks/Events/useEventDetails';
 import useComments from '../hooks/Comments/useComments';
+import useParticipantsByEvent from '../hooks/Participant/useParticipantsByEvent';
+import { useAuth } from '../config/authHeader';
+import useAddComment from '../hooks/Comments/useAddComment';
+import useReplyComment from '../hooks/Comments/useReplyComment';
+
+import CommentBlock from '../components/CommentBlock';
+
 
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
@@ -23,7 +31,43 @@ function EventDetails() {
 
     const { eventId } = useParams();
     const { event, loading, error } = useEventDetails(eventId);
-    const { comments } = useComments(eventId);
+    const { comments, refetchComments } = useComments(eventId);
+    const { participants } = useParticipantsByEvent(eventId);
+    const { add } = useAddComment();
+    const { reply } = useReplyComment();
+    const { user } = useAuth();
+    const [newComment, setNewComment] = useState('');
+
+
+    const handleAddComment = async () => {
+        if (!user) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Connexion requise',
+                text: '🛑 Vous devez être connecté pour écrire un commentaire.',
+                confirmButtonColor: '#C320C0',
+                confirmButtonText: 'Se connecter',
+            });
+            return;
+        }
+
+        if (!newComment.trim()) return;
+
+        try {
+            await add(eventId, {
+                title: 'Nouveau commentaire',
+                message: newComment,
+            });
+            setNewComment('');
+            await refetchComments();
+        } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: err.message || 'Une erreur est survenue lors de l\'envoi du commentaire.',
+            });
+        }
+    };
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -55,7 +99,7 @@ function EventDetails() {
                     <div class="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
                         <h1 class="font-medium text-[56px] xs:text-[45px] md:text-[50px] et-breadcrumb-title anim-text">Event Details</h1>
                         <ul class="inline-flex items-center gap-[10px] font-medium text-[16px]">
-                            <li class="opacity-80"><a href="index.html" class="hover:text-[#C320C0] anim-text">Home</a></li>
+                            <li class="opacity-80"><a href="/" class="hover:text-[#C320C0] anim-text">Home</a></li>
                             <li><i class="fa-angle-right fa-solid"></i><i class="fa-angle-right fa-solid"></i></li>
                             <li class="current-page anim-text">Event Details</li>
                         </ul>
@@ -87,18 +131,49 @@ function EventDetails() {
                                 </div>
 
                                 {/* Infos date + status */}
-                                <div className="flex flex-col items-end gap-2 text-right">
+                                <div className="flex flex-col gap-2">
                                     <p className="mt-2 font-light text-[16px] text-etGray">
-                                        Créé par <span className="font-medium text-[#C320C0]">Yshare Team</span>
+                                        Créé par
+                                        {event?.organizer ? (
+                                            <div>
+                                                <img
+                                                    src={`http://localhost:8080${event.organizer.profileImage}`}
+                                                    alt="Organizer"
+                                                    className="w-8 h-8 rounded-full inline-block mr-2"
+                                                />
+                                                <span className="font-medium text-[#C320C0]">
+                                                    {event.organizer.name} {event.organizer.lastname}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="text-etGray text-sm">Organisateur inconnu</div>
+                                        )}
                                     </p>
-                                    <div>
-                                        <p className="text-[14px] text-etGray">Quand</p>
-                                        <p className="font-medium text-[18px] text-etBlack">
-                                            {new Date(event?.date).toLocaleDateString("fr-FR", {
+                                    <div className="text-left">
+                                        <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
+                                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
+                                            <span className="text-etPurple font-bold">Du</span>{' '}
+                                            {new Date(event?.start_time).toLocaleDateString("fr-FR", {
                                                 weekday: "long",
                                                 day: "2-digit",
                                                 month: "long",
                                                 year: "numeric",
+                                            })}{' '}
+                                            à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                            <br />
+                                            <span className="text-etPink font-bold">Au</span>{' '}
+                                            {new Date(event?.end_time).toLocaleDateString("fr-FR", {
+                                                weekday: "long",
+                                                day: "2-digit",
+                                                month: "long",
+                                                year: "numeric",
+                                            })}{' '}
+                                            à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
                                             })}
                                         </p>
                                     </div>
@@ -117,30 +192,46 @@ function EventDetails() {
                                     </div>
 
                                     <div class="rev-slide-up">
-                                        <h4 class="mt-[27px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">Indoor Concerts</h4>
+                                        <h4 class="mt-[27px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">
+                                            {event?.title}
+                                        </h4>
 
-                                        <p class="mb-[15px] font-light text-[16px] text-etGray">Consectetur adipisicing elit, sed do eiusmod tempor is incididunt ut labore et dolore of magna aliqua. Ut enim ad minim veniam, made of owl the quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea dolor commodo consequat. Duis aute irure and dolor in reprehenderit.</p>
+                                        <p class="mb-[15px] font-light text-[16px] text-etGray">
+                                            {event?.description}
+                                        </p>
 
-                                        <p class="font-light text-[16px] text-etGray">The is ipsum dolor sit amet consectetur adipiscing elit. Fusce eleifend porta arcu In hac augu ehabitasse the is platea augue thelorem turpoi dictumst. In lacus libero faucibus at malesuada sagittis placerat eros sed istincidunt augue ac ante rutrum sed the is sodales augue consequat.</p>
+                                        {/* <h4 class="mt-[19px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">
+                                            Requirements for the event
+                                        </h4>
 
-                                        <h4 class="mt-[19px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">Requirements for the event</h4>
-
-                                        <p class="mb-[21px] font-light text-[16px] text-etGray">Nulla facilisi. Vestibulum tristique sem in eros eleifend imperdiet. Donec quis convallis neque. In id lacus pulvinar lacus, eget vulputate lectus. Ut viverra bibendum lorem, at tempus nibh mattis in. Sed a massa eget lacus consequat auctor.</p>
+                                        <p class="mb-[21px] font-light text-[16px] text-etGray">
+                                            Nulla facilisi. Vestibulum tristique sem in eros eleifend imperdiet...
+                                        </p>
 
                                         <ul class="gap-[20px] xxs:gap-[10px] grid grid-cols-2 xxs:grid-cols-1 font-light text-[16px] text-etGray et-event-details-requirements-list">
                                             <li>Ut viverra bibendum lorem, at tempus nibh</li>
                                             <li>Duis aute irure and dolor in reprehenderit.</li>
                                             <li>quis nostrud exercitation ullamco laboris nisi</li>
                                             <li>ante rutrum sed the is sodales augue</li>
-                                        </ul>
+                                        </ul> */}
 
-                                        <div class="gap-[30px] lg:gap-[20px] grid grid-cols-2 xxs:grid-cols-1 mt-[38px] mb-[33px]">
-                                            <img src={soiree} alt="event-details-img" class="rounded-[8px] w-full max-h-[306px] object-cover" />
-                                            <img src={soiree} alt="event-details-img" class="rounded-[8px] w-full max-h-[306px] object-cover" />
-                                        </div>
+                                        {event?.EventImages?.filter(img => !img.is_main).length > 0 && (
+                                            <div class="gap-[30px] lg:gap-[20px] grid grid-cols-2 xxs:grid-cols-1 mt-[38px] mb-[33px]">
+                                                {event.EventImages.filter(img => !img.is_main).map((img, index) => (
+                                                    <img
+                                                        key={index}
+                                                        src={`${API_BASE_URL}${img.image_url}`}
+                                                        alt="event-details-img"
+                                                        class="rounded-[8px] w-full max-h-[306px] object-cover"
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
 
-                                        <p class="mb-[43px] font-light text-[16px] text-etGray">Consectetur adipisicing elit, sed do eiusmod tempor is incididunt ut labore et dolore of magna aliqua. Ut enim ad minim veniam, made of owl the quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea dolor commodo consequat. Duis aute irure and dolor in reprehenderit.</p>
+                                        {/* <p class="mb-[43px] font-light text-[16px] text-etGray">
+                                        </p> */}
                                     </div>
+
 
                                     <div class="flex xxs:flex-col items-center gap-[20px] py-[24px] border-[#d9d9d9] border-y rev-slide-up">
                                         <a href="#" class="inline-flex items-center gap-[10px] bg-[#C320C0] hover:bg-white px-[20px] border-[#C320C0] border-2 rounded-full h-[50px] font-medium text-[17px] text-white hover:text-[#C320C0]">
@@ -150,56 +241,108 @@ function EventDetails() {
                                     </div>
 
                                     <div class="mt-[50px] rev-slide-up">
-                                        <h3 class="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Event Artists</h3>
+                                        <h3 class="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Event Participants</h3>
 
-                                        <div class="flex xs:flex-col gap-x-[25px] gap-y-[10px] mb-[30px] p-[30px] lg:p-[20px] border border-[#d9d9d9] rounded-[12px]">
-                                            <div class="rounded-[6px] overflow-hidden shrink-0">
-                                                <img src="assets/img/artist-4.jpg" alt="Artist Image" class="w-[168px] aspect-square" />
+                                        {participants?.length === 0 ? (
+                                            <div class="text-center p-[30px] border border-dashed border-[#C320C0] rounded-[12px] bg-[#fdf5ff] animate-fade-in">
+                                                <h4 class="text-[24px] font-bold text-[#C320C0] mb-[10px] animate-bounce">
+                                                    Aucun participant n'est encore inscrit
+                                                </h4>
+                                                <p class="text-[16px] text-etGray mb-[10px] animate-slide-up">
+                                                    Soyez le premier à rejoindre cette aventure et faites partie des pionniers !
+                                                </p>
+                                                <a
+                                                    href="#"
+                                                    class="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse"
+                                                >
+                                                    Candidater maintenant
+                                                </a>
                                             </div>
+                                        ) : (
+                                            participants.map((participant, index) => {
+                                                const user = participant?.user;
 
-                                            <div class="grow">
-                                                <div class="flex flex-wrap justify-between items-center gap-[10px] pb-[15px] border-[#d9d9d9] border-b">
-                                                    <div>
-                                                        <h5 class="font-semibold text-[20px] text-etBlack"><a href="#" class="hover:text-[#C320C0]">Ronald Richards</a></h5>
-                                                        <span class="inline-block text-[16px] text-etGray2">Singer</span>
-                                                    </div>
+                                                if (!user) {
+                                                    console.warn("⚠️ Participant sans user défini :", participant);
+                                                    return null;
+                                                }
 
-                                                    <div class="flex gap-[15px] text-[16px]">
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-facebook-f"></i></a>
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-twitter"></i></a>
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-linkedin-in"></i></a>
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-youtube"></i></a>
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className="flex xs:flex-col gap-x-[25px] gap-y-[10px] mb-[30px] p-[30px] lg:p-[20px] border border-[#d9d9d9] rounded-[12px]"
+                                                    >
+                                                        <div className="rounded-[6px] overflow-hidden shrink-0">
+                                                            <img
+                                                                src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`}
+                                                                alt="Participant"
+                                                                className="w-[168px] aspect-square object-cover"
+                                                            />
+                                                        </div>
+
+                                                        <div className="grow">
+                                                            <div className="flex flex-wrap justify-between items-center gap-[10px] pb-[15px] border-[#d9d9d9] border-b">
+                                                                <div>
+                                                                    <h5 className="font-semibold text-[20px] text-etBlack">
+                                                                        {user.name} {user.lastname}
+                                                                    </h5>
+                                                                    <span className="inline-block text-[16px] text-etGray2">
+                                                                        {user.email}
+                                                                    </span>
+                                                                </div>
+                                                                <span className="inline-block px-[12px] py-[4px] text-sm bg-green-100 text-green-700 rounded-full font-medium">
+                                                                    {participant.status}
+                                                                </span>
+                                                            </div>
+
+                                                            <p className="pt-[20px] font-light text-[16px] text-etGray2">
+                                                                {user.bio || "Aucune biographie fournie."}
+                                                            </p>
+                                                        </div>
                                                     </div>
+                                                );
+                                            })
+                                        )}
+                                    </div>
+
+                                    <div className="mt-[60px] animate-fade-in">
+                                        <h3 className="mb-[30px] text-[30px] font-semibold text-etBlack">Commentaires</h3>
+                                        <div className="rounded-[16px] border border-[#f0f0f0] shadow-lg p-[30px] bg-white space-y-[20px]">
+                                            <div className="space-y-8">
+                                                <div className="flex gap-4">
+                                                    <img
+                                                        src={
+                                                            user?.profileImage
+                                                                ? `http://localhost:8080${user.profileImage}`
+                                                                : "https://assets.codepen.io/285131/hat-man.png"
+                                                        }
+                                                        className="w-10 h-10 rounded-full object-cover"
+                                                        alt="avatar"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={newComment}
+                                                        onChange={(e) => setNewComment(e.target.value)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                e.preventDefault(); // empêche le submit
+                                                                handleAddComment();
+                                                            }
+                                                        }}
+                                                        placeholder={user ? "Ajouter un commentaire..." : "Connectez-vous pour commenter"}
+                                                        className={`flex-1 h-12 px-4 rounded-md border border-gray-200 placeholder-gray-400 ${user ? "focus:outline-none focus:ring-2 focus:ring-gray-100" : "cursor-not-allowed bg-gray-100"
+                                                            }`}
+                                                        disabled={!user}
+                                                    />
                                                 </div>
 
-                                                <p class="pt-[20px] font-light text-[16px] text-etGray2">Pellentesque pretium, mi in viverra faucibus, justo nunc dapibus lacus, sit amet consequat diam nisi eu mi. Integer diam erat, accumsan eget nisl eu, maximus feugiat odio. Proin eleifend.</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex xs:flex-col gap-x-[25px] gap-y-[10px] mb-[30px] p-[30px] lg:p-[20px] border border-[#d9d9d9] rounded-[12px]">
-                                            <div class="rounded-[6px] overflow-hidden shrink-0">
-                                                <img src="assets/img/artist-5.jpg" alt="Artist Image" class="w-[168px] aspect-square" />
-                                            </div>
-
-                                            <div class="grow">
-                                                <div class="flex flex-wrap justify-between items-center gap-[10px] pb-[15px] border-[#d9d9d9] border-b">
-                                                    <div>
-                                                        <h5 class="font-semibold text-[20px] text-etBlack"><a href="#" class="hover:text-[#C320C0]">Leslie Alexander</a></h5>
-                                                        <span class="inline-block text-[16px] text-etGray2">Singer</span>
-                                                    </div>
-
-                                                    <div class="flex gap-[15px] text-[16px]">
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-facebook-f"></i></a>
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-twitter"></i></a>
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-linkedin-in"></i></a>
-                                                        <a href="#" class="text-[#757277] hover:text-[#C320C0]"><i class="fa-brands fa-youtube"></i></a>
-                                                    </div>
-                                                </div>
-
-                                                <p class="pt-[20px] font-light text-[16px] text-etGray2">Pellentesque pretium, mi in viverra faucibus, justo nunc dapibus lacus, sit amet consequat diam nisi eu mi. Integer diam erat, accumsan eget nisl eu, maximus feugiat odio. Proin eleifend.</p>
+                                                {comments?.map((comment) => (
+                                                    <CommentBlock key={comment.id} comment={comment} eventId={eventId} />
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <div class="right space-y-[30px] w-[370px] lg:w-[360px] max-w-full shrink-0">

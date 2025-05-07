@@ -150,7 +150,7 @@ function EventsListEventics() {
                                 <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
                                     <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
                                         {getFormattedDayAndMonthYear(event.start_time).day}
-                                    </span> 
+                                    </span>
                                     {getFormattedDayAndMonthYear(event.start_time).monthYear}
                                 </h5>
                                 <div className="shrink-0">
@@ -169,6 +169,13 @@ function EventsListEventics() {
                                             <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
                                             {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}
                                         </h6>
+                                        <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
+											${event.status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
+											${event.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
+											${event.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
+											${event.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
+										`}>{event.status}
+                                        </div>
                                     </div>
                                     <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
                                         {formatEuro(event.price)}

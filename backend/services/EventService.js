@@ -90,15 +90,23 @@ class EventService {
     async getEventById(eventId) {
         return await Event.findByPk(eventId, {
             include: [
-                { model: Category, through: { attributes: [] } },
+                {
+                    model: Category,
+                    through: { attributes: [] }
+                },
                 {
                     model: EventImage,
                     as: 'EventImages',
+                },
+                {
+                    model: User,
+                    as: 'organizer',
+                    attributes: ['id', 'name', 'lastname', 'profileImage'] 
                 }
             ]
         });
-    }
-
+    }    
+    
     async createEvent(data, images = []) {
         let {
             title, description, date, id_org, price,

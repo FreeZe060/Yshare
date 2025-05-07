@@ -29,16 +29,19 @@ class ParticipantService {
 
     async getParticipantsByEventId(eventId, includeAllStatuses = false) {
         console.log(`🔍 [Service] Récupération participants pour event #${eventId} (all=${includeAllStatuses})`);
-
+    
         const where = { id_event: eventId };
         if (!includeAllStatuses) where.status = 'Inscrit';
-
+    
         return Participant.findAll({
             where,
-            include: [{ model: User, attributes: ['id', 'name', 'lastname', 'profileImage', 'email'] }],
+            include: [{
+                model: User,
+                attributes: ['id', 'name', 'lastname', 'profileImage', 'email', 'bio'] 
+            }],
             order: [['id', 'ASC']]
         });
-    }
+    }    
 
     async getParticipantByUserAndEvent(eventId, userId) {
         console.log(`🔍 [Service] Récupération du participant user #${userId} pour event #${eventId}`);

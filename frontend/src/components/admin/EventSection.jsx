@@ -15,7 +15,6 @@ const EventSection = () => {
 	const { user } = useAuth();
 	const { updateStatus } = useUpdateEventStatus();
 
-	// ✅ Générer dynamiquement les filtres utilisés par le backend
 	const filters = useMemo(() => {
 		const f = {};
 		if (statusFilter) f.status = statusFilter;
@@ -25,7 +24,6 @@ const EventSection = () => {
 		return f;
 	}, [statusFilter, sortOption]);
 
-	// ✅ Les événements sont récupérés via le hook personnalisé
 	const { events, total, loading, error } = useEvents(filters, currentPage, ITEMS_PER_PAGE, true);
 	const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -53,7 +51,7 @@ const EventSection = () => {
 					<select
 						value={sortOption}
 						onChange={(e) => {
-							setCurrentPage(1); // 🔁 reset page
+							setCurrentPage(1);
 							setSortOption(e.target.value);
 						}}
 						className="border rounded px-3 py-1 text-sm text-black shadow-sm"
@@ -67,7 +65,7 @@ const EventSection = () => {
 					<select
 						value={statusFilter}
 						onChange={(e) => {
-							setCurrentPage(1); // 🔁 reset page
+							setCurrentPage(1); 
 							setStatusFilter(e.target.value);
 						}}
 						className="border rounded px-3 py-1 text-sm text-black shadow-sm"
@@ -134,7 +132,8 @@ const EventSection = () => {
 											${event.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
 											${event.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
 											${event.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
-										`}>{event.status}</div>
+										`}>{event.status}
+									</div>
 								</div>
 
 								<div className="flex flex-col gap-y-[10px] items-center">

@@ -116,3 +116,88 @@ export async function getCommentById(commentId, token) {
 	console.log('[commentService] Commentaire reçu:', data);
 	return data;
 }
+
+export async function getReplies(commentId, token) {
+	console.log(`[commentService] getReplies: GET /comments/${commentId}/replies`);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/replies`, {
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] getReplies error:', res.status, data);
+		throw new Error(data.message || "Erreur lors de la récupération des réponses");
+	}
+	console.log('[commentService] Réponses récupérées:', data);
+	return data;
+}
+
+export async function addReaction(commentId, emoji, token) {
+	console.log(`[commentService] addReaction: POST /comments/${commentId}/reactions`, emoji);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({ emoji }),
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] addReaction error:', res.status, data);
+		throw new Error(data.message || "Erreur lors de l'ajout de la réaction");
+	}
+	console.log('[commentService] Réaction ajoutée:', data);
+	return data;
+}
+
+export async function removeReaction(commentId, emoji, token) {
+	console.log(`[commentService] removeReaction: DELETE /comments/${commentId}/reactions?emoji=${emoji}`);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions?emoji=${encodeURIComponent(emoji)}`, {
+		method: 'DELETE',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] removeReaction error:', res.status, data);
+		throw new Error(data.message || "Erreur lors de la suppression de la réaction");
+	}
+	console.log('[commentService] Réaction supprimée:', data);
+	return data;
+}
+
+export async function getReactions(commentId, token) {
+	console.log(`[commentService] getReactions: GET /comments/${commentId}/reactions`);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] getReactions error:', res.status, data);
+		throw new Error(data.message || "Erreur lors de la récupération des réactions");
+	}
+	console.log('[commentService] Réactions récupérées:', data);
+	return data;
+}
+
+export async function getReactionStats(commentId, token) {
+	console.log(`[commentService] getReactionStats: GET /comments/${commentId}/reactions/stats`);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions/stats`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] getReactionStats error:', res.status, data);
+		throw new Error(data.message || "Erreur lors de la récupération des stats de réactions");
+	}
+	console.log('[commentService] Stats des réactions:', data);
+	return data;
+}

@@ -14,6 +14,7 @@ const News = require('./NewsModel');
 const ReportFile = require('./ReportFileModel');
 const ReportMessage = require('./ReportMessageModel');
 const NewsCategory = require('./NewsCategoryModel');
+const CommentReaction = require('./CommentReactionModel');
 
 // Associations
 User.hasMany(Event, { foreignKey: 'id_org' });
@@ -82,6 +83,12 @@ Report.belongsTo(Comment, { foreignKey: 'id_comment', as: 'comment' });
 News.belongsToMany(Category, { through: NewsCategory, foreignKey: 'news_id', otherKey: 'category_id', as: 'categories', });
 Category.belongsToMany(News, { through: NewsCategory, foreignKey: 'category_id', otherKey: 'news_id', as: 'news', });
 
+User.hasMany(CommentReaction, { foreignKey: 'id_user' });
+CommentReaction.belongsTo(User, { foreignKey: 'id_user' });
+
+Comment.hasMany(CommentReaction, { foreignKey: 'id_comment', as: 'reactions' });
+CommentReaction.belongsTo(Comment, { foreignKey: 'id_comment' });
+
 module.exports = {
   sequelize,
   User,
@@ -98,4 +105,5 @@ module.exports = {
   NewsCategory,
   ReportFile,
   ReportMessage,
+  CommentReaction,
 };

@@ -214,3 +214,106 @@ exports.deleteComment = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+exports.addReaction = async (req, res) => {
+    console.log("📥 [addReaction] Requête reçue :", req.body);
+
+    try {
+        const { emoji } = req.body;
+        const commentId = req.params.commentId;
+        const userId = req.user?.id;
+
+        if (!userId || !commentId || !emoji) {
+            console.warn("⚠️ [addReaction] Champs manquants :", { userId, commentId, emoji });
+            return res.status(400).json({ message: "userId, commentId et emoji sont requis." });
+        }
+
+        const reaction = await commentService.addReaction({ userId, commentId, emoji });
+
+        console.log("✅ [addReaction] Réaction ajoutée avec ID :", reaction.id);
+        return res.status(201).json(reaction);
+    } catch (error) {
+        console.error("❌ [addReaction] Erreur :", error.message);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.removeReaction = async (req, res) => {
+    const { commentId } = req.params;
+    const { emoji } = req.query;
+    const userId = req.user?.id;
+
+    console.log('📥 [removeReaction] Requête reçue :');
+    console.log('🧑 userId:', userId);
+    console.log('💬 commentId:', commentId);
+    console.log('😀 emoji:', emoji);
+
+    if (!userId || !commentId || !emoji) {
+        console.warn('⚠️ [removeReaction] Paramètres manquants :', { userId, commentId, emoji });
+        return res.status(400).json({ message: 'userId, commentId et emoji sont requis.' });
+    }
+
+    try {
+        const result = await commentService.removeReaction({ userId, commentId, emoji });
+        console.log('✅ [removeReaction] Réaction supprimée avec succès :', result);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error('❌ [removeReaction] Erreur lors de la suppression :', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getReactions = async (req, res) => {
+    console.log("📤 [getReactions] Requête reçue avec paramètre :", req.params.commentId);
+
+    try {
+        const { commentId } = req.params;
+
+        if (!commentId) {
+            return res.status(400).json({ message: "ID de commentaire requis." });
+        }
+
+        const reactions = await commentService.getReactions(commentId);
+
+        console.log(`✅ [getReactions] ${reactions.length} réaction(s) trouvée(s) pour le commentaire #${commentId}`);
+        return res.status(200).json(reactions);
+    } catch (error) {
+        console.error("❌ [getReactions] Erreur :", error.message);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getReplies = async (req, res) => {
+    const { commentId } = req.params;
+
+    if (!commentId || isNaN(commentId)) {
+        return res.status(400).json({ message: "ID de commentaire invalide." });
+    }
+
+    try {
+        const replies = await commentService.getReplies(commentId);
+        return res.status(200).json(replies);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getReactionStats = async (req, res) => {
+    console.log("📊 [getReactionStats] Requête reçue avec paramètre :", req.params.commentId);
+
+    try {
+        const { commentId } = req.params;
+
+        if (!commentId) {
+            return res.status(400).json({ message: "ID de commentaire requis." });
+        }
+
+        const stats = await commentService.getReactionStats(commentId);
+
+        console.log(`📈 [getReactionStats] Stats pour le commentaire #${commentId} :`, stats);
+        return res.status(200).json(stats);
+    } catch (error) {
+        console.error("❌ [getReactionStats] Erreur :", error.message);
+        return res.status(500).json({ message: error.message });
+    }
+};
