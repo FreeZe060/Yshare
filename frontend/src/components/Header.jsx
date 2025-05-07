@@ -2,9 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../config/authHeader";
 import logo from "../logo.png";
+import useDetailsNotification from "../hooks/Notification/useDetailsNotification";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
+    const { notifications, loading: notifLoading } = useDetailsNotification();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -110,15 +112,12 @@ const Header = () => {
                             </Link>
 
                             <Link
-                                to="/albums"
+                                to="/team"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1">Aide</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
+                                <span className="mx-1"> Team</span>
                             </Link>
 
                         </div>
@@ -131,7 +130,7 @@ const Header = () => {
                                         <span class="top-0 -left-0 absolute flex size-3.5">
                                             <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
                                             <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
-                                                3
+                                                {notifications?.length || 0}
                                             </span>
                                         </span>
                                     </span>

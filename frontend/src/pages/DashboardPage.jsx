@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/admin/Sidebar';
 import StatsSection from '../components/admin/StatsSection';
 import LastEventSection from '../components/admin/LestEventSection';
 import LastUsersSection from '../components/admin/LastUsersSection';
 import ReportSection from '../components/admin/ReportSection';
+import ParticipantSection from '../components/admin/ParticipantSection';
+import CommentSection from '../components/admin/CommentSection';
+import EventSection from '../components/admin/EventSection';
+import NewsSection from '../components/admin/NewsSection';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DashboardPage() {
-	const [activeSection, setActiveSection] = useState('dashboard');
+	const [activeSection, setActiveSection] = useState(() => {
+		return localStorage.getItem('activeSection') || 'dashboard';
+	});
+
+	useEffect(() => {
+		localStorage.setItem('activeSection', activeSection);
+	}, [activeSection]);
 
 	const renderContent = () => {
 		switch (activeSection) {
@@ -45,25 +55,44 @@ export default function DashboardPage() {
                     <ReportSection />
                     </motion.div>
                 );
-			case 'events':
+			case 'all-events':
 				return (
-					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-						<h2 className="text-2xl font-bold mb-4">Events</h2>
-						<p>Design à venir...</p>
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<EventSection />
+					</motion.div>
+				);
+			case 'participants':
+				return (
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<ParticipantSection />
 					</motion.div>
 				);
 			case 'comments':
 				return (
-					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-						<h2 className="text-2xl font-bold mb-4">Comments</h2>
-						<p>Design à venir...</p>
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<CommentSection />
 					</motion.div>
 				);
 			case 'news':
 				return (
-					<motion.div className="text-gray-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-						<h2 className="text-2xl font-bold mb-4">News</h2>
-						<p>Design à venir...</p>
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<NewsSection />
 					</motion.div>
 				);
 			default:
@@ -75,9 +104,9 @@ export default function DashboardPage() {
 		<>
 			<Header />
 			<div className="antialiased bg-gradient-to-br from-white via-indigo-100 to-indigo-300 w-full min-h-screen text-slate-300 relative py-20">
-				<div className="grid xxs:grid-cols-1 grid-cols-12 mx-auto gap-2 xs:gap-4 sm:gap-6 md:gap-10 lg:gap-14 max-w-7xl my-10 px-2">
+				<div className="grid md:grid-cols-1 grid-cols-12 mx-auto gap-2 md:gap-4 sm:gap-6 max-w-7xl my-10 px-2">
 					<Sidebar active={activeSection} setActive={setActiveSection} />
-					<div id="content" className="bg-white shadow-xl col-span-9 rounded-lg p-6">
+					<div id="content" className="bg-white lg:mt-4 shadow-xl col-span-9 rounded-lg p-6">
 						<AnimatePresence mode="wait">
 							{renderContent()}
 						</AnimatePresence>

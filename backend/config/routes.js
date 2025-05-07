@@ -55,6 +55,8 @@ router.delete('/events/:eventId', authenticateToken, eventController.deleteEvent
 router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
+router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
+router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
 
 //////// USER ROUTES ////////
 
@@ -83,33 +85,36 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', { sessio
 
 //////// ADMIN ROUTES ////////
 
-router.get('/participants', authenticateToken, participantController.getAllParticipantsForAdmin);
 router.get('/users', authenticateToken, isAdmin, userController.getAllUsersByAdmin);
 router.get('/users/:userId/events', authenticateToken, isAdmin, userController.getUserEventsAdmin);
 router.post('/admin/users', authenticateToken, isAdmin, userController.adminCreateUser);
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
-router.put('/reports/:reportId/status', authenticateToken, reportController.updateReportStatus);
 
 //////// PARTICIPANT ROUTES ////////
 
-router.get('/users/:userId/events', authenticateToken, userController.getUserEventsAdmin);
-router.get('/events/:eventId/participants', participantController.AllParticipant);
-router.get('/users/:userId/participation-count', participantController.getParticipationCountPublic);
-router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
-router.get('/events/:eventId/participants/:index', authenticateToken, participantController.getParticipant);
+router.get('/participants/all', authenticateToken, isAdmin, participantController.getAllParticipants);
+router.get('/users/:userId/participation-count', participantController.getParticipationCount);
+router.get('/events/:eventId/participants/all', participantController.getParticipantsForEvent);
+router.get('/events/:eventId/participants/user/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.getParticipantByUser);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
-router.put('/events/:eventId/participants/:index', authenticateToken, participantController.updateParticipantStatus);
-router.delete('/events/:eventId/participants/:index', authenticateToken, participantController.removeParticipant);
+router.post( '/admin/events/:eventId/participants/:userId', authenticateToken, isAdmin, participantController.adminAddParticipant );
+router.put('/events/:eventId/participants/:participantId', authenticateToken, isEventOwnerOrAdmin, participantController.updateStatus);
+router.delete('/events/:eventId/participants/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.removeParticipant);
+router.get('/participants/history/:userId', authenticateToken, participantController.getUserEventHistory);
+
 
 //////// COMMENT ROUTES ////////
 
 router.get('/events/:eventId/comments', commentController.getCommentsWithReplies);
+router.get('/comments/all', authenticateToken, isAdmin, commentController.getAllComments);
+router.get( '/comments/:commentId', authenticateToken, isAdmin, commentController.getCommentById);
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
-router.put('/comments/:commentId', authenticateToken, commentController.updateComment);
-router.delete('/comments/:commentId', authenticateToken, commentController.deleteComment);
+router.put('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.updateComment);
+router.get('/users/:userId/comments', commentController.getUserComments);
+router.delete('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.deleteComment);
 
 //////// CATEGORIE ROUTES ////////
 

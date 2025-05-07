@@ -142,7 +142,7 @@ export async function getEventHistory(token, userId) {
  * GET /users
  */
 export async function getAllUsers(token) {
-	console.log("🔐 token reçu dans getAllUsers :", token); // ✅ Correct
+	console.log("🔐 token reçu dans getAllUsers :", token);
 
 	const response = await fetch(`${API_BASE_URL}/users`, {
 		credentials: 'include',
@@ -196,5 +196,5 @@ export async function getParticipationCount(userId) {
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur récupération participation");																					
-	return result.count;
-}									
+	return result.participationCount;
+}

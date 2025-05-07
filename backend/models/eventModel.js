@@ -24,16 +24,17 @@ const Event = sequelize.define('Event', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  date: {
-    type: DataTypes.DATEONLY,
+  date_created: {
+    type: DataTypes.DATE,
     allowNull: true,
+    defaultValue: DataTypes.NOW,
   },
   max_participants: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
   status: {
-    type: DataTypes.ENUM('En Cours', 'Terminé', 'Annulé'),
+    type: DataTypes.ENUM('En Cours', 'Terminé', 'Annulé', 'Planifié'),
     defaultValue: 'En Cours',
   },
   street: {
@@ -53,7 +54,7 @@ const Event = sequelize.define('Event', {
     allowNull: true,
   },
   start_time: {
-    type: DataTypes.TIME,
+    type: DataTypes.DATE,
     allowNull: true,
   },
   end_time: {

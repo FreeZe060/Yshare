@@ -91,7 +91,7 @@ function CalendarEventSection({ events }) {
                                                     <h3 className="font-semibold text-[30px] text-black sm:text-[28px] line-clamp-2">
                                                         <a>{event.title.toUpperCase()}</a>
                                                     </h3>
-                                                    <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{formatDate(event.date, "long")}</h6>
+                                                    <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{formatDate(event.start_time, "long")}</h6>
                                                     <h3 className="mb-[10px] font-semibold text-[30px] text-etBlue">{formatEuro(event.price)}</h3>
                                                     <p className="mb-[19px] text-[17px] text-etGray line-clamp-2">
                                                         {event.description}
@@ -129,7 +129,7 @@ function CalendarEventSection({ events }) {
                                                         {event.title}
                                                     </h5>
                                                     <h6 className="text-[17px] leading-none">
-                                                        {formatDate(event.date, "long")}
+                                                        {formatDate(event.start_time, "long")}
                                                     </h6>
                                                 </div>
                                             </div>

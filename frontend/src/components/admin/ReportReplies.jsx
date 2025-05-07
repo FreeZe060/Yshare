@@ -6,24 +6,12 @@ import { motion } from 'framer-motion';
 import MessageSkeleton from '../SkeletonLoading/MessageSkeleton';
 
 const roleColors = {
-    Administrateur: {
-        bg: 'bg-indigo-500',
-        text: 'text-white',
-        triangle: 'border-l-indigo-500',
-    },
-    Utilisateur: {
-        bg: 'bg-green-500',
-        text: 'text-white',
-        triangle: 'border-r-green-500',
-    },
-    Default: {
-        bg: 'bg-gray-200',
-        text: 'text-gray-800',
-        triangle: 'border-r-gray-200',
-    }
+    Administrateur: { bg: 'bg-indigo-500', text: 'text-white', triangle: 'border-l-indigo-500' },
+    Utilisateur: { bg: 'bg-green-500', text: 'text-white', triangle: 'border-r-green-500' },
+    Default: { bg: 'bg-gray-200', text: 'text-gray-800', triangle: 'border-r-gray-200' }
 };
 
-const ReportReplies = ({ reportId }) => {
+const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
     const { user } = useAuth();
     const { messages, loading } = useReportMessages(reportId);
     const { sendReply, loading: sending } = useReplyToReport();
@@ -37,12 +25,13 @@ const ReportReplies = ({ reportId }) => {
     };
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+        if (!disableAutoScroll) {
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages, disableAutoScroll]);
 
-    const getStylesByRole = (role) => {
-        return roleColors[role] || roleColors.Default;
-    };
+    const getStylesByRole = (role) => roleColors[role] || roleColors.Default;
+    const displayedMessages = limit ? messages.slice(-limit) : messages;
 
     return (
         <div className="bg-white p-4 border rounded-md">
@@ -53,10 +42,10 @@ const ReportReplies = ({ reportId }) => {
                         <MessageSkeleton align="right" />
                         <MessageSkeleton align="left" />
                     </div>
-                ) : messages.length === 0 ? (
+                ) : displayedMessages.length === 0 ? (
                     <p className="text-center text-gray-500">Aucune réponse pour le moment.</p>
                 ) : (
-                    messages.map((msg, idx) => {
+                    displayedMessages.map((msg, idx) => {
                         const isCurrentUser = msg.sender.id === user.id;
                         const isAdmin = msg.sender.role === 'Administrateur';
                         const side = isCurrentUser || isAdmin ? 'right' : 'left';
@@ -71,37 +60,25 @@ const ReportReplies = ({ reportId }) => {
                                 className={`flex items-end ${side === 'right' ? 'justify-end' : 'justify-start'}`}
                             >
                                 {side === 'left' && (
-                                    <img
-                                        src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
-                                        alt="avatar"
-                                        className="w-8 h-8 rounded-full mr-2"
-                                    />
+                                    <img src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
+                                         alt="avatar"
+                                         className="w-8 h-8 rounded-full mr-2" />
                                 )}
-
                                 <div className={`relative max-w-xs px-4 py-2 rounded-xl text-sm shadow-md 
-                                    ${roleStyle.bg} ${roleStyle.text}
-                                    ${side === 'right' ? 'rounded-br-none' : 'rounded-bl-none'}`}
-                                >
+                                    ${roleStyle.bg} ${roleStyle.text} ${side === 'right' ? 'rounded-br-none' : 'rounded-bl-none'}`}>
                                     <p className="font-semibold mb-1">{msg.sender.name}</p>
                                     <p>{msg.message}</p>
                                     <p className="text-xs text-white/70 mt-1 text-right">{new Date(msg.date_sent).toLocaleTimeString()}</p>
-
-                                    {/* Triangle effect */}
-                                    <div
-                                        className={`absolute bottom-0 ${
-                                            side === 'right' ? 'right-0 translate-x-full' : 'left-0 -translate-x-full'
-                                        } w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent ${
-                                            side === 'right' ? `border-l-[10px] ${roleStyle.triangle}` : `border-r-[10px] ${roleStyle.triangle}`
-                                        }`}
-                                    />
+                                    <div className={`absolute bottom-0 ${
+                                        side === 'right' ? 'right-0 translate-x-full' : 'left-0 -translate-x-full'
+                                    } w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent ${
+                                        side === 'right' ? `border-l-[10px] ${roleStyle.triangle}` : `border-r-[10px] ${roleStyle.triangle}`
+                                    }`} />
                                 </div>
-
                                 {side === 'right' && (
-                                    <img
-                                        src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
-                                        alt="avatar"
-                                        className="w-8 h-8 rounded-full ml-2"
-                                    />
+                                    <img src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
+                                         alt="avatar"
+                                         className="w-8 h-8 rounded-full ml-2" />
                                 )}
                             </motion.div>
                         );
@@ -121,7 +98,7 @@ const ReportReplies = ({ reportId }) => {
                 <button
                     onClick={handleReply}
                     disabled={sending}
-                    className="mt-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm"
+                    className="mt-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 text-sm w-full"
                 >
                     {sending ? 'Envoi...' : 'Envoyer'}
                 </button>

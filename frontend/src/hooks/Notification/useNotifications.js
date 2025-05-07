@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getAllNotifications } from "../services/notificationService";
-import { useAuth } from "../context/AuthContext";
+import { getAllNotifications } from "../../services/notificationService";
+import { useAuth } from "../../config/authHeader";
 
 function useNotifications() {
 	const [notifications, setNotifications] = useState([]);

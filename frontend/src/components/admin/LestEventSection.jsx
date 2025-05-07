@@ -25,7 +25,7 @@ const LastEventSection = () => {
 			<div className="grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
 				{events.map(event => {
 					const image = event?.EventImages?.[0]?.image_url;
-					const date = new Date(event.date).toLocaleDateString();
+					const date = new Date(event.start_time).toLocaleDateString();
 
 					return (
 						<div key={event.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 text-sm sm:text-base">

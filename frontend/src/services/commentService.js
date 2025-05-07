@@ -28,6 +28,20 @@ export async function addComment(eventId, data, token) {
 	return result;
 }
 
+export async function getAllCommentsWithDetails(token) {
+	const response = await fetch(`${API_BASE_URL}/comments/all`, {
+		method: "GET",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des commentaires détaillés");
+	return result;
+}
+
 export async function replyComment(eventId, commentId, data, token) {
 	const response = await fetch(`${API_BASE_URL}/events/${eventId}/comments/${commentId}/reply`, {
 		method: "POST",
@@ -40,6 +54,19 @@ export async function replyComment(eventId, commentId, data, token) {
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de l'envoi de la réponse");
+	return result;
+}
+
+export async function getUserComments(userId, token) {
+	const response = await fetch(`${API_BASE_URL}/users/${userId}/comments`, {
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des commentaires utilisateur");
 	return result;
 }
 
@@ -70,4 +97,22 @@ export async function deleteComment(commentId, token) {
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression du commentaire");
 	return result;
+}
+
+export async function getCommentById(commentId, token) {
+	console.log(`[commentService] getCommentById: fetch /comments/${commentId}`);
+	const res = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) {
+		console.error('[commentService] getCommentById error:', res.status, data);
+		throw new Error(data.message || `Erreur récupération commentaire ${commentId}`);
+	}
+	console.log('[commentService] Commentaire reçu:', data);
+	return data;
 }

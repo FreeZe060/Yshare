@@ -10,6 +10,8 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 	if (filters.city) queryParams.append('city', filters.city);
 	if (filters.date) queryParams.append('date', filters.date);
 	if (filters.categoryId) queryParams.append('categoryId', filters.categoryId);
+	if (filters.status) queryParams.append('status', filters.status); 
+	if (filters.sort) queryParams.append('sort', filters.sort);      
 
 	queryParams.append('page', page);
 	queryParams.append('limit', limit);
@@ -62,6 +64,30 @@ export async function getEventById(eventId, token) {
 	if (!response.ok) throw new Error("Erreur lors de la récupération de l'événement");
 
 	return await response.json();
+}
+
+export async function updateEventStatus(eventId, newStatus, token) {
+	console.log(`[updateEventStatus] 📤 Envoi de la mise à jour du statut :`, { eventId, newStatus });
+
+	const response = await fetch(`${API_BASE_URL}/events/${eventId}/status`, {
+		method: 'PATCH',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify({ newStatus }),
+	});
+
+	const result = await response.json();
+
+	if (!response.ok) {
+		console.error(`[updateEventStatus] ❌ Erreur API :`, result);
+		throw new Error(result.message || "Erreur lors de la mise à jour du statut de l'événement");
+	}
+
+	console.log(`[updateEventStatus] ✅ Statut mis à jour avec succès :`, result);
+	return result;
 }
 
 /**

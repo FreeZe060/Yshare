@@ -1,161 +1,145 @@
 const participantService = require('../services/ParticipantService');
-const userService = require('../services/UserService');           
-const eventService = require('../services/EventService');       
-const notificationService = require('../services/NotificationService'); 
-const sendEmail = require('../utils/email');
+const eventService = require('../services/EventService');
 
-exports.getAllParticipantsForAdmin = async (req, res) => {
-  try {
-    if (!req.user || req.user.role !== 'Administrateur') {
-      return res.status(403).json({ message: "Accès interdit. Seuls les administrateurs peuvent accéder à ces informations." });
+exports.getAllParticipants = async (req, res) => {
+    try {
+        console.log('📥 [Controller] GET /participants/all');
+        const data = await participantService.getAllParticipantsWithUserInfo();
+        res.status(200).json(data);
+    } catch (err) {
+        console.error('❌ Erreur getAllParticipants :', err.message);
+        res.status(500).json({ message: err.message });
     }
-    const participants = await participantService.getAllParticipantsWithUserInfo();
-    return res.status(200).json(participants);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
 };
 
-exports.AllParticipant = async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    const participants = await participantService.getParticipantsByEventId(eventId);
-    res.status(200).json(participants);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+exports.getParticipantsForEvent = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const includeAll = req.query.all === 'true';
 
-exports.getParticipant = async (req, res) => {
-  try {
-    const { eventId, index } = req.params;
-    const participant = await participantService.getParticipantByIndexForEvent(eventId, index);
-    if (!participant) {
-      return res.status(404).json({ message: "Participant introuvable." });
+        console.log(`📥 [Controller] GET /participants/event/${eventId}?all=${includeAll}`);
+        const data = await participantService.getParticipantsByEventId(eventId, includeAll);
+        res.status(200).json(data);
+    } catch (err) {
+        console.error('❌ Erreur getParticipantsForEvent :', err.message);
+        res.status(500).json({ message: err.message });
     }
-    res.status(200).json(participant);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
-exports.getAllParticipantsForEvent = async (req, res) => {
-  try {
-    const { eventId } = req.params;
-    const participants = await participantService.getAllParticipantsForEvent(eventId);
-    res.status(200).json(participants);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+exports.getParticipantByUser = async (req, res) => {
+    try {
+        const { eventId, userId } = req.params;
+        console.log(`📥 [Controller] GET /participants/event/${eventId}/user/${userId}`);
 
-exports.getParticipationCountPublic = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const count = await participantService.getParticipationCount(userId);
-    return res.status(200).json({ userId, participationCount: count });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
+        const data = await participantService.getParticipantByUserAndEvent(eventId, userId);
+        if (!data) return res.status(404).json({ message: "Participant non trouvé." });
+        res.status(200).json(data);
+    } catch (err) {
+        console.error('❌ Erreur getParticipantByUser :', err.message);
+        res.status(500).json({ message: err.message });
+    }
 };
 
 exports.addParticipant = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(403).json({ message: "Utilisateur non authentifié." });
-    }
-    const { eventId } = req.params;
-    const userId = req.user.id;
+	try {
+		const { eventId } = req.params;
+		const userId = req.user.id;
+		const { message } = req.body;
 
-    const event = await eventService.getEventById(eventId);
-    if (!event) {
-      return res.status(404).json({ message: "Événement introuvable." });
-    }
-    if (event.id_org === userId) {
-      return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
-    }
+		console.log(`📥 [Controller] POST /participants/event/${eventId} by user #${userId}`);
+		console.log(`💬 Message reçu : ${message}`);
 
-    const response = await participantService.addParticipant(eventId, userId);
+		const event = await eventService.getEventById(eventId);
+		if (!event) return res.status(404).json({ message: "Événement introuvable." });
 
-    const user = await userService.findById(userId);
-    const organizer = await userService.findById(event.id_org);
+		if (event.id_org === userId) {
+			console.warn(`⛔ Utilisateur ${userId} tente de rejoindre son propre événement`);
+			return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
+		}
 
-    const userEmailSubject = `Demande d'inscription à l'événement ${event.title}`;
-    const userEmailText = `Bonjour ${user.name},\n\nVotre demande d'inscription à l'événement "${event.title}" a été envoyée avec succès.\nVous serez informé des mises à jour de votre statut.\n\nMerci!`;
-    await sendEmail(user.email, userEmailSubject, userEmailText);
-    await notificationService.createNotification(user.id, `Demande envoyée - ${event.title}`, `Votre demande d'inscription à l'événement "${event.title}" a été soumise.`);
+		const participant = await participantService.addParticipant(eventId, userId, message);
 
-    const organizerEmailSubject = `Nouvelle demande d'inscription pour ${event.title}`;
-    const organizerEmailText = `Bonjour ${organizer.name},\n\n${user.name} souhaite rejoindre votre événement "${event.title}".\n\nVous pouvez gérer les inscriptions via votre interface administrateur.\n\nMerci!`;
-    await sendEmail(organizer.email, organizerEmailSubject, organizerEmailText);
-    await notificationService.createNotification(organizer.id, `Nouvelle demande - ${event.title}`, `${user.name} souhaite rejoindre votre événement "${event.title}".`);
+		res.status(201).json({ message: "Demande de participation envoyée avec succès.", participant });
 
-    res.status(201).json(response);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+	} catch (err) {
+		console.error('❌ [addParticipant] Erreur :', err.message);
+		res.status(500).json({ message: err.message });
+	}
 };
 
-exports.updateParticipantStatus = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(403).json({ message: "Utilisateur non authentifié." });
-    }
-    const { eventId, index } = req.params;
-    const { status } = req.body;
-    const currentUserId = req.user.id;
-    const userRole = req.user.role;
 
-    const participant = await participantService.getParticipantByIndexForEvent(eventId, index);
-    if (!participant) {
-      return res.status(404).json({ message: "Participant introuvable." });
+exports.adminAddParticipant = async (req, res) => {
+    try {
+      const { eventId, userId } = req.params;
+  
+      console.log(`🛠️ [Admin] Ajout user #${userId} à event #${eventId}`);
+      const participant = await participantService.adminAddParticipant(eventId, userId);
+  
+      res.status(201).json({ message: 'Participant ajouté avec succès.', participant });
+    } catch (err) {
+      console.error('❌ Erreur adminAddParticipant :', err.message);
+      res.status(500).json({ message: err.message });
     }
-    const event = await eventService.getEventById(eventId);
-    if (currentUserId !== event.id_org && userRole !== "Administrateur") {
-      return res.status(403).json({ message: "Vous n'êtes pas autorisé à modifier ce participant." });
+  };  
+
+exports.updateStatus = async (req, res) => {
+    try {
+        const { participantId } = req.params;
+        const { status } = req.body;
+        const user = req.user;
+
+        console.log(`📥 [Controller] PUT /participants/${participantId} status -> "${status}" by user #${user.id}`);
+
+        const updated = await participantService.updateParticipantStatus(participantId, status);
+        res.status(200).json({ message: "Statut mis à jour.", participant: updated });
+    } catch (err) {
+        console.error('❌ Erreur updateStatus :', err.message);
+        res.status(500).json({ message: err.message });
     }
-    const response = await participantService.updateParticipantStatus(eventId, participant.id_user, status);
-
-    const user = await userService.findById(participant.id_user);
-    const emailSubject = `Mise à jour de votre statut pour l'événement ${event.title}`;
-    const emailText = `Bonjour ${user.name},\n\nVotre statut pour l'événement "${event.title}" a été mis à jour : ${status}.\n\nMerci de votre participation !`;
-    await sendEmail(user.email, emailSubject, emailText);
-    await notificationService.createNotification(user.id, `Statut mis à jour - ${event.title}`, emailText);
-
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
 
 exports.removeParticipant = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(403).json({ message: "Utilisateur non authentifié." });
-    }
-    const { eventId, index } = req.params;
-    const organizerId = req.user.id;
-    const userRole = req.user.role;
+    try {
+        const { eventId, userId } = req.params;
+        const user = req.user;
 
-    const participant = await participantService.getParticipantByIndexForEvent(eventId, index);
-    if (!participant) {
-      return res.status(404).json({ message: "Participant introuvable." });
-    }
-    const userId = participant.id_user;
-    const event = await eventService.getEventById(eventId);
-    if (event.id_org !== organizerId && userRole !== "Administrateur") {
-      return res.status(403).json({ message: "Vous n'êtes pas autorisé à retirer ce participant." });
-    }
-    const response = await participantService.removeParticipant(eventId, userId, organizerId, userRole);
+        console.log(`📥 [Controller] DELETE /participants/event/${eventId}/user/${userId}`);
 
-    const user = await userService.findById(userId);
-    const emailSubject = `Vous avez été retiré de l'événement ${event.title}`;
-    const emailText = `Bonjour ${user.name},\n\nVous avez été retiré de l'événement "${event.title}".\n\nSi vous pensez qu'il s'agit d'une erreur, veuillez contacter l'organisateur.`;
-    await sendEmail(user.email, emailSubject, emailText);
-    await notificationService.createNotification(userId, `Retrait de l'événement - ${event.title}`, emailText);
+        const event = await eventService.getEventById(eventId);
+        if (user.role !== 'Administrateur' && user.id !== event.id_org) {
+            return res.status(403).json({ message: "Non autorisé." });
+        }
 
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+        const response = await participantService.removeParticipant(eventId, userId);
+        res.status(200).json(response);
+    } catch (err) {
+        console.error('❌ Erreur removeParticipant :', err.message);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.getUserEventHistory = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log(`📥 [Controller] GET /participants/history/${userId}`);
+
+        const history = await participantService.getUserEventHistory(userId);
+        res.status(200).json(history);
+    } catch (err) {
+        console.error('❌ Erreur getUserEventHistory :', err.message);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.getParticipationCount = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log(`📥 [Controller] GET /participants/count/${userId}`);
+
+        const count = await participantService.getParticipationCount(userId);
+        res.status(200).json({ count });
+    } catch (err) {
+        console.error('❌ Erreur getParticipationCount :', err.message);
+        res.status(500).json({ message: err.message });
+    }
 };

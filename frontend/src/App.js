@@ -13,6 +13,8 @@ import CreateEventPage from './pages/CreateEventPage';
 import Admin from './pages/DashboardPage';
 import AdminRoute from './components/admin/AdminRoute';
 import EventDetails from './pages/EventDetails';
+import TeamPage from './pages/TeamPage';
+import { LegalMentions, PrivacyPolicy, TermsOfUse, TermsOfSale } from './pages/LegalPages';
 
 function App() {
 
@@ -21,6 +23,11 @@ function App() {
 			<ScrollToTop />
 			<Routes>
 				<Route path="/" element={<Home />} />
+				<Route path="/team" element={<TeamPage />} />
+				<Route path="/mentions-legales" element={<LegalMentions />} />
+				<Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
+				<Route path="/conditions-utilisation" element={<TermsOfUse />} />
+				<Route path="/conditions-vente" element={<TermsOfSale />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/profile/:userId" element={<Profil />} />
