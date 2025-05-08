@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS `comments` (
   CONSTRAINT `FK_comments_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_comments_parent` FOREIGN KEY (`id_comment`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_comments_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.comments : ~7 rows (environ)
+-- Listage des données de la table yshare.comments : ~12 rows (environ)
 DELETE FROM `comments`;
 INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_comment`, `date_posted`) VALUES
 	(1, 2, 13, NULL, 'Ceci est le contenu du commen.', NULL, '2025-03-13 14:32:12'),
@@ -65,7 +65,32 @@ INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_com
 	(6, 14, 28, 'Réponse au commentaire', 'Je suis d\'accord avec vous !', 4, '2025-03-17 16:14:01'),
 	(8, 2, 30, NULL, 'tu dis n\'importe quoi toi zbi', 1, '2025-05-05 13:49:17'),
 	(10, 18, 17, 'Cest quoi encore cet event', 'wow levent aberrant woke et tous je vais en parler longtempsssssss de cetttteeeeeee evenementtttttttttttt', NULL, '2025-05-07 11:31:42'),
-	(11, 18, 16, '', 'Parle mieux de cette evenement si tu veux pas que ca parte en couille on va se pt toi et moi', 10, '2025-05-07 11:32:26');
+	(11, 18, 16, '', 'Parle mieux de cette evenement si tu veux pas que ca parte en couille on va se pt toi et moi', 10, '2025-05-07 11:32:26'),
+	(12, 18, 28, 'Nouveau commentaire', 'dazddadadaadada', NULL, '2025-05-07 12:28:43'),
+	(13, 18, 28, 'Réponse', 'sazsazsazsazssa', 12, '2025-05-07 12:31:05'),
+	(14, 18, 28, 'Réponse', 'sazsazsazsazs', 13, '2025-05-07 12:31:24'),
+	(15, 18, 30, 'Nouveau commentaire', 'dzdazdzadazdazdaz', NULL, '2025-05-07 14:38:50'),
+	(16, 18, 30, 'Réponse', 'dzadadadazda', 15, '2025-05-07 14:38:55');
+
+-- Listage de la structure de table yshare. comment_reactions
+CREATE TABLE IF NOT EXISTS `comment_reactions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_comment` int NOT NULL,
+  `id_user` int NOT NULL,
+  `emoji` varchar(50) NOT NULL,
+  `date_reacted` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_user_comment_emoji` (`id_comment`,`id_user`,`emoji`),
+  KEY `FK_reaction_user` (`id_user`),
+  CONSTRAINT `FK_reaction_comment` FOREIGN KEY (`id_comment`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `FK_reaction_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table yshare.comment_reactions : ~2 rows (environ)
+DELETE FROM `comment_reactions`;
+INSERT INTO `comment_reactions` (`id`, `id_comment`, `id_user`, `emoji`, `date_reacted`) VALUES
+	(1, 12, 30, '🔥', '2025-05-07 13:56:06'),
+	(4, 15, 28, '😋', '2025-05-07 14:50:42');
 
 -- Listage de la structure de table yshare. events
 CREATE TABLE IF NOT EXISTS `events` (
@@ -156,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `event_images` (
   CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_images : ~22 rows (environ)
+-- Listage des données de la table yshare.event_images : ~24 rows (environ)
 DELETE FROM `event_images`;
 INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(1, 3, '/event-images/1743067245365-575734556.png', 1),
@@ -198,6 +223,7 @@ INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
 	(17, 3),
 	(31, 3),
 	(28, 8),
+	(30, 8),
 	(28, 17),
 	(30, 17);
 
@@ -233,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `news_categories` (
   CONSTRAINT `news_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.news_categories : ~0 rows (environ)
+-- Listage des données de la table yshare.news_categories : ~2 rows (environ)
 DELETE FROM `news_categories`;
 INSERT INTO `news_categories` (`news_id`, `category_id`) VALUES
 	(1, 2),
@@ -288,7 +314,7 @@ CREATE TABLE IF NOT EXISTS `participants` (
   KEY `id_user` (`id_user`),
   CONSTRAINT `FK_participants_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`),
   CONSTRAINT `FK_participants_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.participants : ~9 rows (environ)
 DELETE FROM `participants`;
@@ -301,7 +327,8 @@ INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`, `joined_at`, 
 	(10, 28, 5, 'Inscrit', '2025-04-29 16:35:57', NULL),
 	(11, 15, 5, 'En Attente', '2025-04-29 16:35:57', NULL),
 	(12, 30, 14, 'En Attente', '2025-05-02 13:16:08', NULL),
-	(13, 17, 4, 'En Attente', '2025-05-02 13:38:46', NULL);
+	(13, 17, 4, 'En Attente', '2025-05-02 13:38:46', NULL),
+	(14, 17, 18, 'Inscrit', '2025-05-07 16:51:34', 'je veux vraiment rejoindre cet evenement');
 
 -- Listage de la structure de table yshare. ratings
 CREATE TABLE IF NOT EXISTS `ratings` (
