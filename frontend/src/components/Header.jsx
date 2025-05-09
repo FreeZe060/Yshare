@@ -3,12 +3,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../config/authHeader";
 import logo from "../logo.png";
 import useNotifications from "../hooks/Notification/useNotifications";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
     const { notifications, loading: notifLoading } = useNotifications();
     const navigate = useNavigate();
     const location = useLocation();
+    const [showNotif, setShowNotif] = useState(false);
+    const notifRef = useRef(null);
 
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
@@ -41,6 +44,16 @@ const Header = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleClickOutsideNotif = (e) => {
+            if (notifRef.current && !notifRef.current.contains(e.target)) {
+                setShowNotif(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutsideNotif);
+        return () => document.removeEventListener("mousedown", handleClickOutsideNotif);
+    }, []);
+
 
     return (
 
@@ -51,7 +64,7 @@ const Header = () => {
             >
             <i className="text-2xl fas fa-bars" />
             </button> */}
-            <div id="navbar" className={`fixed w-full z-50 ${ scrolled ? "p-4 md:top-0" : "p-0 md:top-0" } xs:bottom-0 xs:top-auto transition-all duration-300`} >
+            <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
                         <span className="flex justify-center items-center px-3 py-1 pr-4 border-gray-800 border-r">
@@ -125,15 +138,51 @@ const Header = () => {
                         <div className="flex items-center gap-4 ml-auto">
                             {isAuthenticated && user ? (
                                 <>
-                                    <span className="relative ml-auto px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer">
-                                        <i className="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
-                                        <span className="top-0 -left-0 absolute flex size-3.5">
-                                            <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
-                                            <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
-                                                {notifications?.length || 0}
+                                    <div className="relative">
+                                        <span
+                                            onClick={() => setShowNotif(!showNotif)}
+                                            className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
+                                        >
+                                            <i className="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
+                                            <span className="top-0 -left-0 absolute flex size-3.5">
+                                                <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                                <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
+                                                    {notifications?.length || 0}
+                                                </span>
                                             </span>
                                         </span>
-                                    </span>
+
+                                        <AnimatePresence>
+                                            {showNotif && (
+                                                <motion.div
+                                                    ref={notifRef}
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    transition={{ duration: 0.25 }}
+                                                    className="absolute right-[-100px] z-50 bg-white shadow-lg mt-2 p-3 rounded-xl w-64 font-medium"
+                                                >
+                                                    <div className="p-4 text-sm text-gray-700 font-medium border-b border-gray-200">Notifications</div>
+                                                    <div className="divide-y divide-gray-200">
+                                                        {notifications?.slice(0, 3).map((notif, i) => (
+                                                            <div key={i} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                                                                <p className="text-gray-800 text-sm">{notif.title || 'Nouvelle notification'}</p>
+                                                                <p className="text-gray-400 text-xs mt-1">{new Date(notif.date_sent).toLocaleString("fr-FR")}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <div className="text-center border-t border-gray-200">
+                                                        <Link
+                                                            to="/notifications"
+                                                            className="block py-3 text-indigo-600 hover:text-indigo-800 font-semibold text-sm"
+                                                        >
+                                                            Voir toutes les notifications
+                                                        </Link>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
                                     <div className="relative ml-4">
                                         <button
                                             onClick={() => setMenuOpen((prev) => !prev)}
