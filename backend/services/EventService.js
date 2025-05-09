@@ -6,7 +6,7 @@ class EventService {
         const {
             title,
             city,
-            date,
+            start_time,
             categoryId,
             status,    
             sort       
@@ -18,7 +18,7 @@ class EventService {
         const whereClause = {};
         if (title) whereClause.title = { [Op.like]: `%${title}%` };
         if (city) whereClause.city = { [Op.like]: `%${city}%` };
-        if (date) whereClause.date = date;
+        if (start_time) whereClause.start_time = start_time;
         if (status) whereClause.status = status;
 
         const include = [
@@ -109,21 +109,40 @@ class EventService {
     
     async createEvent(data, images = []) {
         let {
-            title, description, date, id_org, price,
+            title, description, date_created, id_org, price,
             street, street_number, city, postal_code,
             start_time, end_time, categories, max_participants
         } = data;
-
+    
         if (typeof categories === 'string') {
             categories = JSON.parse(categories);
         }
-
+    
+        console.log('Vérification des dates :');
+        console.log('  - Maintenant      :', now.toISOString());
+        console.log('  - Date de début   :', startDate.toISOString());
+        console.log('  - Date de fin     :', endDate.toISOString());
+    
+        if (isNaN(startDate) || isNaN(endDate)) {
+            throw new Error("Les dates de début ou de fin sont invalides.");
+        }
+    
+        if (startDate < now) {
+            console.error("Erreur : la date de début est dans le passé.");
+            throw new Error("La date de début ne peut pas être dans le passé.");
+        }
+    
+        if (endDate <= startDate) {
+            console.error("Erreur : la date de fin est avant ou égale à la date de début.");
+            throw new Error("La date de fin doit être après la date de début.");
+        }
+    
         console.log('Création de l\'événement avec statut "Planifié"');
-
+    
         const event = await Event.create({
             title,
             description,
-            date,
+            date_created: new Date(),
             id_org,
             price: price === '' ? null : parseInt(price),
             max_participants: max_participants === '' ? null : parseInt(max_participants),
@@ -131,25 +150,25 @@ class EventService {
             street_number,
             city,
             postal_code,
-            start_time,
-            end_time,
+            start_time: startDate,
+            end_time: endDate,
             status: 'Planifié'
         });
-
+    
         if (categories?.length > 0) {
             await event.setCategories(categories);
         }
-
+    
         if (images?.length > 0) {
             await EventImage.bulkCreate(
                 images.map(img => ({ ...img, event_id: event.id }))
             );
         }
-
+    
         console.log('Événement créé avec ID:', event.id);
-
+    
         return await this.getEventById(event.id);
-    }
+    }    
 
     async updateEventStatus(eventId, newStatus) {
         console.log(`🔁 Tentative de mise à jour du statut de l'événement ID ${eventId} vers "${newStatus}"`);
@@ -290,7 +309,7 @@ class EventService {
                     limit: 1
                 }
             ],
-            order: [['date', 'DESC']]
+            order: [['date_created', 'DESC']]
         });
     }
 }

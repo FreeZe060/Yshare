@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getUserComments } from '../../services/commentService'; 
 
-export function useUserComments(userId, token) {
+export function useUserComments(userId, token = null) {
     const [commentsData, setCommentsData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!userId || !token) return;
+        if (!userId) return;
 
         const fetchComments = async () => {
             try {

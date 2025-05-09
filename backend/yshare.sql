@@ -130,7 +130,7 @@ INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date_created`, 
 	(13, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31 00:00:00', 10, 'Planifié', 'avenue de la paix', '9', 'Paris', '75000', '2025-05-13 10:00:00', '2025-05-14 10:04:09'),
 	(14, 15, 'Conférence Tech 2025 - Mise à Jour', 'Un événement sur les nouvelles technologies', 50, '2025-06-15 00:00:00', 200, 'Planifié', 'rue de la plage', '6', 'Antibes', '06650', '2025-05-14 12:00:00', '2025-05-14 16:00:00'),
 	(15, 15, 'Conférence Tech 2025', 'Un événement sur les nouvelles technologies', 50, '2025-06-15 00:00:00', 100, 'Planifié', 'place massena', '5', 'Nice', NULL, '2025-05-12 11:00:00', '2025-05-14 11:00:00'),
-	(16, 28, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'En Cours', 'velodrome', '1', 'Marseille', '13000', '2025-05-07 09:00:00', '2025-05-07 23:00:00'),
+	(16, 28, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'Terminé', 'velodrome', '1', 'Marseille', '13000', '2025-05-07 09:00:00', '2025-05-07 23:00:00'),
 	(17, 17, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'Terminé', 'place sophie-laffite', '1', 'Sophia-Antipolis', '06560', '2025-05-06 20:00:00', '2025-05-07 03:00:00'),
 	(18, 15, 'Concert Open Air', 'Un concert en plein air exceptionnel.', 25, '2025-07-20 00:00:00', 10, 'Planifié', 'Avenue de la Musique', '19', 'Lyon', '69000', '2025-07-20 19:00:00', '2025-07-20 23:00:00'),
 	(27, 28, 'dzdadadada', NULL, 0, '2025-04-12 00:00:00', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-04-12 13:25:00', '2025-04-13 13:25:00'),
@@ -435,21 +435,30 @@ CREATE TABLE IF NOT EXISTS `users` (
   `street_number` varchar(50) DEFAULT NULL,
   `banner_image` text,
   `status` enum('Approved','Suspended') DEFAULT 'Approved',
+  `phone` varchar(20) DEFAULT NULL,
+  `show_email` tinyint(1) DEFAULT '1',
+  `show_address` tinyint(1) DEFAULT '1',
+  `show_phone` tinyint(1) DEFAULT '0',
+  `birthdate` date DEFAULT NULL,
+  `gender` enum('Homme','Femme','Autre','Préféré ne pas dire') DEFAULT NULL,
+  `linkedin_url` text,
+  `insta_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `website_url` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.users : ~9 rows (environ)
 DELETE FROM `users`;
-INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `provider`, `profile_image`, `bio`, `city`, `street`, `street_number`, `banner_image`, `status`) VALUES
-	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(14, 'Admin', 'admin@example.com', 'Master', '$2a$10$8rhd4a8O1l4aB1zty8FXV.d4RCzKmVGvXGwdhR9luJw0SQRq7WVUq', 'Administrateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(15, 'Johnny', 'user@example.com', 'Doe', '$2a$10$.uBsQluiOs8o58tj5K.m8exfzfu9ilpnoMm7tsIcJQfR/Zs35UZZu', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(16, 'User', 'user@exampdddle.com', 'Test', '$2a$10$fpMIJMeb7ZZdI1TpyQDQYO6WPAGYaCzwE/NUdxDst6eCkZZ/7vS9G', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(17, 'alex', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1744360917246-308792308.png', '👋 Salut, moi c’est Alexandre Perez, j’ai 21 ans et je suis actuellement en 3ᵉ année de formation en développement web. Passionné par la tech, je suis ici pour mettre mes compétences au service de vos projets tout en continuant à monter en puissance dans ce domaine.\n\n💻 Je maîtrise un large éventail de technologies back-end et front-end, parmi lesquelles : JavaScript, Python (Django, Flask), PHP (Laravel, Symfony), Node.js, HTML/CSS, Bootstrap, Tailwind, React, Angular, Vue.js, mais aussi des outils orientés jeux et apps interactives comme Unreal Engine (C++), Unity (C#), ainsi que WordPress et Shopify.\n\n🚀 Mon objectif ? Allier apprentissage constant et valeur ajoutée pour vos idées. Si vous cherchez un profil jeune, motivé, et polyvalent, parlons de votre projet !\n', 'Argenteuil', 'avenue maria ', '6', '/banner-images/1744624628380-55255588.jpg', 'Approved'),
-	(29, 'l\'ancien d\'argenteuil', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(30, 'Alexandre', 'admin@gmail.com', 'Perez', '$2a$10$CC8h2k8x.P9UUweDZTjhzur7f6pTcXE6UoHcxAH9hvQPiS3ajVedu', 'Administrateur', NULL, '/profile-images/1744640026597-177124585.png', NULL, NULL, NULL, NULL, NULL, 'Approved'),
-	(31, 'Corentin', 'alex@gmail.com', 'pinder-white', '$2a$10$f8hsvpLsoXZXEVkvBLx7nu4NDqfEQBNRqbCRJyHvnqS2KBLPmEnzi', 'Administrateur', NULL, '/profile-images/1745327857504-741394160.png', NULL, NULL, NULL, NULL, NULL, 'Approved');
+INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `provider`, `profile_image`, `bio`, `city`, `street`, `street_number`, `banner_image`, `status`, `phone`, `show_email`, `show_address`, `show_phone`, `birthdate`, `gender`, `linkedin_url`, `insta_url`, `website_url`) VALUES
+	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(14, 'Admin', 'admin@example.com', 'Master', '$2a$10$8rhd4a8O1l4aB1zty8FXV.d4RCzKmVGvXGwdhR9luJw0SQRq7WVUq', 'Administrateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(15, 'Johnny', 'user@example.com', 'Doe', '$2a$10$.uBsQluiOs8o58tj5K.m8exfzfu9ilpnoMm7tsIcJQfR/Zs35UZZu', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(16, 'User', 'user@exampdddle.com', 'Test', '$2a$10$fpMIJMeb7ZZdI1TpyQDQYO6WPAGYaCzwE/NUdxDst6eCkZZ/7vS9G', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(17, 'alex', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1746777390451-588978481.png', '👋 Salut, moi c’est Alexandre Perez, j’ai 21 ans et je suis actuellement en 3ᵉ année de formation en développement web. Passionné par la tech, je suis ici pour mettre mes compétences au service de vos projets tout en continuant à monter en puissance dans ce domaine.\n\n💻 Je maîtrise un large éventail de technologies back-end et front-end, parmi lesquelles : JavaScript, Python (Django, Flask), PHP (Laravel, Symfony), Node.js, HTML/CSS, Bootstrap, Tailwind, React, Angular, Vue.js, mais aussi des outils orientés jeux et apps interactives comme Unreal Engine (C++), Unity (C#), ainsi que WordPress et Shopify.\n\n🚀 Mon objectif ? Allier apprentissage constant et valeur ajoutée pour vos idées. Si vous cherchez un profil jeune, motivé, et polyvalent, parlons de votre projet !\n', 'Argenteuil', 'avenue marie', '6', '/banner-images/1746777411791-984099653.jpg', 'Approved', NULL, 0, 1, 0, NULL, 'Homme', NULL, NULL, NULL),
+	(29, 'l\'ancien d\'argenteuil', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(30, 'Alexandre', 'admin@gmail.com', 'Perez', '$2a$10$CC8h2k8x.P9UUweDZTjhzur7f6pTcXE6UoHcxAH9hvQPiS3ajVedu', 'Administrateur', NULL, '/profile-images/1744640026597-177124585.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL),
+	(31, 'Corentin', 'alex@gmail.com', 'pinder-white', '$2a$10$f8hsvpLsoXZXEVkvBLx7nu4NDqfEQBNRqbCRJyHvnqS2KBLPmEnzi', 'Administrateur', NULL, '/profile-images/1745327857504-741394160.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

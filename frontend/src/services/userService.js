@@ -66,16 +66,23 @@ export async function getPublicProfile(userId) {
 /**
  * GET /profile/:userId
  */
-export async function getProfileById(userId, token) {
+export async function getProfileById(userId, token = null) {
+	if (!userId) throw new Error("Un ID utilisateur est requis.");
+
 	const response = await fetch(`${API_BASE_URL}/profile/${userId}`, {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
+			...(token ? { Authorization: `Bearer ${token}` } : {}),
 		},
 	});
+
 	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération du profil");
+
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération du profil");
+	}
+
 	return result;
 }
 
@@ -196,5 +203,5 @@ export async function getParticipationCount(userId) {
 	});
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur récupération participation");																					
-	return result.participationCount;
+	return result.count;
 }

@@ -26,7 +26,7 @@ const Profil = () => {
     const { update, loading: updateLoading, error: updateError } = useUpdateProfile();
 
     const { user: currentUser } = useAuth();
-    const { commentsData, loading: commentsLoading } = useUserComments(userId, currentUser?.token);
+    const { commentsData, loading: commentsLoading } = useUserComments(userId);
 
     console.log("userId param:", userId);
     console.log("currentUser:", currentUser);
@@ -45,8 +45,8 @@ const Profil = () => {
     );
 
     useEffect(() => {
-        if (!userId || !currentUser?.token) return;
-
+        if (!userId) return;
+    
         const fetchData = async () => {
             try {
                 const [createdStats, participationCount, rating] = await Promise.all([
@@ -54,14 +54,14 @@ const Profil = () => {
                     getParticipationCount(userId),
                     getUserAverageRating(userId)
                 ]);
-
+    
                 setCreatedEvents(createdStats.events.slice(0, 5));
-
+    
                 if (isOwner || isAdmin) {
-                    const history = await getEventHistory(currentUser.token, userId);
+                    const history = await getEventHistory(currentUser?.token || null, userId);
                     setParticipatedEvents(history.slice(0, 5));
                 }
-
+    
                 setStats({
                     created: createdStats.count,
                     participated: participationCount,
@@ -71,36 +71,56 @@ const Profil = () => {
                 console.error("Erreur lors de la récupération des données du profil :", err);
             }
         };
-
+    
         fetchData();
-    }, [userId, currentUser?.token, isOwner, isAdmin]);
+    }, [userId, currentUser, isOwner, isAdmin]);    
 
     console.log("STATS →", stats);
 
-    const handleUpdateProfileImage = async (file) => {
+    const handleUpdateProfileImage = async (file, type = 'profileImage') => {
         try {
             const formData = new FormData();
-            formData.append('profileImage', file);
+            formData.append(type, file);
 
             const userIdToUpdate = isOwner ? currentUser.id : userId;
-            await update(formData, userIdToUpdate);
+
+            const endpoint =
+                type === 'bannerImage'
+                    ? `/api/profile/banner/${userIdToUpdate}`
+                    : `/api/profile/${userIdToUpdate}`;
+
+            const response = await fetch(`http://localhost:8080${endpoint}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${currentUser.token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.message || 'Erreur lors de la mise à jour');
+            }
 
             window.location.reload();
         } catch (err) {
-            console.error("Erreur mise à jour image :", err.message);
+            console.error(`Erreur mise à jour ${type} :`, err.message);
         }
     };
 
     const handleUpdateProfileField = async (field, value) => {
         try {
-            if (!value.trim()) return;
+            const cleanedValue = typeof value === 'string' ? value.trim() : value;
+
+            if (typeof cleanedValue === 'string' && cleanedValue === '') return;
 
             const userIdToUpdate = isOwner ? currentUser.id : userId;
-            await update({ [field]: value }, userIdToUpdate);
+
+            await update({ [field]: cleanedValue }, userIdToUpdate);
 
             setProfile((prev) => ({
                 ...prev,
-                [field]: value
+                [field]: cleanedValue
             }));
         } catch (err) {
             console.error(`Erreur mise à jour ${field} :`, err.message);

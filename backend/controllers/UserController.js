@@ -14,10 +14,32 @@ const generateToken = (user) => {
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10h' });
 };
 
-exports.register = async (req, res) => {  
+exports.register = async (req, res) => {
     try {
-        const { name, lastname, email, password, bio, city, street, streetNumber } = req.body;
+        const {
+            name,
+            lastname,
+            email,
+            password,
+            bio,
+            city,
+            street,
+            streetNumber,
+            gender,
+            birthdate,
+            phone,
+            linkedinUrl,
+            instaUrl,
+            websiteUrl,
+            bannerImage
+        } = req.body;
+
         console.log(`[register] Tentative d'inscription pour ${email}`);
+
+        if (!gender) {
+            console.warn("[register] Genre manquant");
+            return res.status(400).json({ message: "Le champ 'genre' est requis." });
+        }
 
         const userExists = await userService.getUserByEmail(email);
         if (userExists) {
@@ -26,31 +48,39 @@ exports.register = async (req, res) => {
         }
 
         const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+        console.log(`[register] Mot de passe hashé : ${hashedPassword ? '✔️' : 'Aucun mot de passe fourni'}`);
 
         let profileImage = req.file ? `/profile-images/${req.file.filename}` : null;
         console.log(`[register] Image de profil : ${profileImage}`);
 
-        const bannerImage = req.body.bannerImage || null;
-
-        const newUser = await userService.createUser(
+        const newUser = await userService.createUser({
             name,
             lastname,
             email,
-            hashedPassword,
+            password: hashedPassword,
+            gender,
             profileImage,
-            null,
-            bio || null,
-            city || null,
-            street || null,
-            streetNumber || null,
-            bannerImage
-        );
+            provider: null,
+            bio: bio || null,
+            city: city || null,
+            street: street || null,
+            streetNumber: streetNumber || null,
+            bannerImage: bannerImage || null,
+            phone: phone || null,
+            birthdate: birthdate || null,
+            linkedinUrl: linkedinUrl || null,
+            instaUrl: instaUrl || null,
+            websiteUrl: websiteUrl || null
+        });
 
         if (newUser) {
             let token;
             try {
                 token = generateToken(newUser);
-                res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
+                res.cookie('auth_token', token, {
+                    httpOnly: true,
+                    maxAge: 10 * 60 * 60 * 1000 // 10 heures
+                });
             } catch (jwtError) {
                 console.error("[register] Erreur JWT :", jwtError);
                 return res.status(500).json({ message: "Erreur lors de la création du token." });
@@ -79,7 +109,7 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         console.log(`[login] Tentative de connexion pour ${email}`);
-    
+
         const user = await userService.getUserByEmail(email);
         if (user && await bcrypt.compare(password, user.password)) {
             let token;
@@ -90,7 +120,7 @@ exports.login = async (req, res) => {
                 console.error("[login] Erreur lors de la génération du token JWT :", jwtError);
                 return res.status(500).json({ message: "Erreur lors de la création du token." });
             }
-    
+
             console.log(`[login] Connexion réussie pour l'utilisateur ID ${user.id}`);
             return res.json({
                 id: user.id,
@@ -112,18 +142,55 @@ exports.login = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
     try {
-        const userId = req.params.userId || req.user.id;
-        console.log(`[getProfile] Récupération du profil pour l'utilisateur ID : ${userId}`);
+        const requesterId = req.user?.id;
+        const requestedId = req.params.userId || requesterId;
 
-        const userProfile = await userService.findById(userId);
+        console.log(`[getProfile] Récupération du profil pour l'utilisateur ID : ${requestedId}, demandé par : ${requesterId || "public"}`);
 
-        if (!userProfile) {
-            console.warn(`[getProfile] Utilisateur non trouvé pour l'ID : ${userId}`);
+        const user = await userService.findById(requestedId);
+
+        if (!user) {
+            console.warn(`[getProfile] Utilisateur non trouvé pour l'ID : ${requestedId}`);
             return res.status(404).json({ message: "Utilisateur non trouvé" });
         }
 
-        console.log(`[getProfile] Profil récupéré avec succès pour l'ID : ${userId}`);
-        return res.status(200).json(userProfile);
+        const isAdmin = req.user?.role === 'Administrateur';
+        const isOwner = requesterId && Number(requesterId) === Number(user.id);
+        const isPrivate = isOwner || isAdmin;
+
+        const {
+            id, name, lastname, profileImage, bannerImage,
+            bio, role, gender, birthdate, email, phone,
+            city, street, streetNumber, linkedinUrl, instaUrl, websiteUrl,
+            showEmail, showPhone, showAddress
+        } = user;
+
+        const safeUser = {
+            id,
+            name,
+            lastname,
+            profileImage,
+            bannerImage,
+            bio,
+            gender,
+            birthdate,
+            role: isPrivate ? role : undefined,
+            email: isPrivate || showEmail ? email : undefined,
+            phone: isPrivate || showPhone ? phone : undefined,
+            city: isPrivate || showAddress ? city : undefined,
+            street: isPrivate || showAddress ? street : undefined,
+            streetNumber: isPrivate || showAddress ? streetNumber : undefined,
+            linkedinUrl,
+            instaUrl,
+            websiteUrl,
+            showEmail: user.showEmail,
+            showPhone: user.showPhone,
+            showAddress: user.showAddress
+        };
+
+        console.log(`[getProfile] Profil renvoyé pour ${requestedId} (visibilité : ${isPrivate ? 'privée' : 'publique'})`);
+        return res.status(200).json(safeUser);
+
     } catch (error) {
         console.error("[getProfile] Erreur serveur :", error);
         return res.status(500).json({ message: error.message });
@@ -133,8 +200,13 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const userId = req.params.userId || req.user.id;
+        console.log(`[updateProfile] Requête de mise à jour pour l'utilisateur ID : ${userId}`);
+
         const currentUser = await userService.findById(userId);
-        if (!currentUser) return res.status(404).json({ message: "Utilisateur non trouvé" });
+        if (!currentUser) {
+            console.warn(`[updateProfile] Utilisateur ID ${userId} non trouvé`);
+            return res.status(404).json({ message: "Utilisateur non trouvé" });
+        }
 
         const updates = {
             name: req.body.name ?? currentUser.name,
@@ -146,23 +218,41 @@ exports.updateProfile = async (req, res) => {
             bio: req.body.bio ?? currentUser.bio,
             city: req.body.city ?? currentUser.city,
             street: req.body.street ?? currentUser.street,
-            streetNumber: req.body.streetNumber ?? currentUser.streetNumber
+            streetNumber: req.body.streetNumber ?? currentUser.streetNumber,
+            phone: req.body.phone ?? currentUser.phone,
+            birthdate: req.body.birthdate ?? currentUser.birthdate,
+            gender: req.body.gender ?? currentUser.gender,
+            linkedinUrl: req.body.linkedinUrl ?? currentUser.linkedinUrl,
+            instaUrl: req.body.instaUrl ?? currentUser.instaUrl,
+            websiteUrl: req.body.websiteUrl ?? currentUser.websiteUrl,
+            showEmail: req.body.showEmail !== undefined ? req.body.showEmail : currentUser.showEmail,
+            showAddress: req.body.showAddress !== undefined ? req.body.showAddress : currentUser.showAddress,
+            showPhone: req.body.showPhone !== undefined ? req.body.showPhone : currentUser.showPhone
         };
+
+        console.log(`[updateProfile] Données à mettre à jour :`, updates);
 
         if (req.file) {
             const fileField = req.file.fieldname === 'bannerImage' ? 'bannerImage' : 'profileImage';
             const uploadPath = fileField === 'profileImage' ? 'profile-images' : 'banner-images';
             const oldFile = currentUser[fileField];
 
+            console.log(`[updateProfile] Nouvelle image détectée pour ${fileField}`);
+
             if (oldFile) {
                 const oldPath = path.join(__dirname, '..', 'media', uploadPath, path.basename(oldFile));
-                if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                    console.log(`[updateProfile] Ancienne image supprimée : ${oldPath}`);
+                }
             }
 
             updates[fileField] = `/${uploadPath}/${req.file.filename}`;
+            console.log(`[updateProfile] Nouvelle image enregistrée : ${updates[fileField]}`);
         }
 
         const updatedUser = await userService.updateUser(userId, updates);
+        console.log(`[updateProfile] Mise à jour réussie pour l'utilisateur ID : ${userId}`);
 
         res.status(200).json({
             message: "Profil mis à jour avec succès",
@@ -226,32 +316,33 @@ exports.getEventHistory = async (req, res) => {
     }
 };
 
-exports.getPublicProfile = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        console.log(`[getPublicProfile] Récupération du profil public pour l'utilisateur ID: ${userId}`);
-    
-        const user = await userService.findById(userId);
-    
-        if (!user) {
-            console.warn(`[getPublicProfile] Utilisateur non trouvé pour l'ID ${userId}`);
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-        }
-    
-        console.log(`[getPublicProfile] Utilisateur trouvé : ${user.name} ${user.lastname}`);
-        return res.json({
-            id: user.id,
-            name: user.name,
-            lastname: user.lastname,
-            profileImage: user.profileImage,
-            bio: user.bio,
-            bannerImage: user.bannerImage,
-        });
-    } catch (error) {
-        console.error("[getPublicProfile] Erreur serveur :", error);
-        return res.status(500).json({ message: "Erreur serveur", error: error.message });
-    }
-};  
+// exports.getPublicProfile = async (req, res) => {
+//     try {
+//         const { userId } = req.params;
+//         console.log(`[getPublicProfile] Récupération du profil public pour l'utilisateur ID: ${userId}`);
+
+//         const user = await userService.findById(userId);
+
+//         if (!user) {
+//             console.warn(`[getPublicProfile] Utilisateur non trouvé pour l'ID ${userId}`);
+//             return res.status(404).json({ message: "Utilisateur non trouvé" });
+//         }
+
+//         console.log(`[getPublicProfile] Utilisateur trouvé : ${user.name} ${user.lastname}`);
+//         return res.json({
+//             id: user.id,
+//             name: user.name,
+//             lastname: user.lastname,
+//             profileImage: user.profileImage,
+//             bio: user.bio,
+//             bannerImage: user.bannerImage,
+
+//         });
+//     } catch (error) {
+//         console.error("[getPublicProfile] Erreur serveur :", error);
+//         return res.status(500).json({ message: "Erreur serveur", error: error.message });
+//     }
+// };
 
 exports.getUserEventsAdmin = async (req, res) => {
     try {

@@ -7,6 +7,7 @@ import { useRemoveReaction } from '../hooks/Comments/useRemoveReaction';
 import useReplies from '../hooks/Comments/useReplies';
 import { useReactions } from '../hooks/Comments/useReactions';
 import { useAuth } from '../config/authHeader';
+import { Link } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -64,7 +65,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 			});
 			if (confirm.isConfirmed) {
 				await removeReaction(comment.id, emoji);
-                await refetchReactions();
+				await refetchReactions();
 			}
 		} else {
 			if (userReactions.length >= 3) {
@@ -75,7 +76,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 				});
 			}
 			await addReaction(comment.id, emoji);
-            await refetchReactions();
+			await refetchReactions();
 		}
 	};
 
@@ -91,20 +92,28 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 
 	return (
 		<div className="flex gap-4">
-			<img
-				src={
-					comment.User?.profileImage
-						? `${API_BASE_URL}${comment.User.profileImage}`
-						: 'https://assets.codepen.io/285131/hat-man.png'
-				}
-				className="w-10 h-10 rounded-full object-cover"
-				alt="avatar"
-			/>
+			<Link
+				to={`/profile/${comment.User.id}`}
+			>
+				<img
+					src={
+						comment.User?.profileImage
+							? `${API_BASE_URL}${comment.User.profileImage}`
+							: 'https://assets.codepen.io/285131/hat-man.png'
+					}
+					className="w-10 h-10 rounded-full object-cover"
+					alt="avatar"
+				/>
+			</Link>
 			<div className="flex-1 space-y-2">
 				<div className="text-sm text-gray-500">
-					<span className="font-medium text-gray-800">
-						{comment.User ? `${comment.User.name} ${comment.User.lastname}` : 'Utilisateur'}
-					</span>{' '}
+					<Link
+						to={`/profile/${comment.User.id}`}
+					>
+						<span className="font-medium text-gray-800">
+							{comment.User ? `${comment.User.name} ${comment.User.lastname}` : 'Utilisateur'}
+						</span>{' '}
+					</Link>
 					– {new Date(comment.date_posted).toLocaleDateString()}
 				</div>
 				<div className="border border-gray-200 rounded-md p-4 bg-gray-50 shadow-sm">

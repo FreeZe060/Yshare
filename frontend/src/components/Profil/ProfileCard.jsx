@@ -23,11 +23,13 @@ const calculateProfileCompletion = (user) => {
 const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSections }) => {
 	const auth = useAuth();
 	const currentUser = auth?.user;
-	const editable = currentUser?.id === user.id || user.role !== "Administrateur";
+	const editable = currentUser?.id === user.id || currentUser?.role === "Administrateur";
 	const profileCompletion = calculateProfileCompletion(user);
 	const [showFullBio, setShowFullBio] = useState(false);
 	const [editingBio, setEditingBio] = useState(false);
 	const [editedBio, setEditedBio] = useState(user.bio || '');
+	const [editingField, setEditingField] = useState(null);
+	const [birthdateError, setBirthdateError] = useState(null);
 
 	const handleSaveBio = () => {
 		if (onUpdateProfileField) {
@@ -163,8 +165,8 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 							<div className="flex flex-col items-center -mt-20 relative">
 								<div className="flex w-full justify-start items-center">
 									{user.profileImage ? (
-										<div class=" w-4/12 px-4 order-2 flex items-center justify-center">
-											<div class="relative">
+										<div className=" w-4/12 px-4 order-2 flex items-center justify-center">
+											<div className="relative">
 												<img
 													src={`http://localhost:8080${user.profileImage}`}
 													alt="Profile"
@@ -183,8 +185,8 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 											</div>
 										</div>
 									) : (
-										<div class=" w-4/12 px-4 order-2 flex items-center justify-center">
-											<div class="relative">
+										<div className=" w-4/12 px-4 order-2 flex items-center justify-center">
+											<div className="relative">
 												<div
 													className="h-40 w-40 rounded-full bg-gray-300 flex items-center justify-center cursor-pointer"
 													onClick={() => editable && document.getElementById('profileImageInput').click()}
@@ -202,8 +204,8 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										onChange={handleImageChange}
 									/>
 
-									<div class="w-4/12 px-4 order-1 mt-12">
-										<div class="flex py-4 lg:pt-4 pt-8">
+									<div className="w-4/12 px-4 order-1 mt-12">
+										<div className="flex py-4 lg:pt-4 pt-8">
 											<div className="mr-4 p-3 text-center">
 												<span className="font-bold block text-xl">{user.eventsParticipated || 0}</span>
 												<span className="text-sm">événements participés</span>
@@ -296,44 +298,358 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 									{['name', 'lastname'].map((field) =>
 										editable ? (
 											<input
+												key={field}
 												type="text"
 												defaultValue={user[field]}
 												className="text-4xl font-serif font-bold outline-none px-0 w-fit"
 												onBlur={(e) => handleFieldChange(field, e.target.value)}
 												style={{ width: `${user[field]?.length + 1}ch` }}
 											/>
-
 										) : (
 											<span key={field} className="text-4xl font-bold font-serif">
 												{user[field]}
 											</span>
 										)
 									)}
+
 								</div>
 
 								<div className="mt-12 space-y-4 text-blueGray-600 text-xl w-full max-w-md mx-auto">
-									{(user.street || user.streetNumber || user.city) && (
+									<div className="flex items-center">
+										<i class="fa-solid fa-venus-mars text-blue-600 text-3xl mr-4"></i>
+										{editable && editingField === 'gender' ? (
+											<select
+												className="border px-2 py-1 rounded"
+												defaultValue={user.gender || ''}
+												onBlur={(e) => {
+													handleFieldChange('gender', e.target.value);
+													setEditingField(null);
+												}}
+											>
+												<option value="">Sélectionnez votre genre</option>
+												<option value="Homme">Homme</option>
+												<option value="Femme">Femme</option>
+												<option value="Autre">Autre</option>
+												<option value="Préféré ne pas dire">Préféré ne pas dire</option>
+											</select>
+										) : (
+											<span onClick={() => editable && setEditingField('gender')} className={editable ? "cursor-pointer" : ""}>
+												{user.gender || "Genre non spécifié"}
+											</span>
+										)}
+									</div>
+
+									{(editable || currentUser?.role === 'Administrateur' || (user.showAddress && (user.street || user.streetNumber || user.city))) && (
 										<div className="flex items-center">
 											<FaMapMarkerAlt className="mr-4 text-blue-600 text-2xl" />
-											<span>
-												{user.streetNumber ? `${user.streetNumber} ` : ''}
-												{user.street ? `${user.street}, ` : ''}
-												{user.city || ''}
+											<span className={editable ? "cursor-pointer" : ""} onClick={() => editable && setEditingField('address')}>
+												{editingField === 'address' ? (
+													<div className="flex flex-wrap gap-2">
+														<input className="border px-2 py-1 rounded" defaultValue={user.streetNumber || ''} placeholder="Numéro"
+															onBlur={(e) => { handleFieldChange('streetNumber', e.target.value); setEditingField(null); }} />
+														<input className="border px-2 py-1 rounded" defaultValue={user.street || ''} placeholder="Rue"
+															onBlur={(e) => { handleFieldChange('street', e.target.value); setEditingField(null); }} />
+														<input className="border px-2 py-1 rounded" defaultValue={user.city || ''} placeholder="Ville"
+															onBlur={(e) => { handleFieldChange('city', e.target.value); setEditingField(null); }} />
+													</div>
+												) : (
+													user.street || user.streetNumber || user.city ? (
+														<>
+															{user.streetNumber ? `${user.streetNumber} ` : ''}
+															{user.street ? `${user.street}, ` : ''}
+															{user.city || ''}
+														</>
+													) : (
+														<span className="italic text-gray-400">
+															<span className="italic text-gray-400">
+																{"Aucune adresse n’a encore été entrée pour le moment"}
+															</span>
+														</span>
+													)
+												)}
 											</span>
+											{editable && (
+												<button
+													className="ml-2 text-gray-500 hover:text-blue-600"
+													onClick={() => handleFieldChange('showAddress', !user.showAddress)}
+													title={user.showAddress ? "Cacher l'adresse" : "Afficher l'adresse"}>
+													{user.showAddress ? <i class="fa-regular fa-eye"></i> : <i class="fa-regular fa-eye-slash"></i>}
+												</button>
+											)}
 										</div>
 									)}
-									{user.email && (
+
+									{(editable || currentUser?.role === 'Administrateur' || (user.showEmail && user.email)) && (
 										<div className="flex items-center">
 											<FaEnvelope className="mr-4 text-blue-600 text-2xl" />
-											<span>{user.email}</span>
+											<span className={editable ? "cursor-pointer" : ""} onClick={() => editable && setEditingField('email')}>
+												{editingField === 'email' ? (
+													<input
+														type="email"
+														className="border px-2 py-1 rounded"
+														defaultValue={user.email || ''}
+														placeholder="Votre email"
+														onBlur={(e) => { handleFieldChange('email', e.target.value); setEditingField(null); }}
+													/>
+												) : (
+													user.email || (
+														<span className="italic text-gray-400">
+															{"Aucune adresse email n’a encore été entrée pour le moment"}
+														</span>
+													)
+												)}
+											</span>
+											{editable && (
+												<button
+													className="ml-2 text-gray-500 hover:text-blue-600"
+													onClick={() => handleFieldChange('showEmail', !user.showEmail)}
+													title={user.showEmail ? "Cacher l'email" : "Afficher l'email"}>
+													{user.showEmail ? <i class="fa-regular fa-eye"></i> : <i class="fa-regular fa-eye-slash"></i>}
+												</button>
+											)}
 										</div>
 									)}
-									{user.role && (
+
+									{(editable || currentUser?.role === 'Administrateur' || (user.showPhone && user.phone)) && (
+										<div className="flex items-center">
+											<i class="fa-solid fa-phone text-blue-600 text-3xl mr-4"></i>
+											{editable && editingField === 'phone' ? (
+												<input
+													type="text"
+													defaultValue={user.phone || ''}
+													placeholder="Votre téléphone"
+													className="border px-2 py-1 rounded"
+													onBlur={(e) => {
+														handleFieldChange('phone', e.target.value);
+														setEditingField(null);
+													}}
+												/>
+											) : (
+												<span onClick={() => editable && setEditingField('phone')} className={editable ? "cursor-pointer" : ""}>
+													{user.phone || (
+														<span className="italic text-gray-400">
+															{"Aucun numéro de téléphone n’a encore été entré pour le moment"}
+														</span>
+													)}
+												</span>
+											)}
+											{editable && (
+												<button
+													className="ml-2 text-gray-500 hover:text-blue-600"
+													onClick={() => handleFieldChange('showPhone', !user.showPhone)}
+													title={user.showPhone ? "Cacher le téléphone" : "Afficher le téléphone"}>
+													{user.showPhone ? <i class="fa-regular fa-eye"></i> : <i class="fa-regular fa-eye-slash"></i>}
+												</button>
+											)}
+										</div>
+									)}
+
+									{(editable || currentUser?.role === 'Administrateur' || user.birthdate) && (
+										<div className="flex flex-col">
+											<div className="flex items-center">
+												<i class="fa-solid fa-cake-candles text-blue-600 text-3xl mr-4"></i>
+												{editingField === 'birthdate' && editable ? (
+													<input
+														type="date"
+														className="border px-2 py-1 rounded"
+														defaultValue={user.birthdate || ''}
+														onBlur={(e) => {
+															const newDate = new Date(e.target.value);
+															const today = new Date();
+															const age = today.getFullYear() - newDate.getFullYear();
+															const isFuture = newDate > today;
+															const minAgeDate = new Date(today);
+															minAgeDate.setFullYear(today.getFullYear() - 16);
+
+															if (isFuture) {
+																setBirthdateError("La date ne peut pas être dans le futur.");
+																return;
+															}
+															if (newDate > minAgeDate) {
+																setBirthdateError("Vous devez avoir au moins 16 ans.");
+																return;
+															}
+
+															setBirthdateError(null);
+															handleFieldChange('birthdate', e.target.value);
+															setEditingField(null);
+														}}
+													/>
+												) : user.birthdate ? (
+													<span
+														className={editable ? 'cursor-pointer text-blue-700 hover:underline' : ''}
+														onClick={() => editable && setEditingField('birthdate')}
+													>
+														{new Date(user.birthdate).toLocaleDateString('fr-FR', {
+															year: 'numeric',
+															month: 'long',
+															day: 'numeric',
+														})}
+													</span>
+												) : editable || currentUser?.role === 'Administrateur' ? (
+													<span
+														className="italic text-gray-400 cursor-pointer"
+														onClick={() => editable && setEditingField('birthdate')}
+													>
+														Aucune date d'anniversaire encore entrée pour le moment
+													</span>
+												) : null}
+											</div>
+
+											{editingField === 'birthdate' && birthdateError && (
+												<span className="text-red-500 text-sm mt-1 ml-10">{birthdateError}</span>
+											)}
+										</div>
+									)}
+
+
+									{(editable || user.linkedinUrl || currentUser?.role === 'Administrateur') && (
+										<div className="flex items-center">
+											<i class="fa-brands fa-linkedin text-blue-600 text-3xl mr-4"></i>
+											{editable && editingField === 'linkedinUrl' ? (
+												<input
+													type="text"
+													defaultValue={user.linkedinUrl || ''}
+													placeholder="Lien LinkedIn"
+													className="border px-2 py-1 rounded"
+													onBlur={(e) => {
+														const newValue = e.target.value.trim();
+														if (newValue !== user.linkedinUrl) {
+															handleFieldChange('linkedinUrl', newValue);
+														}
+														setEditingField(null);
+													}}
+												/>
+											) : user.linkedinUrl ? (
+												<>
+													<a
+														href={user.linkedinUrl.startsWith('http') ? user.linkedinUrl : `https://${user.linkedinUrl}`}
+														target="_blank"
+														rel="noreferrer"
+														className="text-blue-600 underline"
+													>
+														LinkedIn
+													</a>
+													{editable && (
+														<button
+															onClick={() => setEditingField('linkedinUrl')}
+															className="ml-2 text-gray-500 hover:text-blue-600"
+															title="Modifier LinkedIn"
+														>
+															🖊️
+														</button>
+													)}
+												</>
+											) : editable ? (
+												<span className="text-gray-400 cursor-pointer" onClick={() => setEditingField('linkedinUrl')}>
+													Vous pouvez entrer votre LinkedIn ici
+												</span>
+											) : currentUser?.role === 'Administrateur' ? (
+												<span className="text-gray-400">Cet utilisateur n’a pas encore entré de LinkedIn</span>
+											) : null}
+										</div>
+									)}
+
+									{(editable || user.instaUrl || currentUser?.role === 'Administrateur') && (
+										<div className="flex items-center">
+											<i class="fa-brands fa-instagram text-blue-600 text-3xl mr-4"></i>
+											{editable && editingField === 'instaUrl' ? (
+												<input
+													type="text"
+													defaultValue={user.instaUrl || ''}
+													placeholder="Lien Instagram"
+													className="border px-2 py-1 rounded"
+													onBlur={(e) => {
+														const newValue = e.target.value.trim();
+														if (newValue !== user.instaUrl) {
+															handleFieldChange('instaUrl', newValue);
+														}
+														setEditingField(null);
+													}}
+												/>
+											) : user.instaUrl ? (
+												<>
+													<a
+														href={user.instaUrl.startsWith('http') ? user.instaUrl : `https://${user.instaUrl}`}
+														target="_blank"
+														rel="noreferrer"
+														className="text-pink-600 underline"
+													>
+														Instagram
+													</a>
+													{editable && (
+														<button
+															onClick={() => setEditingField('instaUrl')}
+															className="ml-2 text-gray-500 hover:text-pink-500"
+															title="Modifier Instagram"
+														>
+															🖊️
+														</button>
+													)}
+												</>
+											) : editable ? (
+												<span className="text-gray-400 cursor-pointer" onClick={() => setEditingField('instaUrl')}>
+													Vous pouvez entrer votre Instagram ici
+												</span>
+											) : currentUser?.role === 'Administrateur' ? (
+												<span className="text-gray-400">Cet utilisateur n’a pas encore entré d’Instagram</span>
+											) : null}
+										</div>
+									)}
+									{(editable || user.websiteUrl || currentUser?.role === 'Administrateur') && (
+										<div className="flex items-center">
+											<i class="fa-solid fa-globe text-blue-600 text-3xl mr-4"></i>
+											{editable && editingField === 'websiteUrl' ? (
+												<input
+													type="text"
+													defaultValue={user.websiteUrl || ''}
+													placeholder="Lien Site Web"
+													className="border px-2 py-1 rounded"
+													onBlur={(e) => {
+														const newValue = e.target.value.trim();
+														if (newValue !== user.websiteUrl) {
+															handleFieldChange('websiteUrl', newValue);
+														}
+														setEditingField(null);
+													}}
+												/>
+											) : user.websiteUrl ? (
+												<>
+													<a
+														href={user.websiteUrl.startsWith('http') ? user.websiteUrl : `https://${user.websiteUrl}`}
+														target="_blank"
+														rel="noreferrer"
+														className="text-green-600 underline"
+													>
+														Site Web
+													</a>
+													{editable && (
+														<button
+															onClick={() => setEditingField('websiteUrl')}
+															className="ml-2 text-gray-500 hover:text-green-600"
+															title="Modifier Site Web"
+														>
+															🖊️
+														</button>
+													)}
+												</>
+											) : editable ? (
+												<span className="text-gray-400 cursor-pointer" onClick={() => setEditingField('websiteUrl')}>
+													Vous pouvez entrer votre site web ici
+												</span>
+											) : currentUser?.role === 'Administrateur' ? (
+												<span className="text-gray-400">Cet utilisateur n’a pas encore entré de site web</span>
+											) : null}
+										</div>
+									)}
+
+									{(editable || currentUser?.role === 'Administrateur') && user.role && (
 										<div className="flex items-center">
 											<FaBriefcase className="mr-4 text-blue-600 text-2xl" />
 											<span>{user.role}</span>
 										</div>
 									)}
+
 									{user.status && (
 										<div className="flex items-center">
 											<FaBriefcase className="mr-4 text-blue-600 text-2xl" />

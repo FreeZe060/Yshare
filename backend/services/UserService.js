@@ -5,7 +5,7 @@ class UserService {
         return await User.findAll({
             attributes: ['id', 'name', 'lastname', 'email', 'role', 'status', 'profileImage']
         });
-    }    
+    }
 
     async getUserByEmail(email) {
         return await User.findOne({
@@ -17,11 +17,29 @@ class UserService {
         return await User.findByPk(id);
     }
 
-    async createUser(name, lastname, email, password, profileImage, provider = null, bio = null, city = null, street = null, streetNumber = null, bannerImage = null) {
-        console.log("[createUser] Création de l'utilisateur avec données supplémentaires");
-        return await User.create({ name, lastname, email, password, profileImage, provider, bio, city, street, streetNumber, bannerImage });
+    async createUser(
+        { name, lastname, email, password, gender, profileImage, provider = null, bio = null, city = null, street = null, streetNumber = null, bannerImage = null,
+            phone = null, birthdate = null, linkedinUrl = null, instaUrl = null, websiteUrl = null }) {
+        
+        console.log("[createUser] Données reçues :", {
+            name, lastname, email, gender, profileImage, provider,
+            bio, city, street, streetNumber, bannerImage, phone,
+            birthdate, linkedinUrl, instaUrl, websiteUrl
+        });
+
+        if (!gender) {
+            console.error("[createUser] Erreur : le genre est obligatoire.");
+            throw new Error("Le champ 'genre' est requis pour l'inscription.");
+        }
+
+        return await User.create(
+            {
+                name, lastname, email, password, gender, profileImage, provider, bio, city, street, streetNumber, bannerImage,
+                phone, birthdate, linkedinUrl, instaUrl, websiteUrl, showEmail: true, showPhone: false, showAddress: true
+            }
+        );
     }
-  
+
     async updateUser(userId, updatedData) {
         const user = await this.findById(userId);
         if (!user) {
@@ -30,7 +48,7 @@ class UserService {
         }
         console.log(`[updateUser] Mise à jour de l'utilisateur ID ${userId}`);
         return await user.update(updatedData);
-    }  
+    }
 
     async getAllUserEvents(userId) {
         const user = await User.findByPk(userId, {
@@ -41,7 +59,7 @@ class UserService {
                     model: Event
                 }]
             }]
-        });    
+        });
 
         if (!user) throw new Error('Utilisateur non trouvé');
 

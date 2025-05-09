@@ -62,13 +62,13 @@ router.patch('/events/update-statuses', eventController.updateAllEventStatusesBy
 
 router.post('/register', profileUpload.single('profileImage'), userController.register);
 router.post('/login', userController.login);
-router.get('/profile/:userId', authenticateToken, UserOrAdmin, userController.getProfile);
+router.get('/profile/:userId', userController.getProfile);
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
 router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
 router.patch('/status/:userId', authenticateToken, isAdmin, userController.updateUserStatus);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
-router.get('/users/:userId/public', userController.getPublicProfile);
+// router.get('/users/:userId/public', userController.getPublicProfile);
 router.get('/users/:userId/created-events', eventController.getCreatedEventsPublic);
 
 

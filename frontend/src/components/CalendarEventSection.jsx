@@ -91,6 +91,13 @@ function CalendarEventSection({ events }) {
                                                     <h3 className="font-semibold text-[30px] text-black sm:text-[28px] line-clamp-2">
                                                         <a>{event.title.toUpperCase()}</a>
                                                     </h3>
+                                                    <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
+                                                        ${event.status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
+                                                        ${event.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
+                                                        ${event.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
+                                                        ${event.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
+                                                    `}>{event.status}
+                                                    </div>
                                                     <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{formatDate(event.start_time, "long")}</h6>
                                                     <h3 className="mb-[10px] font-semibold text-[30px] text-etBlue">{formatEuro(event.price)}</h3>
                                                     <p className="mb-[19px] text-[17px] text-etGray line-clamp-2">

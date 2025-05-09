@@ -58,13 +58,16 @@ export async function replyComment(eventId, commentId, data, token) {
 }
 
 export async function getUserComments(userId, token) {
+	const headers = {
+		"Content-Type": "application/json",
+		...(token ? { Authorization: `Bearer ${token}` } : {})
+	};
+
 	const response = await fetch(`${API_BASE_URL}/users/${userId}/comments`, {
 		credentials: "include",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${token}`,
-		},
+		headers,
 	});
+
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des commentaires utilisateur");
 	return result;

@@ -2,11 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../config/authHeader";
 import logo from "../logo.png";
-import useDetailsNotification from "../hooks/Notification/useDetailsNotification";
+import useNotifications from "../hooks/Notification/useNotifications";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
-    const { notifications, loading: notifLoading } = useDetailsNotification();
+    const { notifications, loading: notifLoading } = useNotifications();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -63,7 +63,7 @@ const Header = () => {
                         </span>
                     </Link>
 
-                    <div class="xs:hidden flex justify-between grow">
+                    <div className="xs:hidden flex justify-between grow">
                         <div className="flex gap-6">
                             <Link
                                 to="/"
@@ -126,10 +126,10 @@ const Header = () => {
                             {isAuthenticated && user ? (
                                 <>
                                     <span className="relative ml-auto px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer">
-                                        <i class="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
-                                        <span class="top-0 -left-0 absolute flex size-3.5">
-                                            <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
-                                            <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
+                                        <i className="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
+                                        <span className="top-0 -left-0 absolute flex size-3.5">
+                                            <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                            <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
                                                 {notifications?.length || 0}
                                             </span>
                                         </span>
@@ -194,8 +194,8 @@ const Header = () => {
                                         to="/login"
                                         className="flex items-center gap-2 bg-[#C621C0] hover:bg-[#c621c0d4] px-4 py-2 rounded-xl text-gray-50"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fillRule="currentColor">
+                                            <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                         <span>Se Connecter</span>
                                     </Link>
@@ -203,7 +203,7 @@ const Header = () => {
                                         to="/register"
                                         className="flex items-center gap-2 bg-white hover:bg-gray-300 px-4 py-2 rounded-xl"
                                     >
-                                        <span class="text-black">S'inscrire</span>
+                                        <span className="text-black">S'inscrire</span>
                                     </Link>
                                 </>
                             )}
