@@ -119,7 +119,7 @@ const CommentSection = () => {
             } catch (err) {
                 Swal.fire('Erreur', err.message, 'error');
             }
-        }
+        }   
     };
 
     if (loading) return <RowSkeleton count={6} />;

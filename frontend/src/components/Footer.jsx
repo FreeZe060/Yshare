@@ -18,7 +18,7 @@ const Footer = () => {
 						</a>
 					</div>
 					<div className="px-5 py-2">
-						<a href="#" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="/team" className="text-base leading-6 text-gray-400 hover:text-white">
 							Équipe
 						</a>
 					</div>

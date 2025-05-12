@@ -4,6 +4,7 @@ import useLogin from '../hooks/User/useLogin';
 import Swal from 'sweetalert2';
 import 'animate.css';
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { useAuth } from '../config/authHeader';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
@@ -222,7 +223,7 @@ const TeamPage = () => {
                                                 </svg>
                                             </div>
                                         </div>
-                                        <h5 className="font-semibold text-[22px] md:text-[20px] text-etBlack mb-[4px]"><a href="team-member-details.html" className="hover:text-etBlue">HADDADA YASSINE</a></h5>
+                                        <h5 className="font-semibold text-[22px] md:text-[20px] text-etBlack mb-[4px]"><a href="team-member-details.html" className="hover:text-etBlue">HADDADA Yassine</a></h5>
                                         <span className="text-etGray text-[16px]">Medical Assistant</span>
                                     </div>
                                 </div>
@@ -245,7 +246,7 @@ const TeamPage = () => {
                                                 </svg>
                                             </div>
                                         </div>
-                                        <h5 className="font-semibold text-[22px] md:text-[20px] text-etBlack mb-[4px]"><a href="team-member-details.html" className="hover:text-etBlue">PRAT JEREMY</a></h5>
+                                        <h5 className="font-semibold text-[22px] md:text-[20px] text-etBlack mb-[4px]"><a href="team-member-details.html" className="hover:text-etBlue">PRAT Jeremy</a></h5>
                                         <span className="text-etGray text-[16px]">Medical Assistant</span>
                                     </div>
                                 </div>
@@ -254,6 +255,7 @@ const TeamPage = () => {
                     </section>
                 </div>
             </main>
+            <Footer />
 
         </>
     );
