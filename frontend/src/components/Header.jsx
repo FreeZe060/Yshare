@@ -89,7 +89,7 @@ const Header = () => {
 
                             {/* Artists */}
                             <Link
-                                to="/artists"
+                                to="/news"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/artists" ? "text-gray-300" : ""
                                     }`}
                             >

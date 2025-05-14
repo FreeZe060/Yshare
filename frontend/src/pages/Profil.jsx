@@ -6,7 +6,6 @@ import useFavoris from '../hooks/Favoris/useFavoris';
 import { getCreatedEventsStats } from '../services/eventService';
 import { getEventHistory, getParticipationCount } from '../services/userService';
 import useUpdateProfile from '../hooks/User/useUpdateProfile';
-import { getAllFavoris } from '../services/favorisService';
 import { useUserComments } from '../hooks/Comments/useUserComments';
 import SkeletonProfileCard from '../components/SkeletonLoading/SkeletonProfileCard';
 import { motion } from 'framer-motion';
@@ -205,7 +204,7 @@ const Profil = () => {
                                             events={favoris.slice(0, 5).map(favori => ({
                                                 id: favori.id,
                                                 title: favori.title,
-                                                date: favori.date,
+                                                start_time: favori.start_time,
                                                 status: "Favori",
                                                 image: favori.image || null
                                             }))}
