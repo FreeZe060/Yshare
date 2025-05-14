@@ -5,11 +5,11 @@ import Footer from "../components/Footer";
 const Section = ({ title, children }) => (
     <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow w-full max-w-4xl mx-auto py-[120px] my-10 px-6">
-            <h2 className="text-3xl font-bold text-center text-black mb-6 font-sans border-b-2 border-blue-500 pb-2">
+        <main className="flex-grow mx-auto my-10 px-6 py-[120px] w-full max-w-4xl">
+            <h2 className="mb-6 pb-2 border-b-2 border-blue-500 font-sans font-bold text-black text-3xl text-center">
                 {title}
             </h2>
-            <div className="text-left space-y-4 text-gray-800 font-light leading-relaxed">
+            <div className="space-y-4 font-light text-gray-800 text-left leading-relaxed">
                 {children}
             </div>
         </main>
@@ -55,18 +55,34 @@ export function PrivacyPolicy() {
 export function TermsOfUse() {
     return (
         <Section title="Conditions Générales d'Utilisation (CGU)">
-            <p>
-                L’utilisation du site Eventics implique l’acceptation des présentes CGU. Chaque utilisateur peut créer un compte personnel, publier et gérer des événements, s’inscrire à des événements d’autres utilisateurs, interagir via les profils publics.
-            </p>
-            <p>
-                L’utilisateur s’engage à fournir des informations exactes, à ne pas publier de contenu illégal, discriminatoire ou contraire à l’éthique, sous peine de suppression immédiate du compte.
-            </p>
-            <p>
-                Toute tentative de fraude ou d’utilisation abusive entraînera des sanctions, jusqu’à la suppression définitive du compte et éventuelles poursuites.
-            </p>
-            <p>
-                Eventics se réserve le droit de modifier les présentes CGU à tout moment. En cas de modification, un email sera envoyé à tous les utilisateurs.
-            </p>
+            <h1 className="mb-6 font-bold text-3xl">Conditions générales d'utilisation</h1>
+            <p><strong>En vigueur au 14/05/2025</strong></p>
+            <p>Les présentes conditions générales d'utilisation (dites « CGU ») ont pour objet l'encadrement juridique des modalités de mise à disposition du site et des services par _______________ et de définir les conditions d’accès et d’utilisation des services par « l'Utilisateur ».</p>
+            <p>Les présentes CGU sont accessibles sur le site à la rubrique «CGU».</p>
+            <p>Toute inscription ou utilisation du site implique l'acceptation sans aucune réserve ni restriction des présentes CGU par l’utilisateur...</p>
+            <p><strong>Article 1 : Les mentions légales</strong><br />
+            L’édition et la direction de la publication du site https://y-share.fr est assurée par Tim Vannson, domicilié Pl. Sophie Laffitte Immeuble AGORA, 06560 Valbonne.<br />
+            Numéro de téléphone : 0606060606<br />
+            Adresse e-mail : tim.vannson@ynov.com<br />
+            L'hébergeur du site est la société _______________, dont le siège social est situé au _______________, avec le numéro de téléphone : _______________.</p>
+            <p><strong>ARTICLE 2 : Accès au site</strong><br />
+            Le site https://y-share.fr permet à l'Utilisateur un accès gratuit aux services suivants :<br />
+            Réservation d'événements entre étudiants, Création de compte...</p>
+            <p><strong>ARTICLE 3 : Collecte des données</strong><br />
+            Le site assure à l'Utilisateur une collecte et un traitement d'informations personnelles dans le respect de la vie privée conformément à la loi n°78-17...</p>
+            <p><strong>ARTICLE 4 : Propriété intellectuelle</strong><br />
+            Les marques, logos, signes ainsi que tous les contenus du site (textes, images, son…) font l'objet d'une protection...</p>
+            <p><strong>ARTICLE 5 : Responsabilité</strong><br />
+            Les sources des informations diffusées sur le site https://y-share.fr sont réputées fiables mais le site ne garantit pas qu’il soit exempt de défauts...</p>
+            <p><strong>ARTICLE 6 : Liens hypertextes</strong><br />
+            Des liens hypertextes peuvent être présents sur le site...</p>
+            <p><strong>ARTICLE 7 : Cookies</strong><br />
+            L’Utilisateur est informé que lors de ses visites sur le site, un cookie peut s’installer automatiquement sur son logiciel de navigation...</p>
+            <p><strong>ARTICLE 8 : Publication par l’Utilisateur</strong><br />
+            Le site permet aux membres de publier les contenus suivants : Événements et news...</p>
+            <p><strong>ARTICLE 9 : Droit applicable et juridiction compétente</strong><br />
+            La législation française s'applique au présent contrat...</p>
+            <p className="mt-6 text-sm text-center italic">CGU réalisées sur http://legalplace.fr/</p>
         </Section>
     );
 }

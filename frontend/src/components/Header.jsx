@@ -5,6 +5,8 @@ import logo from "../logo.png";
 import useNotifications from "../hooks/Notification/useNotifications";
 import { AnimatePresence, motion } from "framer-motion";
 
+import NotificationSidebar from "./NotificationSidebar";
+
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
     const { notifications, loading: notifLoading } = useNotifications();
@@ -143,13 +145,15 @@ const Header = () => {
                                             onClick={() => setShowNotif(!showNotif)}
                                             className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
                                         >
-                                            <i className="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
-                                            <span className="top-0 -left-0 absolute flex size-3.5">
-                                                <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
-                                                <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
-                                                    {notifications?.length || 0}
+                                            <i class="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
+                                            {!notifLoading && notifications?.length > 0 && (
+                                                <span class="-top-2 -left-0 absolute size-3.5">
+                                                    <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                                    <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
+                                                        {notifications?.length || 0}
+                                                    </span>
                                                 </span>
-                                            </span>
+                                            )}
                                         </span>
 
                                         <AnimatePresence>
@@ -160,21 +164,21 @@ const Header = () => {
                                                     animate={{ opacity: 1, y: 0 }}
                                                     exit={{ opacity: 0, y: -10 }}
                                                     transition={{ duration: 0.25 }}
-                                                    className="absolute right-[-100px] z-50 bg-white shadow-lg mt-2 p-3 rounded-xl w-64 font-medium"
+                                                    className="right-[-100px] z-50 absolute bg-white shadow-lg mt-2 p-3 rounded-xl w-64 font-medium"
                                                 >
-                                                    <div className="p-4 text-sm text-gray-700 font-medium border-b border-gray-200">Notifications</div>
+                                                    <div className="p-4 border-gray-200 border-b font-medium text-gray-700 text-sm">Notifications</div>
                                                     <div className="divide-y divide-gray-200">
                                                         {notifications?.slice(0, 3).map((notif, i) => (
-                                                            <div key={i} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                                                            <div key={i} className="hover:bg-gray-50 px-4 py-3 cursor-pointer">
                                                                 <p className="text-gray-800 text-sm">{notif.title || 'Nouvelle notification'}</p>
-                                                                <p className="text-gray-400 text-xs mt-1">{new Date(notif.date_sent).toLocaleString("fr-FR")}</p>
+                                                                <p className="mt-1 text-gray-400 text-xs">{new Date(notif.date_sent).toLocaleString("fr-FR")}</p>
                                                             </div>
                                                         ))}
                                                     </div>
-                                                    <div className="text-center border-t border-gray-200">
+                                                    <div className="border-gray-200 border-t text-center">
                                                         <Link
                                                             to="/notifications"
-                                                            className="block py-3 text-indigo-600 hover:text-indigo-800 font-semibold text-sm"
+                                                            className="block py-3 font-semibold text-indigo-600 hover:text-indigo-800 text-sm"
                                                         >
                                                             Voir toutes les notifications
                                                         </Link>
@@ -243,8 +247,8 @@ const Header = () => {
                                         to="/login"
                                         className="flex items-center gap-2 bg-[#C621C0] hover:bg-[#c621c0d4] px-4 py-2 rounded-xl text-gray-50"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fillRule="currentColor">
-                                            <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
                                         </svg>
                                         <span>Se Connecter</span>
                                     </Link>
