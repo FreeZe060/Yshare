@@ -168,7 +168,7 @@ const Profil = () => {
                                                     : null
                                             }
                                             {...(isOwner && participatedEvents.length === 0 && {
-                                                buttonLink: "/allevents",
+                                                buttonLink: "/",
                                                 emptyButtonText: "Voir tous les événements"
                                             })}
                                             {...(participatedEvents.length > 0 && {
@@ -189,7 +189,7 @@ const Profil = () => {
                                                         : "Cet utilisateur n’a pour l’instant créé aucun événement."
                                                     : null
                                             }
-                                            buttonLink={isOwner ? "/createevent" : undefined}
+                                            buttonLink={isOwner ? "/create-event" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
                                             {...(createdEvents.length > 0 && {
                                                 linkText: "Voir tout l’historique"

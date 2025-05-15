@@ -8,8 +8,8 @@ class EventService {
             city,
             start_time,
             categoryId,
-            status,    
-            sort       
+            status,
+            sort
         } = filters;
 
         const { page = 1, limit = 10 } = pagination;
@@ -67,7 +67,7 @@ class EventService {
             offset,
             limit: parseInt(limit),
             subQuery: false,
-            order, 
+            order,
         });
 
         const total = await Event.count({
@@ -101,44 +101,48 @@ class EventService {
                 {
                     model: User,
                     as: 'organizer',
-                    attributes: ['id', 'name', 'lastname', 'profileImage'] 
+                    attributes: ['id', 'name', 'lastname', 'profileImage']
                 }
             ]
         });
-    }    
-    
+    }
+
     async createEvent(data, images = []) {
         let {
             title, description, date_created, id_org, price,
             street, street_number, city, postal_code,
             start_time, end_time, categories, max_participants
         } = data;
-    
+
+        const now = new Date();
+        const startDate = new Date(start_time);
+        const endDate = new Date(end_time);
+
         if (typeof categories === 'string') {
             categories = JSON.parse(categories);
         }
-    
+
         console.log('Vérification des dates :');
         console.log('  - Maintenant      :', now.toISOString());
         console.log('  - Date de début   :', startDate.toISOString());
         console.log('  - Date de fin     :', endDate.toISOString());
-    
+
         if (isNaN(startDate) || isNaN(endDate)) {
             throw new Error("Les dates de début ou de fin sont invalides.");
         }
-    
+
         if (startDate < now) {
             console.error("Erreur : la date de début est dans le passé.");
             throw new Error("La date de début ne peut pas être dans le passé.");
         }
-    
+
         if (endDate <= startDate) {
             console.error("Erreur : la date de fin est avant ou égale à la date de début.");
             throw new Error("La date de fin doit être après la date de début.");
         }
-    
+
         console.log('Création de l\'événement avec statut "Planifié"');
-    
+
         const event = await Event.create({
             title,
             description,
@@ -154,36 +158,36 @@ class EventService {
             end_time: endDate,
             status: 'Planifié'
         });
-    
+
         if (categories?.length > 0) {
             await event.setCategories(categories);
         }
-    
+
         if (images?.length > 0) {
             await EventImage.bulkCreate(
                 images.map(img => ({ ...img, event_id: event.id }))
             );
         }
-    
+
         console.log('Événement créé avec ID:', event.id);
-    
+
         return await this.getEventById(event.id);
-    }    
+    }
 
     async updateEventStatus(eventId, newStatus) {
         console.log(`🔁 Tentative de mise à jour du statut de l'événement ID ${eventId} vers "${newStatus}"`);
-    
+
         const event = await Event.findByPk(eventId);
         if (!event) throw new Error("Événement introuvable.");
-    
+
         const now = new Date();
         const startDate = new Date(event.start_time);
         const endDate = new Date(event.end_time);
-    
+
         console.log(`🕒 Now: ${now.toISOString()} | Start: ${startDate.toISOString()} | End: ${endDate.toISOString()}`);
-    
+
         let allowed = false;
-    
+
         switch (newStatus) {
             case 'Planifié':
                 allowed = now < startDate;
@@ -195,32 +199,32 @@ class EventService {
                 allowed = now >= endDate;
                 break;
             case 'Annulé':
-                allowed = true; 
+                allowed = true;
                 break;
         }
-    
+
         if (!allowed) {
             console.warn(`⛔ Changement de statut non autorisé. Tentative: "${event.status}" => "${newStatus}" à ${now.toISOString()}`);
             throw new Error(`Impossible de passer l'événement en "${newStatus}" selon les dates actuelles.`);
         }
-    
+
         await event.update({ status: newStatus });
         console.log(`✅ Statut mis à jour avec succès pour l'événement ID ${event.id} : ${newStatus}`);
         return event;
-    }    
+    }
 
     async updateAllEventStatusesByDate() {
         const now = new Date();
         console.log('🔄 Lancement de la mise à jour automatique des statuts...');
         console.log('🕒 Date actuelle :', now.toISOString());
-    
+
         const events = await Event.findAll();
-    
+
         for (const event of events) {
             const startDateTime = new Date(event.start_time);
             const endDateTime = new Date(event.end_time);
             let newStatus = event.status;
-    
+
             if (now < startDateTime) {
                 newStatus = 'Planifié';
             } else if (now >= startDateTime && now < endDateTime) {
@@ -228,21 +232,21 @@ class EventService {
             } else if (now >= endDateTime) {
                 newStatus = 'Terminé';
             }
-    
+
             if (event.status !== newStatus) {
                 console.log(`✅ Mise à jour : Événement ID ${event.id} : ${event.status} ➡️ ${newStatus}`);
                 await event.update({ status: newStatus });
-    
+
                 const participants = await Participant.findAll({
                     where: { id_event: event.id, status: 'Inscrit' }
                 });
-    
+
                 if (participants.length > 0) {
                     console.log(`📬 ${participants.length} participant(s) seront notifiés.`);
-    
+
                     const subject = `Statut mis à jour : ${event.title}`;
                     const message = `Bonjour,\n\nLe statut de l'événement "${event.title}" a été automatiquement mis à jour en "${newStatus}".\n\nMerci de votre attention.`;
-    
+
                     for (const participant of participants) {
                         const user = await User.findByPk(participant.id_user);
                         if (user) {
@@ -254,9 +258,9 @@ class EventService {
                 }
             }
         }
-    
+
         console.log('✅ Tous les statuts ont été mis à jour (et notifications envoyées si nécessaire).');
-    }    
+    }
 
     async updateEvent(eventId, update, userId, userRole) {
         const event = await Event.findByPk(eventId);
