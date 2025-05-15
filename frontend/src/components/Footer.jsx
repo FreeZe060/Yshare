@@ -39,12 +39,12 @@ const Footer = () => {
 					</div>
 					<div className="px-5 py-2">
 						<a href="/politique-confidentialite" className="text-gray-400 hover:text-white text-base leading-6">
-						Politique de confidentialité
+							Politique de confidentialité
 						</a>
 					</div>
 					<div className="px-5 py-2">
 						<a href="/conditions-utilisation" className="text-gray-400 hover:text-white text-base leading-6">
-						CGU
+							CGU
 						</a>
 					</div>
 				</nav>

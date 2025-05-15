@@ -35,8 +35,8 @@ function CalendarEventSection({ events }) {
             <div className="mx-[10.4vw] xxs:mx-[4.8vw] sm:mx-[7vw]">
                 <div className="flex justify-between items-end gap-[20px] mb-[60px]">
                     <div className="text-white">
-                        <h6 className="anim-text et-3-section-sub-title">Calender Event</h6>
-                        <h2 className="anim-text et-3-section-title">Experience the Best Events in Town</h2>
+                        <h6 className="anim-text et-3-section-sub-title">Calendrier Event</h6>
+                        <h2 className="anim-text et-3-section-title">Vivez les meilleurs événements</h2>
                     </div>
                     <div className="shrink-0">
                         <a
