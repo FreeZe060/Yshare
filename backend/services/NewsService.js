@@ -1,4 +1,4 @@
-const { News, Category, User } = require('../models');
+const { News, Category, User, Event, EventImage } = require('../models');
 
 class NewsService {
     async createNews(data) {
@@ -98,6 +98,60 @@ class NewsService {
 
         return news;
     }
+
+    async getNewsWithEventDetails(newsId) {
+        console.log(`🔍 Recherche de la news ID #${newsId} avec utilisateur, catégorie & image principale de l'événement`);
+
+        const news = await News.findByPk(newsId, {
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'lastname', 'profile_image'],
+                },
+                {
+                    model: Category,
+                    as: 'categories',
+                    through: { attributes: [] },
+                },
+                {
+                    model: Event,
+                    attributes: ['id', 'title', 'start_time', 'desc'],
+                    include: [
+                        {
+                            model: EventImage,
+                            as: 'EventImages',
+                            where: { is_main: true },
+                            required: false,
+                            attributes: ['image_url'],
+                        }
+                    ]
+                }
+            ]
+        });
+
+        if (!news) {
+            console.warn(`❌ News ID #${newsId} introuvable`);
+            return null;
+        }
+
+        const event = news.Event;
+        const mainImage = event?.EventImages?.[0]?.image_url || null;
+
+        console.log(`✅ News #${news.id} trouvée :`, {
+            title: news.title,
+            author: `${news.User?.name} ${news.User?.lastname}`,
+            event: event?.title || 'Aucun événement'
+        });
+
+        return {
+            ...news.toJSON(),
+            Event: event ? {
+                ...event.toJSON(),
+                main_image: mainImage
+            } : null
+        };
+    }
+
 
     async updateNews(newsId, updateData) {
         const { categories, ...newsFields } = updateData;

@@ -10,64 +10,6 @@ import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 
 const TeamPage = () => {
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
-    // const [showPassword, setShowPassword] = useState(false);
-    // const { login, loading, error } = useLogin();
-    // const navigate = useNavigate();
-    // const location = useLocation();
-    // const { login: loginContext } = useAuth() || {};
-
-    // useTextAnimation();
-    // useSlideUpAnimation();
-
-    // useEffect(() => {
-    //     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // }, []);
-
-    // useEffect(() => {
-    //     const params = new URLSearchParams(location.search);
-    //     const token = params.get('token');
-
-    //     if (token) {
-    //         localStorage.setItem('token', token);
-    //         loginContext({ token });
-    //         navigate('/');
-    //     }
-    // }, [location]);
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const result = await login({ email, password });
-
-    //         localStorage.setItem('token', result.token);
-    //         loginContext(result);
-
-    //         Swal.fire({
-    //             icon: 'success',
-    //             title: 'Connexion réussie',
-    //             showConfirmButton: false,
-    //             timer: 1500,
-    //         }).then(() => {
-    //             window.location.href = '/';
-    //         });
-    //     } catch (err) {
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: 'Erreur',
-    //             text: err.message,
-    //         });
-    //     }
-    // };
-
-    // const [version, setVersion] = useState("");
-
-    // useEffect(() => {
-    //     fetch("/version.txt")
-    //         .then(response => response.text())
-    //         .then(text => setVersion(text.trim()));
-    // }, []);
 
     return (
         <>

@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from '../components/Footer';
 import useAllNews from '../hooks/News/useAllNews';
+import useCategories from "../hooks/Categorie/useCategories";
+
 
 function NewsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
+
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const { categories } = useCategories();
 
     const [filters, setFilters] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
 
     const { news, loading: loadingNews, error: errorNews } = useAllNews();
 
-    const filteredNews = news.filter((item) =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.content.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredNews = news.filter((item) => {
+        const matchSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.content.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchCategory = selectedCategory
+            ? item.categories.some(cat => cat.name === selectedCategory)
+            : true;
+
+        return matchSearch && matchCategory;
+    });
+
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedNews = filteredNews.slice(startIndex, startIndex + itemsPerPage);
@@ -42,6 +55,11 @@ function NewsPage() {
         }
     };
 
+    const getNewsCountByCategory = (categoryName) => {
+        return news.filter(n =>
+            n.categories.some(cat => cat.name === categoryName)
+        ).length;
+    };
 
     if (loadingNews) return <p>Loading...</p>;
     if (errorNews) return <p>Error: {errorNews}</p>;
@@ -52,11 +70,11 @@ function NewsPage() {
             <main>
                 <section className="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
                     <div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
-                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Latest Blog</h1>
+                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">All News</h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li className="opacity-80"><a href="/" className="hover:text-etBlue">Home</a></li>
                             <li><i className="fa-solid fa-angle-right"></i><i className="fa-solid fa-angle-right"></i></li>
-                            <li className="current-page">Latest Blog</li>
+                            <li className="current-page">All News</li>
                         </ul>
                     </div>
                 </section>
@@ -174,7 +192,7 @@ function NewsPage() {
                                             value={searchTerm}
                                             onChange={(e) => {
                                                 setSearchTerm(e.target.value);
-                                                setCurrentPage(1); // reviens à la page 1 après une recherche
+                                                setCurrentPage(1); 
                                             }}
                                         />
                                         <button type="submit" className="text-[16px] hover:text-etBlue">
@@ -185,38 +203,33 @@ function NewsPage() {
 
                                 <div className="border border-[#e5e5e5] rounded-[10px] px-[30px] xxs:px-[20px] pt-[30px] xxs:pt-[20px] pb-[40px] xxs:pb-[30px]">
                                     <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue">Categories</h4>
-
                                     <ul className="mt-[30px] text-[16px]">
-                                        <li className="text-etBlack py-[16px] border-b border-t border-[#D9D9D9]">
-                                            <a href="#" className="flex items-center justify-between hover:text-etBlue">
-                                                <span>Art & Design</span>
-                                                <span>(2)</span>
-                                            </a>
-                                        </li>
-                                        <li className="text-etBlack py-[16px] border-b border-[#D9D9D9]">
-                                            <a href="#" className="flex items-center justify-between hover:text-etBlue">
-                                                <span>Development</span>
-                                                <span>(4)</span>
-                                            </a>
-                                        </li>
-                                        <li className="text-etBlack py-[16px] border-b border-[#D9D9D9]">
-                                            <a href="#" className="flex items-center justify-between hover:text-etBlue">
-                                                <span>Data Science</span>
-                                                <span>(3)</span>
-                                            </a>
-                                        </li>
-                                        <li className="text-etBlack py-[16px] border-b border-[#D9D9D9]">
-                                            <a href="#" className="flex items-center justify-between hover:text-etBlue">
-                                                <span>Marketing</span>
-                                                <span>(2)</span>
-                                            </a>
-                                        </li>
-                                        <li className="text-etBlack py-[16px] border-b border-[#D9D9D9]">
-                                            <a href="#" className="flex items-center justify-between hover:text-etBlue">
-                                                <span>Finance</span>
-                                                <span>(5)</span>
-                                            </a>
-                                        </li>
+                                        {categories.map((cat) => {
+                                            const isSelected = selectedCategory === cat.name;
+                                            const count = getNewsCountByCategory(cat.name);
+
+                                            return (
+                                                <motion.li
+                                                    key={cat.id}
+                                                    className={`py-[16px] border-b border-t border-[#D9D9D9] transition-colors duration-300 ${isSelected ? 'bg-blue-50 text-etBlue font-semibold shadow-inner' : 'text-etBlack'
+                                                        }`}
+                                                    whileHover={{ scale: 1.02 }}
+                                                >
+                                                    <a
+                                                        href="#"
+                                                        className="flex items-center justify-between hover:text-etBlue"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            setSelectedCategory(isSelected ? null : cat.name);
+                                                            setCurrentPage(1); 
+                                                        }}
+                                                    >
+                                                        <span>{cat.name}</span>
+                                                        <span>({count})</span>
+                                                    </a>
+                                                </motion.li>
+                                            );
+                                        })}
                                     </ul>
                                 </div>
 
