@@ -1,50 +1,32 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from 'react';
 
-export default function CookieBanner() {
-    const [isVisible, setIsVisible] = useState(false);
+export default function CookieConsent() {
+    const [showBanner, setShowBanner] = useState(false);
 
     useEffect(() => {
-        const consent = localStorage.getItem("cookieConsent");
-        if (!consent) {
-            setIsVisible(true);
-        }
+        const consent = localStorage.getItem('cookie_consent');
+        if (!consent) setShowBanner(true);
     }, []);
 
-    const handleConsent = (choice) => {
-        localStorage.setItem("cookieConsent", choice);
-        setIsVisible(false);
+    const acceptCookies = () => {
+        localStorage.setItem('cookie_consent', 'true');
+        setShowBanner(false);
     };
 
+    if (!showBanner) return null;
+
     return (
-        <AnimatePresence>
-            {isVisible && (
-                <motion.div
-                    initial={{ y: 100 }}
-                    animate={{ y: 0 }}
-                    exit={{ y: 100 }}
-                    transition={{ duration: 0.4 }}
-                    className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50 flex flex-col sm:flex-row items-center justify-between shadow-lg"
-                >
-                    <p className="text-sm mb-2 sm:mb-0">
-                        Ce site utilise des cookies pour améliorer votre expérience et mesurer l’audience.
-                    </p>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handleConsent("accepted")}
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-                        >
-                            Accepter
-                        </button>
-                        <button
-                            onClick={() => handleConsent("declined")}
-                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                        >
-                            Refuser
-                        </button>
-                    </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+        <div className="right-4 md:right-8 bottom-4 left-4 md:left-8 z-50 fixed bg-white shadow-md p-4 border border-gray-200 rounded-lg">
+            <p className="text-gray-700 text-sm">
+                Ce site utilise des cookies pour vous garantir la meilleure expérience.{" "}
+                <a href="/conditions-utilisation" className="text-blue-600 underline">En savoir plus</a>.
+            </p>
+            <button
+                onClick={acceptCookies}
+                className="bg-pink-500 hover:bg-pink-600 mt-3 px-4 py-2 rounded-full text-white text-sm"
+            >
+                Accepter
+            </button>
+        </div>
     );
 }

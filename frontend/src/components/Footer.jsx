@@ -5,74 +5,69 @@ const Footer = () => {
 
 	return (
 		<footer className="bg-gray-900 text-white">
-			<div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
+			<div className="space-y-8 mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-screen-xl overflow-hidden">
 				<nav className="flex flex-wrap justify-center -mx-5 -my-2">
 					<div className="px-5 py-2">
-						<a href="#" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="#" className="text-gray-400 hover:text-white text-base leading-6">
 							À propos
 						</a>
 					</div>
 					<div className="px-5 py-2">
-						<a href="#" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="#" className="text-gray-400 hover:text-white text-base leading-6">
 							Blog
 						</a>
 					</div>
 					<div className="px-5 py-2">
-						<a href="/team" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="/team" className="text-gray-400 hover:text-white text-base leading-6">
 							Équipe
 						</a>
 					</div>
-					<div className="px-5 py-2">
-						<a href="#" className="text-base leading-6 text-gray-400 hover:text-white">
+					{/* <div className="px-5 py-2">
+						<a href="#" className="text-gray-400 hover:text-white text-base leading-6">
 							Tarifs
 						</a>
-					</div>
-					<div className="px-5 py-2">
-						<a href="#" className="text-base leading-6 text-gray-400 hover:text-white">
+					</div> */}
+					{/* <div className="px-5 py-2">
+						<a href="#" className="text-gray-400 hover:text-white text-base leading-6">
 							Contact
 						</a>
-					</div>
+					</div> */}
 					<div className="px-5 py-2">
-						<a href="/mentions-legales" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="/mentions-legales" className="text-gray-400 hover:text-white text-base leading-6">
 							Mentions légales
 						</a>
 					</div>
 					<div className="px-5 py-2">
-						<a href="/politique-confidentialite" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="/politique-confidentialite" className="text-gray-400 hover:text-white text-base leading-6">
 						Politique de confidentialité
 						</a>
 					</div>
 					<div className="px-5 py-2">
-						<a href="/conditions-utilisation" className="text-base leading-6 text-gray-400 hover:text-white">
+						<a href="/conditions-utilisation" className="text-gray-400 hover:text-white text-base leading-6">
 						CGU
-						</a>
-					</div>
-					<div className="px-5 py-2">
-						<a href="/conditions-vente" className="text-base leading-6 text-gray-400 hover:text-white">
-						CGV
 						</a>
 					</div>
 				</nav>
 
-				<div className="flex justify-center mt-8 space-x-6">
+				<div className="flex justify-center space-x-6 mt-8">
 					<a href="#" className="text-gray-400 hover:text-white" aria-label="Facebook">
-						<i className="fab fa-facebook-f text-xl"></i>
+						<i className="text-xl fab fa-facebook-f"></i>
 					</a>
 					<a href="#" className="text-gray-400 hover:text-white" aria-label="Instagram">
-						<i className="fab fa-instagram text-xl"></i>
+						<i className="text-xl fab fa-instagram"></i>
 					</a>
 					<a href="#" className="text-gray-400 hover:text-white" aria-label="Twitter">
-						<i className="fab fa-twitter text-xl"></i>
+						<i className="text-xl fab fa-twitter"></i>
 					</a>
 					<a href="#" className="text-gray-400 hover:text-white" aria-label="GitHub">
-						<i className="fab fa-github text-xl"></i>
+						<i className="text-xl fab fa-github"></i>
 					</a>
 					<a href="#" className="text-gray-400 hover:text-white" aria-label="Dribbble">
-						<i className="fab fa-dribbble text-xl"></i>
+						<i className="text-xl fab fa-dribbble"></i>
 					</a>
 				</div>
 
-				<p className="mt-8 text-base leading-6 text-center text-gray-400">
+				<p className="mt-8 text-gray-400 text-base text-center leading-6">
 					© {currentYear} YShare, Inc. Tous droits réservés.
 				</p>
 			</div>
