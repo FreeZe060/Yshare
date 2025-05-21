@@ -47,10 +47,10 @@ export async function getParticipantsByEvent(eventId) {
 /**
  * ✅ Ajouter un participant à un événement
  */
-export async function addParticipant(eventId, token, message) {
-	console.log(`📝 [POST] /events/${eventId}/participants`);
-	console.log("📨 Données envoyées au backend :", { message });
 
+export async function addParticipant(eventId, token, message, guests = []) {
+	console.log(`📝 [POST] /events/${eventId}/participants`);
+	console.log("📨 Données envoyées au backend :", { message, guests });
 	try {
 		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
 			method: 'POST',
@@ -58,7 +58,7 @@ export async function addParticipant(eventId, token, message) {
 				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ message }), 
+			body: JSON.stringify({ message, guests }),
 			credentials: 'include',
 		});
 

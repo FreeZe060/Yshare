@@ -1,4 +1,4 @@
-const { Participant, User, Event, EventImage, Notification } = require('../models');
+const { Participant, User, Event, EventImage, Notification, EventGuest } = require('../models');
 const sendEmail = require('../utils/email');
 
 class ParticipantService {
@@ -8,7 +8,8 @@ class ParticipantService {
         const participants = await Participant.findAll({
             include: [
                 { model: User, attributes: ['id', 'name', 'lastname', 'email', 'profileImage'] },
-                { model: Event, attributes: ['id', 'title'] }
+                { model: Event, attributes: ['id', 'title'] },
+                { model: EventGuest, as: 'guests' }
             ],
             order: [['joined_at', 'DESC']]
         });
@@ -23,50 +24,74 @@ class ParticipantService {
             eventId: p.Event?.id,
             eventTitle: p.Event?.title || 'Événement supprimé',
             status: p.status,
-            joinedAt: p.joined_at
+            joinedAt: p.joined_at,
+            guests: p.guests?.map(g => ({
+                firstname: g.firstname,
+                lastname: g.lastname,
+                email: g.email
+            })) || []
         }));
     }
 
     async getParticipantsByEventId(eventId, includeAllStatuses = false) {
         console.log(`🔍 [Service] Récupération participants pour event #${eventId} (all=${includeAllStatuses})`);
-    
+
         const where = { id_event: eventId };
         if (!includeAllStatuses) where.status = 'Inscrit';
-    
+
         return Participant.findAll({
             where,
             include: [{
                 model: User,
-                attributes: ['id', 'name', 'lastname', 'profileImage', 'email', 'bio'] 
+                attributes: ['id', 'name', 'lastname', 'profileImage', 'email', 'bio']
+            },
+            {
+                model: EventGuest, as: 'guests'
             }],
             order: [['id', 'ASC']]
         });
-    }    
+    }
 
     async getParticipantByUserAndEvent(eventId, userId) {
         console.log(`🔍 [Service] Récupération du participant user #${userId} pour event #${eventId}`);
         return Participant.findOne({ where: { id_event: eventId, id_user: userId } });
     }
 
-    async addParticipant(eventId, userId, requestMessage = '') {
+    async addParticipant(eventId, userId, requestMessage = '', guests = []) {
         console.log(`➕ [Service] Demande de participation - user #${userId} à l’event #${eventId}`);
         console.log(`💬 Message de l'utilisateur : "${requestMessage}"`);
+        console.log(`👥 Invités reçus : ${JSON.stringify(guests)}`);
+
+        if (guests.length > 3) {
+            console.warn(`⚠️ Trop d'invités (${guests.length}) - Limite de 3`);
+            throw new Error("Vous pouvez inscrire jusqu'à 3 invités maximum.");
+        }
 
         const existing = await Participant.findOne({
             where: { id_event: eventId, id_user: userId }
         });
         if (existing) {
-            console.warn(`⚠️ Participant déjà existant (status : ${existing.status})`);
-            throw new Error("Déjà inscrit ou en attente.");
+            console.warn(`⚠️ Participant déjà inscrit à cet événement`);
+            throw new Error("Vous êtes déjà inscrit ou en attente.");
         }
 
-        const [user, event] = await Promise.all([
+        console.log(`📦 Récupération des données utilisateur, événement et organisateur...`);
+        const [user, event, organizerWrapped] = await Promise.all([
             User.findByPk(userId),
-            Event.findByPk(eventId)
+            Event.findByPk(eventId),
+            Event.findByPk(eventId, {
+                include: { model: User, as: 'organizer' }
+            })
         ]);
 
         if (!user) throw new Error("Utilisateur introuvable.");
         if (!event) throw new Error("Événement introuvable.");
+        if (!organizerWrapped || !organizerWrapped.organizer) throw new Error("Organisateur introuvable.");
+
+        const organizer = organizerWrapped.organizer;
+        console.log(`✅ Utilisateur : ${user.name} (${user.email})`);
+        console.log(`✅ Événement : ${event.title}`);
+        console.log(`✅ Organisateur : ${organizer.name} (${organizer.email})`);
 
         const participant = await Participant.create({
             id_event: eventId,
@@ -76,23 +101,78 @@ class ParticipantService {
             joined_at: new Date()
         });
 
-        const subject = `Demande envoyée pour "${event.title}"`;
-        const message = `Bonjour ${user.name},\n\nVous avez bien envoyé une demande de participation à l'événement "${event.title}".\n\nMessage : ${requestMessage || '(aucun message fourni)'}\n\nNous vous tiendrons informé(e) dès qu'une décision sera prise.\n\nMerci pour votre confiance !`;
+        console.log(`📝 Participant créé : ID #${participant.id}`);
 
-        console.log(`📧 Email de confirmation à ${user.email}`);
-        await sendEmail(user.email, subject, message);
+        for (const [index, guest] of guests.entries()) {
+            if (guest.firstname && guest.lastname && guest.email) {
+                console.log(`👤 Ajout de l'invité #${index + 1} : ${guest.firstname} ${guest.lastname} (${guest.email})`);
+                await EventGuest.create({
+                    id_participant: participant.id,
+                    firstname: guest.firstname,
+                    lastname: guest.lastname,
+                    email: guest.email
+                });
 
-        console.log(`🔔 Notification créée pour user #${user.id}`);
+                try {
+                    console.log(`📧 Envoi d'email à l'invité : ${guest.email}`);
+                    await sendEmail(guest.email, `Invitation à l'événement "${event.title}"`, `
+                    Bonjour ${guest.firstname},
+
+                    ${user.name} vous a inscrit comme invité à l'événement "${event.title}".
+                    Lieu : ${event.city} | Date : ${event.start_time}
+
+                    Aucune action de votre part n'est requise. À bientôt !`);
+                } catch (emailError) {
+                    console.error(`❌ Erreur lors de l'envoi de l'email à l'invité ${guest.email} :`, emailError.message);
+                }
+            } else {
+                console.warn(`⚠️ Données incomplètes pour l'invité #${index + 1} :`, guest);
+            }
+        }
+
+        try {
+            console.log(`📧 Envoi de l'email de confirmation à l'utilisateur principal : ${user.email}`);
+            await sendEmail(user.email, `Demande envoyée pour "${event.title}"`, `
+            Bonjour ${user.name},
+
+            Votre demande de participation à l'événement "${event.title}" a bien été envoyée.
+            Message : ${requestMessage || '(aucun message)'}
+
+            Nous vous informerons dès qu'une décision sera prise.`);
+        } catch (e) {
+            console.error(`❌ Erreur lors de l'envoi de l'email à l'utilisateur : ${e.message}`);
+        }
+
+        console.log(`🔔 Création de la notification pour l'utilisateur inscrit`);
         await Notification.create({
             id_user: user.id,
             title: `Demande envoyée : "${event.title}"`,
             message: "Votre demande est en attente de validation."
         });
 
-        console.log(`✅ Participant enregistré (ID #${participant.id})`);
+        try {
+            console.log(`📧 Envoi de l'email de notification à l'organisateur : ${organizer.email}`);
+            await sendEmail(organizer.email, `Nouvelle demande pour votre événement "${event.title}"`, `
+            Bonjour ${organizer.name},
+
+            ${user.name} a demandé à participer à votre événement "${event.title}".
+            Message : ${requestMessage || '(aucun message)'}
+
+            Rendez-vous sur votre interface pour valider ou refuser cette demande.`);
+        } catch (e) {
+            console.error(`❌ Erreur lors de l'envoi de l'email à l'organisateur : ${e.message}`);
+        }
+
+        console.log(`🔔 Création de la notification pour l'organisateur`);
+        await Notification.create({
+            id_user: organizer.id,
+            title: `Nouvelle demande pour "${event.title}"`,
+            message: `${user.name} souhaite rejoindre votre événement.`
+        });
+
+        console.log(`✅ Fin de traitement : participant + ${guests.length} invité(s) enregistré(s)`);
         return participant;
     }
-
 
     async adminAddParticipant(eventId, userId) {
         console.log(`👮 [Admin Service] Ajout user #${userId} à event #${eventId}`);

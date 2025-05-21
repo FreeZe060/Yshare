@@ -316,34 +316,6 @@ exports.getEventHistory = async (req, res) => {
     }
 };
 
-// exports.getPublicProfile = async (req, res) => {
-//     try {
-//         const { userId } = req.params;
-//         console.log(`[getPublicProfile] Récupération du profil public pour l'utilisateur ID: ${userId}`);
-
-//         const user = await userService.findById(userId);
-
-//         if (!user) {
-//             console.warn(`[getPublicProfile] Utilisateur non trouvé pour l'ID ${userId}`);
-//             return res.status(404).json({ message: "Utilisateur non trouvé" });
-//         }
-
-//         console.log(`[getPublicProfile] Utilisateur trouvé : ${user.name} ${user.lastname}`);
-//         return res.json({
-//             id: user.id,
-//             name: user.name,
-//             lastname: user.lastname,
-//             profileImage: user.profileImage,
-//             bio: user.bio,
-//             bannerImage: user.bannerImage,
-
-//         });
-//     } catch (error) {
-//         console.error("[getPublicProfile] Erreur serveur :", error);
-//         return res.status(500).json({ message: "Erreur serveur", error: error.message });
-//     }
-// };
-
 exports.getUserEventsAdmin = async (req, res) => {
     try {
         const { userId } = req.params;

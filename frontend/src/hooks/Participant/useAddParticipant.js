@@ -5,13 +5,13 @@ function useAddParticipant() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const addNewParticipant = async (eventId, message) => {
+	const addNewParticipant = async (eventId, message, guests = []) => {
 		setLoading(true);
 		setError(null);
 
 		try {
 			const token = localStorage.getItem("token"); 
-			const result = await addParticipant(eventId, token, message); 
+			const result = await addParticipant(eventId, token, message, guests);
 			return result;
 		} catch (err) {
 			setError(err.message);
