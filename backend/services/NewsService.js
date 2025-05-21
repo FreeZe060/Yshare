@@ -191,6 +191,35 @@ class NewsService {
         console.log('🧹 News supprimée');
         return { message: "News supprimée." };
     }
+
+    async addCategoryToNews(newsId, categoryId) {
+        console.log(`➕ Ajout de la catégorie #${categoryId} à la news #${newsId}`);
+
+        const news = await News.findByPk(newsId);
+        const category = await Category.findByPk(categoryId);
+
+        if (!news || !category) {
+            throw new Error("News ou catégorie introuvable.");
+        }
+
+        await news.addCategory(category);
+    }
+
+    async removeCategoryFromNews(newsId, categoryId) {
+        console.log(`❌ Suppression de la catégorie #${categoryId} de la news #${newsId}`);
+
+        const news = await News.findByPk(newsId);
+        const category = await Category.findByPk(categoryId);
+
+        if (!news || !category) {
+            throw new Error("News ou catégorie introuvable.");
+        }
+
+        await news.removeCategory(category); 
+        return this.getNewsById(newsId);
+    }
+
+
 }
 
 module.exports = new NewsService();

@@ -106,3 +106,40 @@ exports.deleteNews = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la suppression de la news.", error: error.message });
     }
 };
+
+exports.addCategoryToNews = async (req, res) => {
+    try {
+        const { newsId } = req.params;
+        const { categoryId } = req.body;
+
+        console.log(`📥 Requête POST pour ajouter catégorie ${categoryId} à la news ${newsId}`);
+
+        if (!categoryId) {
+            return res.status(400).json({ message: "ID de catégorie requis." });
+        }
+
+        await newsService.addCategoryToNews(newsId, categoryId);
+
+        console.log(`✅ Catégorie ${categoryId} ajoutée à la news ${newsId}`);
+        res.status(200).json({ message: "Catégorie ajoutée avec succès." });
+    } catch (error) {
+        console.error(`❌ Erreur ajout catégorie:`, error.message);
+        res.status(500).json({ message: "Erreur lors de l'ajout de la catégorie.", error: error.message });
+    }
+};
+
+exports.removeCategoryFromNews = async (req, res) => {
+    try {
+        const { newsId, categoryId } = req.params;
+
+        console.log(`📥 Requête DELETE pour retirer catégorie ${categoryId} de la news ${newsId}`);
+
+        const updatedNews = await newsService.removeCategoryFromNews(newsId, categoryId);
+
+        console.log(`✅ Catégorie ${categoryId} retirée de la news ${newsId}`);
+        res.status(200).json({ message: "Catégorie retirée avec succès.", news: updatedNews });
+    } catch (error) {
+        console.error(`❌ Erreur suppression catégorie:`, error.message);
+        res.status(500).json({ message: "Erreur lors de la suppression de la catégorie.", error: error.message });
+    }
+};

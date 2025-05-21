@@ -29,7 +29,6 @@ function NewsPage() {
         return matchSearch && matchCategory;
     });
 
-
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedNews = filteredNews.slice(startIndex, startIndex + itemsPerPage);
     const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
@@ -39,14 +38,15 @@ function NewsPage() {
         .slice(0, 3);
 
     const getCategoryStyle = (categoryName) => {
-        switch (categoryName?.toLowerCase()) {
-            case 'Sport':
+        const name = categoryName?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        switch (name) {
+            case 'sport':
                 return 'bg-blue-100 text-blue-800';
-            case 'Musique':
+            case 'musique':
                 return 'bg-green-100 text-green-800';
-            case 'Fête':
+            case 'fete':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'Foot':
+            case 'foot':
                 return 'bg-purple-100 text-purple-800';
             case 'art & design':
                 return 'bg-pink-100 text-pink-800';
@@ -70,11 +70,11 @@ function NewsPage() {
             <main>
                 <section className="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
                     <div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
-                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">All News</h1>
+                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Toutes les actualités</h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
-                            <li className="opacity-80"><a href="/" className="hover:text-etBlue">Home</a></li>
+                            <li className="opacity-80"><a href="/" className="hover:text-etBlue">Accueil</a></li>
                             <li><i className="fa-solid fa-angle-right"></i><i className="fa-solid fa-angle-right"></i></li>
-                            <li className="current-page">All News</li>
+                            <li className="current-page">Toutes les actualités</li>
                         </ul>
                     </div>
                 </section>
@@ -108,8 +108,14 @@ function NewsPage() {
                                                 <div>
                                                     <div className="flex items-center gap-[30px] mb-[5px]">
                                                         <div className="flex gap-[10px] items-center">
-                                                            <span className="shrink-0">{/* Icone auteur ici */}</span>
-                                                            <span className="text-[14px] text-etGray">by <a href="#">{item.User.name} {item.User.lastname}</a></span>
+                                                            <a href={`/profile/${item.User?.id}`} className="flex items-center gap-[6px] hover:text-etBlue transition">
+                                                                <img
+                                                                    src={`http://localhost:8080${item.User?.profile_image}`}
+                                                                    alt="user"
+                                                                    className="w-[28px] h-[28px] rounded-full object-cover border border-gray-300"
+                                                                />
+                                                                <span className="text-[14px] text-etGray">Par {item.User.name} {item.User.lastname}</span>
+                                                            </a>
                                                         </div>
 
                                                         <div className="flex gap-[10px] items-center">
@@ -127,7 +133,7 @@ function NewsPage() {
                                                     </p>
 
                                                     <a href={`/news/${item.id}`} className="text-etBlue text-[16px] hover:text-etBlue">
-                                                        Read More <span className="pl-[5px]"><i className="fa-solid fa-arrow-right-long"></i></span>
+                                                        Lire la suite <span className="pl-[5px]"><i className="fa-solid fa-arrow-right-long"></i></span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -177,7 +183,7 @@ function NewsPage() {
 
                             <div className="right max-w-full w-[370px] lg:w-[360px] shrink-0 space-y-[30px] md:space-y-[25px]">
                                 <div className="border border-[#e5e5e5] rounded-[10px] px-[30px] xxs:px-[20px] pt-[30px] xxs:pt-[20px] pb-[40px] xxs:pb-[30px]">
-                                    <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue">Search</h4>
+                                    <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue">Recherche</h4>
 
                                     <form
                                         onSubmit={(e) => e.preventDefault()}
@@ -188,11 +194,11 @@ function NewsPage() {
                                             name="search"
                                             id="et-news-search"
                                             className="w-full bg-transparent text-[16px] focus:outline-none"
-                                            placeholder="Search here.."
+                                            placeholder="Rechercher ici.."
                                             value={searchTerm}
                                             onChange={(e) => {
                                                 setSearchTerm(e.target.value);
-                                                setCurrentPage(1); 
+                                                setCurrentPage(1);
                                             }}
                                         />
                                         <button type="submit" className="text-[16px] hover:text-etBlue">
@@ -221,7 +227,7 @@ function NewsPage() {
                                                         onClick={(e) => {
                                                             e.preventDefault();
                                                             setSelectedCategory(isSelected ? null : cat.name);
-                                                            setCurrentPage(1); 
+                                                            setCurrentPage(1);
                                                         }}
                                                     >
                                                         <span>{cat.name}</span>
@@ -234,12 +240,12 @@ function NewsPage() {
                                 </div>
 
                                 <div className="border border-[#e5e5e5] rounded-[10px] px-[30px] xxs:px-[20px] pt-[30px] xxs:pt-[20px] pb-[40px] xxs:pb-[30px]">
-                                    <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue">Recent Post</h4>
+                                    <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue"> Actualités récents</h4>
 
                                     <div className="posts mt-[30px] space-y-[24px]">
                                         {latestNews.map((post) => {
                                             const postDate = new Date(post.date_posted);
-                                            const formattedDate = postDate.toLocaleDateString("en-US", {
+                                            const formattedDate = postDate.toLocaleDateString("fr-FR", {
                                                 day: "2-digit",
                                                 month: "short",
                                                 year: "numeric"

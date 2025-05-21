@@ -96,7 +96,7 @@ const Header = () => {
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
-                                <span className="mx-1">News</span>
+                                <span className="mx-1">Actualités</span>
                             </Link>
 
                             {/* Albums */}

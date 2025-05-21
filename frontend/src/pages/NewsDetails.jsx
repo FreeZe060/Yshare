@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from '../components/Footer';
 import useNewsDetails from '../hooks/News/useNewsDetails';
 import useAllNews from '../hooks/News/useAllNews';
+import useUpdateNews from '../hooks/News/useUpdateNews';
 
 
 function NewsDetails() {
@@ -11,20 +12,26 @@ function NewsDetails() {
     const { newsId } = useParams();
     const { newsDetails, loading, error } = useNewsDetails(newsId);
     const { news, loading: loadingNews, error: errorNews } = useAllNews();
+    const { isOwner, isAdmin, update } = useUpdateNews(newsId);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedTitle, setEditedTitle] = useState('');
+    const [editedContent, setEditedContent] = useState('');
+
 
     const latestNews = [...news]
         .sort((a, b) => new Date(b.date_posted) - new Date(a.date_posted))
         .slice(0, 3);
 
     const getCategoryStyle = (categoryName) => {
-        switch (categoryName?.toLowerCase()) {
-            case 'Sport':
+        const name = categoryName?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        switch (name) {
+            case 'sport':
                 return 'bg-blue-100 text-blue-800';
-            case 'Musique':
+            case 'musique':
                 return 'bg-green-100 text-green-800';
-            case 'Fête':
+            case 'fete':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'Foot':
+            case 'foot':
                 return 'bg-purple-100 text-purple-800';
             case 'art & design':
                 return 'bg-pink-100 text-pink-800';
@@ -47,11 +54,13 @@ function NewsDetails() {
             <main>
                 <section className="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
                     <div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
-                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">News Details</h1>
+                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Details de l'actualités</h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
-                            <li className="opacity-80"><a href="/" className="hover:text-etBlue">Home</a></li>
+                            <li className="opacity-80"><a href="/" className="hover:text-etBlue">Accueil</a></li>
                             <li><i className="fa-solid fa-angle-right"></i><i className="fa-solid fa-angle-right"></i></li>
-                            <li className="current-page">News Details</li>
+                            <li className="current-page"><a href="/news" className="hover:text-etBlue">Page Des Actualités</a></li>
+                            <li><i className="fa-solid fa-angle-right"></i><i className="fa-solid fa-angle-right"></i></li>
+                            <li className="current-page">Details de l'actualités</li>
                         </ul>
                     </div>
                 </section>
@@ -84,21 +93,83 @@ function NewsDetails() {
                                             </div>
 
                                             {newsDetails.categories.map((cat, idx) => (
-                                                <div key={idx} className="flex gap-[10px] items-center text-etGray text-[14px]">
-                                                    <span><a href="#">{cat.name}</a></span>
-                                                </div>
+                                                <span
+                                                    key={idx}
+                                                    className={`text-[14px] font-medium px-[10px] py-[4px] rounded-full capitalize ${getCategoryStyle(cat.name)}`}
+                                                >
+                                                    {cat.name}
+                                                </span>
                                             ))}
                                         </div>
 
-                                        <h3 className="text-[30px] font-medium text-etBlack mb-[21px]">{newsDetails.title}</h3>
+                                        {(isOwner || isAdmin) && isEditing ? (
+                                            <div className="space-y-4">
+                                                <input
+                                                    type="text"
+                                                    value={editedTitle}
+                                                    onChange={(e) => setEditedTitle(e.target.value)}
+                                                    className="w-full border border-gray-300 rounded px-4 py-2"
+                                                    placeholder="Titre"
+                                                />
+                                                <textarea
+                                                    value={editedContent}
+                                                    onChange={(e) => setEditedContent(e.target.value)}
+                                                    className="w-full border border-gray-300 rounded px-4 py-2"
+                                                    rows={6}
+                                                    placeholder="Contenu"
+                                                ></textarea>
 
-                                        <p className="font-light text-[16px] text-etGray mb-[16px]">{newsDetails.content}</p>
+                                                <form
+                                                    onSubmit={async (e) => {
+                                                        e.preventDefault();
+                                                        const formData = new FormData();
+                                                        formData.append("title", editedTitle);
+                                                        formData.append("content", editedContent);
+                                                        if (e.target.image.files[0]) {
+                                                            formData.append("image", e.target.image.files[0]);
+                                                        }
+
+                                                        try {
+                                                            await update(formData);
+                                                            setIsEditing(false);
+                                                            window.location.reload(); // ou mieux : refetch les données
+                                                        } catch (err) {
+                                                            alert("Erreur : " + err.message);
+                                                        }
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="file"
+                                                        name="image"
+                                                        accept="image/*"
+                                                        className="block mb-2"
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+                                                            Enregistrer
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setIsEditing(false)}
+                                                            className="bg-gray-400 text-white px-4 py-2 rounded"
+                                                        >
+                                                            Annuler
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <h3 className="text-[30px] font-medium text-etBlack mb-[21px]">{newsDetails.title}</h3>
+                                                <p className="font-light text-[16px] text-etGray mb-[16px]">{newsDetails.content}</p>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
 
                                 <div className="border-y border-[#d9d9d9] py-[24px] flex items-center justify-between xs:flex-col xs:items-start gap-[20px]">
                                     <div className="flex gap-[28px] items-center">
-                                        <h6 className="font-medium text-[16px] text-etBlack">Catégories:</h6>
+                                        <h6 className="font-medium text-[16px] text-etBlack">Catégories : </h6>
                                         <div className="flex flex-wrap gap-[13px]">
                                             {newsDetails.categories.map((cat, idx) => (
                                                 <a key={idx} href="#" className="border border-[#e5e5e5] text-[14px] text-[#181818] px-[12px] py-[5px] rounded-[4px] hover:bg-etBlue hover:border-etBlue hover:text-white">
@@ -109,7 +180,7 @@ function NewsDetails() {
                                     </div>
 
                                     <div className="flex gap-[28px] items-center">
-                                        <h6 className="font-medium text-[16px] text-etBlack">Share:</h6>
+                                        <h6 className="font-medium text-[16px] text-etBlack">Partager :</h6>
                                         <div className="flex gap-[15px] text-[16px]">
                                             <a
                                                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
@@ -150,7 +221,7 @@ function NewsDetails() {
                                 {newsDetails.Event && (
                                     <div id="et-event-tab1" className="et-tab active">
                                         <h2 className="text-[28px] sm:text-[24px] font-semibold text-etBlack mb-[20px] border-l-4 border-etBlue pl-[12px]">
-                                            Événement lié à la news
+                                            Événement lié à l'actualités
                                         </h2>
                                         <div className="all-scheduled-events space-y-[20px]">
                                             <div
@@ -227,12 +298,12 @@ function NewsDetails() {
 
                             <div class="right max-w-full w-[370px] lg:w-[360px] shrink-0 space-y-[30px] md:space-y-[25px]">
                                 <div className="border border-[#e5e5e5] rounded-[10px] px-[30px] xxs:px-[20px] pt-[30px] xxs:pt-[20px] pb-[40px] xxs:pb-[30px]">
-                                    <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue">Recent Post</h4>
+                                    <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue"> Actualités récents</h4>
 
                                     <div className="posts mt-[30px] space-y-[24px]">
                                         {latestNews.map((post) => {
                                             const postDate = new Date(post.date_posted);
-                                            const formattedDate = postDate.toLocaleDateString("en-US", {
+                                            const formattedDate = postDate.toLocaleDateString("fr-FR", {
                                                 day: "2-digit",
                                                 month: "short",
                                                 year: "numeric"
