@@ -47,8 +47,15 @@ export async function getParticipantsByEvent(eventId) {
 /**
  * ✅ Ajouter un participant à un événement
  */
+<<<<<<< Updated upstream
 export async function addParticipant(eventId, token) {
 	console.log(`📝 [POST] /events/${eventId}/participants`);
+=======
+export async function addParticipant(eventId, token, message, guests = []) {
+	console.log(`📝 [POST] /events/${eventId}/participants`);
+	console.log("📨 Données envoyées au backend :", { message, guests });
+
+>>>>>>> Stashed changes
 	try {
 		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
 			method: 'POST',
@@ -56,7 +63,11 @@ export async function addParticipant(eventId, token) {
 				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
+<<<<<<< Updated upstream
 			body: JSON.stringify({}),
+=======
+			body: JSON.stringify({ message, guests }),
+>>>>>>> Stashed changes
 			credentials: 'include',
 		});
 		const json = await res.json();

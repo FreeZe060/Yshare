@@ -15,6 +15,7 @@ const ReportFile = require('./ReportFileModel');
 const ReportMessage = require('./ReportMessageModel');
 const NewsCategory = require('./NewsCategoryModel');
 const CommentReaction = require('./CommentReactionModel');
+const EventGuest = require('./EventGuestModel');
 
 // Associations
 User.hasMany(Event, { foreignKey: 'id_org' });
@@ -89,6 +90,10 @@ CommentReaction.belongsTo(User, { foreignKey: 'id_user' });
 Comment.hasMany(CommentReaction, { foreignKey: 'id_comment', as: 'reactions' });
 CommentReaction.belongsTo(Comment, { foreignKey: 'id_comment' });
 
+Participant.hasMany(EventGuest, { foreignKey: 'id_participant', as: 'guests' });
+EventGuest.belongsTo(Participant, { foreignKey: 'id_participant' });
+
+
 module.exports = {
   sequelize,
   User,
@@ -106,4 +111,5 @@ module.exports = {
   ReportFile,
   ReportMessage,
   CommentReaction,
+  EventGuest,
 };

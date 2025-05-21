@@ -41,7 +41,59 @@ function EventDetails() {
     const { reply } = useReplyComment();
     const { user, isAuthenticated } = useAuth();
     const [newComment, setNewComment] = useState('');
+    const [ticketCount, setTicketCount] = useState(1);
+    const [errors, setError] = useState("");
 
+    const [guestCount, setGuestCount] = useState(0);
+    const maxGuests = 3;
+    const [guests, setGuests] = useState([]);
+
+    const addGuestField = () => {
+        if (guestCount < maxGuests) {
+            setGuestCount(guestCount + 1);
+            setGuests([...guests, { firstname: '', lastname: '', email: '' }]);
+        } else {
+            Swal.fire('Limite atteinte', "Vous ne pouvez ajouter que 3 invités.", 'warning');
+        }
+    };
+
+    const updateGuestInfo = (index, field, value) => {
+        const updated = [...guests];
+        updated[index][field] = value;
+        setGuests(updated);
+    };
+
+    const renderGuestInputs = (count) => {
+        let fields = '';
+        for (let i = 1; i < count; i++) {
+            fields += `
+            <hr class="border-t border-gray-300 my-4"/>
+            <div class="font-semibold text-[#C320C0] text-sm mb-2">Invité n°${i}</div>
+            <div class="space-y-3">
+                <input type="text" id="guest-firstname-${i}" placeholder="Prénom" class="w-full px-3 py-2 border rounded-md text-sm" />
+                <input type="text" id="guest-lastname-${i}" placeholder="Nom" class="w-full px-3 py-2 border rounded-md text-sm" />
+                <input type="email" id="guest-email-${i}" placeholder="Email" class="w-full px-3 py-2 border rounded-md text-sm" />
+            </div>
+        `;
+        }
+        return fields;
+    };
+
+    const handleIncrease = () => {
+        if (ticketCount >= 4) {
+            setError("Il est possible de réserver un maximum de 4 places par utilisateur.");
+        } else {
+            setTicketCount(ticketCount + 1);
+            setError("");
+        }
+    };
+
+    const handleDecrease = () => {
+        if (ticketCount > 1) {
+            setTicketCount(ticketCount - 1);
+            setError("");
+        }
+    };
 
     const handleAddComment = async () => {
         if (!isAuthenticated) {
@@ -120,22 +172,8 @@ function EventDetails() {
                         <label class="block font-medium text-sm text-gray-700 mb-1">💬 Message au créateur</label>
                         <textarea id="message" class="w-full px-3 py-2 border rounded-md resize-none focus:ring-[#C320C0] focus:border-[#C320C0]" rows="4" placeholder="Expliquez pourquoi vous voulez participer..."></textarea>
                     </div>
-    
-                    ${event.price > 0 ? `
-                    <div class="space-y-2">
-                        <hr class="border-t border-gray-200"/>
-                        <label class="block font-medium text-sm text-gray-700">💳 Informations de paiement</label>
-                        <input
-                            id="card"
-                            inputmode="numeric"
-                            maxlength="19"
-                            placeholder="1234 5678 9012 3456"
-                            class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#C320C0]"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(.{4})/g, '$1 ').trim();"
-                        />
-                        <p class="text-xs text-gray-500">Le paiement est simulé. Aucun montant ne sera débité.</p>
-                    </div>
-                    ` : ''}
+
+                    ${ticketCount > 1 ? renderGuestInputs(ticketCount) : ''}
     
                 </div>
             </div>
@@ -149,29 +187,36 @@ function EventDetails() {
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 const message = document.getElementById('message')?.value?.trim();
-                const card = document.getElementById('card')?.value;
+                const guests = [];
 
                 if (!message) {
                     Swal.showValidationMessage('Veuillez rédiger un message pour le créateur.');
                     return false;
                 }
 
-                if (event.price > 0) {
-                    const cleanCard = card?.replace(/\s/g, '');
-                    if (!cleanCard || cleanCard.length < 16) {
-                        Swal.showValidationMessage('Numéro de carte invalide (16 chiffres requis).');
-                        return false;
+                if (ticketCount > 1) {
+                    for (let i = 1; i < ticketCount; i++) {
+                        const firstname = document.getElementById(`guest-firstname-${i}`)?.value?.trim();
+                        const lastname = document.getElementById(`guest-lastname-${i}`)?.value?.trim();
+                        const email = document.getElementById(`guest-email-${i}`)?.value?.trim();
+
+                        if (!firstname || !lastname || !email) {
+                            Swal.showValidationMessage(`Veuillez compléter les champs de l'invité n°${i}.`);
+                            return false;
+                        }
+
+                        guests.push({ firstname, lastname, email });
                     }
                 }
 
-                return { message, card };
+                return { message, guests };
             },
             backdrop: 'rgba(0,0,0,0.4)',
         });
 
         if (formValues) {
             try {
-                await addNewParticipant(eventId);
+                await addNewParticipant(eventId, formValues.message, formValues.guests || []);
                 Swal.fire({
                     icon: 'success',
                     title: 'Candidature envoyée 🎉',
@@ -250,7 +295,6 @@ function EventDetails() {
 
                                 </div>
 
-                                {/* Infos date + status */}
                                 <div className="flex flex-col gap-2">
                                     <p className="mt-2 font-light text-[16px] text-etGray">
                                         Créé par
@@ -301,8 +345,6 @@ function EventDetails() {
                                             })}
                                         </p>
                                     </div>
-
-                                    {/* Badge status */}
 
                                 </div>
                             </div>
@@ -492,77 +534,42 @@ function EventDetails() {
                                                 </div>
                                             </div>
 
-                                            <div class="mb-[24px] overflow-visible et-event-details-ticket-time-slider swiper">
-                                                <div class="swiper-wrapper">
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
-                                                    </div>
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
-                                                    </div>
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
-                                                    </div>
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
-                                                    </div>
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
-                                                    </div>
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
-                                                    </div>
-                                                    <div class="group w-max swiper-slide">
-                                                        <span class="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">19:00</span>
+                                            <div className="mb-[24px] overflow-visible et-event-details-ticket-time-slider swiper">
+                                                <div className="swiper-wrapper">
+                                                    <div className="group w-max swiper-slide">
+                                                        <span className="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">
+                                                            {`${new Date(event?.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(event?.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <form class="space-y-[10px] mb-[30px]">
-                                                <div class="px-[16px] py-[7px] border border-[#d9d9d9] rounded-[6px] radio-container">
-                                                    <label for="schedule1" class="relative flex gap-[15px] font-normal text-[#232323] text-[14px]">
-                                                        <span>posuere turpis, eget molestie Nulla at nibh et.</span>
-                                                        <span class="flex items-center">
-                                                            <input type="radio" id="schedule1" name="options" value="schedule1" class="appearance-none" checked />
-                                                            <span class="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] before:-translate-y-[50%] after:-translate-y-[50%]">15,00 €</span>
-                                                        </span>
-                                                    </label>
-                                                </div>
-
-                                                <div class="px-[16px] py-[7px] border border-[#d9d9d9] rounded-[6px] radio-container">
-                                                    <label for="schedule2" class="relative flex gap-[15px] font-normal text-[#232323] text-[14px]">
-                                                        <span>posuere turpis, eget molestie Nulla at nibh et.</span>
-                                                        <span class="flex items-center">
-                                                            <input type="radio" id="schedule2" name="options" value="schedule2" class="appearance-none" />
-                                                            <span class="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] font-normal text-[#232323] text-[14px] before:-translate-y-[50%] after:-translate-y-[50%]">13,00 €</span>
-                                                        </span>
-                                                    </label>
-                                                </div>
-
-                                                <div class="px-[16px] py-[7px] border border-[#d9d9d9] rounded-[6px] radio-container">
-                                                    <label for="schedule3" class="relative flex gap-[15px] font-normal text-[#232323] text-[14px]">
-                                                        <span>posuere turpis, eget molestie Nulla at nibh et.</span>
-                                                        <span class="flex items-center">
-                                                            <input type="radio" id="schedule3" name="options" value="schedule3" class="appearance-none" />
-                                                            <span class="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] font-normal text-[#232323] text-[14px] before:-translate-y-[50%] after:-translate-y-[50%]">14,00 €</span>
+                                            <form className="space-y-[10px] mb-[30px]">
+                                                <div className="px-[16px] py-[7px] border border-[#d9d9d9] rounded-[6px] radio-container">
+                                                    <label className="relative flex gap-[15px] font-normal text-[#232323] text-[14px]">
+                                                        <span>{`Place pour l'événement "${event?.title}"`}</span>
+                                                        <span className="flex items-center">
+                                                            <input type="radio" name="options" checked readOnly className="appearance-none" />
+                                                            <span className="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] before:-translate-y-[50%] after:-translate-y-[50%]">
+                                                                {event?.price ? `${event.price.toFixed(2)} €` : "Gratuit"}
+                                                            </span>
                                                         </span>
                                                     </label>
                                                 </div>
                                             </form>
 
-                                            <div class="mb-[30px] px-[80px] xxs:px-[30px] border-[#d9d9d9] border-[0.5px] rounded-full">
-                                                <div class="flex justify-between items-center gap-[15px] py-[17px]">
-                                                    <button type="button" id="decreaseButton" class="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white decrease">
-                                                        <span class="h-[28px] leading-[22px]">&minus;</span>
+                                            <div className="mb-[30px] px-[80px] xxs:px-[30px] border-[#d9d9d9] border-[0.5px] rounded-full">
+                                                <div className="flex justify-between items-center gap-[15px] py-[17px]">
+                                                    <button type="button" onClick={handleDecrease} className="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white">
+                                                        <span className="h-[28px] leading-[22px]">&minus;</span>
                                                     </button>
-                                                    <span class="font-light text-[16px]"><span id="ticketNumber">1</span> Ticket</span>
-
-                                                    <button type="button" id="increaseButton" class="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white increase">
-                                                        <span class="h-[28px] leading-[22px]">&plus;</span>
+                                                    <span className="font-light text-[16px]"><span>{ticketCount}</span> Ticket{ticketCount > 1 ? "s" : ""}</span>
+                                                    <button type="button" onClick={handleIncrease} className="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white">
+                                                        <span className="h-[28px] leading-[22px]">&plus;</span>
                                                     </button>
                                                 </div>
+                                                {error && <p className="text-red-500 text-[12px] text-center mt-2">{error}</p>}
                                             </div>
-
 
                                             <button class="flex justify-center items-center gap-x-[10px] bg-[#C320C0] hover:bg-white px-[15px] border-[#C320C0] border-2 rounded-full w-full h-[50px] text-[15px] text-white hover:text-[#C320C0]">
 

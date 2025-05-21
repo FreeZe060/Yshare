@@ -44,7 +44,7 @@ exports.addParticipant = async (req, res) => {
 	try {
 		const { eventId } = req.params;
 		const userId = req.user.id;
-		const { message } = req.body;
+		const { message, guests = [] } = req.body;
 
 		console.log(`📥 [Controller] POST /participants/event/${eventId} by user #${userId}`);
 		console.log(`💬 Message reçu : ${message}`);
@@ -57,7 +57,7 @@ exports.addParticipant = async (req, res) => {
 			return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
 		}
 
-		const participant = await participantService.addParticipant(eventId, userId, message);
+		const participant = await participantService.addParticipant(eventId, userId, message, guests);
 
 		res.status(201).json({ message: "Demande de participation envoyée avec succès.", participant });
 
