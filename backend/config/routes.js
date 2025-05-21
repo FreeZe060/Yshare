@@ -76,8 +76,13 @@ router.get('/users/:userId/created-events', eventController.getCreatedEventsPubl
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), (req, res) => {
-	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
+	res.cookie('auth_token', req.user.token, {
+		httpOnly: true,
+		maxAge: 10 * 60 * 60 * 1000 
+	});
+	res.redirect('http://localhost:3000/'); 
 });
+
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), (req, res) => {
 	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);

@@ -19,6 +19,10 @@ const Register = () => {
 	const [gender, setGender] = useState('');
 	const [profileImage, setProfileImage] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
+	const [invalidPasswordRules, setInvalidPasswordRules] = useState([]);
+	const [shakeRules, setShakeRules] = useState(false);
+	const [passwordFocused, setPasswordFocused] = useState(false);
+
 
 	const handleNameChange = (e) => {
 		const sanitized = sanitizeInput(e.target.value);
@@ -92,11 +96,24 @@ const Register = () => {
 			newErrors.email = 'Veuillez entrer un email valide';
 		}
 		if (!password) newErrors.password = 'Veuillez entrer un mot de passe';
-
 		if (!gender) newErrors.gender = 'Veuillez sélectionner votre genre';
 
-		if (Object.keys(newErrors).length > 0 || passwordStrength.level === 'weak') {
-			setErrors(newErrors);
+		const rules = checkPasswordRules(password);
+		const failedRules = rules.filter(r => !r.isValid);
+
+		if (Object.keys(newErrors).length > 0 || failedRules.length > 0) {
+			if (failedRules.length > 0) {
+				const failedMessages = failedRules.map(r => `• ${r.label}`).join('\n');
+				await Swal.fire({
+					icon: 'error',
+					title: 'Mot de passe invalide',
+					html: `Votre mot de passe ne respecte pas les conditions suivantes :<br><strong>${failedRules.map(r => r.label).join('<br>')}</strong>`,
+					confirmButtonText: 'OK'
+				});
+				setShakeRules(true);
+				setTimeout(() => setShakeRules(false), 1000);
+			}
+			setErrors({ ...newErrors });
 			return;
 		}
 
@@ -126,23 +143,24 @@ const Register = () => {
 		}
 	};
 
-	const getPasswordStrength = (password) => {
-		if (!password) return { level: 'empty', message: '' };
-
-		const hasUppercase = /[A-Z]/.test(password);
-		const hasNumber = /\d/.test(password);
-		const hasMinLength = password.length >= 8;
-
-		if (hasUppercase && hasNumber && hasMinLength) {
-			return { level: 'strong', message: 'Mot de passe sécurisé' };
-		} else if ((hasUppercase || hasNumber) && password.length >= 6) {
-			return { level: 'medium', message: 'Mot de passe faible' };
-		} else {
-			return { level: 'weak', message: 'Au moins une majuscule, un chiffre et 8 caractères' };
-		}
+	const checkPasswordRules = (password) => {
+		return [
+			{ label: 'Au moins 8 caractères', isValid: password.length >= 8 },
+			{ label: 'Une majuscule', isValid: /[A-Z]/.test(password) },
+			{ label: 'Un chiffre', isValid: /\d/.test(password) }
+		];
 	};
 
-	const passwordStrength = getPasswordStrength(password);
+	const getPasswordLevel = (rules) => {
+		const validCount = rules.filter(r => r.isValid).length;
+		if (validCount === 3) return 'strong';
+		if (validCount === 2) return 'medium';
+		return 'weak';
+	};
+
+	const passwordRules = checkPasswordRules(password);
+	const passwordLevel = getPasswordLevel(passwordRules);
+
 
 	const strengthStyle = {
 		strong: {
@@ -308,7 +326,7 @@ const Register = () => {
 								<option value="Homme">Homme</option>
 								<option value="Femme">Femme</option>
 								<option value="Autre">Autre</option>
-								<option value="Ne pas dire">Préféré ne pas dire</option>
+								<option value="Préféré ne pas dire">Préféré ne pas dire</option>
 							</select>
 						</div>
 
@@ -325,12 +343,12 @@ const Register = () => {
 						</div>
 						{errors.email && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.email}</p>}
 
-						<div
-							className={`relative flex items-center border-2 py-2 px-3 pr-10 rounded-2xl
-								${errors.password || passwordStrength.level === 'weak' ? 'border-red-400 bg-red-50' : strengthStyle[passwordStrength.level]?.border || ''}
-								${!errors.password && !password ? 'mb-4' : ''}
-							`}
-						>
+						<div className={`relative flex items-center border-2 py-2 px-3 pr-10 rounded-2xl
+							${passwordLevel === 'strong' ? 'border-green-400 bg-green-50' : ''}
+							${passwordLevel === 'medium' ? 'border-yellow-400 bg-yellow-50' : ''}
+							${passwordLevel === 'weak' && password ? 'border-red-400 bg-red-50' : ''}
+							${!password ? 'mb-4' : ''}
+						`}>
 							<svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
 								<path
 									fillRule="evenodd"
@@ -343,6 +361,8 @@ const Register = () => {
 								type={showPassword ? 'text' : 'password'}
 								name="password"
 								value={password}
+								onFocus={() => setPasswordFocused(true)}
+								onBlur={() => setPasswordFocused(password.length > 0)}
 								onChange={handlePasswordChange}
 								placeholder="Mot de passe"
 							/>
@@ -360,13 +380,34 @@ const Register = () => {
 								</div>
 							</button>
 						</div>
-
-						{errors.password ? (
-							<p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.password}</p>
-						) : password && (
-							<div className={`flex items-center text-xs mb-2 ${strengthStyle[passwordStrength.level]?.text}`}>
-								{strengthStyle[passwordStrength.level]?.icon}
-								<p className="flex flex-wrap ml-1">{passwordStrength.message}</p>
+						{password && (
+							<p className={`text-xs mt-1 mb-2 text-center transition-all duration-300 ${passwordLevel === 'strong' ? 'text-green-600' :
+									passwordLevel === 'medium' ? 'text-yellow-600' :
+										'text-red-600'
+								}`}>
+								{passwordLevel === 'strong' ? 'Mot de passe sécurisé' :
+									passwordLevel === 'medium' ? 'Mot de passe moyen' :
+										'Mot de passe faible'}
+							</p>
+						)}
+						{passwordFocused && (
+							<div className="mt-2 mb-4 flex flex-col gap-2 text-xs">
+								{checkPasswordRules(password).map((rule, idx) => {
+									const shouldShake = shakeRules && !rule.isValid;
+									return (
+										<div
+											key={idx}
+											className={`
+												flex items-center gap-2 px-3 py-1 rounded-xl transition-all duration-300
+												${rule.isValid ? 'text-green-700 text-sm animate__fadeIn animate__animated' : 'text-red-600 text-base'}
+												${shouldShake ? 'animate__animated animate__headShake' : ''}
+											`}
+										>
+											<span className={`w-2 h-2 rounded-full ${rule.isValid ? 'bg-green-500' : 'bg-red-500'}`} />
+											{rule.label}
+										</div>
+									);
+								})}
 							</div>
 						)}
 
@@ -397,7 +438,7 @@ const Register = () => {
 								Se connecter ici
 							</a>
 						</span>
-						
+
 					</form>
 				</div>
 			</div>
