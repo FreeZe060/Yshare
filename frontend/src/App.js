@@ -14,7 +14,10 @@ import Admin from './pages/DashboardPage';
 import AdminRoute from './components/admin/AdminRoute';
 import EventDetails from './pages/EventDetails';
 import TeamPage from './pages/TeamPage';
+import NewsPage from './pages/NewsPage';
 import { LegalMentions, PrivacyPolicy, TermsOfUse, TermsOfSale } from './pages/LegalPages';
+import NotificationPage from './pages/NotificationPage';
+import NewsDetails from './pages/NewsDetails';
 
 function App() {
 
@@ -31,7 +34,10 @@ function App() {
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				<Route path="/profile/:userId" element={<Profil />} />
+				<Route path="/news" element={<NewsPage />}/>
+				<Route path="/news/:newsId" element={<NewsDetails />}/>
 				<Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+				<Route path="/notifications" element={<PrivateRoute><NotificationPage /></PrivateRoute>} />
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 
 				<Route path="/event/:eventId" element={<EventDetails />} />

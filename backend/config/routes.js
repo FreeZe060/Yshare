@@ -144,6 +144,7 @@ router.get('/favoris/:eventId', authenticateToken, favorisController.getFavorisB
 
 router.post('/news', authenticateToken, newsUpload.single('image'), newsController.createNews);
 router.get('/news', newsController.getAllNews);
+router.get('/news/:newsId/details', newsController.getNewsDetails);
 router.get('/news/event/:eventId', newsController.getNewsByEventId);
 router.get('/news/my', authenticateToken, newsController.getNewsByUserId);
 router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.single('image'), newsController.updateNews);

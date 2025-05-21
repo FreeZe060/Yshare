@@ -9,6 +9,7 @@ export async function registerUser(userData) {
 	formData.append("lastname", userData.lastname);
 	formData.append("email", userData.email);
 	formData.append("password", userData.password);
+	formData.append("gender", userData.gender);
 	if (userData.profileImage) {
 		formData.append("profileImage", userData.profileImage);
 	}

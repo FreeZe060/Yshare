@@ -136,17 +136,21 @@ function EventsListEventics() {
 
                         return (
                             <div key={index} className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-                                <div
-                                    className={`absolute top-3 right-3 cursor-pointer text-xl transition-all duration-300 transform 
-                                    ${isFavoris(event.id) ? 'text-red-600 hover:scale-110' : 'text-gray-400 hover:scale-110'}`}
-                                    onClick={() => toggleFavoris(event.id)}
-                                >
-                                    {isFavoris(event.id) ? (
-                                        <FaHeart className="animate-pulse" />
-                                    ) : (
-                                        <FaRegHeart />
-                                    )}
-                                </div>
+
+                                {isAuthenticated && (
+                                    <div
+                                        className={`absolute top-3 right-3 cursor-pointer text-xl transition-all duration-300 transform 
+                                        ${isFavoris(event.id) ? 'text-red-600 hover:scale-110' : 'text-gray-400 hover:scale-110'}`}
+                                        onClick={() => toggleFavoris(event.id)}
+                                    >
+                                        {isFavoris(event.id) ? (
+                                            <FaHeart className="animate-pulse" />
+                                        ) : (
+                                            <FaRegHeart />
+                                        )}
+                                    </div>
+                                )}  
+
                                 <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
                                     <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
                                         {getFormattedDayAndMonthYear(event.start_time).day}
@@ -162,9 +166,11 @@ function EventsListEventics() {
                                 </div>
                                 <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
                                     <div className="min-w-0">
-                                        <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
-                                            {capitalizeFirstLetter(event.title)}
-                                        </h3>
+                                        <Link to={`/event/${event.id}`}>
+                                            <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
+                                                {capitalizeFirstLetter(event.title)}
+                                            </h3>
+                                        </Link>
                                         <h6 className="text-[17px] text-etBlue">
                                             <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
                                             {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}

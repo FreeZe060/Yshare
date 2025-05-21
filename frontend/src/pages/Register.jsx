@@ -16,6 +16,7 @@ const Register = () => {
 	const [lastname, setLastname] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [gender, setGender] = useState('');
 	const [profileImage, setProfileImage] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -37,6 +38,11 @@ const Register = () => {
 	const handlePasswordChange = (e) => {
 		const sanitized = sanitizeInput(e.target.value);
 		setPassword(sanitized);
+	};
+
+	const handleGenderChange = (e) => {
+		const sanitized = sanitizeInput(e.target.value);
+		setGender(sanitized);
 	};
 
 	const { register, loading, error } = useRegister();
@@ -67,6 +73,9 @@ const Register = () => {
 		if (password && errors.password) {
 			setErrors(prev => ({ ...prev, password: null }));
 		}
+		if (gender && errors.gender) {
+			setErrors(prev => ({ ...prev, gender: null }));
+		}
 	}, [name, lastname, email, password]);
 
 
@@ -84,6 +93,8 @@ const Register = () => {
 		}
 		if (!password) newErrors.password = 'Veuillez entrer un mot de passe';
 
+		if (!gender) newErrors.gender = 'Veuillez sélectionner votre genre';
+
 		if (Object.keys(newErrors).length > 0 || passwordStrength.level === 'weak') {
 			setErrors(newErrors);
 			return;
@@ -92,7 +103,7 @@ const Register = () => {
 		setErrors({});
 
 		try {
-			const userData = { name, lastname, email, password, profileImage };
+			const userData = { name, lastname, gender, email, password, profileImage };
 			const result = await register(userData);
 
 			localStorage.setItem('token', result.token);
@@ -285,6 +296,24 @@ const Register = () => {
 						</div>
 						{errors.lastname && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.lastname}</p>}
 
+						<div className={`flex items-center border-2 py-2 px-3 rounded-2xl ${errors.gender ? 'border-red-400 bg-red-50' : 'mb-4'}`}>
+							<i className="flex justify-center items-center w-5 h-5 text-gray-400 fa-solid fa-venus-mars"></i>
+							<select
+								name="gender"
+								value={gender}
+								onChange={handleGenderChange}
+								className={`bg-transparent pl-2 border-none outline-none w-full ${gender === '' ? 'text-gray-400' : 'text-gray-700'}`}
+							>
+								<option value="" disabled hidden className="text-gray-400">Genre</option>
+								<option value="Homme">Homme</option>
+								<option value="Femme">Femme</option>
+								<option value="Autre">Autre</option>
+								<option value="Ne pas dire">Préféré ne pas dire</option>
+							</select>
+						</div>
+
+						{errors.gender && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.gender}</p>}
+
 						<div className={`flex items-center border-2 py-2 px-3 rounded-2xl ${errors.email ? 'border-red-400 bg-red-50' : 'mb-4'}`}>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
 								stroke="currentColor">
@@ -348,7 +377,7 @@ const Register = () => {
 						<button
 							type="submit"
 							disabled={loading}
-							className="block bg-[#C421C0] mb-4 py-3 rounded-2xl w-full font-medium text-white text-sm hover:scale-105 transition-all duration-300 ease-in-out"
+							className="block bg-[#C421C0] mb-2 py-3 rounded-2xl w-full font-medium text-white text-sm hover:scale-105 transition-all duration-300 ease-in-out"
 						>
 							{loading ? (
 								<i className="mr-2 animate-spin fas fa-spinner fa-spin"></i>
@@ -357,12 +386,18 @@ const Register = () => {
 							)}
 						</button>
 
-						<span className="block hover:text-blue-500 text-sm text-center cursor-pointer">
+						<span className="block text-gray-400 text-xs text-center">
+							En créant un compte, vous acceptez nos{' '}
+							<a href="/conditions-utilisation" className="hover:text-[#C421C0] underline transition">Conditions d'utilisation</a>.
+						</span>
+
+						<span className="block mt-2 hover:text-blue-500 text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
 							Déjà un compte ?{' '}
 							<a href="/login" className="text-blue-500">
 								Se connecter ici
 							</a>
 						</span>
+						
 					</form>
 				</div>
 			</div>

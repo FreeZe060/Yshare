@@ -6,7 +6,6 @@ import useFavoris from '../hooks/Favoris/useFavoris';
 import { getCreatedEventsStats } from '../services/eventService';
 import { getEventHistory, getParticipationCount } from '../services/userService';
 import useUpdateProfile from '../hooks/User/useUpdateProfile';
-import { getAllFavoris } from '../services/favorisService';
 import { useUserComments } from '../hooks/Comments/useUserComments';
 import SkeletonProfileCard from '../components/SkeletonLoading/SkeletonProfileCard';
 import { motion } from 'framer-motion';
@@ -169,7 +168,7 @@ const Profil = () => {
                                                     : null
                                             }
                                             {...(isOwner && participatedEvents.length === 0 && {
-                                                buttonLink: "/allevents",
+                                                buttonLink: "/",
                                                 emptyButtonText: "Voir tous les événements"
                                             })}
                                             {...(participatedEvents.length > 0 && {
@@ -190,7 +189,7 @@ const Profil = () => {
                                                         : "Cet utilisateur n’a pour l’instant créé aucun événement."
                                                     : null
                                             }
-                                            buttonLink={isOwner ? "/createevent" : undefined}
+                                            buttonLink={isOwner ? "/create-event" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
                                             {...(createdEvents.length > 0 && {
                                                 linkText: "Voir tout l’historique"
@@ -205,7 +204,7 @@ const Profil = () => {
                                             events={favoris.slice(0, 5).map(favori => ({
                                                 id: favori.id,
                                                 title: favori.title,
-                                                date: favori.date,
+                                                start_time: favori.start_time,
                                                 status: "Favori",
                                                 image: favori.image || null
                                             }))}

@@ -61,12 +61,16 @@ export async function addParticipant(eventId, token, message, guests = []) {
 			body: JSON.stringify({ message, guests }),
 			credentials: 'include',
 		});
+
 		const json = await res.json();
+
 		if (!res.ok) {
 			console.error("❌ Erreur d'inscription :", json.message);
 			throw new Error(json.message);
 		}
+
 		console.log(`✅ Participant ajouté à l'événement #${eventId}`);
+		console.log("📥 Réponse backend :", json);
 		return json;
 	} catch (err) {
 		console.error("❌ addParticipant - Exception :", err.message);

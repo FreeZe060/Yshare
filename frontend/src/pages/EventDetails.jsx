@@ -268,11 +268,11 @@ function EventDetails() {
                 }}
                     class="z-[1] before:-z-[1] before:absolute relative bg-gradient-to-tr from-[#580FCA] to-[#F929BB] before:bg-cover before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
                     <div class="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
-                        <h1 class="font-medium text-[56px] xs:text-[45px] md:text-[50px] et-breadcrumb-title anim-text">Event Details</h1>
+                        <h1 class="font-medium text-[56px] xs:text-[45px] md:text-[50px] et-breadcrumb-title anim-text">Détails de l’événement</h1>
                         <ul class="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li class="opacity-80"><a href="/" class="hover:text-[#C320C0] anim-text">Home</a></li>
                             <li><i class="fa-angle-right fa-solid"></i><i class="fa-angle-right fa-solid"></i></li>
-                            <li class="current-page anim-text">Event Details</li>
+                            <li class="current-page anim-text">Détails de l’événement</li>
                         </ul>
                     </div>
                 </section>
@@ -416,7 +416,7 @@ function EventDetails() {
                                     </div>
 
                                     <div class="mt-[50px] rev-slide-up">
-                                        <h3 class="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Event Participants</h3>
+                                        <h3 class="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Liste des participants à l’événement</h3>
 
                                         {participants?.length === 0 ? (
                                             <div class="text-center p-[30px] border border-dashed border-[#C320C0] rounded-[12px] bg-[#fdf5ff] animate-fade-in">
@@ -527,12 +527,12 @@ function EventDetails() {
                                 <div class="right space-y-[30px] w-[370px] lg:w-[360px] max-w-full shrink-0">
                                     <div class="border border-[#e5e5e5] rounded-[16px] overflow-hidden et-event-details-ticket-widgget">
                                         <div class="bg-[#C320C0] p-[16px] xxs:p-[12px]">
-                                            <h5 class="font-medium text-[20px] text-white text-center">Select Date and Time</h5>
+                                            <h5 class="font-medium text-[20px] text-white text-center">Sélectionnez la date et l’heure</h5>
                                         </div>
 
                                         <div class="p-[22px] lg:p-[16px]">
                                             <div class="flex justify-between items-center mt-[6px] mb-[16px]">
-                                                <h6 class="font-medium text-[#232323] text-[16px]">Time Schedule</h6>
+                                                <h6 class="font-medium text-[#232323] text-[16px]">Plage horaire</h6>
 
                                                 <div class="flex items-center gap-[20px] text-[16px]" id="et-event-details-ticket-time-slider-nav">
                                                     <button class="hover:text-[#C320C0] prev"><i class="fa-angle-left fa-solid"></i></button>
