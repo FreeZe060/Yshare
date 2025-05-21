@@ -43,6 +43,7 @@ function EventDetails() {
     const [newComment, setNewComment] = useState('');
     const [ticketCount, setTicketCount] = useState(1);
     const [errors, setError] = useState("");
+    const [errorCount, setErrorCount] = useState(0);
 
     const [guestCount, setGuestCount] = useState(0);
     const maxGuests = 3;
@@ -80,18 +81,23 @@ function EventDetails() {
     };
 
     const handleIncrease = () => {
-        if (ticketCount >= 4) {
-            setError("Il est possible de réserver un maximum de 4 places par utilisateur.");
-        } else {
+        if (ticketCount < 4) {
             setTicketCount(ticketCount + 1);
             setError("");
+        } else {
+            setError("Il est possible de réserver un maximum de 4 places par utilisateur.");
+            setErrorCount(prev => prev + 1); // force le re-render
         }
     };
 
+
     const handleDecrease = () => {
         if (ticketCount > 1) {
-            setTicketCount(ticketCount - 1);
-            setError("");
+            const newCount = ticketCount - 1;
+            setTicketCount(newCount);
+            if (newCount < 4) {
+                setError("");
+            }
         }
     };
 
@@ -420,7 +426,7 @@ function EventDetails() {
                                                 <p class="text-[16px] text-etGray mb-[10px] animate-slide-up">
                                                     Soyez le premier à rejoindre cette aventure et faites partie des pionniers !
                                                 </p>
-                                                <a
+                                                <a onClick={handleApplyToEvent}
                                                     href="#"
                                                     class="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse"
                                                 >
@@ -565,14 +571,17 @@ function EventDetails() {
                                                     </button>
                                                     <span className="font-light text-[16px]"><span>{ticketCount}</span> Ticket{ticketCount > 1 ? "s" : ""}</span>
                                                     <button type="button" onClick={handleIncrease} className="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white">
-                                                        <span className="h-[28px] leading-[22px]">&plus;</span>
+                                                        <span className="h-[28px] leading-[22px]">+</span>
                                                     </button>
                                                 </div>
-                                                {error && <p className="text-red-500 text-[12px] text-center mt-2">{error}</p>}
                                             </div>
+                                            {errors && (
+                                                <p key={errorCount} className="text-red-500 text-[12px] text-center mt-2">
+                                                    {errors}
+                                                </p>
+                                            )}
 
-                                            <button class="flex justify-center items-center gap-x-[10px] bg-[#C320C0] hover:bg-white px-[15px] border-[#C320C0] border-2 rounded-full w-full h-[50px] text-[15px] text-white hover:text-[#C320C0]">
-
+                                            <button onClick={handleApplyToEvent} class="flex justify-center items-center gap-x-[10px] bg-[#C320C0] hover:bg-white px-[15px] border-[#C320C0] border-2 rounded-full w-full h-[50px] text-[15px] text-white hover:text-[#C320C0]">
                                                 <span>{`${event?.price > 0 ? "Candidater" : "Candidater"} (${formatEuro(event?.price)}) `}</span>
                                             </button>
                                         </div>
