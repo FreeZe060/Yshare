@@ -122,6 +122,32 @@ export async function updateParticipantStatus(eventId, participantId, status, to
 	}
 }
 
+export async function getUserEventHistory(userId, token) {
+	console.log(`📜 [GET] /participants/history/${userId}`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/participants/history/${userId}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			credentials: 'include',
+		});
+
+		const json = await res.json();
+
+		if (!res.ok) {
+			console.error(`❌ Erreur récupération historique user #${userId} :`, json.message);
+			throw new Error(json.message);
+		}
+
+		console.log(`✅ Historique récupéré pour user #${userId} (${json.length} événements)`);
+		return json;
+	} catch (err) {
+		console.error("❌ getUserEventHistory - Exception :", err.message);
+		throw err;
+	}
+}
+
 /**
  * ✅ Supprimer un participant
  */

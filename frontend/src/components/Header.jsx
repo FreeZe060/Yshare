@@ -86,7 +86,7 @@ const Header = () => {
                                     }`}
                             >
                                 <i className="flex justify-center items-center bg-gray-800 p-2 rounded-full w-8 fas fa-home" />
-                                <span className="mx-1">Home</span>
+                                <span className="mx-1">Accueil</span>
                             </Link>
 
                             {/* Artists */}
@@ -126,7 +126,7 @@ const Header = () => {
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1"> Team</span>
+                                <span className="mx-1"> Équipe</span>
                             </Link>
 
                         </div>

@@ -31,7 +31,9 @@ const Login = () => {
 		if (token) {
 			localStorage.setItem('token', token);
 			loginContext({ token });
-			navigate('/');
+			const lastVisited = localStorage.getItem('lastVisited') || '/';
+			localStorage.removeItem('lastVisited');
+			window.location.href = lastVisited;
 		}
 	}, [location]);
 
@@ -49,7 +51,9 @@ const Login = () => {
 				showConfirmButton: false,
 				timer: 1500,
 			}).then(() => {
-				window.location.href = '/';
+				const lastVisited = localStorage.getItem('lastVisited') || '/';
+				localStorage.removeItem('lastVisited');
+				window.location.href = lastVisited;
 			});
 		} catch (err) {
 			Swal.fire({

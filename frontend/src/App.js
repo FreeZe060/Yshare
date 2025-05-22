@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 
 import './index.css';
 import ScrollToTop from './utils/ScrollToTop';
+import SaveLastVisitedPage from './config/SaveLastVisitedPage';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -18,12 +19,14 @@ import NewsPage from './pages/NewsPage';
 import { LegalMentions, PrivacyPolicy, TermsOfUse, TermsOfSale } from './pages/LegalPages';
 import NotificationPage from './pages/NotificationPage';
 import NewsDetails from './pages/NewsDetails';
+import UserParticipationPage from './pages/ParticipantPage';
 
 function App() {
 
 	return (
 		<>
 			<ScrollToTop />
+			<SaveLastVisitedPage />
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/team" element={<TeamPage />} />
@@ -37,6 +40,7 @@ function App() {
 				<Route path="/news" element={<NewsPage />}/>
 				<Route path="/news/:newsId" element={<NewsDetails />}/>
 				<Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+				<Route path="/participation" element={<PrivateRoute><UserParticipationPage /></PrivateRoute>} />
 				<Route path="/notifications" element={<PrivateRoute><NotificationPage /></PrivateRoute>} />
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 

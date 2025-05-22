@@ -383,6 +383,10 @@ class ParticipantService {
                             attributes: ['id', 'name', 'lastname', 'email']
                         }
                     ]
+                },
+                {
+                    model: EventGuest,
+                    as: 'guests'
                 }
             ]
         });
@@ -399,6 +403,15 @@ class ParticipantService {
             console.log(`   - Réponse organisateur: ${p.organizer_response || '(aucune)'}`);
             console.log(`   - Organisateur: ${organizer?.name || '(non trouvé)'} ${organizer?.lastname || ''}`);
 
+            if (p.guests && p.guests.length > 0) {
+                console.log(`   - Invités (${p.guests.length}):`);
+                p.guests.forEach((g, i) => {
+                    console.log(`     👤 Invité #${i + 1}: ${g.firstname} ${g.lastname} (${g.email})`);
+                });
+            } else {
+                console.log(`   - Aucun invité associé.`);
+            }
+
             return {
                 ...rest,
                 status: p.status,
@@ -410,7 +423,12 @@ class ParticipantService {
                     name: organizer.name,
                     lastname: organizer.lastname,
                     email: organizer.email
-                } : null
+                } : null,
+                guests: p.guests?.map(g => ({
+                    firstname: g.firstname,
+                    lastname: g.lastname,
+                    email: g.email
+                })) || []
             };
         });
     }

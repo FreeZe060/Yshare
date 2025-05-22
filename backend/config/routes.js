@@ -20,6 +20,7 @@ const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
 const conversationController = require('../controllers/conversationController');
+const { extractUserFromToken } = require('../middlewares/authOptional');
 
 
 //////// LOGS ROUTES ////////
@@ -63,7 +64,7 @@ router.patch('/events/update-statuses', eventController.updateAllEventStatusesBy
 
 router.post('/register', profileUpload.single('profileImage'), userController.register);
 router.post('/login', userController.login);
-router.get('/profile/:userId', userController.getProfile);
+router.get('/profile/:userId', extractUserFromToken, userController.getProfile);
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
 router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
