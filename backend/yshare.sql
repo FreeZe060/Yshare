@@ -93,6 +93,31 @@ INSERT INTO `comment_reactions` (`id`, `id_comment`, `id_user`, `emoji`, `date_r
 	(4, 15, 28, '😋', '2025-05-07 14:50:42'),
 	(7, 15, 28, '👎🏿', '2025-05-14 07:36:18');
 
+-- Listage de la structure de table yshare. conversations
+CREATE TABLE IF NOT EXISTS `conversations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user1_id` int NOT NULL,
+  `user2_id` int NOT NULL,
+  `normalized_user1_id` int NOT NULL,
+  `normalized_user2_id` int NOT NULL,
+  `event_id` int DEFAULT NULL,
+  `news_id` int DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_conversation` (`normalized_user1_id`,`normalized_user2_id`,`event_id`,`news_id`),
+  KEY `user1_id` (`user1_id`),
+  KEY `user2_id` (`user2_id`),
+  KEY `event_id` (`event_id`),
+  KEY `news_id` (`news_id`),
+  CONSTRAINT `conversations_ibfk_1` FOREIGN KEY (`user1_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `conversations_ibfk_2` FOREIGN KEY (`user2_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `conversations_ibfk_3` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `conversations_ibfk_4` FOREIGN KEY (`news_id`) REFERENCES `news` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table yshare.conversations : ~0 rows (environ)
+DELETE FROM `conversations`;
+
 -- Listage de la structure de table yshare. events
 CREATE TABLE IF NOT EXISTS `events` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -257,6 +282,28 @@ INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
 	(28, 17),
 	(30, 17);
 
+-- Listage de la structure de table yshare. messages
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `conversation_id` int NOT NULL,
+  `sender_id` int NOT NULL,
+  `content` text,
+  `reply_to_message_id` int DEFAULT NULL,
+  `emoji` varchar(10) DEFAULT NULL,
+  `sent_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `seen` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `conversation_id` (`conversation_id`),
+  KEY `sender_id` (`sender_id`),
+  KEY `reply_to_message_id` (`reply_to_message_id`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`reply_to_message_id`) REFERENCES `messages` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table yshare.messages : ~0 rows (environ)
+DELETE FROM `messages`;
+
 -- Listage de la structure de table yshare. news
 CREATE TABLE IF NOT EXISTS `news` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -344,6 +391,7 @@ CREATE TABLE IF NOT EXISTS `participants` (
   `status` enum('En Attente','Inscrit','Annulé','Refusé') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `joined_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `request_message` text,
+  `organizer_response` text,
   PRIMARY KEY (`id`),
   KEY `id_event` (`id_event`),
   KEY `id_user` (`id_user`),
@@ -353,19 +401,19 @@ CREATE TABLE IF NOT EXISTS `participants` (
 
 -- Listage des données de la table yshare.participants : ~12 rows (environ)
 DELETE FROM `participants`;
-INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`, `joined_at`, `request_message`) VALUES
-	(3, 13, 9, 'En Attente', '2025-04-29 16:35:57', NULL),
-	(4, 13, 6, 'En Attente', '2025-04-29 16:35:57', NULL),
-	(5, 13, 7, 'En Attente', '2025-04-29 16:35:57', NULL),
-	(6, 13, 8, 'En Attente', '2025-04-29 16:35:57', NULL),
-	(7, 14, 3, 'En Attente', '2025-04-29 16:35:57', NULL),
-	(10, 28, 5, 'Inscrit', '2025-04-29 16:35:57', NULL),
-	(11, 15, 5, 'En Attente', '2025-04-29 16:35:57', NULL),
-	(12, 30, 14, 'En Attente', '2025-05-02 13:16:08', NULL),
-	(13, 17, 4, 'En Attente', '2025-05-02 13:38:46', NULL),
-	(14, 17, 18, 'Inscrit', '2025-05-07 16:51:34', 'je veux vraiment rejoindre cet evenement'),
-	(15, 28, 18, 'En Attente', '2025-05-09 14:04:56', ''),
-	(18, 28, 8, 'En Attente', '2025-05-21 12:33:36', 'jaime beaucoup cet evenement');
+INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`, `joined_at`, `request_message`, `organizer_response`) VALUES
+	(3, 13, 9, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
+	(4, 13, 6, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
+	(5, 13, 7, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
+	(6, 13, 8, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
+	(7, 14, 3, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
+	(10, 28, 5, 'Inscrit', '2025-04-29 16:35:57', NULL, NULL),
+	(11, 15, 5, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
+	(12, 30, 14, 'En Attente', '2025-05-02 13:16:08', NULL, NULL),
+	(13, 17, 4, 'En Attente', '2025-05-02 13:38:46', NULL, NULL),
+	(14, 17, 18, 'Inscrit', '2025-05-07 16:51:34', 'je veux vraiment rejoindre cet evenement', NULL),
+	(15, 28, 18, 'En Attente', '2025-05-09 14:04:56', '', NULL),
+	(18, 28, 8, 'En Attente', '2025-05-21 12:33:36', 'jaime beaucoup cet evenement', NULL);
 
 -- Listage de la structure de table yshare. ratings
 CREATE TABLE IF NOT EXISTS `ratings` (

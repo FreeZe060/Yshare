@@ -19,6 +19,7 @@ const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
+const conversationController = require('../controllers/conversationController');
 
 
 //////// LOGS ROUTES ////////
@@ -156,6 +157,23 @@ router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.si
 router.delete('/news/:newsId', isNewsOwnerOrAdmin, newsController.deleteNews);
 router.post( '/news/:newsId/category', authenticateToken, isNewsOwnerOrAdmin, newsController.addCategoryToNews);
 router.delete( '/news/:newsId/category/:categoryId', authenticateToken, isNewsOwnerOrAdmin, newsController.removeCategoryFromNews);
+
+//////// CONVERSATION ROUTES ////////
+
+router.get('/conversations', authenticateToken, isAdmin, conversationController.getAllConversations);
+router.get('/conversations/my', authenticateToken, conversationController.getMyConversations);
+router.post('/conversations', authenticateToken, conversationController.startOrGetConversation);
+router.post('/messages', authenticateToken, conversationController.sendMessage);
+router.put('/messages/:messageId', authenticateToken, UserOrAdmin, conversationController.editMessage);
+router.delete('/messages/:messageId', authenticateToken, UserOrAdmin, conversationController.deleteMessage);
+router.post('/messages/:messageId/reactions', authenticateToken, UserOrAdmin, conversationController.reactToMessage);
+router.delete('/messages/:messageId/reactions', authenticateToken, UserOrAdmin, conversationController.removeReaction);
+router.patch('/messages/:messageId/seen', authenticateToken, conversationController.markAsSeen);
+router.delete('/conversations/:conversationId', authenticateToken, UserOrAdmin, conversationController.deleteConversation);
+router.patch('/conversations/:conversationId/link', authenticateToken, conversationController.linkToEventOrNews);
+router.patch('/conversations/:conversationId/update-link', authenticateToken, conversationController.updateLinkedItem);
+router.patch('/conversations/:conversationId/unlink', authenticateToken, conversationController.unlinkEventOrNews);
+router.get('/conversations/between/:user1Id/:user2Id', authenticateToken, isAdmin, conversationController.getConversationBetweenUsers);
 
 //////// RATING ROUTES ////////
 

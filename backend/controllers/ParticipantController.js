@@ -41,56 +41,56 @@ exports.getParticipantByUser = async (req, res) => {
 };
 
 exports.addParticipant = async (req, res) => {
-	try {
-		const { eventId } = req.params;
-		const userId = req.user.id;
-		const { message, guests = [] } = req.body;
+    try {
+        const { eventId } = req.params;
+        const userId = req.user.id;
+        const { message, guests = [] } = req.body;
 
-		console.log(`📥 [Controller] POST /participants/event/${eventId} by user #${userId}`);
-		console.log(`💬 Message reçu : ${message}`);
+        console.log(`📥 [Controller] POST /participants/event/${eventId} by user #${userId}`);
+        console.log(`💬 Message reçu : ${message}`);
 
-		const event = await eventService.getEventById(eventId);
-		if (!event) return res.status(404).json({ message: "Événement introuvable." });
+        const event = await eventService.getEventById(eventId);
+        if (!event) return res.status(404).json({ message: "Événement introuvable." });
 
-		if (event.id_org === userId) {
-			console.warn(`⛔ Utilisateur ${userId} tente de rejoindre son propre événement`);
-			return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
-		}
+        if (event.id_org === userId) {
+            console.warn(`⛔ Utilisateur ${userId} tente de rejoindre son propre événement`);
+            return res.status(400).json({ message: "Vous ne pouvez pas rejoindre votre propre événement." });
+        }
 
-		const participant = await participantService.addParticipant(eventId, userId, message, guests);
+        const participant = await participantService.addParticipant(eventId, userId, message, guests);
 
-		res.status(201).json({ message: "Demande de participation envoyée avec succès.", participant });
+        res.status(201).json({ message: "Demande de participation envoyée avec succès.", participant });
 
-	} catch (err) {
-		console.error('❌ [addParticipant] Erreur :', err.message);
-		res.status(500).json({ message: err.message });
-	}
+    } catch (err) {
+        console.error('❌ [addParticipant] Erreur :', err.message);
+        res.status(500).json({ message: err.message });
+    }
 };
-
 
 exports.adminAddParticipant = async (req, res) => {
     try {
-      const { eventId, userId } = req.params;
-  
-      console.log(`🛠️ [Admin] Ajout user #${userId} à event #${eventId}`);
-      const participant = await participantService.adminAddParticipant(eventId, userId);
-  
-      res.status(201).json({ message: 'Participant ajouté avec succès.', participant });
+        const { eventId, userId } = req.params;
+
+        console.log(`🛠️ [Admin] Ajout user #${userId} à event #${eventId}`);
+        const participant = await participantService.adminAddParticipant(eventId, userId);
+
+        res.status(201).json({ message: 'Participant ajouté avec succès.', participant });
     } catch (err) {
-      console.error('❌ Erreur adminAddParticipant :', err.message);
-      res.status(500).json({ message: err.message });
+        console.error('❌ Erreur adminAddParticipant :', err.message);
+        res.status(500).json({ message: err.message });
     }
-  };  
+};
 
 exports.updateStatus = async (req, res) => {
     try {
         const { participantId } = req.params;
-        const { status } = req.body;
+        const { status, organizerResponse } = req.body;
         const user = req.user;
 
         console.log(`📥 [Controller] PUT /participants/${participantId} status -> "${status}" by user #${user.id}`);
+        console.log(`📨 Message de l'organisateur : ${organizerResponse}`);
 
-        const updated = await participantService.updateParticipantStatus(participantId, status);
+        const updated = await participantService.updateParticipantStatus(participantId, status, organizerResponse);
         res.status(200).json({ message: "Statut mis à jour.", participant: updated });
     } catch (err) {
         console.error('❌ Erreur updateStatus :', err.message);
