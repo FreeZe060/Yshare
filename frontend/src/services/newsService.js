@@ -113,3 +113,33 @@ export async function deleteNews(newsId, token) {
     if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression de l'actualité");
     return result;
 }
+
+export async function addCategoryToNews(newsId, categoryId, token) {
+    const response = await fetch(`${API_BASE_URL}/news/${newsId}/category`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ categoryId }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Erreur lors de l'ajout de la catégorie");
+    return result;
+}
+
+export async function removeCategoryFromNews(newsId, categoryId, token) {
+    const response = await fetch(`${API_BASE_URL}/news/${newsId}/category/${categoryId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression de la catégorie");
+    return result;
+}

@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from "../components/Header";
 import Footer from '../components/Footer';
 import useNewsDetails from '../hooks/News/useNewsDetails';
 import useAllNews from '../hooks/News/useAllNews';
 import useUpdateNews from '../hooks/News/useUpdateNews';
+import Swal from 'sweetalert2';
+import useCategories from '../hooks/Categorie/useCategories';
+import { addCategoryToNews, removeCategoryFromNews } from '../services/newsService';
+import { useAuth } from '../config/authHeader';
+import { AnimatePresence, motion } from "framer-motion";
 
 
 function NewsDetails() {
@@ -16,6 +21,8 @@ function NewsDetails() {
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState('');
     const [editedContent, setEditedContent] = useState('');
+    const { categories: allCategories } = useCategories();
+    const [showAddCat, setShowAddCat] = useState(false);
 
 
     const latestNews = [...news]
@@ -37,6 +44,43 @@ function NewsDetails() {
                 return 'bg-pink-100 text-pink-800';
             default:
                 return 'bg-gray-100 text-gray-800';
+        }
+    };
+
+    const linkedCategoryIds = newsDetails?.categories?.map(cat => cat.id) || [];
+    const availableCategories = allCategories.filter(cat => !linkedCategoryIds.includes(cat.id));
+
+    const editorRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (editorRef.current && !editorRef.current.contains(e.target) && isEditing) {
+                if (
+                    editedTitle !== newsDetails.title ||
+                    editedContent !== newsDetails.content
+                ) {
+                    handleSave(); // auto-save
+                } else {
+                    setIsEditing(false);
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isEditing, editedTitle, editedContent]);
+
+    const handleSave = async () => {
+        const formData = new FormData();
+        formData.append("title", editedTitle);
+        formData.append("content", editedContent);
+
+        try {
+            const updated = await update(formData);
+            Object.assign(newsDetails, updated);
+            setIsEditing(false);
+        } catch (err) {
+            Swal.fire("Erreur", err.message, "error");
         }
     };
 
@@ -102,63 +146,72 @@ function NewsDetails() {
                                             ))}
                                         </div>
 
-                                        {(isOwner || isAdmin) && isEditing ? (
-                                            <div className="space-y-4">
-                                                <input
-                                                    type="text"
-                                                    value={editedTitle}
-                                                    onChange={(e) => setEditedTitle(e.target.value)}
-                                                    className="w-full border border-gray-300 rounded px-4 py-2"
-                                                    placeholder="Titre"
-                                                />
-                                                <textarea
-                                                    value={editedContent}
-                                                    onChange={(e) => setEditedContent(e.target.value)}
-                                                    className="w-full border border-gray-300 rounded px-4 py-2"
-                                                    rows={6}
-                                                    placeholder="Contenu"
-                                                ></textarea>
+                                        {(isOwner || isAdmin) && !isEditing && (
+                                            <motion.button
+                                                onClick={() => {
+                                                    setEditedTitle(newsDetails.title);
+                                                    setEditedContent(newsDetails.content);
+                                                    setIsEditing(true);
+                                                }}
+                                                whileHover={{ scale: 1.1 }}
+                                                className="mb-2 text-etBlue hover:underline text-sm font-medium"
+                                            >
+                                                <i className="fas fa-pen mr-1"></i> Modifier la news
+                                            </motion.button>
+                                        )}
 
-                                                <form
-                                                    onSubmit={async (e) => {
+                                        <AnimatePresence>
+                                            {(isOwner || isAdmin) && isEditing && (
+                                                <motion.form
+                                                    key="edit-form"
+                                                    ref={editorRef}
+                                                    onSubmit={(e) => {
                                                         e.preventDefault();
-                                                        const formData = new FormData();
-                                                        formData.append("title", editedTitle);
-                                                        formData.append("content", editedContent);
-                                                        if (e.target.image.files[0]) {
-                                                            formData.append("image", e.target.image.files[0]);
-                                                        }
-
-                                                        try {
-                                                            await update(formData);
-                                                            setIsEditing(false);
-                                                            window.location.reload(); // ou mieux : refetch les données
-                                                        } catch (err) {
-                                                            alert("Erreur : " + err.message);
-                                                        }
+                                                        handleSave();
                                                     }}
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    className="space-y-3"
                                                 >
                                                     <input
-                                                        type="file"
-                                                        name="image"
-                                                        accept="image/*"
-                                                        className="block mb-2"
+                                                        type="text"
+                                                        value={editedTitle}
+                                                        onChange={(e) => setEditedTitle(e.target.value)}
+                                                        className="w-full border border-gray-300 rounded px-4 py-2 text-[20px] font-medium text-etBlack"
+                                                        placeholder="Titre"
                                                     />
+                                                    <textarea
+                                                        value={editedContent}
+                                                        onChange={(e) => setEditedContent(e.target.value)}
+                                                        className="w-full border border-gray-300 rounded px-4 py-2 text-[16px] text-etGray"
+                                                        rows={5}
+                                                        placeholder="Contenu"
+                                                    />
+
                                                     <div className="flex gap-2">
-                                                        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
-                                                            Enregistrer
-                                                        </button>
-                                                        <button
+                                                        <motion.button
+                                                            type="submit"
+                                                            whileTap={{ scale: 0.95 }}
+                                                            className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition"
+                                                        >
+                                                            <i className="fas fa-check"></i>
+                                                        </motion.button>
+                                                        <motion.button
                                                             type="button"
                                                             onClick={() => setIsEditing(false)}
-                                                            className="bg-gray-400 text-white px-4 py-2 rounded"
+                                                            whileTap={{ scale: 0.95 }}
+                                                            className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition"
                                                         >
-                                                            Annuler
-                                                        </button>
+                                                            <i className="fas fa-times"></i>
+                                                        </motion.button>
                                                     </div>
-                                                </form>
-                                            </div>
-                                        ) : (
+                                                </motion.form>
+                                            )}
+                                        </AnimatePresence>
+
+                                        {!isEditing && (
                                             <>
                                                 <h3 className="text-[30px] font-medium text-etBlack mb-[21px]">{newsDetails.title}</h3>
                                                 <p className="font-light text-[16px] text-etGray mb-[16px]">{newsDetails.content}</p>
@@ -168,15 +221,88 @@ function NewsDetails() {
                                 </div>
 
                                 <div className="border-y border-[#d9d9d9] py-[24px] flex items-center justify-between xs:flex-col xs:items-start gap-[20px]">
-                                    <div className="flex gap-[28px] items-center">
-                                        <h6 className="font-medium text-[16px] text-etBlack">Catégories : </h6>
+                                    <div className="flex gap-[28px] items-start">
+                                        <h6 className="font-medium text-[16px] text-etBlack">Catégories :</h6>
                                         <div className="flex flex-wrap gap-[13px]">
-                                            {newsDetails.categories.map((cat, idx) => (
-                                                <a key={idx} href="#" className="border border-[#e5e5e5] text-[14px] text-[#181818] px-[12px] py-[5px] rounded-[4px] hover:bg-etBlue hover:border-etBlue hover:text-white">
+                                            {newsDetails.categories.map((cat) => (
+                                                <div
+                                                    key={cat.id}
+                                                    className={`relative border border-[#e5e5e5] text-[14px] text-[#181818] px-[12px] py-[5px] rounded-[4px] hover:bg-etBlue hover:border-etBlue hover:text-white transition-all duration-300`}
+                                                >
                                                     {cat.name}
-                                                </a>
+                                                    {(isOwner || isAdmin) && (
+                                                        <button
+                                                            className="absolute top-[-6px] right-[-6px] w-[18px] h-[18px] rounded-full bg-red-600 text-white text-xs flex items-center justify-center shadow-md hover:bg-red-700 transition"
+                                                            onClick={async () => {
+                                                                const result = await Swal.fire({
+                                                                    title: 'Supprimer cette catégorie ?',
+                                                                    icon: 'warning',
+                                                                    showCancelButton: true,
+                                                                    confirmButtonText: 'Oui, supprimer',
+                                                                    cancelButtonText: 'Annuler',
+                                                                });
+
+                                                                if (result.isConfirmed) {
+                                                                    await removeCategoryFromNews(newsId, cat.id);
+                                                                    setShowAddCat(false);
+                                                                    window.location.reload();
+                                                                }
+                                                            }}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    )}
+                                                </div>
                                             ))}
                                         </div>
+
+                                        {(isOwner || isAdmin) && (
+                                            <motion.button
+                                                onClick={() => setShowAddCat(prev => !prev)}
+                                                initial={false}
+                                                animate={{ rotate: showAddCat ? 180 : 0 }}
+                                                transition={{ type: "spring", stiffness: 180, damping: 16 }}
+                                                className="w-[36px] h-[36px] flex items-center justify-center border border-etBlue text-etBlue rounded-[4px] text-[18px] hover:bg-etBlue hover:text-white transition-all duration-300"
+                                            >
+                                                <AnimatePresence mode="wait">
+                                                    <motion.i
+                                                        key={showAddCat ? 'close' : 'plus'}
+                                                        className={`fas ${showAddCat ? 'fa-times' : 'fa-plus'}`}
+                                                        initial={{ opacity: 0, scale: 0.6 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        exit={{ opacity: 0, scale: 0.6 }}
+                                                        transition={{ duration: 0.35 }}
+                                                    />
+                                                </AnimatePresence>
+                                            </motion.button>
+                                        )}
+
+                                        <AnimatePresence>
+                                            {showAddCat && (
+                                                <motion.div
+                                                    key="add-cat"
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    className="flex flex-wrap gap-[13px]"
+                                                >
+                                                    {availableCategories.map(cat => (
+                                                        <div
+                                                            key={cat.id}
+                                                            onClick={async () => {
+                                                                await addCategoryToNews(newsId, cat.id);
+                                                                setShowAddCat(false);
+                                                                window.location.reload();
+                                                            }}
+                                                            className={`cursor-pointer border border-[#e5e5e5] px-[12px] py-[5px] rounded-[4px] text-[14px] hover:bg-etBlue hover:text-white ${getCategoryStyle(cat.name)} transition-all duration-300`}
+                                                        >
+                                                            {cat.name}
+                                                        </div>
+                                                    ))}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
 
                                     <div className="flex gap-[28px] items-center">
