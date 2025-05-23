@@ -380,7 +380,7 @@ class ParticipantService {
                         {
                             model: User,
                             as: 'organizer',
-                            attributes: ['id', 'name', 'lastname', 'email']
+                            attributes: ['id', 'name', 'lastname', 'email', 'profileImage']
                         }
                     ]
                 },
@@ -414,6 +414,8 @@ class ParticipantService {
 
             return {
                 ...rest,
+                id_event: event.id,
+                event_status: event.status,
                 status: p.status,
                 image: EventImages?.[0]?.image_url || null,
                 request_message: p.request_message || null,
@@ -422,7 +424,8 @@ class ParticipantService {
                     id: organizer.id,
                     name: organizer.name,
                     lastname: organizer.lastname,
-                    email: organizer.email
+                    email: organizer.email,
+                    image: organizer.profileImage
                 } : null,
                 guests: p.guests?.map(g => ({
                     firstname: g.firstname,

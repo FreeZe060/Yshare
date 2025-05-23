@@ -168,11 +168,12 @@ const Profil = () => {
                                                     : null
                                             }
                                             {...(isOwner && participatedEvents.length === 0 && {
-                                                buttonLink: "/",
+                                                buttonLink: "/participation",
                                                 emptyButtonText: "Voir tous les événements"
                                             })}
                                             {...(participatedEvents.length > 0 && {
-                                                linkText: "Voir tout l’historique"
+                                                linkText: "Voir tout l’historique",
+                                                buttonLink: "/participation",
                                             })}
                                         />
                                     </SectionWrapper>
