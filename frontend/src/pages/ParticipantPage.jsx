@@ -110,7 +110,6 @@ const UserParticipationPage = () => {
                     >
                         <div className="flex flex-wrap justify-center gap-6 max-w-4xl w-full">
 
-                            {/* FILTRE STATUT */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -132,7 +131,6 @@ const UserParticipationPage = () => {
                                 </div>
                             </motion.div>
 
-                            {/* FILTRE ÉVÉNEMENT */}
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -186,7 +184,6 @@ const UserParticipationPage = () => {
                             </motion.div>
                         </div>
                     </motion.div>
-
 
                     {loading && <p className="text-center text-gray-600">Chargement...</p>}
                     {error && <p className="text-center text-red-500">Erreur : {error}</p>}
