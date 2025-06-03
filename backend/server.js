@@ -7,6 +7,10 @@ const passport = require('passport');
 const cors = require("cors");
 const sequelize = require('./config/dbManager');
 const startStatusScheduler = require('./utils/statusScheduler');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('./config/passport'); 
@@ -28,6 +32,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Swagger setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 // Cookies & sessions
 app.use(cookieParser());
