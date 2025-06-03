@@ -88,7 +88,7 @@ const Login = () => {
 					</div>
 				</div>
 
-				<div class="md:absolute flex justify-center items-center bg-white md:bg-transparent py-10 w-1/2 md:w-full md:h-full rev-slide-up">
+				<div class="md:absolute flex justify-center items-center bg-white md:bg-transparent py-10 pt-[104px] xs:pt-[0px] pb-[0px] xs:pb-[104px] w-1/2 md:w-full md:h-full rev-slide-up">
 					<form onSubmit={handleSubmit} class="bg-white md:p-6 md:rounded-xl min-w-[20%]">
 						<h1 className="mb-3 font-bold text-gray-800 text-3xl text-center anim-text">Bonjour!</h1>
 						<p className="mb-6 font-normal text-gray-600 text-base text-center anim-text">Content de te revoir</p>
@@ -123,7 +123,7 @@ const Login = () => {
 							<button
 								type="button"
 								onClick={() => setShowPassword(!showPassword)}
-								className="right-3 absolute focus:outline-none text-gray-400"
+								className="right-3 focus:outline-none text-gray-400"
 							>
 								<div class="w-6">
 									{showPassword ? <i class="fa-solid fa-eye"></i> : <i class="fa-solid fa-eye-slash"></i>}

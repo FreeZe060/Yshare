@@ -1359,4 +1359,9 @@ input[type=radio]:checked+span::after {
 	opacity: 1;
 }
 
+.animate__animated.animate__fadeIn {
+  --animate-duration: 0.3s;
+}
+
+
 /*# sourceMappingURL=style.css.map */
