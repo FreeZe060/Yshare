@@ -8,7 +8,8 @@ const cors = require("cors");
 const sequelize = require('./config/dbManager');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-require('./config/passport'); 
+require('./config/passport');
+require('./config/googleAuth');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -58,7 +59,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 const routes = require('./config/routes');
+const authRoutes = require('./routes/auth');
 app.use('/api/', routes);
+app.use('/auth', authRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
