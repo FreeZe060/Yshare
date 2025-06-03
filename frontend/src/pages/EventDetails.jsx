@@ -78,7 +78,7 @@ function EventDetails() {
             return Swal.fire({
                 icon: 'info',
                 title: 'Connexion requise',
-                html: `<p class="text-sm text-gray-700">Veuillez vous connecter pour candidater à cet événement.</p>`,
+                html: `<p class="text-gray-700 text-sm">Veuillez vous connecter pour candidater à cet événement.</p>`,
                 confirmButtonText: 'Se connecter',
                 cancelButtonText: 'Annuler',
                 showCancelButton: true,
@@ -96,44 +96,44 @@ function EventDetails() {
                 popup: 'p-0 overflow-hidden rounded-xl shadow-2xl',
             },
             html: `
-            <div class="flex flex-col text-left text-[15px] text-gray-700 bg-white">
+            <div class="flex flex-col bg-white text-[15px] text-gray-700 text-left">
     
                 <div class="relative overflow-hidden">
-                    <img src="${imageUrl}" class="w-full h-48 object-cover transition-transform duration-300 hover:scale-105" alt="Événement">
+                    <img src="${imageUrl}" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300" alt="Événement">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <div class="absolute bottom-2 left-4 text-white text-xl font-bold">${event.title}</div>
+                    <div class="bottom-2 left-4 absolute font-bold text-white text-xl">${event.title}</div>
                 </div>
     
-                <div class="px-6 pt-4 pb-1 space-y-4">
+                <div class="space-y-4 px-6 pt-4 pb-1">
                     <div>
-                        <h3 class="text-lg font-semibold text-[#C320C0]">🎯 Récapitulatif</h3>
-                        <div class="text-gray-800 mt-1">
+                        <h3 class="font-semibold text-[#C320C0] text-lg">🎯 Récapitulatif</h3>
+                        <div class="mt-1 text-gray-800">
                             <p><strong>📅 Date :</strong> ${new Date(event.start_time).toLocaleDateString('fr-FR')}</p>
                             <p><strong>📍 Lieu :</strong> ${event.city || 'À venir'}</p>
                             <p><strong>💰 Prix :</strong> ${event.price > 0 ? `${formatEuro(event.price)}` : 'Gratuit'}</p>
                         </div>
                     </div>
     
-                    <hr class="border-t border-gray-200"/>
+                    <hr class="border-gray-200 border-t"/>
     
                     <div>
-                        <label class="block font-medium text-sm text-gray-700 mb-1">💬 Message au créateur</label>
-                        <textarea id="message" class="w-full px-3 py-2 border rounded-md resize-none focus:ring-[#C320C0] focus:border-[#C320C0]" rows="4" placeholder="Expliquez pourquoi vous voulez participer..."></textarea>
+                        <label class="block mb-1 font-medium text-gray-700 text-sm">💬 Message au créateur</label>
+                        <textarea id="message" class="px-3 py-2 border focus:border-[#C320C0] rounded-md focus:ring-[#C320C0] w-full resize-none" rows="4" placeholder="Expliquez pourquoi vous voulez participer..."></textarea>
                     </div>
     
                     ${event.price > 0 ? `
                     <div class="space-y-2">
-                        <hr class="border-t border-gray-200"/>
-                        <label class="block font-medium text-sm text-gray-700">💳 Informations de paiement</label>
+                        <hr class="border-gray-200 border-t"/>
+                        <label class="block font-medium text-gray-700 text-sm">💳 Informations de paiement</label>
                         <input
                             id="card"
                             inputmode="numeric"
                             maxlength="19"
                             placeholder="1234 5678 9012 3456"
-                            class="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#C320C0]"
+                            class="shadow-sm px-4 py-2 border rounded-lg focus:outline-none focus:ring-[#C320C0] focus:ring-2 w-full"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(.{4})/g, '$1 ').trim();"
                         />
-                        <p class="text-xs text-gray-500">Le paiement est simulé. Aucun montant ne sera débité.</p>
+                        <p class="text-gray-500 text-xs">Le paiement est simulé. Aucun montant ne sera débité.</p>
                     </div>
                     ` : ''}
     
@@ -262,7 +262,7 @@ function EventDetails() {
                                                     <img
                                                         src={`http://localhost:8080${event.organizer.profileImage}`}
                                                         alt="Organizer"
-                                                        className="w-8 h-8 rounded-full inline-block mr-2"
+                                                        className="inline-block mr-2 rounded-full w-8 h-8"
                                                     />
                                                     <span className="font-medium text-[#C320C0]">
                                                         {event.organizer.name} {event.organizer.lastname}
@@ -274,9 +274,9 @@ function EventDetails() {
                                         )}
                                     </p>
                                     <div className="text-left">
-                                        <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
-                                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
-                                            <span className="text-etPurple font-bold">Du</span>{' '}
+                                        <p className="mb-1 font-light text-etGray text-sm uppercase tracking-wide">Quand</p>
+                                        <p className="font-sans font-semibold text-[17px] text-etBlack leading-relaxed">
+                                            <span className="font-bold text-etPurple">Du</span>{' '}
                                             {new Date(event?.start_time).toLocaleDateString("fr-FR", {
                                                 weekday: "long",
                                                 day: "2-digit",
@@ -288,7 +288,7 @@ function EventDetails() {
                                                 minute: "2-digit",
                                             })}
                                             <br />
-                                            <span className="text-etPink font-bold">Au</span>{' '}
+                                            <span className="font-bold text-etPink">Au</span>{' '}
                                             {new Date(event?.end_time).toLocaleDateString("fr-FR", {
                                                 weekday: "long",
                                                 day: "2-digit",
@@ -371,16 +371,16 @@ function EventDetails() {
                                         <h3 class="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Event Participants</h3>
 
                                         {participants?.length === 0 ? (
-                                            <div class="text-center p-[30px] border border-dashed border-[#C320C0] rounded-[12px] bg-[#fdf5ff] animate-fade-in">
-                                                <h4 class="text-[24px] font-bold text-[#C320C0] mb-[10px] animate-bounce">
+                                            <div class="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in">
+                                                <h4 class="mb-[10px] font-bold text-[#C320C0] text-[24px] animate-bounce">
                                                     Aucun participant n'est encore inscrit
                                                 </h4>
-                                                <p class="text-[16px] text-etGray mb-[10px] animate-slide-up">
+                                                <p class="mb-[10px] text-[16px] text-etGray animate-slide-up">
                                                     Soyez le premier à rejoindre cette aventure et faites partie des pionniers !
                                                 </p>
                                                 <a
                                                     href="#"
-                                                    class="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse"
+                                                    class="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
                                                 >
                                                     Candidater maintenant
                                                 </a>
@@ -404,7 +404,7 @@ function EventDetails() {
                                                                 <img
                                                                     src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`}
                                                                     alt="Participant"
-                                                                    className="w-[168px] aspect-square object-cover"
+                                                                    className="w-[168px] object-cover aspect-square"
                                                                 />
                                                             </Link>
                                                         </div>
@@ -421,7 +421,7 @@ function EventDetails() {
                                                                         {user.email}
                                                                     </span>
                                                                 </div>
-                                                                <span className="inline-block px-[12px] py-[4px] text-sm bg-green-100 text-green-700 rounded-full font-medium">
+                                                                <span className="inline-block bg-green-100 px-[12px] py-[4px] rounded-full font-medium text-green-700 text-sm">
                                                                     {participant.status}
                                                                 </span>
                                                             </div>
@@ -437,8 +437,8 @@ function EventDetails() {
                                     </div>
 
                                     <div className="mt-[60px] animate-fade-in">
-                                        <h3 className="mb-[30px] text-[30px] font-semibold text-etBlack">Commentaires</h3>
-                                        <div className="rounded-[16px] border border-[#f0f0f0] shadow-lg p-[30px] bg-white space-y-[20px]">
+                                        <h3 className="mb-[30px] font-semibold text-[30px] text-etBlack">Commentaires</h3>
+                                        <div className="space-y-[20px] bg-white shadow-lg p-[30px] border border-[#f0f0f0] rounded-[16px]">
                                             <div className="space-y-8">
                                                 <div className="flex gap-4">
                                                     <img
@@ -447,7 +447,7 @@ function EventDetails() {
                                                                 ? `http://localhost:8080${user.profileImage}`
                                                                 : "https://assets.codepen.io/285131/hat-man.png"
                                                         }
-                                                        className="w-10 h-10 rounded-full object-cover"
+                                                        className="rounded-full w-10 h-10 object-cover"
                                                         alt="avatar"
                                                     />
                                                     <input
@@ -460,10 +460,10 @@ function EventDetails() {
                                                                 handleAddComment();
                                                             }
                                                         }}
-                                                        placeholder={user ? "Ajouter un commentaire..." : "Connectez-vous pour commenter"}
+                                                        placeholder={isAuthenticated ? "Ajouter un commentaire..." : "Connectez-vous pour commenter"}
                                                         className={`flex-1 h-12 px-4 rounded-md border border-gray-200 placeholder-gray-400 ${user ? "focus:outline-none focus:ring-2 focus:ring-gray-100" : "cursor-not-allowed bg-gray-100"
                                                             }`}
-                                                        disabled={!user}
+                                                        disabled={!isAuthenticated}
                                                     />
                                                 </div>
 
