@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getParticipantsByEvent } from "../services/participantService";
+import { getParticipantsByEvent } from "../../services/participantService";
 
 function useParticipantsByEvent(eventId) {
 	const [participants, setParticipants] = useState([]);

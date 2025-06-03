@@ -28,8 +28,8 @@ import { useAuth } from '../config/authHeader';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function EventsListEventics() {
-  useSlideUpAnimation();
-  useTextAnimation();
+    useSlideUpAnimation();
+    useTextAnimation();
 
     const { categories: allCategories, loading: catLoading } = useCategories();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -136,22 +136,26 @@ function EventsListEventics() {
 
                         return (
                             <div key={index} className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-                                <div
-                                    className={`absolute top-3 right-3 cursor-pointer text-xl transition-all duration-300 transform 
-                                    ${isFavoris(event.id) ? 'text-red-600 hover:scale-110' : 'text-gray-400 hover:scale-110'}`}
-                                    onClick={() => toggleFavoris(event.id)}
-                                >
-                                    {isFavoris(event.id) ? (
-                                        <FaHeart className="animate-pulse" />
-                                    ) : (
-                                        <FaRegHeart />
-                                    )}
-                                </div>
+
+                                {isAuthenticated && (
+                                    <div
+                                        className={`absolute top-3 right-3 cursor-pointer text-xl transition-all duration-300 transform 
+                                        ${isFavoris(event.id) ? 'text-red-600 hover:scale-110' : 'text-gray-400 hover:scale-110'}`}
+                                        onClick={() => toggleFavoris(event.id)}
+                                    >
+                                        {isFavoris(event.id) ? (
+                                            <FaHeart className="animate-pulse" />
+                                        ) : (
+                                            <FaRegHeart />
+                                        )}
+                                    </div>
+                                )}  
+
                                 <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
                                     <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
-                                        {getFormattedDayAndMonthYear(event.date).day}
+                                        {getFormattedDayAndMonthYear(event.start_time).day}
                                     </span>
-                                    {getFormattedDayAndMonthYear(event.date).monthYear}
+                                    {getFormattedDayAndMonthYear(event.start_time).monthYear}
                                 </h5>
                                 <div className="shrink-0">
                                     <img
@@ -162,13 +166,22 @@ function EventsListEventics() {
                                 </div>
                                 <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
                                     <div className="min-w-0">
-                                        <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
-                                            {capitalizeFirstLetter(event.title)}
-                                        </h3>
+                                        <Link to={`/event/${event.id}`}>
+                                            <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
+                                                {capitalizeFirstLetter(event.title)}
+                                            </h3>
+                                        </Link>
                                         <h6 className="text-[17px] text-etBlue">
                                             <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
                                             {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}
                                         </h6>
+                                        <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
+											${event.status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
+											${event.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
+											${event.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
+											${event.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
+										`}>{event.status}
+                                        </div>
                                     </div>
                                     <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
                                         {formatEuro(event.price)}
@@ -177,9 +190,9 @@ function EventsListEventics() {
                                 <div className="pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
                                     <ParticipantAvatars eventId={event.id} />
 
-                                    <a href="#" className="et-3-btn">
+                                    <Link to={`/event/${event.id}`} className="et-3-btn">
                                         Voir l'event
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         );

@@ -14,6 +14,7 @@ import useEvents from "../hooks/Events/useEvents";
 import useComments from "../hooks/Comments/useComments";
 import AboutClub from '../components/AboutClub';
 import EventsListEventics from '../components/EventsListEventics';
+import CookieBanner from '../components/CookieBanner';
 
 
 function Home() {
@@ -51,6 +52,8 @@ function Home() {
 				{/* {eventDetails && <AboutEvent event={eventDetails} comments={comments} />}
 				{events && <EventsList events={events.slice(0, 10)} />} */}
 			</main>
+
+			<CookieBanner />
 
 			<Footer />
 		</>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getNotificationById } from "../services/notificationService";
-import { useAuth } from "../context/AuthContext";
+import { getNotificationById } from "../../services/notificationService";
+import { useAuth } from "../../config/authHeader";
 
 function useDetailsNotification(notificationId) {
 	const [notification, setNotification] = useState(null);

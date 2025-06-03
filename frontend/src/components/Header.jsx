@@ -2,11 +2,18 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../config/authHeader";
 import logo from "../logo.png";
+import useNotifications from "../hooks/Notification/useNotifications";
+import { AnimatePresence, motion } from "framer-motion";
+
+import NotificationSidebar from "./NotificationSidebar";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
+    const { notifications, loading: notifLoading } = useNotifications();
     const navigate = useNavigate();
     const location = useLocation();
+    const [showNotif, setShowNotif] = useState(false);
+    const notifRef = useRef(null);
 
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
@@ -39,6 +46,16 @@ const Header = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleClickOutsideNotif = (e) => {
+            if (notifRef.current && !notifRef.current.contains(e.target)) {
+                setShowNotif(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutsideNotif);
+        return () => document.removeEventListener("mousedown", handleClickOutsideNotif);
+    }, []);
+
 
     return (
 
@@ -49,7 +66,7 @@ const Header = () => {
             >
             <i className="text-2xl fas fa-bars" />
             </button> */}
-            <div id="navbar" className={`fixed w-full z-50 ${ scrolled ? "p-4 md:top-0" : "p-0 md:top-0" } xs:bottom-0 xs:top-auto`} >
+            <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
                         <span className="flex justify-center items-center px-3 py-1 pr-4 border-gray-800 border-r">
@@ -61,7 +78,7 @@ const Header = () => {
                         </span>
                     </Link>
 
-                    <div class="xs:hidden flex justify-between grow">
+                    <div className="xs:hidden flex justify-between grow">
                         <div className="flex gap-6">
                             <Link
                                 to="/"
@@ -69,20 +86,17 @@ const Header = () => {
                                     }`}
                             >
                                 <i className="flex justify-center items-center bg-gray-800 p-2 rounded-full w-8 fas fa-home" />
-                                <span className="mx-1">Home</span>
+                                <span className="mx-1">Accueil</span>
                             </Link>
 
                             {/* Artists */}
                             <Link
-                                to="/artists"
+                                to="/news"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/artists" ? "text-gray-300" : ""
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
-                                <span className="mx-1">News</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    5
-                                </span>
+                                <span className="mx-1">Actualités</span>
                             </Link>
 
                             {/* Albums */}
@@ -92,12 +106,9 @@ const Header = () => {
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
                                 <span className="mx-1">Créer des Evénements</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
                             </Link>
 
-                            <Link
+                            {/* <Link
                                 to="/albums"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
                                     }`}
@@ -107,18 +118,15 @@ const Header = () => {
                                 <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
                                     8
                                 </span>
-                            </Link>
+                            </Link> */}
 
                             <Link
-                                to="/albums"
+                                to="/team"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1">Aide</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
+                                <span className="mx-1"> Équipe</span>
                             </Link>
 
                         </div>
@@ -126,15 +134,53 @@ const Header = () => {
                         <div className="flex items-center gap-4 ml-auto">
                             {isAuthenticated && user ? (
                                 <>
-                                    <span className="relative ml-auto px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer">
-                                        <i class="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
-                                        <span class="top-0 -left-0 absolute flex size-3.5">
-                                            <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
-                                            <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
-                                                3
-                                            </span>
+                                    <div className="relative">
+                                        <span
+                                            onClick={() => setShowNotif(!showNotif)}
+                                            className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
+                                        >
+                                            <i class="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
+                                            {!notifLoading && notifications?.length > 0 && (
+                                                <span class="-top-2 -left-0 absolute size-3.5">
+                                                    <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                                    <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
+                                                        {notifications?.length || 0}
+                                                    </span>
+                                                </span>
+                                            )}
                                         </span>
-                                    </span>
+
+                                        <AnimatePresence>
+                                            {showNotif && (
+                                                <motion.div
+                                                    ref={notifRef}
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    transition={{ duration: 0.25 }}
+                                                    className="right-[-100px] z-50 absolute bg-white shadow-lg mt-2 p-3 rounded-xl w-64 font-medium"
+                                                >
+                                                    <div className="p-4 border-gray-200 border-b font-medium text-gray-700 text-sm">Notifications</div>
+                                                    <div className="divide-y divide-gray-200">
+                                                        {notifications?.slice(0, 3).map((notif, i) => (
+                                                            <div key={i} className="hover:bg-gray-50 px-4 py-3 cursor-pointer">
+                                                                <p className="text-gray-800 text-sm">{notif.title || 'Nouvelle notification'}</p>
+                                                                <p className="mt-1 text-gray-400 text-xs">{new Date(notif.date_sent).toLocaleString("fr-FR")}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <div className="border-gray-200 border-t text-center">
+                                                        <Link
+                                                            to="/notifications"
+                                                            className="block py-3 font-semibold text-indigo-600 hover:text-indigo-800 text-sm"
+                                                        >
+                                                            Voir toutes les notifications
+                                                        </Link>
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
                                     <div className="relative ml-4">
                                         <button
                                             onClick={() => setMenuOpen((prev) => !prev)}
@@ -204,7 +250,7 @@ const Header = () => {
                                         to="/register"
                                         className="flex items-center gap-2 bg-white hover:bg-gray-300 px-4 py-2 rounded-xl"
                                     >
-                                        <span class="text-black">S'inscrire</span>
+                                        <span className="text-black">S'inscrire</span>
                                     </Link>
                                 </>
                             )}

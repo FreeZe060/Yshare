@@ -19,6 +19,8 @@ const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
+const conversationController = require('../controllers/conversationController');
+const { extractUserFromToken } = require('../middlewares/authOptional');
 
 
 //////// LOGS ROUTES ////////
@@ -55,18 +57,20 @@ router.delete('/events/:eventId', authenticateToken, eventController.deleteEvent
 router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
+router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
+router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
 
 //////// USER ROUTES ////////
 
 router.post('/register', profileUpload.single('profileImage'), userController.register);
 router.post('/login', userController.login);
-router.get('/profile/:userId', authenticateToken, UserOrAdmin, userController.getProfile);
+router.get('/profile/:userId', extractUserFromToken, userController.getProfile);
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
 router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
 router.patch('/status/:userId', authenticateToken, isAdmin, userController.updateUserStatus);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
-router.get('/users/:userId/public', userController.getPublicProfile);
+// router.get('/users/:userId/public', userController.getPublicProfile);
 router.get('/users/:userId/created-events', eventController.getCreatedEventsPublic);
 
 
@@ -74,8 +78,13 @@ router.get('/users/:userId/created-events', eventController.getCreatedEventsPubl
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), (req, res) => {
-	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
+	res.cookie('auth_token', req.user.token, {
+		httpOnly: true,
+		maxAge: 10 * 60 * 60 * 1000 
+	});
+	res.redirect('http://localhost:3000/'); 
 });
+
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), (req, res) => {
 	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
@@ -83,33 +92,41 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', { sessio
 
 //////// ADMIN ROUTES ////////
 
-router.get('/participants', authenticateToken, participantController.getAllParticipantsForAdmin);
 router.get('/users', authenticateToken, isAdmin, userController.getAllUsersByAdmin);
 router.get('/users/:userId/events', authenticateToken, isAdmin, userController.getUserEventsAdmin);
 router.post('/admin/users', authenticateToken, isAdmin, userController.adminCreateUser);
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
-router.put('/reports/:reportId/status', authenticateToken, reportController.updateReportStatus);
 
 //////// PARTICIPANT ROUTES ////////
 
-router.get('/users/:userId/events', authenticateToken, userController.getUserEventsAdmin);
-router.get('/events/:eventId/participants', participantController.AllParticipant);
-router.get('/users/:userId/participation-count', participantController.getParticipationCountPublic);
-router.get('/events/:eventId/participants/all', authenticateToken, isEventOwnerOrAdmin, participantController.getAllParticipantsForEvent);
-router.get('/events/:eventId/participants/:index', authenticateToken, participantController.getParticipant);
+router.get('/participants/all', authenticateToken, isAdmin, participantController.getAllParticipants);
+router.get('/users/:userId/participation-count', participantController.getParticipationCount);
+router.get('/events/:eventId/participants/all', participantController.getParticipantsForEvent);
+router.get('/events/:eventId/participants/user/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.getParticipantByUser);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
-router.put('/events/:eventId/participants/:index', authenticateToken, participantController.updateParticipantStatus);
-router.delete('/events/:eventId/participants/:index', authenticateToken, participantController.removeParticipant);
+router.post( '/admin/events/:eventId/participants/:userId', authenticateToken, isAdmin, participantController.adminAddParticipant );
+router.put('/events/:eventId/participants/:participantId', authenticateToken, isEventOwnerOrAdmin, participantController.updateStatus);
+router.delete('/events/:eventId/participants/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.removeParticipant);
+router.get('/participants/history/:userId', authenticateToken, participantController.getUserEventHistory);
+
 
 //////// COMMENT ROUTES ////////
 
 router.get('/events/:eventId/comments', commentController.getCommentsWithReplies);
+router.get('/comments/:commentId/replies', commentController.getReplies);
+router.get('/comments/all', authenticateToken, isAdmin, commentController.getAllComments);
+router.get( '/comments/:commentId', authenticateToken, isAdmin, commentController.getCommentById);
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
-router.put('/comments/:commentId', authenticateToken, commentController.updateComment);
-router.delete('/comments/:commentId', authenticateToken, commentController.deleteComment);
+router.put('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.updateComment);
+router.get('/users/:userId/comments', commentController.getUserComments);
+router.delete('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.deleteComment);
+router.post('/comments/:commentId/reactions', authenticateToken, commentController.addReaction);
+router.delete('/comments/:commentId/reactions', authenticateToken, commentController.removeReaction);
+router.get('/comments/:commentId/reactions', commentController.getReactions);
+router.get('/comments/:commentId/reactions/stats', commentController.getReactionStats);
 
 //////// CATEGORIE ROUTES ////////
 
@@ -134,10 +151,30 @@ router.get('/favoris/:eventId', authenticateToken, favorisController.getFavorisB
 
 router.post('/news', authenticateToken, newsUpload.single('image'), newsController.createNews);
 router.get('/news', newsController.getAllNews);
+router.get('/news/:newsId/details', newsController.getNewsDetails);
 router.get('/news/event/:eventId', newsController.getNewsByEventId);
 router.get('/news/my', authenticateToken, newsController.getNewsByUserId);
 router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.single('image'), newsController.updateNews);
 router.delete('/news/:newsId', isNewsOwnerOrAdmin, newsController.deleteNews);
+router.post( '/news/:newsId/category', authenticateToken, isNewsOwnerOrAdmin, newsController.addCategoryToNews);
+router.delete( '/news/:newsId/category/:categoryId', authenticateToken, isNewsOwnerOrAdmin, newsController.removeCategoryFromNews);
+
+//////// CONVERSATION ROUTES ////////
+
+router.get('/conversations', authenticateToken, isAdmin, conversationController.getAllConversations);
+router.get('/conversations/my', authenticateToken, conversationController.getMyConversations);
+router.post('/conversations', authenticateToken, conversationController.startOrGetConversation);
+router.post('/messages', authenticateToken, conversationController.sendMessage);
+router.put('/messages/:messageId', authenticateToken, UserOrAdmin, conversationController.editMessage);
+router.delete('/messages/:messageId', authenticateToken, UserOrAdmin, conversationController.deleteMessage);
+router.post('/messages/:messageId/reactions', authenticateToken, UserOrAdmin, conversationController.reactToMessage);
+router.delete('/messages/:messageId/reactions', authenticateToken, UserOrAdmin, conversationController.removeReaction);
+router.patch('/messages/:messageId/seen', authenticateToken, conversationController.markAsSeen);
+router.delete('/conversations/:conversationId', authenticateToken, UserOrAdmin, conversationController.deleteConversation);
+router.patch('/conversations/:conversationId/link', authenticateToken, conversationController.linkToEventOrNews);
+router.patch('/conversations/:conversationId/update-link', authenticateToken, conversationController.updateLinkedItem);
+router.patch('/conversations/:conversationId/unlink', authenticateToken, conversationController.unlinkEventOrNews);
+router.get('/conversations/between/:user1Id/:user2Id', authenticateToken, isAdmin, conversationController.getConversationBetweenUsers);
 
 //////// RATING ROUTES ////////
 

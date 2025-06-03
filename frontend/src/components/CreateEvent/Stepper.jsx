@@ -39,7 +39,6 @@ const StepLabel = ({ label }) => (
 const Stepper = ({ currentStep }) => {
 	return (
 		<div className="w-full max-w-4xl mx-auto px-4 flex flex-col items-center">
-			{/* Top Row: Circles + Connectors */}
 			<div className="flex w-full items-center justify-between">
 				<StepCircle step={1} current={currentStep} />
 				<Connector fill={currentStep > 1 ? "full" : currentStep === 1 ? "half" : "none"} />
@@ -48,7 +47,6 @@ const Stepper = ({ currentStep }) => {
 				<StepCircle step={3} current={currentStep} />
 			</div>
 
-			{/* Bottom Row: Labels */}
 			<div className="flex w-full justify-between mt-2">
 				<StepLabel label="Informations" />
 				<StepLabel label="Images" />

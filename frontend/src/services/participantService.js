@@ -1,140 +1,199 @@
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
- * Récupérer tous les participants (admin)
- * GET /participants
+ * ✅ [ADMIN] Récupérer tous les participants
  */
 export async function getAllParticipantsForAdmin(token) {
-	const response = await fetch(`${API_BASE_URL}/participants`, {
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la récupération des participants");
+	console.log("🔒 [GET] /participants (admin only)");
+	try {
+		const res = await fetch(`${API_BASE_URL}/participants/all`, {
+			method: 'GET',
+			headers: { Authorization: `Bearer ${token}` },
+			credentials: 'include',
+		});
+		const json = await res.json();
+		if (!res.ok) {
+			console.error("❌ Erreur /participants :", json.message);
+			throw new Error(json.message);
+		}
+		console.log(`✅ Participants récupérés (${json.length})`);
+		return json;
+	} catch (err) {
+		console.error("❌ getAllParticipantsForAdmin - Exception :", err.message);
+		throw err;
 	}
-	return result;
 }
 
 /**
- * Récupérer tous les participants d’un événement
- * GET /events/:eventId/participants
+ * ✅ [PUBLIC] Récupérer les participants d’un événement
  */
-export async function getParticipantsByEvent(eventId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la récupération des participants de l'événement");
+export async function getParticipantsByEvent(eventId) {
+	console.log(`🌍 [GET] /events/${eventId}/participants/all`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/all`);
+		const json = await res.json();
+		if (!res.ok) {
+			console.error(`❌ Erreur /events/${eventId}/participants/all :`, json.message);
+			throw new Error(json.message);
+		}
+		console.log(`✅ Participants pour l'événement #${eventId} : ${json.length}`);
+		return json;
+	} catch (err) {
+		console.error("❌ getParticipantsByEvent - Exception :", err.message);
+		throw err;
 	}
-	return result;
 }
 
 /**
- * Récupérer un participant par son index dans un événement
- * GET /events/:eventId/participants/:index
+ * ✅ Ajouter un participant à un événement
  */
-export async function getParticipantByIndex(eventId, index, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${index}`, {
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la récupération du participant");
+
+export async function addParticipant(eventId, token, message, guests = []) {
+	console.log(`📝 [POST] /events/${eventId}/participants`);
+	console.log("📨 Données envoyées au backend :", { message, guests });
+	try {
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ message, guests }),
+			credentials: 'include',
+		});
+
+		const json = await res.json();
+
+		if (!res.ok) {
+			console.error("❌ Erreur d'inscription :", json.message);
+			throw new Error(json.message);
+		}
+
+		console.log(`✅ Participant ajouté à l'événement #${eventId}`);
+		console.log("📥 Réponse backend :", json);
+		return json;
+	} catch (err) {
+		console.error("❌ addParticipant - Exception :", err.message);
+		throw err;
 	}
-	return result;
 }
 
-/**
- * Ajouter un participant à un événement
- * POST /events/:eventId/participants
- */
-export async function addParticipant(eventId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
+export async function addParticipantAdmin(eventId, userId, token) {
+	const response = await fetch(`${API_BASE_URL}/admin/events/${eventId}/participants/${userId}`, {
 		method: 'POST',
-		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
-		// Le backend ne nécessite pas forcément de body, sinon vous pouvez envoyer un objet vide
-		body: JSON.stringify({}),
+		credentials: 'include',
+		body: JSON.stringify({ status: 'Inscrit' }),
 	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de l'inscription à l'événement");
-	}
-	return result;
+
+	const data = await response.json();
+	if (!response.ok) throw new Error(data.message || 'Erreur ajout participant (admin)');
+	return data;
 }
 
 /**
- * Mettre à jour le statut d'un participant
- * PUT /events/:eventId/participants/:index
+ * ✅ Mettre à jour le statut d’un participant
  */
-export async function updateParticipantStatus(eventId, index, status, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${index}`, {
-		method: 'PUT',
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-		body: JSON.stringify({ status }),
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la mise à jour du statut du participant");
+export async function updateParticipantStatus(eventId, participantId, status, token) {
+	console.log(`🔁 [PUT] /events/${eventId}/participants/${participantId} → "${status}"`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${participantId}`, {
+			method: 'PUT',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ status }),
+			credentials: 'include',
+		});
+		const json = await res.json();
+		if (!res.ok) {
+			console.error(`❌ Erreur updateStatus [${status}] :`, json.message);
+			throw new Error(json.message);
+		}
+		console.log(`✅ Statut mis à jour pour participant #${participantId} (${status})`);
+		return json;
+	} catch (err) {
+		console.error("❌ updateParticipantStatus - Exception :", err.message);
+		throw err;
 	}
-	return result;
+}
+
+export async function getUserEventHistory(userId, token) {
+	console.log(`📜 [GET] /participants/history/${userId}`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/participants/history/${userId}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			credentials: 'include',
+		});
+
+		const json = await res.json();
+
+		if (!res.ok) {
+			console.error(`❌ Erreur récupération historique user #${userId} :`, json.message);
+			throw new Error(json.message);
+		}
+
+		console.log(`✅ Historique récupéré pour user #${userId} (${json.length} événements)`);
+		return json;
+	} catch (err) {
+		console.error("❌ getUserEventHistory - Exception :", err.message);
+		throw err;
+	}
 }
 
 /**
- * Retirer un participant d'un événement
- * DELETE /events/:eventId/participants/:index
+ * ✅ Supprimer un participant
  */
-export async function removeParticipant(eventId, index, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${index}`, {
-		method: 'DELETE',
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors du retrait du participant");
+export async function removeParticipant(eventId, userId, token) {
+	console.log(`🗑️ [DELETE] /events/${eventId}/participants/${userId}`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${userId}`, {
+			method: 'DELETE',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			credentials: 'include',
+		});
+		const json = await res.json();
+		if (!res.ok) {
+			console.error(`❌ Erreur suppression participant #${userId} :`, json.message);
+			throw new Error(json.message);
+		}
+		console.log(`✅ Participant #${userId} retiré de l'événement #${eventId}`);
+		return json;
+	} catch (err) {
+		console.error("❌ removeParticipant - Exception :", err.message);
+		throw err;
 	}
-	return result;
 }
 
 /**
- * Récupérer l'historique (ou les événements) d'un utilisateur (admin)
- * GET /users/:userId/events
+ * ✅ [ADMIN] Récupérer les événements d’un utilisateur (historique admin)
  */
 export async function getUserEventsAdmin(userId, token) {
-	const response = await fetch(`${API_BASE_URL}/users/${userId}/events`, {
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-		},
-	});
-	const result = await response.json();
-	if (!response.ok) {
-		throw new Error(result.message || "Erreur lors de la récupération des événements de l'utilisateur");
+	console.log(`📜 [GET] /users/${userId}/events`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/users/${userId}/events`, {
+			headers: { Authorization: `Bearer ${token}` },
+			credentials: 'include',
+		});
+		const json = await res.json();
+		if (!res.ok) {
+			console.error(`❌ Erreur récupération événements user #${userId} :`, json.message);
+			throw new Error(json.message);
+		}
+		console.log(`✅ ${json.length} événements récupérés pour l'utilisateur #${userId}`);
+		return json;
+	} catch (err) {
+		console.error("❌ getUserEventsAdmin - Exception :", err.message);
+		throw err;
 	}
-	return result;
 }

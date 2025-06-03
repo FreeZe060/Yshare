@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { motion } from 'framer-motion';
-import { XIcon, DownloadIcon } from 'lucide-react';
+import { XIcon, ArrowRightIcon } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import useReportDetails from '../../hooks/Report/useReportDetails';
@@ -12,200 +12,176 @@ const isImage = (file) => /\.(jpg|jpeg|png|gif)$/i.test(file.file_path);
 const isPdf = (file) => /\.pdf$/i.test(file.file_path);
 
 const ReportDetailsPopup = ({ reportId, onClose }) => {
-  const { report, loading, error } = useReportDetails(reportId);
-  const [lightbox, setLightbox] = useState({ open: false, index: 0, images: [] });
+    const { report, loading, error } = useReportDetails(reportId);
+    const [lightbox, setLightbox] = useState({ open: false, index: 0, images: [] });
 
-  const Backdrop = () => (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm cursor-pointer z-0"
-    />
-  );
+    const imageFiles = report?.files?.filter(isImage).map(f => `http://localhost:8080${f.file_path}`) || [];
 
-  const stopPropagation = (e) => e.stopPropagation();
-
-  if (loading) {
-    return (
-      <Dialog open={true} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
-        <Backdrop />
-        <div className="z-10 bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative" onClick={stopPropagation}>
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, idx) => (
-              <RowSkeletonReport key={idx} />
-            ))}
-          </div>
-        </div>
-      </Dialog>
+    const Backdrop = () => (
+        <div onClick={onClose} className="fixed inset-0 bg-black/50 backdrop-blur-sm z-0 cursor-pointer" />
     );
-  }
 
-  if (error || !report) {
-    return (
-      <Dialog open={true} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
-        <Backdrop />
-        <div className="z-10 bg-white rounded-xl shadow-lg max-w-2xl w-full p-6 relative" onClick={stopPropagation}>
-          <p className="text-red-500">Erreur de chargement : {error}</p>
-        </div>
-      </Dialog>
-    );
-  }
+    const stopPropagation = (e) => e.stopPropagation();
 
-  const imageFiles = report.files?.filter(isImage).map(f => `http://localhost:8080${f.file_path}`) || [];
-
-  return (
-    <Dialog open={true} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
-      <Backdrop />
-      <motion.div
-        onClick={stopPropagation}
-        initial={{ scale: 0.95, opacity: 0, y: 10 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 10 }}
-        transition={{ type: 'spring', stiffness: 150, damping: 20 }}
-        className="z-10 bg-white rounded-xl shadow-lg max-w-3xl w-full p-6 relative font-sans"
-      >
-        <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" onClick={onClose}>
-          <XIcon size={24} />
-        </button>
-
-        <div className="text-center mb-4">
-          <h3 className="text-xl font-bold text-indigo-700">Détails du signalement</h3>
-          <p className="text-sm text-gray-500">{new Date(report.date_reported).toLocaleString()}</p>
-        </div>
-
-        {report.event && (
-          <motion.div layout className="mb-4">
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">Événement signalé</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-              {report.event?.EventImages?.[0]?.image_url && (
-                <img
-                  src={report.event.EventImages[0].image_url ? `http://localhost:8080${report.event.EventImages[0].image_url}` : '/default-avatar.png'}
-                  alt="Événement"
-                  className="w-full h-40 object-cover rounded-lg shadow"
-                />
-              )}
-              <div className="md:col-span-2 space-y-1">
-                <h5 className="text-lg font-bold text-indigo-600">{report.event.title}</h5>
-                <p className="text-sm text-gray-600 truncate">{report.event.description}</p>
-                <p className="text-xs text-gray-400">Date : {new Date(report.event.date).toLocaleString()}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <img
-                    src={report.event.organizer?.profileImage ? `http://localhost:8080${report.event.organizer.profileImage}` : '/default-avatar.png'}
-                    className="w-6 h-6 rounded-full"
-                    alt="Organisateur"
-                  />
-                  <span className="text-sm text-gray-700">{report.event.organizer?.name || 'Inconnu'}</span>
+    if (loading) {
+        return (
+            <Dialog open={true} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
+                <Backdrop />
+                <div className="z-10 bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full" onClick={stopPropagation}>
+                    <div className="space-y-4">
+                        {Array.from({ length: 3 }).map((_, idx) => (
+                            <RowSkeletonReport key={idx} />
+                        ))}
+                    </div>
                 </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+            </Dialog>
+        );
+    }
 
-        <motion.div layout className="mb-4">
-          <h4 className="text-lg font-medium text-gray-800">Informations générales</h4>
-          <ul className="text-sm text-gray-600 space-y-1 mt-2">
-            <li className="flex items-center gap-2">
-              <img
-                src={report.reportingUser?.profileImage ? `http://localhost:8080${report.reportingUser.profileImage}` : '/default-avatar.png'}
-                className="w-6 h-6 rounded-full"
-                alt="Reporter"
-              />
-              <strong>Signalé par :</strong> {report.reportingUser?.name || 'Inconnu'}
-            </li>
-            <li><strong>Statut :</strong> {report.status}</li>
-            <li><strong>Message :</strong> {report.message}</li>
-            {report.reportedUser && <li><strong>Utilisateur signalé :</strong> {report.reportedUser.name}</li>}
-          </ul>
-        </motion.div>
+    if (error || !report) {
+        return (
+            <Dialog open={true} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
+                <Backdrop />
+                <div className="z-10 bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full" onClick={stopPropagation}>
+                    <p className="text-red-600 text-lg font-semibold">Erreur de chargement: {error}</p>
+                </div>
+            </Dialog>
+        );
+    }
 
-        {report.files?.length > 0 && (
-          <motion.div layout className="mb-4">
-            <h4 className="text-lg font-medium text-gray-800 mb-2">Pièces jointes</h4>
-            <div className="flex flex-wrap gap-4">
-              {report.files.map((file, index) => {
-                const fileUrl = `http://localhost:8080${file.file_path}`;
-                if (isImage(file)) {
-                  return (
-                    <div key={file.file_path} className="relative group w-32 h-32">
-                      <img
-                        src={fileUrl}
-                        alt="Aperçu"
-                        className="w-full h-full object-cover rounded-lg shadow cursor-pointer group-hover:brightness-75 transition duration-300"
-                        onClick={() => setLightbox({ open: true, index, images: imageFiles })}
-                      />
-                      <a
-                        href={fileUrl}
-                        download
-                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"
-                      >
-                        <i className="fas fa-download text-white text-xl drop-shadow" />
-                      </a>
+    const goToProfile = (userId) => {
+        window.location.href = `/profile/${userId}`;
+    };
+
+    return (
+        <Dialog open={true} onClose={onClose} className="fixed inset-0 z-50 overflow-y-auto">
+            <Backdrop />
+            <motion.div
+                onClick={stopPropagation}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 50 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                className="relative z-10 bg-white rounded-2xl shadow-xl mx-auto my-10 max-w-5xl w-full p-8 space-y-8"
+            >
+                <button onClick={onClose} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
+                    <XIcon size={24} />
+                </button>
+
+                <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="text-center">
+                    <h2 className="text-3xl font-extrabold text-indigo-600 font-serif">Détails du Signalement</h2>
+                    <p className="text-sm text-gray-400 mt-1">{new Date(report.date_reported).toLocaleString()}</p>
+                </motion.div>
+
+                <div className="space-y-6">
+                    <h4 className="text-lg font-bold text-gray-700 mb-4">Information du report</h4>
+                    <div className="flex items-center gap-4 cursor-pointer" onClick={() => goToProfile(report.reportingUser?.id)}>
+                        <img
+                            src={report.reportingUser?.profileImage ? `http://localhost:8080${report.reportingUser.profileImage}` : '/default-avatar.png'}
+                            alt="Reporter"
+                            className="w-14 h-14 rounded-full object-cover shadow"
+                        />
+                        <div>
+                            <h4 className="text-xl font-semibold">{report.reportingUser?.name || 'Utilisateur inconnu'}</h4>
+                            <p className="text-md text-gray-500">Statut: <span className="font-medium text-indigo-600">{report.status}</span></p>
+                        </div>
                     </div>
-                  );
-                } else if (isPdf(file)) {
-                  return (
-                    <div key={file.file_path} className="relative group w-72 h-32">
-                      <iframe
-                        src={fileUrl}
-                        className="w-full h-full rounded-lg shadow group-hover:brightness-90 transition"
-                        title="Aperçu PDF"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                        <a
-                          href={fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          download
-                          className="text-white text-xl"
-                        >
-                          <i className="fas fa-file-download drop-shadow" />
-                        </a>
-                      </div>
+
+                    <div className="p-6 rounded-xl bg-indigo-50 border border-indigo-200">
+                        <h5 className="text-lg font-bold text-indigo-800 mb-2">Message :</h5>
+                        <p className="text-gray-700 text-base leading-relaxed">{report.message}</p>
                     </div>
-                  );
-                }
-                return null;
-              })}
-            </div>
-          </motion.div>
-        )}
 
-        <motion.div layout className="mt-4">
-          <h4 className="text-lg font-medium text-gray-800 mb-2">Réponses</h4>
-          <div className="bg-gray-100 rounded-lg p-4 shadow-inner max-h-60 overflow-y-auto">
-            <ReportReplies reportId={reportId} />
-          </div>
-        </motion.div>
-      </motion.div>
+                    {report.reportedUser && (
+                        <div className="text-md text-gray-600">
+                            Utilisateur signalé: <span className="text-gray-800 font-semibold">{report.reportedUser.name}</span>
+                        </div>
+                    )}
+                </div>
 
-      {lightbox.open && (
-        <Lightbox
-          open={lightbox.open}
-          index={lightbox.index}
-          close={() => setLightbox({ open: false, index: 0, images: [] })}
-          slides={lightbox.images.map((src) => ({ src }))}
-          render={{
-            download: ({ slide }) => (
-              <a
-                href={slide.src}
-                download
-                className="absolute top-4 right-16 bg-white rounded-full p-2 shadow hover:bg-gray-100 z-50"
-              >
-                <DownloadIcon className="w-5 h-5 text-gray-600" />
-              </a>
-            ),
-            close: ({ close }) => (
-              <button
-                onClick={close}
-                className="absolute top-4 right-4 bg-white rounded-full p-2 shadow hover:bg-gray-100 z-50"
-              >
-                <XIcon className="w-5 h-5 text-gray-600" />
-              </button>
-            )
-          }}
-        />
-      )}
-    </Dialog>
-  );
+                {report.files?.length > 0 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                        <h4 className="text-lg font-bold text-gray-700 mb-4">Pièces jointes</h4>
+                        <div className="flex flex-wrap gap-4">
+                            {report.files.map((file, idx) => {
+                                const fileUrl = `http://localhost:8080${file.file_path}`;
+                                if (isImage(file)) {
+                                    return (
+                                        <div key={`${file.file_path}-${idx}`}
+                                        className="relative w-32 h-40 group">
+                                            <img
+                                                src={fileUrl}
+                                                className="object-cover w-full h-full rounded-lg shadow-md cursor-pointer group-hover:opacity-80 transition"
+                                                onClick={() => setLightbox({ open: true, index: idx, images: imageFiles })}
+                                                alt="piece jointe"
+                                            />
+                                        </div>
+                                    );
+                                } else if (isPdf(file)) {
+                                    return (
+                                        <div key={`${file.file_path}-${idx}`}
+                                        className="relative w-48 h-40 border rounded-lg overflow-hidden shadow hover:shadow-lg">
+                                            <iframe
+                                                src={fileUrl}
+                                                className="w-full h-full"
+                                                title="Aperçu PDF"
+                                            />
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                    </motion.div>
+                )}
+
+                {report.event && (
+                    <>
+                        <h4 className="text-lg font-bold text-gray-700">Event Report</h4>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 rounded-2xl border bg-gray-50 hover:shadow-lg transition">
+                            <div className="flex items-start gap-4">
+                                {report.event?.EventImages?.[0]?.image_url && (
+                                    <img src={`http://localhost:8080${report.event.EventImages[0].image_url}`} alt="event" className="w-24 h-24 object-cover rounded-lg" />
+                                )}
+                                <div className="flex flex-col">
+                                    <h5 className="text-lg font-bold text-indigo-600 cursor-pointer" onClick={() => window.location.href = `/event/${report.event.id}`}>
+                                        {report.event.title}
+                                    </h5>
+                                    <p className="text-sm text-gray-600">{report.event.description}</p>
+                                    <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
+                                        <span>{new Date(report.event.date).toLocaleDateString()}</span>
+                                        <ArrowRightIcon size={16} />
+                                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => goToProfile(report.event.organizer?.id)}>
+                                            <img
+                                                src={report.event.organizer?.profileImage ? `http://localhost:8080${report.event.organizer.profileImage}` : '/default-avatar.png'}
+                                                className="w-6 h-6 rounded-full object-cover"
+                                                alt="Organisateur"
+                                            />
+                                            <span>{report.event.organizer?.name || 'Organisateur inconnu'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+
+                <div className="mt-8">
+                    <h4 className="text-lg font-bold text-gray-700 mb-4">Réponses au Signalement</h4>
+                    <ReportReplies reportId={reportId} />
+                </div>
+
+                {lightbox.open && (
+                    <Lightbox
+                        open={lightbox.open}
+                        index={lightbox.index}
+                        close={() => setLightbox({ open: false, index: 0, images: [] })}
+                        slides={lightbox.images.map((src) => ({ src }))}
+                    />
+                )}
+            </motion.div>
+        </Dialog>
+    );
 };
 
 export default ReportDetailsPopup;

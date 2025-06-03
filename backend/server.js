@@ -6,6 +6,7 @@ const session = require('express-session');
 const passport = require('passport');
 const cors = require("cors");
 const sequelize = require('./config/dbManager');
+const startStatusScheduler = require('./utils/statusScheduler');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('./config/passport');
@@ -63,6 +64,7 @@ const authRoutes = require('./routes/auth');
 app.use('/api/', routes);
 app.use('/auth', authRoutes);
 
+startStatusScheduler(5);
 // Error handler
 app.use((err, req, res, next) => {
     console.error("[Express] Stack error:", err.stack);

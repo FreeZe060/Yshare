@@ -9,6 +9,7 @@ export async function registerUser(userData) {
 	formData.append("lastname", userData.lastname);
 	formData.append("email", userData.email);
 	formData.append("password", userData.password);
+	formData.append("gender", userData.gender);
 	if (userData.profileImage) {
 		formData.append("profileImage", userData.profileImage);
 	}
@@ -66,16 +67,23 @@ export async function getPublicProfile(userId) {
 /**
  * GET /profile/:userId
  */
-export async function getProfileById(userId, token) {
+export async function getProfileById(userId, token = null) {
+	if (!userId) throw new Error("Un ID utilisateur est requis.");
+
 	const response = await fetch(`${API_BASE_URL}/profile/${userId}`, {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
+			...(token ? { Authorization: `Bearer ${token}` } : {}),
 		},
 	});
+
 	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération du profil");
+
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération du profil");
+	}
+
 	return result;
 }
 
@@ -142,7 +150,7 @@ export async function getEventHistory(token, userId) {
  * GET /users
  */
 export async function getAllUsers(token) {
-	console.log("🔐 token reçu dans getAllUsers :", token); // ✅ Correct
+	console.log("🔐 token reçu dans getAllUsers :", token);
 
 	const response = await fetch(`${API_BASE_URL}/users`, {
 		credentials: 'include',
@@ -197,4 +205,4 @@ export async function getParticipationCount(userId) {
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur récupération participation");																					
 	return result.count;
-}									
+}

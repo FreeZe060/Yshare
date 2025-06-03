@@ -32,7 +32,7 @@ class FavorisService {
             where: { id_user: userId },
             include: [{
                 model: Event,
-                attributes: ['id', 'title', 'desc', 'date', 'city', 'street', 'street_number', 'price'],
+                attributes: ['id', 'title', 'desc', 'start_time', 'city', 'street', 'street_number', 'price'],
                 include: [{
                     model: EventImage,
                     as: 'EventImages',
@@ -41,7 +41,7 @@ class FavorisService {
                     attributes: ['image_url']
                 }]
             }],
-            order: [[Event, 'date', 'DESC']]
+            order: [[Event, 'date_created', 'DESC']]
         });
 
         if (!favoris || favoris.length === 0) {

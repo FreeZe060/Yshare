@@ -7,7 +7,7 @@ const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink, empt
     const isEmpty = !events || events.length === 0;
 
     return (
-        <div className="mt-8">
+        <>
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold">{title}</h2>
                 {!isEmpty && linkText && (
@@ -16,31 +16,35 @@ const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink, empt
                     </Link>
                 )}
             </div>
-            {events && events.length > 0 ? (
-                <div className="flex space-x-4">
-                    {events.map(event => (
-                        <EventCard key={event.id} event={event} />
-                    ))}
-                </div>
-            ) : (
-                <motion.div 
-                    className="flex flex-col items-center justify-center h-40 border-dashed border-2 border-gray-300 rounded-lg"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <p className="text-xl font-bold text-gray-500 text-center px-4">
-                        {emptyMessage}
-                    </p>
-                    <Link 
-                        to={buttonLink} 
-                        className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            {
+                events && events.length > 0 ? (
+                    <div className="flex gap-6 scrollbar-hide pb-2">
+                        {events.map(event => (
+                            <motion.div key={event.id} whileHover={{ scale: 1.05 }} className="flex-shrink-0">
+                                <EventCard event={event} />
+                            </motion.div>
+                        ))}
+                    </div>
+                ) : (
+                    <motion.div
+                        className="flex flex-col items-center justify-center h-40 border-dashed border-2 border-gray-300 rounded-lg"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
                     >
-                        {emptyButtonText || "Explorer"}
-                    </Link>
-                </motion.div>
-            )}
-        </div>
+                        <p className="text-xl font-bold text-gray-500 text-center px-4">
+                            {emptyMessage}
+                        </p>
+                        <Link
+                            to={buttonLink}
+                            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                        >
+                            {emptyButtonText || "Explorer"}
+                        </Link>
+                    </motion.div>
+                )
+            }
+        </>
     );
 };
 

@@ -4,9 +4,11 @@ import EventsSection from '../components/Profil/EventsSection';
 import useProfile from '../hooks/User/useProfile';
 import useFavoris from '../hooks/Favoris/useFavoris';
 import { getCreatedEventsStats } from '../services/eventService';
-import { getEventHistory, getParticipationCount} from '../services/userService';
+import { getEventHistory, getParticipationCount } from '../services/userService';
 import useUpdateProfile from '../hooks/User/useUpdateProfile';
-import { getAllFavoris } from '../services/favorisService';
+import { useUserComments } from '../hooks/Comments/useUserComments';
+import SkeletonProfileCard from '../components/SkeletonLoading/SkeletonProfileCard';
+import { motion } from 'framer-motion';
 import { getUserAverageRating } from '../services/ratingService';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
@@ -15,174 +17,211 @@ import Header from '../components/Header';
 
 const Profil = () => {
     const { userId } = useParams();
-    const { profile, accessLevel, loading, error } = useProfile(userId);
+    const { profile, accessLevel, isOwner, isAdmin, loading, error, setProfile } = useProfile(userId);
     const [participatedEvents, setParticipatedEvents] = useState([]);
     const [createdEvents, setCreatedEvents] = useState([]);
     const [stats, setStats] = useState({ created: 0, participated: 0 });
     const { favoris, loading: favorisLoading } = useFavoris();
     const { update, loading: updateLoading, error: updateError } = useUpdateProfile();
-    
 
     const { user: currentUser } = useAuth();
+    const { commentsData, loading: commentsLoading } = useUserComments(userId);
 
     console.log("userId param:", userId);
     console.log("currentUser:", currentUser);
 
-    const isOwner = accessLevel === 'private';
+    const SectionWrapper = ({ title, children }) => (
+        <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-10"
+        >
+            <h2 className="text-3xl font-bold mb-4 text-blue-700">{title}</h2>
+            {children}
+        </motion.div>
+    );
 
     useEffect(() => {
-		if (!userId) return;
-
-		const fetchData = async () => {
-			try {
-				const [createdStats, participationCount, rating] = await Promise.all([
+        if (!userId) return;
+    
+        const fetchData = async () => {
+            try {
+                const [createdStats, participationCount, rating] = await Promise.all([
                     getCreatedEventsStats(userId),
                     getParticipationCount(userId),
                     getUserAverageRating(userId)
                 ]);
-
-				setCreatedEvents(createdStats.events.slice(0, 5));
-
-				if (isOwner) {
-					const history = await getEventHistory(currentUser?.token, currentUser?.id);
-					setParticipatedEvents(history.slice(0, 5));
-				}
-
-				setStats({
-					created: createdStats.count,
-					participated: isOwner ? participationCount : undefined,
+    
+                setCreatedEvents(createdStats.events.slice(0, 5));
+    
+                if (isOwner || isAdmin) {
+                    const history = await getEventHistory(currentUser?.token || null, userId);
+                    setParticipatedEvents(history.slice(0, 5));
+                }
+    
+                setStats({
+                    created: createdStats.count,
+                    participated: participationCount,
                     rating: rating || 0
-				});
-			} catch (err) {
-				console.error("Erreur lors de la récupération des données du profil :", err);
-			}
-		};
+                });
+            } catch (err) {
+                console.error("Erreur lors de la récupération des données du profil :", err);
+            }
+        };
+    
+        fetchData();
+    }, [userId, currentUser, isOwner, isAdmin]);    
 
-		fetchData();
-	}, [userId, isOwner, currentUser?.token]);
+    console.log("STATS →", stats);
 
-    const handleUpdateProfileImage = async (file) => {
+    const handleUpdateProfileImage = async (file, type = 'profileImage') => {
         try {
             const formData = new FormData();
-            formData.append('profileImage', file);
-    
+            formData.append(type, file);
+
             const userIdToUpdate = isOwner ? currentUser.id : userId;
-            await update(formData, userIdToUpdate);
-    
+
+            const endpoint =
+                type === 'bannerImage'
+                    ? `/api/profile/banner/${userIdToUpdate}`
+                    : `/api/profile/${userIdToUpdate}`;
+
+            const response = await fetch(`http://localhost:8080${endpoint}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${currentUser.token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.message || 'Erreur lors de la mise à jour');
+            }
+
             window.location.reload();
         } catch (err) {
-            console.error("Erreur mise à jour image :", err.message);
+            console.error(`Erreur mise à jour ${type} :`, err.message);
         }
-    };    
+    };
 
     const handleUpdateProfileField = async (field, value) => {
         try {
-            if (!value.trim()) return;
-    
+            const cleanedValue = typeof value === 'string' ? value.trim() : value;
+
+            if (typeof cleanedValue === 'string' && cleanedValue === '') return;
+
             const userIdToUpdate = isOwner ? currentUser.id : userId;
-            await update({ [field]: value }, userIdToUpdate);
+
+            await update({ [field]: cleanedValue }, userIdToUpdate);
+
+            setProfile((prev) => ({
+                ...prev,
+                [field]: cleanedValue
+            }));
         } catch (err) {
             console.error(`Erreur mise à jour ${field} :`, err.message);
         }
     };
 
-    // if (loading) return <div className="text-center text-2xl">Chargement...</div>;
     if (error) return <div className="text-center text-red-500">Erreur : {error}</div>;
-    if (!profile) return null;
+    if (!profile) return <SkeletonProfileCard />;
+
+    const shouldShowGlobalNoActivityMessage = isAdmin && !isOwner && createdEvents.length === 0 && participatedEvents.length === 0;
 
     return (
         <>
             <Header />
 
-            <section class="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
-                <div class="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
-                    <h1 class="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Profile</h1>
-                    <ul class="inline-flex items-center gap-[10px] font-medium text-[16px]">
-                        <li class="opacity-80"><a class="hover:text-etBlue">Home</a></li>
-                        <li><i class="fa-solid fa-angle-right"></i><i class="fa-solid fa-angle-right"></i></li>
-                        <li class="current-page">Profile</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section className="container mx-auto pt-32 md:pt-32 p-8 space-y-12">
-                <ProfileCard 
+            <section className="container mx-auto space-y-12 pt-[100px] lg:pt-[190px] sm:pt-[160px]">
+                <ProfileCard
                     user={{
                         ...profile,
                         rating: stats.rating ?? 0,
                         eventsParticipated: stats.participated,
-                        eventsCreated: stats.created
-                    }} 
-                    editable={isOwner} 
+                        eventsCreated: stats.created,
+                        commentsPosted: commentsData?.totalComments ?? 0
+                    }}
+                    editable={isOwner}
                     onUpdateProfileImage={handleUpdateProfileImage}
                     onUpdateProfileField={handleUpdateProfileField}
+                    extraSections={
+                        shouldShowGlobalNoActivityMessage ? (
+                            <SectionWrapper title="Activité de l'utilisateur">
+                                <p className="text-gray-600 text-lg">
+                                    Cet utilisateur n’a pour l’instant participé à aucun événement ni créé d’événement.
+                                </p>
+                            </SectionWrapper>
+                        ) : (
+                            <>
+                                {(isOwner || isAdmin) && (
+                                    <SectionWrapper title="Événements Participés">
+                                        <EventsSection
+                                            events={participatedEvents}
+                                            emptyMessage={
+                                                participatedEvents.length === 0
+                                                    ? isOwner
+                                                        ? "Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
+                                                        : "Cet utilisateur n’a pour l’instant participé à aucun événement."
+                                                    : null
+                                            }
+                                            {...(isOwner && participatedEvents.length === 0 && {
+                                                buttonLink: "/participation",
+                                                emptyButtonText: "Voir tous les événements"
+                                            })}
+                                            {...(participatedEvents.length > 0 && {
+                                                linkText: "Voir tout l’historique",
+                                                buttonLink: "/participation",
+                                            })}
+                                        />
+                                    </SectionWrapper>
+                                )}
+
+                                {(stats.created > 0 || isOwner || isAdmin) && (
+                                    <SectionWrapper title="Événements Créés">
+                                        <EventsSection
+                                            events={createdEvents}
+                                            emptyMessage={
+                                                stats.created === 0
+                                                    ? isOwner
+                                                        ? "Vous n'avez pas encore créé d'événement."
+                                                        : "Cet utilisateur n’a pour l’instant créé aucun événement."
+                                                    : null
+                                            }
+                                            buttonLink={isOwner ? "/create-event" : undefined}
+                                            emptyButtonText={isOwner ? "Créer un événement" : undefined}
+                                            {...(createdEvents.length > 0 && {
+                                                linkText: "Voir tout l’historique"
+                                            })}
+                                        />
+                                    </SectionWrapper>
+                                )}
+
+                                {isOwner && (
+                                    <SectionWrapper title="Favoris">
+                                        <EventsSection
+                                            events={favoris.slice(0, 5).map(favori => ({
+                                                id: favori.id,
+                                                title: favori.title,
+                                                start_time: favori.start_time,
+                                                status: "Favori",
+                                                image: favori.image || null
+                                            }))}
+                                            emptyMessage="Vous n'avez pas encore de favoris."
+                                            buttonLink="/allevents"
+                                            emptyButtonText="Voir tous les événements"
+                                            {...(favoris.length > 0 && {
+                                                linkText: "Voir tous les favoris"
+                                            })}
+                                        />
+                                    </SectionWrapper>
+                                )}
+                            </>
+                        )
+                    }
                 />
-
-
-                {isOwner && (
-                    <EventsSection 
-                        title="Événements Participés"
-                        events={participatedEvents}
-                        emptyMessage="Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
-                        buttonLink="/allevents"
-                        emptyButtonText="Voir tous les événements"
-                        {...(participatedEvents.length > 0 && {
-                            linkText: "Voir tous l’historique"
-                        })}
-                    />
-                )}
-
-
-                {createdEvents.length > 0 && (
-                    <EventsSection 
-                        title="Événements Créés"
-                        linkText="Voir tous l’historique"
-                        events={createdEvents}
-                        emptyMessage="Vous n'avez pas encore créé d'événement."
-                        buttonLink="/allevents"
-                    />
-                )}
-
-                {!isOwner && createdEvents.length === 0 && (
-                    <EventsSection 
-                        title="Événements Créés"
-                        events={createdEvents}
-                        emptyMessage="Cet utilisateur n'a pas encore créé d'événement."
-                    />
-                )}
-
-                {isOwner && createdEvents.length === 0 && (
-                    <EventsSection 
-                        title="Événements Créés"
-                        events={createdEvents}
-                        emptyMessage="Vous n'avez pas encore créé d'événement."
-                        buttonLink="/createevent"
-                        emptyButtonText="Créer un événement"
-                        {...(createdEvents.length > 0 && {
-                            linkText: "Voir tous l’historique",
-                            buttonLink: "/allevents"
-                        })}
-                    />
-                )}
-
-                {isOwner && (
-                    <EventsSection
-                        title="Favoris"
-                        events={favoris.slice(0, 5).map(favori => ({
-                        id: favori.id, 
-                        title: favori.title,
-                        date: favori.date,
-                        status: "Favori",
-                        image: favori.image || null 
-                        }))}
-                        emptyMessage="Vous n'avez pas encore de favoris."
-                        buttonLink="/allevents"
-                        emptyButtonText="Voir tous les événements"
-                        {...(favoris.length > 0 && {
-                        linkText: "Voir tous les favoris"
-                        })}
-                  />
-                )}
             </section>
             <Footer />
         </>

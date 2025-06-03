@@ -116,7 +116,7 @@ function EventCard({ event }) {
             <div className="top-1/2 right-16 absolute group-hover:opacity-0 max-w-[170px] font-bold text-white text-3xl rotate-[270deg] origin-right transition-opacity -translate-y-1/2 duration-500 transform"
             >
                 <span className="block mb-2 text-2xl">{event.title || 'NO TITLE'}</span>
-                {event.date && <span>{event.date}</span>}
+                {event.start_time && <span>{event.start_time}</span>}
             </div>
 
             <div className="hidden absolute inset-0 group-hover:flex bg-white opacity-0 group-hover:opacity-100 shadow-2xl rounded-2xl text-black transition-all duration-500 pointer-events-none group-hover:pointer-events-auto"
@@ -127,7 +127,7 @@ function EventCard({ event }) {
                     </h4>
 
                     <p className="font-bold text-blue-600 text-3xl">
-                        {event.date || 'DATE NON PRÉCISÉE'}
+                        {event.start_time || 'DATE NON PRÉCISÉE'}
                     </p>
 
                     {event.price && (

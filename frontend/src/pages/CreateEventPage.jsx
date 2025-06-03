@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import Swal from 'sweetalert2';
 
 const LOCAL_STORAGE_KEY = 'create_event_draft';
 
@@ -16,9 +17,8 @@ const CreateEventPage = () => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        date: '',
-        end_date: '',
         price: '',
+        date: '',
         city: '',
         street: '',
         street_number: '',
@@ -44,13 +44,13 @@ const CreateEventPage = () => {
 
     useEffect(() => {
         window.scrollTo({
-          top: 0,
-          behavior: 'smooth', 
+            top: 0,
+            behavior: 'smooth',
         });
     }, [step]);
 
     const isStepOneValid = () => {
-        const requiredFields = ['title', 'date', 'start_time', 'end_date', 'end_time', 'city', 'postal_code','street', 'street_number', 'categories'];
+        const requiredFields = ['title', 'start_time', 'end_time', 'city', 'postal_code', 'street', 'street_number', 'categories'];
         const isComplete = requiredFields.every((field) => formData[field] && (Array.isArray(formData[field]) ? formData[field].length > 0 : true));
 
         if (!isComplete) return false;
@@ -63,7 +63,7 @@ const CreateEventPage = () => {
     const isStepTwoValid = () => {
         return formData.images.length > 0;
     };
-      
+
 
     const nextStep = () => {
         if (step === 1 && !isStepOneValid()) return;
@@ -80,42 +80,60 @@ const CreateEventPage = () => {
 
     const onFieldClick = (key) => {
         const stepOneFields = [
-          'title', 'description', 'date', 'start_time', 'end_date', 'end_time',
-          'max_participants', 'price', 'city', 'postal_code', 'street', 'street_number', 'categories'
+            'title', 'description', 'date', 'start_time', 'end_date', 'end_time',
+            'max_participants', 'price', 'city', 'postal_code', 'street', 'street_number', 'categories'
         ];
         const stepTwoFields = ['images'];
-      
+
         if (stepOneFields.includes(key)) {
-          setStep(1);
+            setStep(1);
         } else if (stepTwoFields.includes(key)) {
-          setStep(2);
+            setStep(2);
         }
     };
 
     const onRemoveImage = (index) => {
         if (formData.images.length <= 1) return;
-      
+
         const updatedImages = formData.images.filter((_, i) => i !== index);
-      
+
         setFormData((prev) => ({
-          ...prev,
-          images: index === 0 ? [...updatedImages] : updatedImages,
+            ...prev,
+            images: index === 0 ? [...updatedImages] : updatedImages,
         }));
-    };      
-      
-      
+    };
+
     const handleSubmit = async () => {
         try {
-        const { end_date, end_time, ...rest } = formData;
-        const finalData = {
-            ...rest,
-            end_time: `${end_date}T${end_time}`
-        };
-        await handleCreateEvent(finalData);
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
-        navigate('/');
+            const start = `${formData.date}T${formData.start_time}`;
+            const end = `${formData.end_date || formData.date}T${formData.end_time}`;
+            const finalData = {
+                ...formData,
+                start_time: start,
+                end_time: end,
+                date_created: new Date().toISOString()
+            };
+
+            await handleCreateEvent(finalData);
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+
+            await Swal.fire({
+                icon: 'success',
+                title: 'Événement créé avec succès !',
+                text: 'Votre événement a été enregistré.',
+                confirmButtonText: 'Super !',
+                confirmButtonColor: '#2563eb'
+            });
+
+            navigate('/');
         } catch (e) {
-        console.error(e);
+            console.error(e);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: 'Une erreur est survenue lors de la création de l’événement.',
+                confirmButtonText: 'Fermer'
+            });
         }
     };
 
@@ -130,30 +148,29 @@ const CreateEventPage = () => {
                 <div className="max-w-4xl mx-auto mt-12 bg-white p-8 rounded-2xl shadow-lg">
                     {step === 1 && <EventStepOne formData={formData} onChange={handleChange} />}
                     {step === 2 && <EventStepTwo formData={formData} onChange={handleChange} />}
-                    {step === 3 && (<EventStepThree data={formData} images={formData.images} onFieldClick={onFieldClick} onRemoveImage={onRemoveImage}/>)}
+                    {step === 3 && (<EventStepThree data={formData} images={formData.images} onFieldClick={onFieldClick} onRemoveImage={onRemoveImage} />)}
 
 
                     <div className="flex justify-between mt-12">
                         {step > 1 && (
                             <button onClick={prevStep} className="px-6 py-2 text-white bg-gray-400 rounded hover:bg-gray-500 transition">
-                            Précédent
+                                Précédent
                             </button>
                         )}
 
                         {step < 3 && (
                             <div className="relative group">
-                            <button
-                                onClick={nextStep}
-                                disabled={step === 1 ? !isStepOneValid() : step === 2 ? !isStepTwoValid() : false}
-                                className={`px-6 py-2 rounded text-white transition duration-300 ${
-                                !isStepOneValid()
-                                    ? 'bg-blue-300 cursor-not-allowed'
-                                    : 'bg-blue-600 hover:bg-blue-700'
-                                }`}
-                            >
-                                Suivant
-                            </button>
-                            {/* <div className="absolute right-0 -top-10">
+                                <button
+                                    onClick={nextStep}
+                                    disabled={step === 1 ? !isStepOneValid() : step === 2 ? !isStepTwoValid() : false}
+                                    className={`px-6 py-2 rounded text-white transition duration-300 ${!isStepOneValid()
+                                        ? 'bg-blue-300 cursor-not-allowed'
+                                        : 'bg-blue-600 hover:bg-blue-700'
+                                        }`}
+                                >
+                                    Suivant
+                                </button>
+                                {/* <div className="absolute right-0 -top-10">
                                 <button
                                     onClick={nextStep}
                                     disabled={step === 1 ? !isStepOneValid() : step === 2 ? !isStepTwoValid() : false}
@@ -166,34 +183,34 @@ const CreateEventPage = () => {
                                     Suivant
                                 </button>
                             </div> */}
-                            {((step === 1 && !isStepOneValid()) || (step === 2 && !isStepTwoValid())) && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white border border-gray-300 shadow-md rounded px-4 py-2 text-sm text-gray-700 w-80 hidden group-hover:block z-10"
-                                >
-                                    {step === 1
-                                    ? "Tous les champs requis doivent être remplis, avec une date de fin supérieure."
-                                    : "Une image est nécessaire pour passer à l’étape suivante."}
-                                </motion.div>
-                            )}
+                                {((step === 1 && !isStepOneValid()) || (step === 2 && !isStepTwoValid())) && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="absolute -top-14 left-1/2 -translate-x-1/2 bg-white border border-gray-300 shadow-md rounded px-4 py-2 text-sm text-gray-700 w-80 hidden group-hover:block z-10"
+                                    >
+                                        {step === 1
+                                            ? "Tous les champs requis doivent être remplis, avec une date de fin supérieure."
+                                            : "Une image est nécessaire pour passer à l’étape suivante."}
+                                    </motion.div>
+                                )}
 
                             </div>
                         )}
 
                         {step === 3 && (
                             <button
-                            onClick={handleSubmit}
-                            className="px-6 py-2 text-white bg-green-600 hover:bg-green-700 rounded transition flex items-center gap-2"
+                                onClick={handleSubmit}
+                                className="px-6 py-2 text-white bg-green-600 hover:bg-green-700 rounded transition flex items-center gap-2"
                             >
-                            {loading && (
-                                <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"
-                                />
-                            )}
-                            Créer l’événement
+                                {loading && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                                    />
+                                )}
+                                Créer l’événement
                             </button>
                         )}
                     </div>

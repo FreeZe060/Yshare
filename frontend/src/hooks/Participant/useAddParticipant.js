@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { addParticipant } from "../services/participantService";
+import { addParticipant } from "../../services/participantService";
 
 function useAddParticipant() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const add = async (eventId) => {
+	const addNewParticipant = async (eventId, message, guests = []) => {
 		setLoading(true);
 		setError(null);
+
 		try {
-			const result = await addParticipant(eventId);
+			const token = localStorage.getItem("token"); 
+			const result = await addParticipant(eventId, token, message, guests);
 			return result;
 		} catch (err) {
 			setError(err.message);
@@ -19,7 +21,7 @@ function useAddParticipant() {
 		}
 	};
 
-	return { add, loading, error };
+	return { addNewParticipant, loading, error };
 }
 
 export default useAddParticipant;

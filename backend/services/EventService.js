@@ -3,14 +3,23 @@ const { Op, fn, col } = require('sequelize');
 
 class EventService {
     async getAllEvents(filters = {}, pagination = {}) {
-        const { title, city, date, categoryId } = filters;
+        const {
+            title,
+            city,
+            start_time,
+            categoryId,
+            status,
+            sort
+        } = filters;
+
         const { page = 1, limit = 10 } = pagination;
         const offset = (page - 1) * limit;
 
         const whereClause = {};
         if (title) whereClause.title = { [Op.like]: `%${title}%` };
         if (city) whereClause.city = { [Op.like]: `%${city}%` };
-        if (date) whereClause.date = date;
+        if (start_time) whereClause.start_time = start_time;
+        if (status) whereClause.status = status;
 
         const include = [
             {
@@ -39,21 +48,26 @@ class EventService {
             },
         ];
 
+        const order = [];
+        if (sort === 'title_asc') {
+            order.push(['title', 'ASC']);
+        } else if (sort === 'start_time_desc') {
+            order.push(['start_time', 'DESC']);
+        } else if (sort === 'start_time_asc') {
+            order.push(['start_time', 'ASC']);
+        }
+
         const events = await Event.findAll({
             where: whereClause,
             include,
             attributes: {
                 include: [[fn('COUNT', col('participants.id')), 'nb_participants']],
             },
-            group: [
-                'Event.id',
-                'Categories.id',
-                'EventImages.id',
-                'organizer.id',
-            ],
+            group: ['Event.id', 'Categories.id', 'EventImages.id', 'organizer.id'],
             offset,
             limit: parseInt(limit),
             subQuery: false,
+            order,
         });
 
         const total = await Event.count({
@@ -76,10 +90,18 @@ class EventService {
     async getEventById(eventId) {
         return await Event.findByPk(eventId, {
             include: [
-                { model: Category, through: { attributes: [] } },
+                {
+                    model: Category,
+                    through: { attributes: [] }
+                },
                 {
                     model: EventImage,
                     as: 'EventImages',
+                },
+                {
+                    model: User,
+                    as: 'organizer',
+                    attributes: ['id', 'name', 'lastname', 'profileImage']
                 }
             ]
         });
@@ -87,19 +109,44 @@ class EventService {
 
     async createEvent(data, images = []) {
         let {
-            title, description, date, id_org, price,
+            title, description, date_created, id_org, price,
             street, street_number, city, postal_code,
             start_time, end_time, categories, max_participants
         } = data;
+
+        const now = new Date();
+        const startDate = new Date(start_time);
+        const endDate = new Date(end_time);
 
         if (typeof categories === 'string') {
             categories = JSON.parse(categories);
         }
 
+        console.log('Vérification des dates :');
+        console.log('  - Maintenant      :', now.toISOString());
+        console.log('  - Date de début   :', startDate.toISOString());
+        console.log('  - Date de fin     :', endDate.toISOString());
+
+        if (isNaN(startDate) || isNaN(endDate)) {
+            throw new Error("Les dates de début ou de fin sont invalides.");
+        }
+
+        if (startDate < now) {
+            console.error("Erreur : la date de début est dans le passé.");
+            throw new Error("La date de début ne peut pas être dans le passé.");
+        }
+
+        if (endDate <= startDate) {
+            console.error("Erreur : la date de fin est avant ou égale à la date de début.");
+            throw new Error("La date de fin doit être après la date de début.");
+        }
+
+        console.log('Création de l\'événement avec statut "Planifié"');
+
         const event = await Event.create({
             title,
             description,
-            date,
+            date_created: new Date(),
             id_org,
             price: price === '' ? null : parseInt(price),
             max_participants: max_participants === '' ? null : parseInt(max_participants),
@@ -107,8 +154,9 @@ class EventService {
             street_number,
             city,
             postal_code,
-            start_time,
-            end_time
+            start_time: startDate,
+            end_time: endDate,
+            status: 'Planifié'
         });
 
         if (categories?.length > 0) {
@@ -121,7 +169,97 @@ class EventService {
             );
         }
 
+        console.log('Événement créé avec ID:', event.id);
+
         return await this.getEventById(event.id);
+    }
+
+    async updateEventStatus(eventId, newStatus) {
+        console.log(`🔁 Tentative de mise à jour du statut de l'événement ID ${eventId} vers "${newStatus}"`);
+
+        const event = await Event.findByPk(eventId);
+        if (!event) throw new Error("Événement introuvable.");
+
+        const now = new Date();
+        const startDate = new Date(event.start_time);
+        const endDate = new Date(event.end_time);
+
+        console.log(`🕒 Now: ${now.toISOString()} | Start: ${startDate.toISOString()} | End: ${endDate.toISOString()}`);
+
+        let allowed = false;
+
+        switch (newStatus) {
+            case 'Planifié':
+                allowed = now < startDate;
+                break;
+            case 'En Cours':
+                allowed = now >= startDate && now < endDate;
+                break;
+            case 'Terminé':
+                allowed = now >= endDate;
+                break;
+            case 'Annulé':
+                allowed = true;
+                break;
+        }
+
+        if (!allowed) {
+            console.warn(`⛔ Changement de statut non autorisé. Tentative: "${event.status}" => "${newStatus}" à ${now.toISOString()}`);
+            throw new Error(`Impossible de passer l'événement en "${newStatus}" selon les dates actuelles.`);
+        }
+
+        await event.update({ status: newStatus });
+        console.log(`✅ Statut mis à jour avec succès pour l'événement ID ${event.id} : ${newStatus}`);
+        return event;
+    }
+
+    async updateAllEventStatusesByDate() {
+        const now = new Date();
+        console.log('🔄 Lancement de la mise à jour automatique des statuts...');
+        console.log('🕒 Date actuelle :', now.toISOString());
+
+        const events = await Event.findAll();
+
+        for (const event of events) {
+            const startDateTime = new Date(event.start_time);
+            const endDateTime = new Date(event.end_time);
+            let newStatus = event.status;
+
+            if (now < startDateTime) {
+                newStatus = 'Planifié';
+            } else if (now >= startDateTime && now < endDateTime) {
+                newStatus = 'En Cours';
+            } else if (now >= endDateTime) {
+                newStatus = 'Terminé';
+            }
+
+            if (event.status !== newStatus) {
+                console.log(`✅ Mise à jour : Événement ID ${event.id} : ${event.status} ➡️ ${newStatus}`);
+                await event.update({ status: newStatus });
+
+                const participants = await Participant.findAll({
+                    where: { id_event: event.id, status: 'Inscrit' }
+                });
+
+                if (participants.length > 0) {
+                    console.log(`📬 ${participants.length} participant(s) seront notifiés.`);
+
+                    const subject = `Statut mis à jour : ${event.title}`;
+                    const message = `Bonjour,\n\nLe statut de l'événement "${event.title}" a été automatiquement mis à jour en "${newStatus}".\n\nMerci de votre attention.`;
+
+                    for (const participant of participants) {
+                        const user = await User.findByPk(participant.id_user);
+                        if (user) {
+                            await sendEmail(user.email, subject, message);
+                            await notificationService.createNotification(user.id, subject, message);
+                            console.log(`✅ Notification envoyée à ${user.email}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        console.log('✅ Tous les statuts ont été mis à jour (et notifications envoyées si nécessaire).');
     }
 
     async updateEvent(eventId, update, userId, userRole) {
@@ -175,7 +313,7 @@ class EventService {
                     limit: 1
                 }
             ],
-            order: [['date', 'DESC']]
+            order: [['date_created', 'DESC']]
         });
     }
 }

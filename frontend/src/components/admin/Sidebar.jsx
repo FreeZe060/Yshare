@@ -1,77 +1,152 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../config/authHeader';
 
 const Sidebar = ({ active, setActive }) => {
 	const { user } = useAuth();
-	
 	const [version, setVersion] = useState("");
+	const [openSubMenu, setOpenSubMenu] = useState(active === 'all-events' || active === 'participants');
+	const sidebarRef = useRef(null);
+
+	const handleClick = (key, hasSub) => {
+		if (hasSub) {
+			setOpenSubMenu(prev => key === 'events' ? !prev : true);
+		} else {
+			setActive(key);
+			if (!['all-events', 'participants'].includes(key)) {
+				setOpenSubMenu(false);
+			}
+		}
+	};
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+				setOpenSubMenu(false);
+			}
+		};
+	
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 	
 	useEffect(() => {
 		fetch("/version.txt")
-		.then(response => response.text())
-		.then(text => setVersion(text.trim()));
+			.then(response => response.text())
+			.then(text => setVersion(text.trim()));
 	}, []);
-	
+
 	if (!user || !user.id) return null;
 
 	const navItems = [
-		{ key: 'dashboard', icon: null, label: 'Dashboard', desc: 'Data overview' },
+		{ key: 'dashboard', icon: 'fa-house', label: 'Dashboard', desc: 'Data overview' },
 		{ key: 'reports', icon: 'fa-file-alt', label: 'Reports', desc: 'Manage Reports' },
 		{ key: 'users', icon: 'fa-user', label: 'Users', desc: 'Manage Users' },
-		{ key: 'events', icon: 'fa-calendar', label: 'Events', desc: 'Manage Events' },
+		{ key: 'events', icon: 'fa-calendar', label: 'Events', desc: 'Manage Events', hasSub: true },
 		{ key: 'comments', icon: 'fa-comments', label: 'Comments', desc: 'Manage Comments' },
 		{ key: 'news', icon: 'fa-newspaper', label: 'News', desc: 'Manage News' },
 	];
 
-	return (
-		<div className="bg-white shadow-xl col-span-3 xxs:flex xxs:flex-row sm:flex-col xxs:justify-between xxs:items-center rounded-lg p-4">
-			<h1 className="font-bold text-lg sm:text-3xl bg-gradient-to-br from-indigo-600 via-indigo-400 to-indigo-300 bg-clip-text text-transparent">
-				Dashboard<span className="text-indigo-500">.</span>
-			</h1>
-			<p className="text-gray-500 text-sm mb-2">Welcome back,</p>
+	const eventSubItems = [
+		{ key: 'all-events', label: 'All Events' },
+		{ key: 'participants', label: 'Participants' }
+	];
 
-			<Link
-				to={`/profile/${user?.id}`}
-				className="flex flex-col space-y-2 xxs:space-y-0 xxs:flex-row mb-5 items-center xxs:space-x-2 hover:bg-indigo-50 group transition duration-150 ease-linear rounded-lg w-full py-3 px-2"
-			>
-				<img className="rounded-full w-10 h-10 object-cover" src={user.profileImage ? `http://localhost:8080${user.profileImage}` : "https://via.placeholder.com/40"} alt={user?.name} />
-				<div>
-					<p className="font-medium text-gray-800 group-hover:text-indigo-500 leading-4">{user?.name} {user?.lastname}</p>
-					<span className="text-xs text-gray-400">{user?.role}</span>
+	const isEventsSubItem = ['all-events', 'participants'].includes(active);
+
+	return (
+		<div ref={sidebarRef} className="bg-white shadow-xl col-span-3 md:col-span-9 lg:mt-4 md:flex flex-col md:justify-between md:items-center rounded-lg p-4">
+			<div className="md:flex md:justify-between md:w-full">
+				<div className="flex flex-col">
+					<h1 className="font-bold md:text-lg text-3xl bg-gradient-to-br from-indigo-600 via-indigo-400 to-indigo-300 bg-clip-text text-transparent">
+						Dashboard<span className="text-indigo-500">.</span>
+					</h1>
+					<p className="text-gray-500 text-sm mb-2 md:mb-0">Welcome back,</p>
 				</div>
-			</Link>
+				<Link
+					to={`/profile/${user?.id}`}
+					className="flex flex-col md:flex-col items-center justify-center mb-5 md:mb-0 space-y-2 md:space-y-2 hover:bg-indigo-50 group transition duration-150 ease-linear rounded-lg w-full pb-[0.75rem] px-2"
+				>
+					<img
+						className="rounded-full w-16 h-16 object-cover"
+						src={user.profileImage ? `http://localhost:8080${user.profileImage}` : "https://via.placeholder.com/40"}
+						alt={user?.name}
+					/>
+					<div className="text-center">
+						<p className="font-medium text-gray-800 group-hover:text-indigo-500 leading-4">
+							{user?.name} {user?.lastname}
+						</p>
+						<span className="text-xs text-gray-400">{user?.role}</span>
+					</div>
+				</Link>
+			</div>
 
 			<hr className="my-2 border-gray-200" />
 
-			<div className="flex flex-col xxs:flex-wrap xxs:gap-2 space-y-2 my-5">
-				{navItems.map(({ key, icon, label, desc }) => {
+			<div className="flex flex-col md:flex-row md:gap-2 md:justify-start md:items-end md:w-full space-y-2 my-5 xs:overflow-x-auto xs:whitespace-nowrap">
+				{navItems.map(({ key, icon, label, desc, hasSub }) => {
 					const isActive = active === key;
 					return (
-						<button
-							key={key}
-							onClick={() => setActive(key)}
-							className={`text-left w-full transition duration-300 ease-in-out rounded-lg py-3 px-2 group ${isActive ? 'bg-indigo-50' : 'hover:bg-indigo-50'}`}
-						>
-							<div className="flex flex-row xxs:flex-col items-center gap-4">
-								{icon ? (
-									<i className={`fa-regular ${icon} text-2xl xxs:text-xl ${isActive ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-500`} />
-								) : (
-									<svg className={`w-6 h-6 ${isActive ? 'text-indigo-500' : 'text-gray-700'} group-hover:text-indigo-500`} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-										<path strokeLinecap="round" strokeLinejoin="round" d="M3 12l8.25-8.25c.3-.3.8-.3 1.1 0L21 12M4.5 10.5v9c0 .414.336.75.75.75H9.75v-3.75c0-.414.336-.75.75-.75h3c.414 0 .75.336.75.75V21h4.5c.414 0 .75-.336.75-.75v-9" />
-									</svg>
-								)}
-								<div className="text-left xxs:text-center">
-									<p className={`font-bold text-lg xxs:text-base ${isActive ? 'text-indigo-500' : 'text-gray-800'} group-hover:text-indigo-500`}>{label}</p>
-									<p className="text-gray-400 text-sm block sm:hidden">{desc}</p>
+						<React.Fragment key={key}>
+							<button
+								onClick={() => handleClick(key, hasSub)}
+								className={`text-left w-full transition duration-300 ease-in-out rounded-lg py-3 px-2 group ${key === 'events' && isEventsSubItem ? 'bg-indigo-50' : active === key ? 'bg-indigo-50' : 'hover:bg-indigo-50'
+									}`}
+							>
+								<div className="flex flex-row md:flex-col items-center gap-4">
+									{key === 'dashboard' ? (
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className={`w-6 h-6 ${isActive ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-400`}
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+											/>
+										</svg>
+									) : (
+										<i className={`fa-regular ${icon} text-2xl md:text-xl ${isActive || (key === 'events' && isEventsSubItem) ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-500`} />
+									)}
+									<div className="text-left md:text-center">
+										<p className={`font-bold text-lg md:text-base ${key === 'events' && isEventsSubItem ? 'text-indigo-500' :
+											active === key ? 'text-indigo-500' : 'text-gray-800'
+											} group-hover:text-indigo-500`}>
+											{label}
+										</p>
+										<p className="text-gray-400 text-sm block md:hidden">{desc}</p>
+									</div>
 								</div>
-							</div>
-						</button>
+							</button>
+
+
+							{hasSub && openSubMenu && key === 'events' && (
+								<div className="ml-6 mt-1 md:flex md:flex-col space-y-1 transition-all">
+									{eventSubItems.map(sub => (
+										<button
+											key={sub.key}
+											onClick={() => setActive(sub.key)}
+											className={`block text-sm text-left w-full px-4 py-2 rounded hover:bg-indigo-100 ${active === sub.key ? 'text-indigo-600 font-semibold' : 'text-gray-600'}`}
+										>
+											{sub.label}
+										</button>
+									))}
+								</div>
+							)}
+						</React.Fragment>
 					);
 				})}
 			</div>
 
-			<p className="text-sm text-center text-gray-400"style={{ fontFamily: "'Source Code Pro', monospace" }}>v{version} | &copy; 2025 YShare</p>
+			<p className="text-sm text-center text-gray-400" style={{ fontFamily: "'Source Code Pro', monospace" }}>
+				v{version} | &copy; 2025 YShare
+			</p>
 		</div>
 	);
 };
