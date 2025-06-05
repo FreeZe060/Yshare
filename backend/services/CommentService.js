@@ -159,15 +159,37 @@ class CommentService {
 
     async deleteComment(commentId) {
         try {
-            this.log('Deleting comment:', commentId);
+            console.log(`[CommentService] Début de la suppression du commentaire ${commentId}`);
+            
             const comment = await this.getCommentById(commentId);
-            if (!comment) throw new Error("Commentaire non trouvé");
+            if (!comment) {
+                console.log(`[CommentService] Commentaire ${commentId} non trouvé`);
+                throw new Error("Commentaire non trouvé");
+            }
 
+            // Supprimer d'abord les réactions associées
+            await CommentReaction.destroy({
+                where: {
+                    id_comment: commentId
+                }
+            });
+            console.log(`[CommentService] Réactions supprimées pour le commentaire ${commentId}`);
+
+            // Supprimer les réponses au commentaire
+            await Comment.destroy({
+                where: {
+                    id_comment: commentId
+                }
+            });
+            console.log(`[CommentService] Réponses supprimées pour le commentaire ${commentId}`);
+
+            // Supprimer le commentaire lui-même
             await comment.destroy();
-            this.log('Comment deleted successfully:', commentId);
+            console.log(`[CommentService] Commentaire ${commentId} supprimé avec succès`);
+
             return { message: "Commentaire supprimé avec succès." };
         } catch (error) {
-            this.log('Error deleting comment:', error);
+            console.error(`[CommentService] Erreur lors de la suppression du commentaire ${commentId}:`, error);
             throw new Error("Erreur lors de la suppression du commentaire : " + error.message);
         }
     }

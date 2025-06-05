@@ -19,6 +19,7 @@ const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
+const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
 const conversationController = require('../controllers/conversationController');
 const { extractUserFromToken } = require('../middlewares/authOptional');
 
@@ -120,9 +121,9 @@ router.get('/comments/all', authenticateToken, isAdmin, commentController.getAll
 router.get( '/comments/:commentId', authenticateToken, isAdmin, commentController.getCommentById);
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
-router.put('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.updateComment);
+router.put('/comments/:commentId', authenticateToken, isCommentOwnerOrAdmin, commentController.updateComment);
 router.get('/users/:userId/comments', commentController.getUserComments);
-router.delete('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.deleteComment);
+router.delete('/comments/:commentId', authenticateToken, isCommentOwnerOrAdmin, commentController.deleteComment);
 router.post('/comments/:commentId/reactions', authenticateToken, commentController.addReaction);
 router.delete('/comments/:commentId/reactions', authenticateToken, commentController.removeReaction);
 router.get('/comments/:commentId/reactions', commentController.getReactions);
