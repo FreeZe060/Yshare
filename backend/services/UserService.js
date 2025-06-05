@@ -1,4 +1,4 @@
-const { User, Participant, Event } = require('../models');
+const { User, Participant, Event, Comment, Favoris, Rating, EventCategory } = require('../models');
 
 class UserService {
     async getAllUsers() {
@@ -74,10 +74,70 @@ class UserService {
     }
 
     async deleteUser(userId) {
-        const user = await this.findById(userId);
-        if (!user) throw new Error('Utilisateur non trouvé');
-        await user.destroy();
-        return { message: "Utilisateur supprimé avec succès." };
+        try {
+            const user = await this.findById(userId);
+            if (!user) {
+                throw new Error('Utilisateur non trouvé');
+            }
+
+            // Récupérer tous les événements de l'utilisateur
+            const userEvents = await Event.findAll({
+                where: {
+                    id_org: userId
+                }
+            });
+
+            // Pour chaque événement, supprimer d'abord ses catégories
+            for (const event of userEvents) {
+                await EventCategory.destroy({
+                    where: {
+                        id_event: event.id
+                    }
+                });
+            }
+
+            // Supprimer les événements
+            await Event.destroy({
+                where: {
+                    id_org: userId
+                }
+            });
+
+            // Supprimer les participations aux événements
+            await Participant.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            // Supprimer les commentaires
+            await Comment.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            // Supprimer les favoris
+            await Favoris.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            // Supprimer les notes
+            await Rating.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            // Enfin, supprimer l'utilisateur
+            await user.destroy();
+            return true;
+        } catch (error) {
+            console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+            throw error;
+        }
     }
 }
 

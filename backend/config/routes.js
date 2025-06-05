@@ -220,6 +220,17 @@ router.get('/auth/check', authenticateToken, async (req, res) => {
 	}
 });
 
+router.delete('/auth/delete-account', authenticateToken, async (req, res) => {
+	try {
+		await userService.deleteUser(req.user.id);
+		res.clearCookie('auth_token');
+		res.status(200).json({ message: "Compte supprimé avec succès" });
+	} catch (error) {
+		console.error('Erreur lors de la suppression du compte:', error);
+		res.status(500).json({ message: "Erreur lors de la suppression du compte" });
+	}
+});
+
 router.post('/logout', (req, res) => {
 	res.clearCookie('auth_token');
 	res.status(200).json({ message: 'Déconnexion réussie' });

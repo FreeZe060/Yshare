@@ -10,10 +10,12 @@ import { useUserComments } from '../hooks/Comments/useUserComments';
 import SkeletonProfileCard from '../components/SkeletonLoading/SkeletonProfileCard';
 import { motion } from 'framer-motion';
 import { getUserAverageRating } from '../services/ratingService';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import { deleteAccount } from '../services/authService';
+import Swal from 'sweetalert2';
 
 const Profil = () => {
     const { userId } = useParams();
@@ -23,9 +25,10 @@ const Profil = () => {
     const [stats, setStats] = useState({ created: 0, participated: 0 });
     const { favoris, loading: favorisLoading } = useFavoris();
     const { update, loading: updateLoading, error: updateError } = useUpdateProfile();
-
-    const { user: currentUser } = useAuth();
+    const { user: currentUser, logout } = useAuth();
     const { commentsData, loading: commentsLoading } = useUserComments(userId);
+    const navigate = useNavigate();
+    const [isDeleting, setIsDeleting] = useState(false);
 
     console.log("userId param:", userId);
     console.log("currentUser:", currentUser);
@@ -126,6 +129,42 @@ const Profil = () => {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        try {
+            const result = await Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Cette action est irréversible !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Oui, supprimer mon compte',
+                cancelButtonText: 'Annuler'
+            });
+
+            if (result.isConfirmed) {
+                setIsDeleting(true);
+                await deleteAccount();
+                await logout();
+                navigate('/');
+                Swal.fire(
+                    'Compte supprimé !',
+                    'Votre compte a été supprimé avec succès.',
+                    'success'
+                );
+            }
+        } catch (error) {
+            console.error('Erreur lors de la suppression du compte:', error);
+            Swal.fire(
+                'Erreur !',
+                'Une erreur est survenue lors de la suppression de votre compte.',
+                'error'
+            );
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     if (error) return <div className="text-center text-red-500">Erreur : {error}</div>;
     if (!profile) return <SkeletonProfileCard />;
 
@@ -151,7 +190,7 @@ const Profil = () => {
                         shouldShowGlobalNoActivityMessage ? (
                             <SectionWrapper title="Activité de l'utilisateur">
                                 <p className="text-gray-600 text-lg">
-                                    Cet utilisateur n’a pour l’instant participé à aucun événement ni créé d’événement.
+                                    Cet utilisateur n'a pour l'instant participé à aucun événement ni créé d'événement.
                                 </p>
                             </SectionWrapper>
                         ) : (
@@ -164,7 +203,7 @@ const Profil = () => {
                                                 participatedEvents.length === 0
                                                     ? isOwner
                                                         ? "Vous n'avez encore participé à aucun événement. Rejoignez-en un dès maintenant !"
-                                                        : "Cet utilisateur n’a pour l’instant participé à aucun événement."
+                                                        : "Cet utilisateur n'a pour l'instant participé à aucun événement."
                                                     : null
                                             }
                                             {...(isOwner && participatedEvents.length === 0 && {
@@ -172,7 +211,7 @@ const Profil = () => {
                                                 emptyButtonText: "Voir tous les événements"
                                             })}
                                             {...(participatedEvents.length > 0 && {
-                                                linkText: "Voir tout l’historique",
+                                                linkText: "Voir tout l'historique",
                                                 buttonLink: "/participation",
                                             })}
                                         />
@@ -187,13 +226,13 @@ const Profil = () => {
                                                 stats.created === 0
                                                     ? isOwner
                                                         ? "Vous n'avez pas encore créé d'événement."
-                                                        : "Cet utilisateur n’a pour l’instant créé aucun événement."
+                                                        : "Cet utilisateur n'a pour l'instant créé aucun événement."
                                                     : null
                                             }
                                             buttonLink={isOwner ? "/create-event" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
                                             {...(createdEvents.length > 0 && {
-                                                linkText: "Voir tout l’historique"
+                                                linkText: "Voir tout l'historique"
                                             })}
                                         />
                                     </SectionWrapper>
@@ -223,6 +262,38 @@ const Profil = () => {
                     }
                 />
             </section>
+
+            {/* Section des paramètres */}
+            {isOwner && (
+                <div className="mt-8 p-6 border-t">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Paramètres du compte</h3>
+                    <div className="space-y-4">
+                        <button
+                            onClick={handleDeleteAccount}
+                            disabled={isDeleting}
+                            className="text-red-600 hover:text-red-700 transition-colors flex items-center space-x-2"
+                        >
+                            {isDeleting ? (
+                                <>
+                                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span>Suppression en cours...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    <span>Supprimer mon compte</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </>
     );
