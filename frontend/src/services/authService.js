@@ -27,3 +27,22 @@ export async function logout() {
 		console.error("Erreur de déconnexion :", err);
 	}
 }
+
+export async function deleteAccount() {
+	try {
+		const response = await fetch(`${API_BASE_URL}/auth/delete-account`, {
+			method: 'DELETE',
+			credentials: 'include',
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.message || 'Erreur lors de la suppression du compte');
+		}
+
+		return await response.json();
+	} catch (err) {
+		console.error("Erreur de suppression du compte :", err);
+		throw err;
+	}
+}
