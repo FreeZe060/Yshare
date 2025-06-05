@@ -41,7 +41,7 @@ Yshare est une plateforme moderne de partage et de collaboration qui permet aux 
 
 1. **Cloner le repository**
 ```bash
-git clone [URL_DU_REPO]
+git clone [https://github.com/FreeZe060/Yshare.git]
 cd Yshare
 ```
 
@@ -179,7 +179,10 @@ npm start
 Ce projet est sous licence ISC. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 👥 Auteurs
-- Ibrahim SAKO - Développeur principal
+- Ibrahim SAKO 
+- Tim VANSSON
+- Alexandre PEREZ
+- Jeremy PRATT
 
 ## 🙏 Remerciements
 - Google pour l'API OAuth
