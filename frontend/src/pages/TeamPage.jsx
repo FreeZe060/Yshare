@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import useLogin from '../hooks/User/useLogin';
-import Swal from 'sweetalert2';
+import React from 'react';
 import 'animate.css';
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import { useAuth } from '../config/authHeader';
+import Header from "../components/Partials/Header";
+import Footer from "../components/Partials/Footer";
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 

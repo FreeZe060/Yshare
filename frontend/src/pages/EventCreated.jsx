@@ -1,21 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useEventCreated from '../hooks/Events/useEventCreated';
+import SkeletonProfileCard from '../components/SkeletonLoading/SkeletonProfileCard';
 import { useAuth } from '../config/authHeader';
-import useUserEventHistory from '../hooks/Participant/useUserEventHistory';
-import FiltreParticipant from '../components/Participant/FiltreParticipant';
-import EventParticipant from '../components/Participant/EventParticipant';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
+import FiltreParticipant from '../components/Participant/FiltreParticipant';
+import Event_Created from '../components/Event_Created/EventCreated';
+import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
-const UserParticipationPage = () => {
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
+export default function EventCreated() {
+
     const { user } = useAuth();
     const [filtered, setFiltered] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [eventFilter, setEventFilter] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
-    const [expanded, setExpanded] = useState(null);
 
-    const { history, loading, error } = useUserEventHistory(user?.id);
+    const { createdEvents, loading, error } = useEventCreated(user?.id);
+
     const profileLink = `/profile/${user?.id}`;
 
     const getStatusClass = (status) => {
@@ -39,15 +44,16 @@ const UserParticipationPage = () => {
     };
 
     useEffect(() => {
-        let data = [...history];
+        let data = [...createdEvents];
         if (statusFilter) data = data.filter(p => p.status === statusFilter);
         if (eventFilter) data = data.filter(p => p.title === eventFilter);
         if (searchValue) data = data.filter(p => p.title.toLowerCase().includes(searchValue.toLowerCase()));
         setFiltered(data);
-    }, [statusFilter, eventFilter, searchValue, history]);
+    }, [statusFilter, eventFilter, searchValue, createdEvents]);
 
-    const statuses = [...new Set(history.map(p => p.status))];
-    const events = [...new Set(history.map(p => p.title))];
+
+    const statuses = [...new Set(createdEvents.map(p => p.status))];
+    const events = [...new Set(createdEvents.map(p => p.title))];
 
     const getSuggestions = value => {
         const inputValue = value.trim().toLowerCase();
@@ -117,11 +123,13 @@ const UserParticipationPage = () => {
                     {error && <p className="text-center text-red-500">Erreur : {error}</p>}
 
                     {!loading && !error && (
-                        <EventParticipant
+                        // eslint-disable-next-line react/jsx-pascal-case
+                        <Event_Created
                             filtered={filtered}
-                            getStatusClass={getStatusClass}
-                            expanded={expanded}
-                            setExpanded={setExpanded}
+                            API_BASE_URL={API_BASE_URL}
+                            getFormattedDayAndMonthYear={getFormattedDayAndMonthYear}
+                            capitalizeFirstLetter={capitalizeFirstLetter}
+                            formatEuro={formatEuro}
                         />
                     )}
                 </div>
@@ -130,5 +138,3 @@ const UserParticipationPage = () => {
         </>
     );
 };
-
-export default UserParticipationPage;

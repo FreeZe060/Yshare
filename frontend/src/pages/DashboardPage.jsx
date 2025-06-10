@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/admin/Sidebar';
-import StatsSection from '../components/admin/StatsSection';
-import LastEventSection from '../components/admin/LestEventSection';
-import LastUsersSection from '../components/admin/LastUsersSection';
-import ReportSection from '../components/admin/ReportSection';
-import ParticipantSection from '../components/admin/ParticipantSection';
-import CommentSection from '../components/admin/CommentSection';
-import EventSection from '../components/admin/EventSection';
-import NewsSection from '../components/admin/NewsSection';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Sidebar from '../components/admin/Sidebar/Sidebar';
+import StatsSection from '../components/admin/Stats/StatsSection';
+import LastEventSection from '../components/admin/Stats/LestEventSection';
+import LastUsersSection from '../components/admin/Stats/LastUsersSection';
+import ReportSection from '../components/admin/Report/ReportSection';
+import ParticipantSection from '../components/admin/Participant/ParticipantSection';
+import CommentSection from '../components/admin/Comment/CommentSection';
+import EventSection from '../components/admin/Event/EventSection';
+import NewsSection from '../components/admin/News/NewsSection';
+import Header from '../components/Partials/Header';
+import Footer from '../components/Partials/Footer';
 
 import { motion, AnimatePresence } from 'framer-motion';
 

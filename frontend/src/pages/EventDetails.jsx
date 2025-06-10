@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/Partials/Header';
+import Footer from '../components/Partials/Footer';
 
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
@@ -17,15 +16,14 @@ import useAddComment from '../hooks/Comments/useAddComment';
 import useReplyComment from '../hooks/Comments/useReplyComment';
 import useAddParticipant from '../hooks/Participant/useAddParticipant';
 
-import CommentBlock from '../components/CommentBlock';
-
+import EventHeaderInfo from '../components/Event_Details/EventHeaderInfo';
+import EventMainLeftColumn from '../components/Event_Details/EventMainLeftColumn';
+import EventMainRightColumn from '../components/Event_Details/EventMainRightColumn';
 
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
 
-import soiree from '../assets/img/soiree.jpg';
-
-import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
+import { formatEuro} from '../utils/format';
 
 
 function EventDetails() {
@@ -86,10 +84,9 @@ function EventDetails() {
             setError("");
         } else {
             setError("Il est possible de réserver un maximum de 4 places par utilisateur.");
-            setErrorCount(prev => prev + 1); // force le re-render
+            setErrorCount(prev => prev + 1);
         }
     };
-
 
     const handleDecrease = () => {
         if (ticketCount > 1) {
@@ -257,7 +254,6 @@ function EventDetails() {
     return (
         <>
             <Header />
-
             <main>
                 <section style={{
                     backgroundImage: `linear-gradient(to top right, #580FCA, #F929BB), url(${vector1})`,
@@ -278,336 +274,40 @@ function EventDetails() {
                 </section>
 
                 <section className="z-[1] relative overflow-hidden">
-
-
                     <div class="py-[130px] md:py-[60px] lg:py-[80px] et-event-details-content">
                         <div class="mx-auto px-[12px] max-w-[1200px] xl:max-w-full container">
-
-                            <div className="flex md:flex-row flex-col justify-between items-start md:items-end gap-4 mb-12 pb-8 border-[#e5e5e5] border-b">
-                                <div class="flex flex-row justify-between items-center gap-2 w-full">
-                                    <h1 className="font-bold text-[42px] text-etBlack xs:text-[32px] leading-tight">
-                                        {capitalizeFirstLetter(event?.title)}
-                                    </h1>
-                                    {event && event.status && (
-                                        <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
-                                            ${event.status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
-                                            ${event.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
-                                            ${event.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
-                                            ${event.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
-                                        `}>
-                                            {event.status}
-                                        </div>
-                                    )}
-
-                                </div>
-
-                                <div className="flex flex-col gap-2">
-                                    <p className="mt-2 font-light text-[16px] text-etGray">
-                                        Créé par
-                                        {event?.organizer ? (
-                                            <div>
-                                                <Link
-                                                    to={`/profile/${event.organizer.id}`}
-                                                >
-                                                    <img
-                                                        src={`http://localhost:8080${event.organizer.profileImage}`}
-                                                        alt="Organizer"
-                                                        className="w-8 h-8 rounded-full inline-block mr-2"
-                                                    />
-                                                    <span className="font-medium text-[#C320C0]">
-                                                        {event.organizer.name} {event.organizer.lastname}
-                                                    </span>
-                                                </Link>
-                                            </div>
-                                        ) : (
-                                            <div className="text-etGray text-sm">Organisateur inconnu</div>
-                                        )}
-                                    </p>
-                                    <div className="text-left">
-                                        <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
-                                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
-                                            <span className="text-etPurple font-bold">Du</span>{' '}
-                                            {new Date(event?.start_time).toLocaleDateString("fr-FR", {
-                                                weekday: "long",
-                                                day: "2-digit",
-                                                month: "long",
-                                                year: "numeric",
-                                            })}{' '}
-                                            à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                            <br />
-                                            <span className="text-etPink font-bold">Au</span>{' '}
-                                            {new Date(event?.end_time).toLocaleDateString("fr-FR", {
-                                                weekday: "long",
-                                                day: "2-digit",
-                                                month: "long",
-                                                year: "numeric",
-                                            })}{' '}
-                                            à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })}
-                                        </p>
-                                    </div>
-
-                                </div>
-                            </div>
-
-
+                            <EventHeaderInfo event={event} />
                             <div class="flex md:flex-col md:items-center gap-[30px] lg:gap-[20px]">
-                                <div class="left">
-                                    <div class="relative rounded-[8px] overflow-hidden rev-slide-up">
-                                        <img src={mainImageUrl || soiree} alt="event-details-img" class="bg-cover" />
-                                        <span class="inline-block top-[20px] left-[20px] absolute bg-[#C320C0] px-[12px] py-[5px] rounded-[6px] font-normal text-[16px] text-white">Hall No: 59</span>
-                                    </div>
+                                <EventMainLeftColumn
+                                    event={event}
+                                    mainImageUrl={mainImageUrl}
+                                    user={user}
+                                    newComment={newComment}
+                                    setNewComment={setNewComment}
+                                    handleAddComment={handleAddComment}
+                                    handleApplyToEvent={handleApplyToEvent}
+                                    participants={participants}
+                                    comments={comments}
+                                    eventId={eventId}
+                                    API_BASE_URL={API_BASE_URL}
+                                />
 
-                                    <div class="rev-slide-up">
-                                        <h4 class="mt-[27px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">
-                                            {event?.title}
-                                        </h4>
-
-                                        <p class="mb-[15px] font-light text-[16px] text-etGray">
-                                            {event?.description}
-                                        </p>
-
-                                        {/* <h4 class="mt-[19px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">
-                                            Requirements for the event
-                                        </h4>
-
-                                        <p class="mb-[21px] font-light text-[16px] text-etGray">
-                                            Nulla facilisi. Vestibulum tristique sem in eros eleifend imperdiet...
-                                        </p>
-
-                                        <ul class="gap-[20px] xxs:gap-[10px] grid grid-cols-2 xxs:grid-cols-1 font-light text-[16px] text-etGray et-event-details-requirements-list">
-                                            <li>Ut viverra bibendum lorem, at tempus nibh</li>
-                                            <li>Duis aute irure and dolor in reprehenderit.</li>
-                                            <li>quis nostrud exercitation ullamco laboris nisi</li>
-                                            <li>ante rutrum sed the is sodales augue</li>
-                                        </ul> */}
-
-                                        {event?.EventImages?.filter(img => !img.is_main).length > 0 && (
-                                            <div class="gap-[30px] lg:gap-[20px] grid grid-cols-2 xxs:grid-cols-1 mt-[38px] mb-[33px]">
-                                                {event.EventImages.filter(img => !img.is_main).map((img, index) => (
-                                                    <img
-                                                        key={index}
-                                                        src={`${API_BASE_URL}${img.image_url}`}
-                                                        alt="event-details-img"
-                                                        className="rounded-[8px] w-full h-[306px] object-cover"
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {/* <p class="mb-[43px] font-light text-[16px] text-etGray">
-                                        </p> */}
-                                    </div>
-
-
-                                    <div class="flex xxs:flex-col items-center gap-[20px] py-[24px] border-[#d9d9d9] border-y rev-slide-up">
-                                        <button
-                                            onClick={handleApplyToEvent}
-                                            className="inline-flex items-center gap-[10px] bg-[#C320C0] hover:bg-white px-[20px] border-[#C320C0] border-2 rounded-full h-[50px] font-medium text-[17px] text-white hover:text-[#C320C0] transition-all duration-300"
-                                        >
-                                            Candidater maintenant
-                                            <i className="fa-arrow-right-long fa-solid" />
-                                        </button>
-                                    </div>
-
-                                    <div class="mt-[50px] rev-slide-up">
-                                        <h3 class="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Liste des participants à l’événement</h3>
-
-                                        {participants?.length === 0 ? (
-                                            <div class="text-center p-[30px] border border-dashed border-[#C320C0] rounded-[12px] bg-[#fdf5ff] animate-fade-in">
-                                                <h4 class="text-[24px] font-bold text-[#C320C0] mb-[10px] animate-bounce">
-                                                    Aucun participant n'est encore inscrit
-                                                </h4>
-                                                <p class="text-[16px] text-etGray mb-[10px] animate-slide-up">
-                                                    Soyez le premier à rejoindre cette aventure et faites partie des pionniers !
-                                                </p>
-                                                <a onClick={handleApplyToEvent}
-                                                    href="#"
-                                                    class="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse"
-                                                >
-                                                    Candidater maintenant
-                                                </a>
-                                            </div>
-                                        ) : (
-                                            participants.map((participant, index) => {
-                                                const user = participant?.User;
-
-                                                if (!user) {
-                                                    console.warn("⚠️ Participant sans user défini :", participant);
-                                                    return null;
-                                                }
-
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className="flex xs:flex-col gap-x-[25px] gap-y-[10px] mb-[30px] p-[30px] lg:p-[20px] border border-[#d9d9d9] rounded-[12px]"
-                                                    >
-                                                        <div className="rounded-[6px] overflow-hidden shrink-0">
-                                                            <Link to={`/profile/${user.id}`} >
-                                                                <img
-                                                                    src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`}
-                                                                    alt="Participant"
-                                                                    className="w-[168px] aspect-square object-cover"
-                                                                />
-                                                            </Link>
-                                                        </div>
-
-                                                        <div className="grow">
-                                                            <div className="flex flex-wrap justify-between items-center gap-[10px] pb-[15px] border-[#d9d9d9] border-b">
-                                                                <div>
-                                                                    <Link to={`/profile/${user.id}`} >
-                                                                        <h5 className="font-semibold text-[20px] text-etBlack">
-                                                                            {user.name} {user.lastname}
-                                                                        </h5>
-                                                                    </Link>
-                                                                    <span className="inline-block text-[16px] text-etGray2">
-                                                                        {user.email}
-                                                                    </span>
-                                                                </div>
-                                                                <span className="inline-block px-[12px] py-[4px] text-sm bg-green-100 text-green-700 rounded-full font-medium">
-                                                                    {participant.status}
-                                                                </span>
-                                                            </div>
-
-                                                            <p className="pt-[20px] font-light text-[16px] text-etGray2">
-                                                                {user.bio || "Aucune biographie fournie."}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })
-                                        )}
-                                    </div>
-
-                                    <div className="mt-[60px] animate-fade-in">
-                                        <h3 className="mb-[30px] text-[30px] font-semibold text-etBlack">Commentaires</h3>
-                                        <div className="rounded-[16px] border border-[#f0f0f0] shadow-lg p-[30px] bg-white space-y-[20px]">
-                                            <div className="space-y-8">
-                                                <div className="flex gap-4">
-                                                    <img
-                                                        src={
-                                                            user?.profileImage
-                                                                ? `http://localhost:8080${user.profileImage}`
-                                                                : "https://assets.codepen.io/285131/hat-man.png"
-                                                        }
-                                                        className="w-10 h-10 rounded-full object-cover"
-                                                        alt="avatar"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        value={newComment}
-                                                        onChange={(e) => setNewComment(e.target.value)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter') {
-                                                                e.preventDefault();
-                                                                handleAddComment();
-                                                            }
-                                                        }}
-                                                        placeholder={user ? "Ajouter un commentaire..." : "Connectez-vous pour commenter"}
-                                                        className={`flex-1 h-12 px-4 rounded-md border border-gray-200 placeholder-gray-400 ${user ? "focus:outline-none focus:ring-2 focus:ring-gray-100" : "cursor-not-allowed bg-gray-100"
-                                                            }`}
-                                                        disabled={!user}
-                                                    />
-                                                </div>
-
-                                                {comments?.map((comment) => (
-                                                    <CommentBlock key={comment.id} comment={comment} eventId={eventId} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="right space-y-[30px] w-[370px] lg:w-[360px] max-w-full shrink-0">
-                                    <div class="border border-[#e5e5e5] rounded-[16px] overflow-hidden et-event-details-ticket-widgget">
-                                        <div class="bg-[#C320C0] p-[16px] xxs:p-[12px]">
-                                            <h5 class="font-medium text-[20px] text-white text-center">Sélectionnez la date et l’heure</h5>
-                                        </div>
-
-                                        <div class="p-[22px] lg:p-[16px]">
-                                            <div class="flex justify-between items-center mt-[6px] mb-[16px]">
-                                                <h6 class="font-medium text-[#232323] text-[16px]">Plage horaire</h6>
-
-                                                <div class="flex items-center gap-[20px] text-[16px]" id="et-event-details-ticket-time-slider-nav">
-                                                    <button class="hover:text-[#C320C0] prev"><i class="fa-angle-left fa-solid"></i></button>
-                                                    <button class="hover:text-[#C320C0] next"><i class="fa-angle-right fa-solid"></i></button>
-                                                </div>
-                                            </div>
-
-                                            <div className="mb-[24px] overflow-visible et-event-details-ticket-time-slider swiper">
-                                                <div className="swiper-wrapper">
-                                                    <div className="group w-max swiper-slide">
-                                                        <span className="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">
-                                                            {`${new Date(event?.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(event?.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <form className="space-y-[10px] mb-[30px]">
-                                                <div className="px-[16px] py-[7px] border border-[#d9d9d9] rounded-[6px] radio-container">
-                                                    <label className="relative flex gap-[15px] font-normal text-[#232323] text-[14px]">
-                                                        <span>{`Place pour l'événement "${event?.title}"`}</span>
-                                                        <span className="flex items-center">
-                                                            <input type="radio" name="options" checked readOnly className="appearance-none" />
-                                                            <span className="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] before:-translate-y-[50%] after:-translate-y-[50%]">
-                                                                {event?.price ? `${event.price.toFixed(2)} €` : "Gratuit"}
-                                                            </span>
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            </form>
-
-                                            <div className="mb-[30px] px-[80px] xxs:px-[30px] border-[#d9d9d9] border-[0.5px] rounded-full">
-                                                <div className="flex justify-between items-center gap-[15px] py-[17px]">
-                                                    <button type="button" onClick={handleDecrease} className="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white">
-                                                        <span className="h-[28px] leading-[22px]">&minus;</span>
-                                                    </button>
-                                                    <span className="font-light text-[16px]"><span>{ticketCount}</span> Ticket{ticketCount > 1 ? "s" : ""}</span>
-                                                    <button type="button" onClick={handleIncrease} className="inline-flex justify-center items-center bg-[#C320C0]/10 hover:bg-[#C320C0] rounded-full w-[28px] aspect-square font-extralight text-[35px] hover:text-white">
-                                                        <span className="h-[28px] leading-[22px]">+</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            {errors && (
-                                                <p key={errorCount} className="text-red-500 text-[12px] text-center mt-2">
-                                                    {errors}
-                                                </p>
-                                            )}
-
-                                            <button onClick={handleApplyToEvent} class="flex justify-center items-center gap-x-[10px] bg-[#C320C0] hover:bg-white px-[15px] border-[#C320C0] border-2 rounded-full w-full h-[50px] text-[15px] text-white hover:text-[#C320C0]">
-                                                <span>{`${event?.price > 0 ? "Candidater" : "Candidater"} (${formatEuro(event?.price)}) `}</span>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="border border-[#e5e5e5] rounded-[16px]">
-                                        <div class="bg-[#C320C0] p-[16px] xxs:p-[12px] rounded-t-[16px]">
-                                            <h5 class="font-medium text-[17px] text-white text-center"><i className="mr-2 fas fa-map-marker-alt"></i>{address}</h5>
-                                        </div>
-                                        <iframe
-                                            src={googleMapUrl}
-                                            allowFullScreen=""
-                                            loading="lazy"
-                                            referrerPolicy="no-referrer-when-downgrade"
-                                            className="rounded-b-[16px] w-full h-[280px]"
-                                            title="Event Location"
-                                        />
-                                    </div>
-
-
-                                </div>
+                                <EventMainRightColumn
+                                    event={event}
+                                    handleApplyToEvent={handleApplyToEvent}
+                                    ticketCount={ticketCount}
+                                    handleIncrease={handleIncrease}
+                                    handleDecrease={handleDecrease}
+                                    errors={errors}
+                                    errorCount={errorCount}
+                                    address={address}
+                                    googleMapUrl={googleMapUrl}
+                                    formatEuro={formatEuro}
+                                />
                             </div>
                         </div>
                     </div>
 
-                    {/* VECTORS + BACKGROUND */}
                     <div className="*:-z-[1] *:absolute">
                         <h3 className="xl:hidden top-[420px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">Event</h3>
                         <div className="-top-[195px] -left-[519px] bg-gradient-to-b from-etPurple to-etPink blur-[230px] rounded-full w-[688px] aspect-square"></div>
@@ -619,11 +319,7 @@ function EventDetails() {
                     </div>
 
                 </section>
-
-
-
             </main >
-
             <Footer />
         </>
     );

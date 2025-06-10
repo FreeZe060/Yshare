@@ -9,10 +9,10 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profil from './pages/Profil';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from './components/Route/PrivateRoute';
 import CreateEventPage from './pages/CreateEventPage';
 import Admin from './pages/DashboardPage';
-import AdminRoute from './components/admin/AdminRoute';
+import AdminRoute from './components/Route/AdminRoute';
 import EventDetails from './pages/EventDetails';
 import TeamPage from './pages/TeamPage';
 import NewsPage from './pages/NewsPage';
@@ -20,6 +20,7 @@ import { LegalMentions, PrivacyPolicy, TermsOfUse, TermsOfSale } from './pages/L
 import NotificationPage from './pages/NotificationPage';
 import NewsDetails from './pages/NewsDetails';
 import UserParticipationPage from './pages/ParticipantPage';
+import EventCreated from './pages/EventCreated';
 
 function App() {
 
@@ -43,10 +44,8 @@ function App() {
 				<Route path="/participation" element={<PrivateRoute><UserParticipationPage /></PrivateRoute>} />
 				<Route path="/notifications" element={<PrivateRoute><NotificationPage /></PrivateRoute>} />
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
-
+				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/event/:eventId" element={<EventDetails />} />
-				{/* <Route path="/all-events" element={<AllEvents />} />
-			<Route path="*" element={<Navigate to="/" />} /> */}
 			</Routes>
 		</>
 

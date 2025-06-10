@@ -6,7 +6,7 @@ import useRegister from '../hooks/User/useRegister';
 import Swal from 'sweetalert2';
 import 'animate.css';
 
-import Header from '../components/Header';
+import Header from '../components/Partials/Header';
 
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';

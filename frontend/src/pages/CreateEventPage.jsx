@@ -6,8 +6,8 @@ import EventStepThree from '../components/CreateEvent/EventStepThree';
 import useCreateEvent from '../hooks/Events/useCreateEvent';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import Footer from '../components/Partials/Footer';
+import Header from '../components/Partials/Header';
 import Swal from 'sweetalert2';
 
 const LOCAL_STORAGE_KEY = 'create_event_draft';
@@ -170,19 +170,6 @@ const CreateEventPage = () => {
                                 >
                                     Suivant
                                 </button>
-                                {/* <div className="absolute right-0 -top-10">
-                                <button
-                                    onClick={nextStep}
-                                    disabled={step === 1 ? !isStepOneValid() : step === 2 ? !isStepTwoValid() : false}
-                                    className={`px-6 py-2 rounded text-white transition duration-300 ${
-                                    !isStepOneValid()
-                                        ? 'bg-blue-300 cursor-not-allowed'
-                                        : 'bg-blue-600 hover:bg-blue-700'
-                                    }`}
-                                >
-                                    Suivant
-                                </button>
-                            </div> */}
                                 {((step === 1 && !isStepOneValid()) || (step === 2 && !isStepTwoValid())) && (
                                     <motion.div
                                         initial={{ opacity: 0, y: -10 }}

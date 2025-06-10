@@ -12,8 +12,8 @@ import { motion } from 'framer-motion';
 import { getUserAverageRating } from '../services/ratingService';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../config/authHeader';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
+import Footer from '../components/Partials/Footer';
+import Header from '../components/Partials/Header';
 import { deleteAccount } from '../services/authService';
 import Swal from 'sweetalert2';
 
@@ -263,7 +263,6 @@ const Profil = () => {
                 />
             </section>
 
-            {/* Section des paramètres */}
             {isOwner && (
                 <div className="mt-8 p-6 border-t">
                     <h3 className="text-lg font-semibold text-gray-700 mb-4">Paramètres du compte</h3>

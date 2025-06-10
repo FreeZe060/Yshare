@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import StarRating from '../StarRating';
+import StarRating from './StarRating';
 import { FiUser, FiEdit2, FiX } from 'react-icons/fi';
 import { FaMapMarkerAlt, FaBriefcase, FaEnvelope } from 'react-icons/fa';
 import { useAuth } from '../../config/authHeader';
