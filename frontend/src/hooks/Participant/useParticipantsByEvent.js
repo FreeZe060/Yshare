@@ -12,7 +12,7 @@ function useParticipantsByEvent(eventId) {
 			setLoading(true);
 			try {
 				const data = await getParticipantsByEvent(eventId);
-				setParticipants(data);
+				setParticipants(Array.isArray(data) ? data : []);
 			} catch (err) {
 				setError(err.message);
 			} finally {

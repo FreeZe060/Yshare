@@ -15,7 +15,7 @@ export default function useEventCreated() {
             setLoading(true);
             try {
                 const data = await getCreatedEventsStats(user.id);
-                setEvent(data);
+                setEvent(Array.isArray(data.events) ? data.events : []);
             } catch (err) {
                 setError(err.message);
             } finally {

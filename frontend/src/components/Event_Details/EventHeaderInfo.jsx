@@ -7,7 +7,7 @@ function EventHeaderInfo({ event }) {
 
     return (
         <div className="flex md:flex-row flex-col justify-between items-start md:items-end gap-4 mb-12 pb-8 border-[#e5e5e5] border-b">
-            <div class="flex flex-row justify-between items-center gap-2 w-full">
+            <div className="flex flex-row justify-between items-center gap-2 w-full">
                 <h1 className="font-bold text-[42px] text-etBlack xs:text-[32px] leading-tight">
                     {capitalizeFirstLetter(event?.title)}
                 </h1>
@@ -25,13 +25,11 @@ function EventHeaderInfo({ event }) {
             </div>
 
             <div className="flex flex-col gap-2">
-                <p className="mt-2 font-light text-[16px] text-etGray">
-                    Créé par
+                <div className="mt-2 font-light text-[16px] text-etGray">
+                    <span>Créé par</span>
                     {event?.organizer ? (
                         <div>
-                            <Link
-                                to={`/profile/${event.organizer.id}`}
-                            >
+                            <Link to={`/profile/${event.organizer.id}`}>
                                 <img
                                     src={`http://localhost:8080${event.organizer.profileImage}`}
                                     alt="Organizer"
@@ -45,7 +43,7 @@ function EventHeaderInfo({ event }) {
                     ) : (
                         <div className="text-etGray text-sm">Organisateur inconnu</div>
                     )}
-                </p>
+                </div>
                 <div className="text-left">
                     <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
                     <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">

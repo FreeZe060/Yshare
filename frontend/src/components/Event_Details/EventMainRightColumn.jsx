@@ -14,19 +14,19 @@ function EventMainRightColumn({
 }) {
 
     return (
-        <div class="right space-y-[30px] w-[370px] lg:w-[360px] max-w-full shrink-0">
-            <div class="border border-[#e5e5e5] rounded-[16px] overflow-hidden et-event-details-ticket-widgget">
-                <div class="bg-[#C320C0] p-[16px] xxs:p-[12px]">
-                    <h5 class="font-medium text-[20px] text-white text-center">Sélectionnez la date et l’heure</h5>
+        <div className="right space-y-[30px] w-[370px] lg:w-[360px] max-w-full shrink-0">
+            <div className="border border-[#e5e5e5] rounded-[16px] overflow-hidden et-event-details-ticket-widgget">
+                <div className="bg-[#C320C0] p-[16px] xxs:p-[12px]">
+                    <h5 className="font-medium text-[20px] text-white text-center">Sélectionnez la date et l’heure</h5>
                 </div>
 
-                <div class="p-[22px] lg:p-[16px]">
-                    <div class="flex justify-between items-center mt-[6px] mb-[16px]">
-                        <h6 class="font-medium text-[#232323] text-[16px]">Plage horaire</h6>
+                <div className="p-[22px] lg:p-[16px]">
+                    <div className="flex justify-between items-center mt-[6px] mb-[16px]">
+                        <h6 className="font-medium text-[#232323] text-[16px]">Plage horaire</h6>
 
-                        <div class="flex items-center gap-[20px] text-[16px]" id="et-event-details-ticket-time-slider-nav">
-                            <button class="hover:text-[#C320C0] prev"><i class="fa-angle-left fa-solid"></i></button>
-                            <button class="hover:text-[#C320C0] next"><i class="fa-angle-right fa-solid"></i></button>
+                        <div className="flex items-center gap-[20px] text-[16px]" id="et-event-details-ticket-time-slider-nav">
+                            <button className="hover:text-[#C320C0] prev"><i className="fa-angle-left fa-solid"></i></button>
+                            <button className="hover:text-[#C320C0] next"><i className="fa-angle-right fa-solid"></i></button>
                         </div>
                     </div>
 
@@ -71,24 +71,26 @@ function EventMainRightColumn({
                         </p>
                     )}
 
-                    <button onClick={handleApplyToEvent} class="flex justify-center items-center gap-x-[10px] bg-[#C320C0] hover:bg-white px-[15px] border-[#C320C0] border-2 rounded-full w-full h-[50px] text-[15px] text-white hover:text-[#C320C0]">
+                    <button onClick={handleApplyToEvent} className="flex justify-center items-center gap-x-[10px] bg-[#C320C0] hover:bg-white px-[15px] border-[#C320C0] border-2 rounded-full w-full h-[50px] text-[15px] text-white hover:text-[#C320C0]">
                         <span>{`${event?.price > 0 ? "Candidater" : "Candidater"} (${formatEuro(event?.price)}) `}</span>
                     </button>
                 </div>
             </div>
 
-            <div class="border border-[#e5e5e5] rounded-[16px]">
-                <div class="bg-[#C320C0] p-[16px] xxs:p-[12px] rounded-t-[16px]">
-                    <h5 class="font-medium text-[17px] text-white text-center"><i className="mr-2 fas fa-map-marker-alt"></i>{address}</h5>
+            <div className="border border-[#e5e5e5] rounded-[16px]">
+                <div className="bg-[#C320C0] p-[16px] xxs:p-[12px] rounded-t-[16px]">
+                    <h5 className="font-medium text-[17px] text-white text-center"><i className="mr-2 fas fa-map-marker-alt"></i>{address}</h5>
                 </div>
-                <iframe
-                    src={googleMapUrl}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="rounded-b-[16px] w-full h-[280px]"
-                    title="Event Location"
-                />
+                {address && (
+                    <iframe
+                        src={googleMapUrl}
+                        allowFullScreen=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="rounded-b-[16px] w-full h-[280px]"
+                        title="Event Location"
+                    />
+                )}
             </div>
         </div>
     )

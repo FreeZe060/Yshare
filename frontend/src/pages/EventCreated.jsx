@@ -44,6 +44,8 @@ export default function EventCreated() {
     };
 
     useEffect(() => {
+        if (!Array.isArray(createdEvents)) return;
+
         let data = [...createdEvents];
         if (statusFilter) data = data.filter(p => p.status === statusFilter);
         if (eventFilter) data = data.filter(p => p.title === eventFilter);
@@ -52,7 +54,9 @@ export default function EventCreated() {
     }, [statusFilter, eventFilter, searchValue, createdEvents]);
 
 
-    const statuses = [...new Set(createdEvents.map(p => p.status))];
+    const statuses = Array.isArray(createdEvents)
+        ? [...new Set(createdEvents.map(p => p.status))]
+        : [];
     const events = [...new Set(createdEvents.map(p => p.title))];
 
     const getSuggestions = value => {
@@ -82,7 +86,7 @@ export default function EventCreated() {
                 <section className="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
                     <div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
                         <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">
-                            Toutes vos participations
+                            Toutes vos créations
                         </h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li className="opacity-80">
@@ -97,13 +101,13 @@ export default function EventCreated() {
                             <li>
                                 <i className="fa-solid fa-angle-right"></i>
                             </li>
-                            <li className="current-page">Toutes vos participations</li>
+                            <li className="current-page">Toutes vos créations</li>
                         </ul>
                     </div>
                 </section>
 
                 <div className="p-6 max-w-6xl mx-auto font-sans">
-
+                    <h1 className="text-3xl font-bold text-center mb-6">Vos créations</h1>
                     <FiltreParticipant
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}

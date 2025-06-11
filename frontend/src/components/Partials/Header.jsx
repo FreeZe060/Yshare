@@ -60,12 +60,6 @@ const Header = () => {
     return (
 
         <>
-            {/* <button
-            className="md:hidden ml-auto text-white"
-            onClick={() => setMenuOpen(prev => !prev)}
-            >
-            <i className="text-2xl fas fa-bars" />
-            </button> */}
             <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
@@ -89,7 +83,6 @@ const Header = () => {
                                 <span className="mx-1">Accueil</span>
                             </Link>
 
-                            {/* Artists */}
                             <Link
                                 to="/news"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/artists" ? "text-gray-300" : ""
@@ -99,7 +92,6 @@ const Header = () => {
                                 <span className="mx-1">Actualités</span>
                             </Link>
 
-                            {/* Albums */}
                             <Link
                                 to="/create-event"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300`}
@@ -107,18 +99,6 @@ const Header = () => {
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
                                 <span className="mx-1">Créer des Evénements</span>
                             </Link>
-
-                            {/* <Link
-                                to="/albums"
-                                className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
-                                    }`}
-                            >
-                                <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1">About Us</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
-                            </Link> */}
 
                             <Link
                                 to="/team"
@@ -139,11 +119,11 @@ const Header = () => {
                                             onClick={() => setShowNotif(!showNotif)}
                                             className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
                                         >
-                                            <i class="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
+                                            <i className="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
                                             {!notifLoading && notifications?.length > 0 && (
-                                                <span class="-top-2 -left-0 absolute size-3.5">
-                                                    <span class="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
-                                                    <span class="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
+                                                <span className="-top-2 -left-0 absolute size-3.5">
+                                                    <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                                    <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
                                                         {notifications?.length || 0}
                                                     </span>
                                                 </span>
@@ -241,8 +221,8 @@ const Header = () => {
                                         to="/login"
                                         className="flex items-center gap-2 bg-[#C621C0] hover:bg-[#c621c0d4] px-4 py-2 rounded-xl text-gray-50"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                         <span>Se Connecter</span>
                                     </Link>
@@ -296,11 +276,6 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-
-            {/* {menuOpen && (
-            <div className="md:hidden flex flex-col gap-4 mt-4 w-full">
-            </div>
-            )} */}
         </>
     );
 };

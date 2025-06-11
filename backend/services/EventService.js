@@ -1,4 +1,4 @@
-const { Event, Category, EventImage, Participant, User } = require('../models');
+const { Event, Category, EventImage, Participant, User, EventGuest } = require('../models');
 const { Op, fn, col } = require('sequelize');
 
 class EventService {
@@ -311,6 +311,22 @@ class EventService {
                     as: 'EventImages',
                     order: [['is_main', 'DESC']],
                     limit: 1
+                },
+                {
+                    model: Participant,
+                    as: 'participants',
+                    attributes: ['id', 'id_user', 'id_event', 'status', 'request_message', 'organizer_response', 'joined_at'], // ⬅️ Inclure les champs nécessaires
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'name', 'lastname', 'email', 'profileImage'] // ⬅️ Retirer bio ici
+                        },
+                        {
+                            model: EventGuest,
+                            as: 'guests',
+                            attributes: ['firstname', 'lastname', 'email']
+                        }
+                    ]
                 }
             ],
             order: [['date_created', 'DESC']]

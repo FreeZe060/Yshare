@@ -19,8 +19,6 @@ function FiltreParticipant({
 }) {
     return (
         <div>
-            <h1 className="text-3xl font-bold text-center mb-6">Mes participations</h1>
-
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}

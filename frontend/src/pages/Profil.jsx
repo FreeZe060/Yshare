@@ -229,7 +229,7 @@ const Profil = () => {
                                                         : "Cet utilisateur n'a pour l'instant créé aucun événement."
                                                     : null
                                             }
-                                            buttonLink={isOwner ? "/create-event" : undefined}
+                                            buttonLink={isOwner ? "/event-created" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
                                             {...(createdEvents.length > 0 && {
                                                 linkText: "Voir tout l'historique"
