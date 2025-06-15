@@ -60,6 +60,7 @@ const Header = () => {
     return (
 
         <>
+            <NotificationSidebar notifications={notifications} isOpen={showNotif} setIsOpen={setShowNotif} />
             <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
@@ -130,7 +131,7 @@ const Header = () => {
                                             )}
                                         </span>
 
-                                        <AnimatePresence>
+                                        {/* <AnimatePresence>
                                             {showNotif && (
                                                 <motion.div
                                                     ref={notifRef}
@@ -159,7 +160,7 @@ const Header = () => {
                                                     </div>
                                                 </motion.div>
                                             )}
-                                        </AnimatePresence>
+                                        </AnimatePresence> */}
                                     </div>
                                     <div className="relative ml-4">
                                         <button
