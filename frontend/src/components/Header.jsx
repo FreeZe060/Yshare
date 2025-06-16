@@ -7,7 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
-    const { notifications, loading: notifLoading } = useNotifications();
+    const { notifications: initialNotifications, loading: notifLoading } = useNotifications();
+    const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
     const [showNotif, setShowNotif] = useState(false);
@@ -55,15 +56,31 @@ const Header = () => {
     }, []);
 
 
+    useEffect(() => {
+        if (initialNotifications) {
+            setNotifications(initialNotifications);
+        }
+    }, [initialNotifications]);
+
+
     return (
 
         <>
+<<<<<<< Updated upstream:frontend/src/components/Header.jsx
             {/* <button
             className="md:hidden ml-auto text-white"
             onClick={() => setMenuOpen(prev => !prev)}
             >
             <i className="text-2xl fas fa-bars" />
             </button> */}
+=======
+            <NotificationSidebar
+                notifications={notifications}
+                setNotifications={setNotifications}
+                isOpen={showNotif}
+                setIsOpen={setShowNotif}
+            />
+>>>>>>> Stashed changes:frontend/src/components/Partials/Header.jsx
             <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
                     <Link to="/" className="xs:hidden">
@@ -143,11 +160,21 @@ const Header = () => {
                                             onClick={() => setShowNotif(!showNotif)}
                                             className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
                                         >
+<<<<<<< Updated upstream:frontend/src/components/Header.jsx
                                             <i className="flex justify-center items-center bg-gray-800 rounded-full w-8 h-8 text-gray-200 fa-solid fa-bell"></i>
                                             <span className="top-0 -left-0 absolute flex size-3.5">
                                                 <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
                                                 <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white">
                                                     {notifications?.length || 0}
+=======
+                                            <i className="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
+                                            {!notifLoading && notifications?.filter(n => !n.read_status).length > 0 && (
+                                                <span className="-top-2 -left-0 absolute size-3.5">
+                                                    <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                                    <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
+                                                        {notifications.filter(n => !n.read_status).length}
+                                                    </span>
+>>>>>>> Stashed changes:frontend/src/components/Partials/Header.jsx
                                                 </span>
                                             </span>
                                         </span>

@@ -19,6 +19,13 @@ const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
+<<<<<<< Updated upstream
+=======
+const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
+const conversationController = require('../controllers/conversationController');
+const { extractUserFromToken } = require('../middlewares/authOptional');
+const isNotificationOwnerOrAdmin = require('../middlewares/isNotificationOwnerOrAdmin');
+>>>>>>> Stashed changes
 
 
 //////// LOGS ROUTES ////////
@@ -127,11 +134,12 @@ router.get('/categories', categoryController.getAllCategories);
 
 //////// NOTIFICATION ROUTES ////////
 
-router.get('/notifications', authenticateToken, notificationController.getAllNotifications);
-router.get('/notifications/:notificationId', authenticateToken, notificationController.getNotificationById);
-router.put('/notifications/:notificationId/read', authenticateToken, notificationController.markNotificationAsRead);
-router.put('/notifications/read-all', authenticateToken, notificationController.markAllNotificationsAsRead);
-router.delete('/notifications/:notificationId', authenticateToken, notificationController.deleteNotification);
+router.get('/notifications', authenticateToken, isNotificationOwnerOrAdmin, notificationController.getAllNotifications);
+router.get('/notifications/:notificationId', authenticateToken, isNotificationOwnerOrAdmin, notificationController.getNotificationById);
+router.put('/notifications/:notificationId/read', authenticateToken, isNotificationOwnerOrAdmin, notificationController.markNotificationAsRead);
+router.put('/notifications/read-all', authenticateToken, isNotificationOwnerOrAdmin, notificationController.markAllNotificationsAsRead);
+router.delete('/notifications/:notificationId', authenticateToken, isNotificationOwnerOrAdmin, notificationController.deleteNotification);
+router.put('/notifications/:notificationId/unread', authenticateToken, isNotificationOwnerOrAdmin, notificationController.markNotificationAsUnread);
 
 //////// FAVORIS ROUTES ////////
 

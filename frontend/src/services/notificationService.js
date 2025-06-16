@@ -32,6 +32,21 @@ export async function getNotificationById(notificationId, token) {
 	return result;
 }
 
+export const markNotificationAsUnread = async (notificationId, token) => {
+	const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/unread`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`,
+		},
+		credentials: "include",
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour de la notification (unread)");
+	return result;
+};
+
 /**
  * PUT /notifications/:notificationId/read
  */

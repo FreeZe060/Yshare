@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 
+<<<<<<< Updated upstream
 const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30 minutes
+=======
+const INACTIVITY_LIMIT = 30 * 60 * 1000;
+>>>>>>> Stashed changes
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;

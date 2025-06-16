@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { markAllNotificationsAsRead } from "../services/notificationService";
-import { useAuth } from "../context/AuthContext";
+import { markAllNotificationsAsRead } from "../../services/notificationService";
+import { useAuth } from "../../config/authHeader";
 
 function useMarkAllNotificationsAsRead() {
 	const [loading, setLoading] = useState(false);
@@ -12,7 +12,7 @@ function useMarkAllNotificationsAsRead() {
 		setLoading(true);
 		setError(null);
 		try {
-			return await markAllNotificationsAsRead(user.token);
+			await markAllNotificationsAsRead(user.token);
 		} catch (err) {
 			setError(err.message);
 			throw err;
@@ -21,7 +21,13 @@ function useMarkAllNotificationsAsRead() {
 		}
 	};
 
-	return { markAllAsRead, loading, error };
+	const updateLocalNotifications = (setLocalNotifications) => {
+		setLocalNotifications((prev) =>
+			prev.map((n) => ({ ...n, read_status: true }))
+		);
+	};
+
+	return { markAllAsRead, updateLocalNotifications, loading, error };
 }
 
 export default useMarkAllNotificationsAsRead;

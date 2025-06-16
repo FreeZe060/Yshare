@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { deleteNotification } from "../services/notificationService";
-import { useAuth } from "../context/AuthContext";
+import { deleteNotification } from "../../services/notificationService";
+import { useAuth } from "../config/authHeader";
 
 function useDeleteNotification() {
 	const [loading, setLoading] = useState(false);

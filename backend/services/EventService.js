@@ -307,6 +307,25 @@ class EventService {
                     as: 'EventImages',
                     order: [['is_main', 'DESC']],
                     limit: 1
+<<<<<<< Updated upstream
+=======
+                },
+                {
+                    model: Participant,
+                    as: 'participants',
+                    attributes: ['id', 'id_user', 'id_event', 'status', 'request_message', 'organizer_response', 'joined_at'], // ⬅️ Inclure les champs nécessaires
+                    include: [
+                        {
+                            model: User,
+                            attributes: ['id', 'name', 'lastname', 'email', 'profileImage']
+                        },
+                        {
+                            model: EventGuest,
+                            as: 'guests',
+                            attributes: ['firstname', 'lastname', 'email']
+                        }
+                    ]
+>>>>>>> Stashed changes
                 }
             ],
             order: [['date_created', 'DESC']]

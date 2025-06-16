@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { markNotificationAsRead } from "../../services/notificationService";
+import { markNotificationAsUnread } from "../../services/notificationService";
 import { useAuth } from "../../config/authHeader";
 
-function useMarkNotificationAsRead() {
+function useMarkNotificationAsUnread() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const { user } = useAuth();
 
-	const markAsRead = async (notificationId) => {
+	const markAsUnread = async (notificationId) => {
 		if (!user?.token) throw new Error("Authentification requise");
 		setLoading(true);
 		setError(null);
 		try {
-			return await markNotificationAsRead(notificationId, user.token);
+			return await markNotificationAsUnread(notificationId, user.token);
 		} catch (err) {
 			setError(err.message);
 			throw err;
@@ -21,7 +21,7 @@ function useMarkNotificationAsRead() {
 		}
 	};
 
-	return { markAsRead, loading, error };
+	return { markAsUnread, loading, error };
 }
 
-export default useMarkNotificationAsRead;
+export default useMarkNotificationAsUnread;
