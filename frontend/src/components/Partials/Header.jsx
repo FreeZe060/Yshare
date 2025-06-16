@@ -5,6 +5,11 @@ import logo from "../../logo.png";
 import useNotifications from "../../hooks/Notification/useNotifications";
 import { AnimatePresence, motion } from "framer-motion";
 import NotificationSidebar from "../Notification/NotificationSidebar";
+import useMarkNotificationAsRead from "../../hooks/Notification/useMarkNotificationAsRead";
+import useMarkAllNotificationsAsRead from "../../hooks/Notification/useMarkAllNotificationsAsRead";
+import useMarkNotificationAsUnread from "../../hooks/Notification/useMarkNotificationAsUnread";
+import useDeleteNotification from "../../hooks/Notification/useDeleteNotification";
+
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
@@ -14,6 +19,11 @@ const Header = () => {
     const location = useLocation();
     const [showNotif, setShowNotif] = useState(false);
     const notifRef = useRef(null);
+    const { markAsRead } = useMarkNotificationAsRead();
+    const { markAsUnread } = useMarkNotificationAsUnread();
+    const { markAllAsRead } = useMarkAllNotificationsAsRead();
+    const { removeNotification } = useDeleteNotification();
+
 
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
@@ -63,6 +73,41 @@ const Header = () => {
         }
     }, [initialNotifications]);
 
+    const toggleReadStatus = async (notif) => {
+        try {
+            if (notif.read_status) {
+                await markAsUnread(notif.id);
+            } else {
+                await markAsRead(notif.id);
+            }
+
+            const updated = notifications.map(n =>
+                n.id === notif.id ? { ...n, read_status: !n.read_status } : n
+            );
+            setNotifications(updated);
+        } catch (err) {
+            console.error("Erreur en changeant le statut lu/non lu", err);
+        }
+    };
+
+    const handleMarkAllAsRead = async () => {
+        try {
+            await markAllAsRead();
+            const updated = notifications.map(n => ({ ...n, read_status: true }));
+            setNotifications(updated);
+        } catch (err) {
+            console.error("Erreur lors de marquer tout comme lu", err);
+        }
+    };
+
+    const handleDeleteNotification = async (id) => {
+        try {
+            await removeNotification(id);
+            setNotifications((prev) => prev.filter((n) => n.id !== id));
+        } catch (error) {
+            console.error("Erreur lors de la suppression :", error);
+        }
+    };
 
     return (
         <>
@@ -71,6 +116,10 @@ const Header = () => {
                 setNotifications={setNotifications}
                 isOpen={showNotif}
                 setIsOpen={setShowNotif}
+                onToggleRead={toggleReadStatus}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onDelete={handleDeleteNotification}
+                loading={notifLoading}
             />
             <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
                 <div className={`bg-gray-900 text-gray-500 w-[100%] xs:shadow-none shadow-lg font-medium capitalize flex items-center gap-4 ${scrolled ? "p-5 rounded-lg" : "p-8"} transition-all duration-300`}>
