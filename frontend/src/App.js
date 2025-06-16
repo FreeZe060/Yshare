@@ -17,7 +17,6 @@ import EventDetails from './pages/EventDetails';
 import TeamPage from './pages/TeamPage';
 import NewsPage from './pages/NewsPage';
 import { LegalMentions, PrivacyPolicy, TermsOfUse, TermsOfSale } from './pages/LegalPages';
-import NotificationPage from './pages/NotificationPage';
 import NewsDetails from './pages/NewsDetails';
 import UserParticipationPage from './pages/ParticipantPage';
 import EventCreated from './pages/EventCreated';
@@ -43,7 +42,6 @@ function App() {
 				<Route path="/news/:newsId" element={<NewsDetails />}/>
 				<Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
 				<Route path="/participation" element={<PrivateRoute><UserParticipationPage /></PrivateRoute>} />
-				<Route path="/notifications" element={<PrivateRoute><NotificationPage /></PrivateRoute>} />
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
