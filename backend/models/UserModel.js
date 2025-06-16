@@ -22,14 +22,7 @@ const User = sequelize.define('User', {
     },
     password: {
         type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-            notEmptyIfLocal(value) {
-                if (!this.provider && (!value || value.trim() === '')) {
-                    throw new Error('Le mot de passe est obligatoire pour une inscription locale.');
-                }
-            }
-        }
+        allowNull: true
     },
     role: {
         type: DataTypes.STRING,
@@ -70,8 +63,6 @@ const User = sequelize.define('User', {
         type: DataTypes.ENUM('Approved', 'Suspended'),
         defaultValue: 'Approved'
     },
-
-    // Nouveaux champs ajoutés :
     phone: {
         type: DataTypes.STRING,
         allowNull: true

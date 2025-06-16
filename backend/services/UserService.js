@@ -1,4 +1,4 @@
-const { User, Participant, Event } = require('../models');
+const { User, Participant, Event, Comment, Favoris, Rating, EventCategory } = require('../models');
 
 class UserService {
     async getAllUsers() {
@@ -20,16 +20,20 @@ class UserService {
     async createUser(
         { name, lastname, email, password, gender, profileImage, provider = null, bio = null, city = null, street = null, streetNumber = null, bannerImage = null,
             phone = null, birthdate = null, linkedinUrl = null, instaUrl = null, websiteUrl = null }) {
-        
+
         console.log("[createUser] Données reçues :", {
             name, lastname, email, gender, profileImage, provider,
             bio, city, street, streetNumber, bannerImage, phone,
             birthdate, linkedinUrl, instaUrl, websiteUrl
         });
 
-        if (!gender) {
-            console.error("[createUser] Erreur : le genre est obligatoire.");
-            throw new Error("Le champ 'genre' est requis pour l'inscription.");
+        if (!provider) {
+            if (!password || password.trim() === '') {
+                throw new Error("Le mot de passe est requis pour une inscription locale.");
+            }
+            if (!gender) {
+                throw new Error("Le genre est requis pour une inscription locale.");
+            }
         }
 
         return await User.create(
@@ -70,10 +74,62 @@ class UserService {
     }
 
     async deleteUser(userId) {
-        const user = await this.findById(userId);
-        if (!user) throw new Error('Utilisateur non trouvé');
-        await user.destroy();
-        return { message: "Utilisateur supprimé avec succès." };
+        try {
+            const user = await this.findById(userId);
+            if (!user) {
+                throw new Error('Utilisateur non trouvé');
+            }
+
+            const userEvents = await Event.findAll({
+                where: {
+                    id_org: userId
+                }
+            });
+
+            for (const event of userEvents) {
+                await EventCategory.destroy({
+                    where: {
+                        id_event: event.id
+                    }
+                });
+            }
+
+            await Event.destroy({
+                where: {
+                    id_org: userId
+                }
+            });
+
+            await Participant.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            await Comment.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            await Favoris.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            await Rating.destroy({
+                where: {
+                    id_user: userId
+                }
+            });
+
+            await user.destroy();
+            return true;
+        } catch (error) {
+            console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+            throw error;
+        }
     }
 }
 

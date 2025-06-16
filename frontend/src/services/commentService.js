@@ -97,8 +97,15 @@ export async function deleteComment(commentId, token) {
 			Authorization: `Bearer ${token}`,
 		},
 	});
+	
+	if (!response.ok) {
+		const error = await response.json();
+		console.error('[commentService] deleteComment error:', response.status, error);
+		throw new Error(error.message || "Erreur lors de la suppression du commentaire");
+	}
+	
 	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression du commentaire");
+	console.log('[commentService] Commentaire supprimé:', result);
 	return result;
 }
 

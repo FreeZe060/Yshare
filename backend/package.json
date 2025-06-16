@@ -6,6 +6,7 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "backend-app": "file:",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
@@ -27,6 +28,8 @@
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
     "sequelize": "^6.37.6",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   }
 }

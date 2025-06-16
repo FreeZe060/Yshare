@@ -145,18 +145,20 @@ exports.getProfile = async (req, res) => {
         const requesterId = req.user?.id;
         const requestedId = req.params.userId || requesterId;
 
-        console.log(`[getProfile] Récupération du profil pour l'utilisateur ID : ${requestedId}, demandé par : ${requesterId || "public"}`);
+        console.log(`[getProfile] 🔍 Requête de profil pour userId=${requestedId}, par ${requesterId || 'invité'}`);
 
         const user = await userService.findById(requestedId);
 
         if (!user) {
-            console.warn(`[getProfile] Utilisateur non trouvé pour l'ID : ${requestedId}`);
+            console.warn(`[getProfile] ⚠️ Utilisateur non trouvé pour ID ${requestedId}`);
             return res.status(404).json({ message: "Utilisateur non trouvé" });
         }
 
         const isAdmin = req.user?.role === 'Administrateur';
         const isOwner = requesterId && Number(requesterId) === Number(user.id);
         const isPrivate = isOwner || isAdmin;
+
+        console.log(`[getProfile] 👤 Accès ${isPrivate ? 'privé' : 'public'} (admin: ${isAdmin}, owner: ${isOwner})`);
 
         const {
             id, name, lastname, profileImage, bannerImage,
@@ -175,24 +177,29 @@ exports.getProfile = async (req, res) => {
             gender,
             birthdate,
             role: isPrivate ? role : undefined,
-            email: isPrivate || showEmail ? email : undefined,
-            phone: isPrivate || showPhone ? phone : undefined,
-            city: isPrivate || showAddress ? city : undefined,
-            street: isPrivate || showAddress ? street : undefined,
-            streetNumber: isPrivate || showAddress ? streetNumber : undefined,
+            email: (isPrivate || showEmail) ? email : undefined,
+            phone: (isPrivate || showPhone) ? phone : undefined,
+            city: (isPrivate || showAddress) ? city : undefined,
+            street: (isPrivate || showAddress) ? street : undefined,
+            streetNumber: (isPrivate || showAddress) ? streetNumber : undefined,
             linkedinUrl,
             instaUrl,
             websiteUrl,
-            showEmail: user.showEmail,
-            showPhone: user.showPhone,
-            showAddress: user.showAddress
+            showEmail,
+            showPhone,
+            showAddress
         };
 
-        console.log(`[getProfile] Profil renvoyé pour ${requestedId} (visibilité : ${isPrivate ? 'privée' : 'publique'})`);
+        console.log(`[getProfile] ✅ Données renvoyées :`, {
+            email: !!safeUser.email,
+            phone: !!safeUser.phone,
+            addressVisible: !!(safeUser.city || safeUser.street || safeUser.streetNumber)
+        });
+
         return res.status(200).json(safeUser);
 
     } catch (error) {
-        console.error("[getProfile] Erreur serveur :", error);
+        console.error("[getProfile] ❌ Erreur serveur :", error);
         return res.status(500).json({ message: error.message });
     }
 };
@@ -315,34 +322,6 @@ exports.getEventHistory = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
-
-// exports.getPublicProfile = async (req, res) => {
-//     try {
-//         const { userId } = req.params;
-//         console.log(`[getPublicProfile] Récupération du profil public pour l'utilisateur ID: ${userId}`);
-
-//         const user = await userService.findById(userId);
-
-//         if (!user) {
-//             console.warn(`[getPublicProfile] Utilisateur non trouvé pour l'ID ${userId}`);
-//             return res.status(404).json({ message: "Utilisateur non trouvé" });
-//         }
-
-//         console.log(`[getPublicProfile] Utilisateur trouvé : ${user.name} ${user.lastname}`);
-//         return res.json({
-//             id: user.id,
-//             name: user.name,
-//             lastname: user.lastname,
-//             profileImage: user.profileImage,
-//             bio: user.bio,
-//             bannerImage: user.bannerImage,
-
-//         });
-//     } catch (error) {
-//         console.error("[getPublicProfile] Erreur serveur :", error);
-//         return res.status(500).json({ message: "Erreur serveur", error: error.message });
-//     }
-// };
 
 exports.getUserEventsAdmin = async (req, res) => {
     try {

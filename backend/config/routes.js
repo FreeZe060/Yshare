@@ -19,13 +19,10 @@ const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
 const UserOrAdmin = require('../middlewares/UserOrAdmin');
 const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
 const isAdmin = require('../middlewares/Admin');
-<<<<<<< Updated upstream
-=======
 const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
 const conversationController = require('../controllers/conversationController');
 const { extractUserFromToken } = require('../middlewares/authOptional');
 const isNotificationOwnerOrAdmin = require('../middlewares/isNotificationOwnerOrAdmin');
->>>>>>> Stashed changes
 
 
 //////// LOGS ROUTES ////////
@@ -69,7 +66,7 @@ router.patch('/events/update-statuses', eventController.updateAllEventStatusesBy
 
 router.post('/register', profileUpload.single('profileImage'), userController.register);
 router.post('/login', userController.login);
-router.get('/profile/:userId', userController.getProfile);
+router.get('/profile/:userId', extractUserFromToken, userController.getProfile);
 router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
 router.put( '/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile );
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
@@ -83,8 +80,13 @@ router.get('/users/:userId/created-events', eventController.getCreatedEventsPubl
 
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { session: false }), (req, res) => {
-	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
+	res.cookie('auth_token', req.user.token, {
+		httpOnly: true,
+		maxAge: 10 * 60 * 60 * 1000 
+	});
+	res.redirect('http://localhost:3000/'); 
 });
+
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), (req, res) => {
 	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
@@ -120,9 +122,9 @@ router.get('/comments/all', authenticateToken, isAdmin, commentController.getAll
 router.get( '/comments/:commentId', authenticateToken, isAdmin, commentController.getCommentById);
 router.post('/events/:eventId/comments', authenticateToken, commentController.addComment);
 router.post('/events/:eventId/comments/:commentId/reply', authenticateToken, commentController.replyComment);
-router.put('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.updateComment);
+router.put('/comments/:commentId', authenticateToken, isCommentOwnerOrAdmin, commentController.updateComment);
 router.get('/users/:userId/comments', commentController.getUserComments);
-router.delete('/comments/:commentId', authenticateToken, UserOrAdmin, commentController.deleteComment);
+router.delete('/comments/:commentId', authenticateToken, isCommentOwnerOrAdmin, commentController.deleteComment);
 router.post('/comments/:commentId/reactions', authenticateToken, commentController.addReaction);
 router.delete('/comments/:commentId/reactions', authenticateToken, commentController.removeReaction);
 router.get('/comments/:commentId/reactions', commentController.getReactions);
@@ -152,10 +154,30 @@ router.get('/favoris/:eventId', authenticateToken, favorisController.getFavorisB
 
 router.post('/news', authenticateToken, newsUpload.single('image'), newsController.createNews);
 router.get('/news', newsController.getAllNews);
+router.get('/news/:newsId/details', newsController.getNewsDetails);
 router.get('/news/event/:eventId', newsController.getNewsByEventId);
 router.get('/news/my', authenticateToken, newsController.getNewsByUserId);
 router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.single('image'), newsController.updateNews);
 router.delete('/news/:newsId', isNewsOwnerOrAdmin, newsController.deleteNews);
+router.post( '/news/:newsId/category', authenticateToken, isNewsOwnerOrAdmin, newsController.addCategoryToNews);
+router.delete( '/news/:newsId/category/:categoryId', authenticateToken, isNewsOwnerOrAdmin, newsController.removeCategoryFromNews);
+
+//////// CONVERSATION ROUTES ////////
+
+router.get('/conversations', authenticateToken, isAdmin, conversationController.getAllConversations);
+router.get('/conversations/my', authenticateToken, conversationController.getMyConversations);
+router.post('/conversations', authenticateToken, conversationController.startOrGetConversation);
+router.post('/messages', authenticateToken, conversationController.sendMessage);
+router.put('/messages/:messageId', authenticateToken, UserOrAdmin, conversationController.editMessage);
+router.delete('/messages/:messageId', authenticateToken, UserOrAdmin, conversationController.deleteMessage);
+router.post('/messages/:messageId/reactions', authenticateToken, UserOrAdmin, conversationController.reactToMessage);
+router.delete('/messages/:messageId/reactions', authenticateToken, UserOrAdmin, conversationController.removeReaction);
+router.patch('/messages/:messageId/seen', authenticateToken, conversationController.markAsSeen);
+router.delete('/conversations/:conversationId', authenticateToken, UserOrAdmin, conversationController.deleteConversation);
+router.patch('/conversations/:conversationId/link', authenticateToken, conversationController.linkToEventOrNews);
+router.patch('/conversations/:conversationId/update-link', authenticateToken, conversationController.updateLinkedItem);
+router.patch('/conversations/:conversationId/unlink', authenticateToken, conversationController.unlinkEventOrNews);
+router.get('/conversations/between/:user1Id/:user2Id', authenticateToken, isAdmin, conversationController.getConversationBetweenUsers);
 
 //////// RATING ROUTES ////////
 
@@ -198,6 +220,17 @@ router.get('/auth/check', authenticateToken, async (req, res) => {
 	} catch (err) {
 		console.error("Erreur lors de l'auth check :", err.message);
 		res.status(500).json({ authenticated: false, error: "Erreur serveur" });
+	}
+});
+
+router.delete('/auth/delete-account', authenticateToken, async (req, res) => {
+	try {
+		await userService.deleteUser(req.user.id);
+		res.clearCookie('auth_token');
+		res.status(200).json({ message: "Compte supprimé avec succès" });
+	} catch (error) {
+		console.error('Erreur lors de la suppression du compte:', error);
+		res.status(500).json({ message: "Erreur lors de la suppression du compte" });
 	}
 });
 

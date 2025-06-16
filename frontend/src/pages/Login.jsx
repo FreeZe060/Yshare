@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import useLogin from '../hooks/User/useLogin';
 import Swal from 'sweetalert2';
 import 'animate.css';
-import Header from "../components/Header";
+import Header from "../components/Partials/Header";
 import { useAuth } from '../config/authHeader';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
@@ -31,7 +31,9 @@ const Login = () => {
 		if (token) {
 			localStorage.setItem('token', token);
 			loginContext({ token });
-			navigate('/');
+			const lastVisited = localStorage.getItem('lastVisited') || '/';
+			localStorage.removeItem('lastVisited');
+			window.location.href = lastVisited;
 		}
 	}, [location]);
 
@@ -49,7 +51,9 @@ const Login = () => {
 				showConfirmButton: false,
 				timer: 1500,
 			}).then(() => {
-				window.location.href = '/';
+				const lastVisited = localStorage.getItem('lastVisited') || '/';
+				localStorage.removeItem('lastVisited');
+				window.location.href = lastVisited;
 			});
 		} catch (err) {
 			Swal.fire({

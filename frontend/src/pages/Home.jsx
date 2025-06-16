@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 // import "../css/style.css";
 
-import Header from "../components/Header";
-import Footer from '../components/Footer';
+import Header from "../components/Partials/Header";
+import Footer from '../components/Partials/Footer';
 
 // import BannerEvent from "../components/BannerEvent";
 // import AboutEvent from "../components/About";
-import EventsList from "../components/EventsList";
-import CalendarEventSection from '../components/CalendarEventSection';
+import EventsList from "../components/Home/EventsList";
+import CalendarEventSection from '../components/Home/CalendarEventSection';
 
 import useEventDetails from "../hooks/Events/useEventDetails";
 import useEvents from "../hooks/Events/useEvents";
 import useComments from "../hooks/Comments/useComments";
-import AboutClub from '../components/AboutClub';
-import EventsListEventics from '../components/EventsListEventics';
-import CookieBanner from '../components/CookieBanner';
+import AboutClub from '../components/About/AboutClub';
+import EventsListEventics from '../components/Home/EventsListEventics';
+import CookieBanner from '../components/Home/CookieBanner';
 
 
 function Home() {
