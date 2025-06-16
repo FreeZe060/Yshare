@@ -319,7 +319,7 @@ class EventService {
                     include: [
                         {
                             model: User,
-                            attributes: ['id', 'name', 'lastname', 'email', 'profileImage'] // ⬅️ Retirer bio ici
+                            attributes: ['id', 'name', 'lastname', 'email', 'profileImage']
                         },
                         {
                             model: EventGuest,
