@@ -4,7 +4,7 @@ import { useAuth } from "../../config/authHeader";
 import logo from "../../logo.png";
 import useNotifications from "../../hooks/Notification/useNotifications";
 import { AnimatePresence, motion } from "framer-motion";
-import NotificationSidebar from "../NotificationSidebar";
+import NotificationSidebar from "../Notification/NotificationSidebar";
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};

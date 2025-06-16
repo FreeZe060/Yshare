@@ -112,6 +112,9 @@ Message.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
 Message.hasMany(Message, { foreignKey: 'reply_to_message_id', as: 'replies' });
 Message.belongsTo(Message, { foreignKey: 'reply_to_message_id', as: 'replyTo' });
 
+Favoris.belongsTo(Event, { foreignKey: 'id_event', as: 'Event', });
+Favoris.belongsTo(User, { foreignKey: 'id_user', as: 'User', });
+
 module.exports = {
   sequelize,
   User,

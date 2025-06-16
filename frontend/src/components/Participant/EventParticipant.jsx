@@ -1,184 +1,153 @@
-import React from 'react';
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import dayjs from 'dayjs';
-import { AnimatePresence } from 'framer-motion';
+import '../../assets/css/style.css';
+import useSlideUpAnimation from '../../hooks/Animations/useSlideUpAnimation';
+import useTextAnimation from '../../hooks/Animations/useTextAnimation';
+import vector1 from "../../assets/img/et-3-event-vector.svg";
+import vector2 from "../../assets/img/et-3-event-vector-2.svg";
+import FiltreParticipant from './FiltreParticipant';
 
-function EventParticipant({
+function Event_Participated({
     filtered,
-    setExpanded,
-    expanded,
-    getStatusClass
+    API_BASE_URL,
+    getFormattedDayAndMonthYear,
+    capitalizeFirstLetter,
+    formatEuro,
+    statusFilter,
+    setStatusFilter,
+    eventFilter,
+    setEventFilter,
+    searchValue,
+    setSearchValue,
+    suggestions,
+    onSuggestionsFetchRequested,
+    onSuggestionsClearRequested,
+    statuses,
+    events,
+    inputProps
 }) {
+    const [visibleGuests, setVisibleGuests] = useState({});
+
+    const toggleGuests = (eventId) => {
+        setVisibleGuests((prev) => ({
+            ...prev,
+            [eventId]: !prev[eventId],
+        }));
+    };
+
+    useSlideUpAnimation('.rev-slide-up', filtered);
+    useTextAnimation();
+
     return (
-        <div className="space-y-10">
-            {filtered.map((item, index) => (
-                <React.Fragment key={index}>
-                    <div className="et-schedule flex md:flex-wrap gap-x-[20px] gap-y-[15px] justify-between sm:justify-center rounded-[15px]">
-                        <div className="w-[300px] rounded-[15px] overflow-hidden shadow-md flex flex-col bg-white">
-                            <img
-                                src={`http://localhost:8080${item.image}`}
-                                alt={item.title}
-                                className="object-cover w-full h-[190px] rounded-t-[10px]"
-                            />
+        <section className="z-[1] relative py-[60px] md:py-[60px] xl:py-[80px] overflow-hidden">
+            <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
+                <div className="mb-[60px] md:mb-[40px] pb-[60px] md:pb-[40px] border-[#8E8E93]/25 border-b">
+                    <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
+                        Vos participations
+                    </h6>
+                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements auxquels vous participez</h2>
+                    <FiltreParticipant
+                        statusFilter={statusFilter}
+                        setStatusFilter={setStatusFilter}
+                        eventFilter={eventFilter}
+                        setEventFilter={setEventFilter}
+                        searchValue={searchValue}
+                        setSearchValue={setSearchValue}
+                        suggestions={suggestions}
+                        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                        onSuggestionsClearRequested={onSuggestionsClearRequested}
+                        statuses={statuses}
+                        events={events}
+                        inputProps={inputProps}
+                    />
+                </div>
 
-                            <h3 className="mt-3 text-[18px] font-semibold text-etBlack text-center line-clamp-2">
-                                <Link to={`/event/${item.id_event}`} className="hover:text-etBlue transition-colors duration-200">
-                                    {item.title}
-                                </Link>
-                            </h3>
+                {filtered.map((item, index) => {
+                    const imageUrl = item.image?.startsWith('http')
+                        ? item.image
+                        : `${API_BASE_URL}${item.image || ''}`;
 
-                            <Link
-                                to={`/profile/${item.organizer?.id}`}
-                                className="mt-2 ml-4 flex items-center mb-2 gap-2 text-sm text-gray-600 hover:text-etBlue transition"
-                            >
-                                <img
-                                    src={`http://localhost:8080${item.organizer?.image}`}
-                                    alt="organizer"
-                                    className="w-8 h-8 rounded-full border border-gray-300 hover:scale-105 transition"
-                                />
-                                <span className="font-medium">{item.organizer?.name} {item.organizer?.lastname}</span>
-                            </Link>
-                        </div>
-
-
-                        <div className="px-[20px] sm:px-[15px] py-[20px] shadow-md w-full rounded-[15px] flex gap-y-[10px] xs:flex-col bg-white transition duration-300 hover:shadow-lg">
-                            <div className="et-schedule__heading pr-[25px] sm:pr-[15px] min-w-[550px] sm:min-w-0 xs:pr-0 mr-[25px] sm:mr-[15px] xs:mr-0 border-r xs:border-r-0 border-[#d9d9d9]">
-                                <div className="flex justify-between items-center mb-[8px]">
-                                    <div className="et-schedule-date-time border border-gray-300 py-[5px] px-[10px] rounded-full inline-flex items-center gap-x-[12px] text-sm bg-gray-50 animate-fade-in">
-                                        <span className="icon">📅</span>
-                                        <span className="text-etGray">
-                                            {dayjs(item.start_time).format('DD/MM/YYYY HH:mm')} - {dayjs(item.end_time).format('DD/MM/YYYY HH:mm')}
-                                        </span>
-                                    </div>
-
-                                    <div className={`text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap ${getStatusClass(item.status)}`}>
-                                        {item.status}
-                                    </div>
-                                </div>
-
-                                <div className="mt-2 text-sm text-etGray font-medium ml-2">
-                                    Statut de l'événement :
-                                    <span className={`ml-2 inline-block text-xs font-semibold px-3 py-1 rounded-full ${getStatusClass(item.event_status)}`}>
-                                        {item.event_status}
+                    return (
+                        <div key={index} className="mb-[40px]">
+                            <div className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
+                                <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
+                                    <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
+                                        {getFormattedDayAndMonthYear(item.start_time).day}
                                     </span>
+                                    {getFormattedDayAndMonthYear(item.start_time).monthYear}
+                                </h5>
+                                <div className="shrink-0">
+                                    <img
+                                        src={imageUrl}
+                                        alt="Event"
+                                        className="rounded-xl w-full max-w-[300px] object-cover aspect-[300/128]"
+                                    />
                                 </div>
-
-                                <div className="et-schedule-loaction flex items-center gap-[8px] text-sm text-etGray mt-2">
-                                    <span className="icon">📍</span>
-                                    <span>{`${item.street_number} ${item.street}, ${item.city} ${item.postal_code || ''}`}</span>
+                                <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
+                                    <div className="min-w-0">
+                                        <Link to={`/event/${item.id_event}`}>
+                                            <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
+                                                {capitalizeFirstLetter(item.title)}
+                                            </h3>
+                                        </Link>
+                                        <h6 className="text-[17px] text-etBlue">
+                                            <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
+                                            {capitalizeFirstLetter(item.city)}, {item.street_number} {item.street}
+                                        </h6>
+                                        <div className="text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2 bg-blue-100 text-blue-700">
+                                            {item.status}
+                                        </div>
+                                    </div>
+                                    <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
+                                        {formatEuro(item.price)}
+                                    </h4>
                                 </div>
+                                <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0 min-w-[161px] sm:min-h-[161px]">
+                                    <Link to={`/event/${item.id_event}`} className="et-3-btn min-w-[161px]">
+                                        Voir l'event
+                                    </Link>
 
-                                {item.organizer_response ? (
-                                    <div className="mt-3 text-sm text-etGray animate-fade-in">
-                                        <p className="font-semibold text-green-700 mb-1">Réponse de l’organisateur :</p>
-                                        <p className="border border-green-300 bg-green-50 text-green-900 rounded p-2 text-sm shadow-sm">
-                                            {item.organizer_response}
-                                        </p>
-
-                                        {item.request_message && (
-                                            <details className="mt-3 transition-all">
-                                                <summary className="cursor-pointer text-sm text-blue-600 hover:underline hover:text-etBlue font-medium">
-                                                    Voir votre message envoyé
-                                                </summary>
-                                                <motion.div
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    transition={{ duration: 0.3 }}
-                                                    className="mt-2"
-                                                >
-                                                    <p className="border border-blue-300 bg-blue-50 text-blue-900 rounded p-2 text-sm shadow-sm">
-                                                        {item.request_message}
-                                                    </p>
-                                                </motion.div>
-                                            </details>
-                                        )}
-                                    </div>
-                                ) : item.request_message ? (
-                                    <div className="mt-3 text-sm text-etGray animate-fade-in">
-                                        <p className="font-semibold text-blue-700 mb-1">Votre message :</p>
-                                        <p className="border border-blue-300 bg-blue-50 text-blue-900 rounded p-2 text-sm shadow-sm">
-                                            {item.request_message}
-                                        </p>
-                                    </div>
-                                ) : null}
-
-                            </div>
-
-                            <div className="flex flex-col justify-center items-center gap-y-3 ml-12">
-                                <Link
-                                    to={`/event/${item.id_event}`}
-                                    className="et-btn border border-etBlue text-etBlue inline-flex items-center justify-center gap-x-2 h-[36px] px-4 text-sm rounded-full transition hover:bg-etBlue hover:text-white"
-                                >
-                                    Voir l’événement
-                                </Link>
-
-                                {item.guests.length > 0 && (
-                                    <button
-                                        className="et-btn border border-etBlue text-etBlue inline-flex items-center justify-center gap-x-2 h-[36px] px-4 text-sm rounded-full transition hover:bg-etBlue hover:text-white"
-                                        onClick={() => setExpanded(expanded === index ? null : index)}
-                                    >
-                                        Voir les invités
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <AnimatePresence>
-                        {expanded === index && item.guests.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.6, ease: "easeInOut" }}
-                                className="ml-[250px] px-[20px] sm:px-[15px] py-[20px] shadow-md rounded-[15px] bg-white mt-2"
-                            >
-                                <motion.div
-                                    className="flex flex-col gap-6"
-                                    initial="hidden"
-                                    animate="visible"
-                                    variants={{
-                                        visible: { transition: { staggerChildren: 0.1 } },
-                                    }}
-                                >
-                                    {item.guests.map((g, i) => (
-                                        <motion.div
-                                            key={i}
-                                            variants={{
-                                                hidden: { opacity: 0, y: 10 },
-                                                visible: { opacity: 1, y: 0 },
-                                            }}
-                                            transition={{ duration: 0.3, ease: "easeOut" }}
-                                            className="border-b border-gray-200 pb-5 last:border-b-0 relative"
+                                    {item.guests?.length > 0 && (
+                                        <button
+                                            onClick={() => toggleGuests(item.id_event)}
+                                            className="et-3-btn min-w-[161px]"
                                         >
-                                            <div className="absolute top-2 right-4 text-xs font-semibold text-gray-500 uppercase">
-                                                Invité {i + 1}
+                                            {visibleGuests[item.id_event] ? "Masquer invités" : "Voir invités"}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {visibleGuests[item.id_event] && item.guests?.length > 0 && (
+                                <div className="mt-4 w-full bg-gray-50 p-4 rounded-lg border animate-fade-in">
+                                    <h5 className="text-lg font-bold mb-4">Invités ajoutés</h5>
+                                    {item.guests.map((g, i) => (
+                                        <div key={i} className="flex items-center gap-4 mb-3">
+                                            <div className="text-left">
+                                                <div className="font-semibold">{g.firstname} {g.lastname}</div>
+                                                <div className="text-sm text-gray-500">{g.email}</div>
                                             </div>
-                                            <div className="flex flex-col items-start text-left gap-y-2 mt-6">
-                                                <div>
-                                                    <p className="text-sm text-gray-500">Nom</p>
-                                                    <p className="text-lg font-semibold text-gray-800">{g.lastname}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-gray-500">Prénom</p>
-                                                    <p className="text-lg font-semibold text-gray-800">{g.firstname}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm text-gray-500">Email</p>
-                                                    <p className="text-base text-gray-700">{g.email}</p>
-                                                </div>
-                                            </div>
-                                        </motion.div>
+                                        </div>
                                     ))}
-                                </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </React.Fragment>
-            ))}
-        </div>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className="*:-z-[1] *:absolute">
+                <h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">
+                    événements rejoints
+                </h3>
+                <div className="-top-[195px] -left-[519px] bg-gradient-to-b from-etPurple to-etPink blur-[230px] rounded-full w-[688px] aspect-square"></div>
+                <div className="-right-[319px] bottom-[300px] bg-gradient-to-b from-etPink to-etPink blur-[230px] rounded-full w-[588px] aspect-square"></div>
+                <img src={vector1} alt="vector" className="top-0 left-0 opacity-25" />
+                <img src={vector1} alt="vector" className="right-0 bottom-0 opacity-25 rotate-180" />
+                <img src={vector2} alt="vector" className="top-[33px] -right-[175px] animate-[etSpin_7s_linear_infinite]" />
+            </div>
+        </section>
     );
 }
 
-export default EventParticipant;
+export default Event_Participated;

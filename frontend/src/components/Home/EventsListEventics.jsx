@@ -22,7 +22,7 @@ import useEvents from '../../hooks/Events/useEvents';
 import useFavoris from '../../hooks/Favoris/useFavoris';
 import useAddFavoris from '../../hooks/Favoris/useAddFavoris';
 
-import { removeFavoris } from '../../services/favorisService';
+import useRemoveFavoris from '../../hooks/Favoris/useRemoveFavoris';
 import { useAuth } from '../../config/authHeader';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
@@ -38,7 +38,9 @@ function EventsListEventics() {
 
     const { user, isAuthenticated } = useAuth();
     const { favoris, loading: favLoading, error, refreshFavoris } = useFavoris();
+    const [refreshKey, setRefreshKey] = useState(0);
     const { add } = useAddFavoris();
+    const { remove } = useRemoveFavoris();
 
     useEffect(() => {
         if (allCategories.length > 0 && !selectedCategoryId) {
@@ -50,8 +52,7 @@ function EventsListEventics() {
         return selectedCategoryId ? { categoryId: selectedCategoryId } : {};
     }, [selectedCategoryId]);
 
-    const { events, loading: eventsLoading } = useEvents(filters, 1, 10);
-
+    const { events, loading: eventsLoading } = useEvents(filters, 1, 10, true, refreshKey);
     useSlideUpAnimation('.rev-slide-up', events);
     useTextAnimation();
 
@@ -82,13 +83,14 @@ function EventsListEventics() {
 
         try {
             if (isFavoris(eventId)) {
-                await removeFavoris(eventId, user.token);
+                await remove(eventId); 
                 showToast('Événement retiré des favoris');
             } else {
                 await add(eventId);
                 showToast('Événement ajouté aux favoris');
             }
             await refreshFavoris();
+            setRefreshKey(prev => prev + 1);
         } catch (err) {
             showToast(err.message || 'Erreur', 'error');
         }
@@ -149,7 +151,7 @@ function EventsListEventics() {
                                             <FaRegHeart />
                                         )}
                                     </div>
-                                )}  
+                                )}
 
                                 <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
                                     <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">

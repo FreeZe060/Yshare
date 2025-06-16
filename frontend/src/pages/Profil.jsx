@@ -249,7 +249,7 @@ const Profil = () => {
                                                 image: favori.image || null
                                             }))}
                                             emptyMessage="Vous n'avez pas encore de favoris."
-                                            buttonLink="/allevents"
+                                            buttonLink="/favoris"
                                             emptyButtonText="Voir tous les événements"
                                             {...(favoris.length > 0 && {
                                                 linkText: "Voir tous les favoris"

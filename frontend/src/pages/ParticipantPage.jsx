@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../config/authHeader';
 import useUserEventHistory from '../hooks/Participant/useUserEventHistory';
-import FiltreParticipant from '../components/Participant/FiltreParticipant';
 import EventParticipant from '../components/Participant/EventParticipant';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
+import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
 const UserParticipationPage = () => {
     const { user } = useAuth();
@@ -96,9 +96,15 @@ const UserParticipationPage = () => {
                     </div>
                 </section>
 
-                <div className="p-6 max-w-6xl mx-auto font-sans">
-                    <h1 className="text-3xl font-bold text-center mb-6">Mes participations</h1>
-                    <FiltreParticipant
+                {!loading && !error && (
+                    <EventParticipant
+                        formatEuro={formatEuro}
+                        getFormattedDayAndMonthYear={getFormattedDayAndMonthYear}
+                        capitalizeFirstLetter={capitalizeFirstLetter}
+                        filtered={filtered}
+                        getStatusClass={getStatusClass}
+                        expanded={expanded}
+                        setExpanded={setExpanded}
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
                         eventFilter={eventFilter}
@@ -112,19 +118,7 @@ const UserParticipationPage = () => {
                         events={events}
                         inputProps={inputProps}
                     />
-
-                    {loading && <p className="text-center text-gray-600">Chargement...</p>}
-                    {error && <p className="text-center text-red-500">Erreur : {error}</p>}
-
-                    {!loading && !error && (
-                        <EventParticipant
-                            filtered={filtered}
-                            getStatusClass={getStatusClass}
-                            expanded={expanded}
-                            setExpanded={setExpanded}
-                        />
-                    )}
-                </div>
+                )}
             </main>
             <Footer />
         </>

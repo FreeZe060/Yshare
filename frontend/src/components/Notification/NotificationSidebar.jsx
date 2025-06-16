@@ -5,10 +5,10 @@ import 'dayjs/locale/fr';
 import utc from 'dayjs/plugin/utc';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
-import useNotifications from '../hooks/Notification/useNotifications';
-import useMarkNotificationAsRead from '../hooks/Notification/useMarkNotificationAsRead';
-import useMarkAllNotificationsAsRead from '../hooks/Notification/useMarkAllNotificationsAsRead';
-import useMarkNotificationAsUnread from '../hooks/Notification/useMarkNotificationAsUnread';
+import useNotifications from '../../hooks/Notification/useNotifications';
+import useMarkNotificationAsRead from '../../hooks/Notification/useMarkNotificationAsRead';
+import useMarkAllNotificationsAsRead from '../../hooks/Notification/useMarkAllNotificationsAsRead';
+import useMarkNotificationAsUnread from '../../hooks/Notification/useMarkNotificationAsUnread';
 
 
 dayjs.extend(duration);

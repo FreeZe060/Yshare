@@ -4,7 +4,6 @@ import SkeletonProfileCard from '../components/SkeletonLoading/SkeletonProfileCa
 import { useAuth } from '../config/authHeader';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
-import FiltreParticipant from '../components/Participant/FiltreParticipant';
 import Event_Created from '../components/Event_Created/EventCreated';
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
@@ -105,10 +104,14 @@ export default function EventCreated() {
                         </ul>
                     </div>
                 </section>
-
-                <div className="p-6 max-w-6xl mx-auto font-sans">
-                    <h1 className="text-3xl font-bold text-center mb-6">Vos créations</h1>
-                    <FiltreParticipant
+                {!loading && !error && (
+                    // eslint-disable-next-line react/jsx-pascal-case
+                    <Event_Created
+                        filtered={filtered}
+                        API_BASE_URL={API_BASE_URL}
+                        getFormattedDayAndMonthYear={getFormattedDayAndMonthYear}
+                        capitalizeFirstLetter={capitalizeFirstLetter}
+                        formatEuro={formatEuro}
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
                         eventFilter={eventFilter}
@@ -122,21 +125,7 @@ export default function EventCreated() {
                         events={events}
                         inputProps={inputProps}
                     />
-
-                    {loading && <p className="text-center text-gray-600">Chargement...</p>}
-                    {error && <p className="text-center text-red-500">Erreur : {error}</p>}
-
-                    {!loading && !error && (
-                        // eslint-disable-next-line react/jsx-pascal-case
-                        <Event_Created
-                            filtered={filtered}
-                            API_BASE_URL={API_BASE_URL}
-                            getFormattedDayAndMonthYear={getFormattedDayAndMonthYear}
-                            capitalizeFirstLetter={capitalizeFirstLetter}
-                            formatEuro={formatEuro}
-                        />
-                    )}
-                </div>
+                )}
             </main>
             <Footer />
         </>

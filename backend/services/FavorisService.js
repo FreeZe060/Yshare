@@ -32,7 +32,8 @@ class FavorisService {
             where: { id_user: userId },
             include: [{
                 model: Event,
-                attributes: ['id', 'title', 'desc', 'start_time', 'city', 'street', 'street_number', 'price'],
+                as: 'Event', 
+                attributes: ['id', 'title', 'desc', 'start_time', 'city', 'street', 'street_number', 'price', 'status'],
                 include: [{
                     model: EventImage,
                     as: 'EventImages',
@@ -41,7 +42,7 @@ class FavorisService {
                     attributes: ['image_url']
                 }]
             }],
-            order: [[Event, 'date_created', 'DESC']]
+            order: [[{ model: Event, as: 'Event' }, 'date_created', 'DESC']]
         });
 
         if (!favoris || favoris.length === 0) {
@@ -69,6 +70,7 @@ class FavorisService {
             where: { id_user: userId, id_event: eventId },
             include: [{
                 model: Event,
+                as: 'Event',
                 include: [{
                     model: EventImage,
                     as: 'EventImages',
