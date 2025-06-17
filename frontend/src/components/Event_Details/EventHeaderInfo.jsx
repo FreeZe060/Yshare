@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/format';
 
+import EventStatusTag from '../../utils/EventStatusTag';
+
 function EventHeaderInfo({ event }) {
     if (!event) return null;
 
@@ -11,16 +13,7 @@ function EventHeaderInfo({ event }) {
                 <h1 className="font-bold text-[42px] text-etBlack xs:text-[32px] leading-tight">
                     {capitalizeFirstLetter(event?.title)}
                 </h1>
-                {event && event.status && (
-                    <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
-                            ${event.status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
-                            ${event.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
-                            ${event.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
-                            ${event.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
-                        `}>
-                        {event.status}
-                    </div>
-                )}
+                <EventStatusTag date={event.start_time} status={event.status} />
 
             </div>
 

@@ -24,7 +24,7 @@ function EventMainLeftColumn({
             : "text-green-600";
 
     return (
-        <div className="left">
+        <div className="left grow">
             <div className="relative rounded-[8px] overflow-hidden rev-slide-up">
                 <img src={mainImageUrl || soiree} alt="event-details-img" className="bg-cover" />
                 <span className="inline-block top-[20px] left-[20px] absolute bg-[#C320C0] px-[12px] py-[5px] rounded-[6px] font-normal text-[16px] text-white">Hall No: 59</span>

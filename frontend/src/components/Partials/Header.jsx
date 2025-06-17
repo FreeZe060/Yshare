@@ -31,6 +31,8 @@ const Header = () => {
 
     const [scrolled, setScrolled] = useState(false);
 
+    console.log(notifications);
+
     const handleLogout = async () => {
         await logout();
         navigate("/login");

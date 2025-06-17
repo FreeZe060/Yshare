@@ -48,6 +48,18 @@ export async function getCreatedEventsStats(userId) {
 	};
 }
 
+export async function getTotalEventCount() {
+	const response = await fetch(`${API_BASE_URL}/events-count`, {
+		credentials: 'include',
+		headers: { 'Content-Type': 'application/json' },
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération du nombre d'événements");
+
+	return result.total;
+}
+
 /**
  * GET /events/:id (public)
  */

@@ -12,8 +12,7 @@ import aboutVector3 from "../../assets/img/about-3-vector-1.svg";
 import aboutVector4 from "../../assets/img/about-3-vector-2.svg";
 import aboutVector5 from "../../assets/img/about-3-vector-3.svg";
 
-function AboutClub({ events }) {
-    // const displayedEvents = events.slice(0, 10);
+function AboutClub() {
 
     return (
         <section className="z-[1] relative py-[120px] md:py-[60px] xl:py-[80px] et-3-about">
