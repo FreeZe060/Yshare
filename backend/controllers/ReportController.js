@@ -1,4 +1,3 @@
-// controllers/ReportController.js
 const reportService = require('../services/ReportService');
 const eventService = require('../services/EventService');
 const commentService = require('../services/CommentService');

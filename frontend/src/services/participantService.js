@@ -148,6 +148,34 @@ export async function getUserEventHistory(userId, token) {
 	}
 }
 
+export async function updateParticipantMessage(eventId, userId, message) {
+	console.log(`✏️ [PUT] /events/${eventId}/participants/${userId}/message`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${userId}/message`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${localStorage.getItem('token')}`, // ou passer `token` en paramètre
+			},
+			body: JSON.stringify({ message }),
+			credentials: 'include',
+		});
+
+		const json = await res.json();
+
+		if (!res.ok) {
+			console.error("❌ Erreur updateParticipantMessage :", json.message);
+			throw new Error(json.message);
+		}
+
+		console.log("✅ Message du participant mis à jour avec succès.");
+		return json;
+	} catch (err) {
+		console.error("❌ updateParticipantMessage - Exception :", err.message);
+		throw err;
+	}
+}
+
 /**
  * ✅ Supprimer un participant
  */
@@ -194,6 +222,36 @@ export async function getUserEventsAdmin(userId, token) {
 		return json;
 	} catch (err) {
 		console.error("❌ getUserEventsAdmin - Exception :", err.message);
+		throw err;
+	}
+}
+
+export async function updateParticipantGuests(eventId, userId, guests = []) {
+	console.log(`👥 [PUT] /events/${eventId}/participants/${userId}/guests`);
+	console.log("📨 Nouveaux invités :", guests);
+
+	try {
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${userId}/guests`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${localStorage.getItem('token')}`,
+			},
+			body: JSON.stringify({ guests }),
+			credentials: 'include',
+		});
+
+		const json = await res.json();
+
+		if (!res.ok) {
+			console.error("❌ Erreur updateParticipantGuests :", json.message);
+			throw new Error(json.message);
+		}
+
+		console.log(`✅ ${json.guests.length} invités mis à jour pour participant #${userId}`);
+		return json;
+	} catch (err) {
+		console.error("❌ updateParticipantGuests - Exception :", err.message);
 		throw err;
 	}
 }

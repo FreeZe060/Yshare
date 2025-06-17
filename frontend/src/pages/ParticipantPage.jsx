@@ -5,9 +5,14 @@ import EventParticipant from '../components/Participant/EventParticipant';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
+import useUpdateMessage from '../hooks/Participant/useUpdateMessage';
+import useUpdateGuests from '../hooks/Participant/useUpdateGuests';
+import useRemoveParticipant from '../hooks/Participant/useRemoveParticipant';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const UserParticipationPage = () => {
-    const { user } = useAuth();
+    const { user, token } = useAuth();
     const [filtered, setFiltered] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [eventFilter, setEventFilter] = useState('');
@@ -16,6 +21,10 @@ const UserParticipationPage = () => {
     const [expanded, setExpanded] = useState(null);
 
     const { history, loading, error } = useUserEventHistory(user?.id);
+    const { updateMessage, loading: messageLoading } = useUpdateMessage();
+    const { updateGuests, loading: guestsLoading } = useUpdateGuests();
+    const { remove, loading: removeLoading } = useRemoveParticipant();
+
     const profileLink = `/profile/${user?.id}`;
 
     const getStatusClass = (status) => {
@@ -60,6 +69,12 @@ const UserParticipationPage = () => {
 
     const onSuggestionsClearRequested = () => {
         setSuggestions([]);
+    };
+
+    const updateLocalParticipant = (eventId, updatedFields) => {
+        setFiltered(prev =>
+            prev.map(p => (p.id_event === eventId ? { ...p, ...updatedFields } : p))
+        );
     };
 
     const inputProps = {
@@ -117,6 +132,16 @@ const UserParticipationPage = () => {
                         statuses={statuses}
                         events={events}
                         inputProps={inputProps}
+                        API_BASE_URL={API_BASE_URL}
+                        updateMessage={updateMessage}
+                        updateGuests={updateGuests}
+                        removeParticipant={remove}
+                        messageLoading={messageLoading}
+                        guestsLoading={guestsLoading}
+                        removeLoading={removeLoading}
+                        userId={user?.id}
+                        token={token}
+                        updateLocalParticipant={updateLocalParticipant}
                     />
                 )}
             </main>

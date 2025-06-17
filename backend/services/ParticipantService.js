@@ -29,6 +29,7 @@ class ParticipantService {
             status: p.status,
             joinedAt: p.joined_at,
             guests: p.guests?.map(g => ({
+                id: g.id,
                 firstname: g.firstname,
                 lastname: g.lastname,
                 email: g.email
@@ -82,6 +83,7 @@ class ParticipantService {
                 requestMessage: p.request_message || '(aucun message)',
                 organizerResponse: p.organizer_response || '(aucune réponse)',
                 guests: p.guests?.map(g => ({
+                    id: g.id,
                     firstname: g.firstname,
                     lastname: g.lastname,
                     email: g.email
@@ -343,6 +345,7 @@ class ParticipantService {
 
         const user = participant.User;
         const event = participant.Event;
+        const message = `Vous avez été retiré de l'événement "${event.title}".`;
 
         const subject = `Retrait de l'événement ${event.title}`;
         const text = `Bonjour ${user.name},\n\nVous avez été retiré de l'événement "${event.title}".`;
@@ -417,6 +420,8 @@ class ParticipantService {
                 id_event: event.id,
                 event_status: event.status,
                 status: p.status,
+                id_user: p.id_user, 
+                participant_id: p.id, 
                 image: EventImages?.[0]?.image_url || null,
                 request_message: p.request_message || null,
                 organizer_response: p.organizer_response || null,
@@ -428,6 +433,7 @@ class ParticipantService {
                     image: organizer.profileImage
                 } : null,
                 guests: p.guests?.map(g => ({
+                    id: g.id, 
                     firstname: g.firstname,
                     lastname: g.lastname,
                     email: g.email
@@ -435,6 +441,77 @@ class ParticipantService {
             };
         });
     }
+
+    async updateGuests(participantId, guests = []) {
+        console.log(`🔁 [Service] Mise à jour ciblée des invités pour participant #${participantId}`);
+
+        if (!Array.isArray(guests)) {
+            throw new Error("Le format des invités est invalide.");
+        }
+
+        const updatedGuests = [];
+
+        for (const guest of guests) {
+            const { id, firstname, lastname, email } = guest;
+
+            if (!id) {
+                console.warn("❌ ID manquant pour un invité. Ignoré.");
+                continue;
+            }
+
+            const existingGuest = await EventGuest.findOne({
+                where: {
+                    id,
+                    id_participant: participantId
+                }
+            });
+
+            if (!existingGuest) {
+                console.warn(`⚠️ Aucun invité trouvé avec l'ID ${id} pour ce participant.`);
+                continue;
+            }
+
+            const updatedData = {
+                firstname: firstname ?? existingGuest.firstname,
+                lastname: lastname ?? existingGuest.lastname,
+                email: email ?? existingGuest.email
+            };
+
+            await existingGuest.update(updatedData);
+            updatedGuests.push(existingGuest);
+            console.log(`✅ Invité #${id} mis à jour.`);
+        }
+
+        return {
+            message: "Invités mis à jour.",
+            guests: updatedGuests
+        };
+    }
+
+    async updateRequestMessage(eventId, userId, newMessage) {
+        console.log(`✏️ [Service] Modification du message pour user #${userId} sur l'événement #${eventId}`);
+
+        const participant = await Participant.findOne({
+            where: {
+                id_event: eventId,
+                id_user: userId
+            }
+        });
+
+        if (!participant) {
+            throw new Error("Participant non trouvé.");
+        }
+
+        if (participant.organizer_response) {
+            throw new Error("Le message ne peut plus être modifié, car l'organisateur a déjà répondu.");
+        }
+
+        participant.request_message = newMessage;
+        await participant.save();
+
+        console.log("✅ Message mis à jour avec succès.");
+        return participant;
+    } s
 
     async getParticipationCount(userId) {
         try {

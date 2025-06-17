@@ -3,6 +3,8 @@ const router = express.Router();
 const passport = require('passport');
 const userService = require('../services/UserService');
 
+//////// CONTROLLERS ////////
+
 const userController = require('../controllers/UserController');
 const eventController = require('../controllers/EventController');
 const participantController = require('../controllers/ParticipantController');
@@ -13,16 +15,22 @@ const reportController = require('../controllers/ReportController');
 const favorisController = require('../controllers/FavorisController');
 const ratingController = require('../controllers/RatingController');
 const newsController = require('../controllers/NewsController');
-const authenticateToken = require('../middlewares/authMiddleware');
-const { profileUpload, eventUpload, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
-const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
-const UserOrAdmin = require('../middlewares/UserOrAdmin');
-const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
-const isAdmin = require('../middlewares/Admin');
-const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
 const conversationController = require('../controllers/conversationController');
-const { extractUserFromToken } = require('../middlewares/authOptional');
+
+//////// MIDDLEWARE ////////
+
+const authenticateToken = require('../middlewares/authMiddleware');
+const isAdmin = require('../middlewares/Admin');
+const UserOrAdmin = require('../middlewares/UserOrAdmin');
+const isEventOwnerOrAdmin = require('../middlewares/isEventOwnerOrAdmin');
+const isNewsOwnerOrAdmin = require('../middlewares/isNewsOwnerOrAdmin');
+const isCommentOwnerOrAdmin = require('../middlewares/isCommentOwnerOrAdmin');
 const isNotificationOwnerOrAdmin = require('../middlewares/isNotificationOwnerOrAdmin');
+const isParticipantOwnerOrAdmin = require('../middlewares/isParticipantOwnerOrAdmin');
+const isReportOwnerOrAdmin = require('../middlewares/isReportOwnerOrAdmin');
+const isRatingOwnerOrAdmin = require('../middlewares/isRatingOwnerOrAdmin');
+const { extractUserFromToken } = require('../middlewares/authOptional');
+const { profileUpload, eventUpload, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
 
 
 //////// LOGS ROUTES ////////
@@ -108,11 +116,12 @@ router.get('/users/:userId/participation-count', participantController.getPartic
 router.get('/events/:eventId/participants/all', participantController.getParticipantsForEvent);
 router.get('/events/:eventId/participants/user/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.getParticipantByUser);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
-router.post( '/admin/events/:eventId/participants/:userId', authenticateToken, isAdmin, participantController.adminAddParticipant );
+router.post('/admin/events/:eventId/participants/:userId', authenticateToken, isAdmin, participantController.adminAddParticipant );
 router.put('/events/:eventId/participants/:participantId', authenticateToken, isEventOwnerOrAdmin, participantController.updateStatus);
-router.delete('/events/:eventId/participants/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.removeParticipant);
+router.delete('/events/:eventId/participants/:userId', authenticateToken, isParticipantOwnerOrAdmin, participantController.removeParticipant);
 router.get('/participants/history/:userId', authenticateToken, participantController.getUserEventHistory);
-
+router.put('/events/:eventId/participants/:userId/message', authenticateToken, isParticipantOwnerOrAdmin, participantController.updateRequestMessage);
+router.put('/events/:eventId/participants/:userId/guests', authenticateToken, isParticipantOwnerOrAdmin, participantController.updateGuests);
 
 //////// COMMENT ROUTES ////////
 

@@ -85,6 +85,27 @@ h6 {
 	background-color: var(--et-blue);
 }
 
+.underline-animation {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-animation::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0%;
+  height: 1px;
+  background-color: #1260FE !important;
+  transition: width 0.3s ease-in-out;
+}
+
+.group:hover .underline-animation::after {
+  width: 100%;
+}
+
+
 /* section sub title */
 .et-section-sub-title {
 	position: relative;

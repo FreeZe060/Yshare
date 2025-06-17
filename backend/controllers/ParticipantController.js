@@ -40,6 +40,45 @@ exports.getParticipantByUser = async (req, res) => {
     }
 };
 
+exports.updateRequestMessage = async (req, res) => {
+    try {
+        const { eventId, userId } = req.params;
+        const { message } = req.body;
+
+        if (!message || typeof message !== 'string') {
+            return res.status(400).json({ message: "Message invalide." });
+        }
+
+        const participant = await participantService.updateRequestMessage(eventId, userId, message);
+        res.status(200).json({
+            message: "Message mis à jour avec succès.",
+            request_message: participant.request_message
+        });
+    } catch (err) {
+        console.error("❌ Erreur updateRequestMessage :", err.message);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.updateGuests = async (req, res) => {
+    try {
+        const { eventId, userId } = req.params;
+        const { guests = [] } = req.body;
+
+        console.log(`👥 [Controller] PUT /events/${eventId}/participants/${userId}/guests`);
+
+        const participant = await participantService.getParticipantByUserAndEvent(eventId, userId);
+        if (!participant) return res.status(404).json({ message: "Participant introuvable." });
+        if (participant.organizer_response) return res.status(400).json({ message: "Les invités ne peuvent plus être modifiés." });
+
+        const result = await participantService.updateGuests(participant.id, guests);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('❌ Erreur updateGuests :', err.message);
+        res.status(500).json({ message: err.message });
+    }
+};
+
 exports.addParticipant = async (req, res) => {
     try {
         const { eventId } = req.params;
@@ -106,8 +145,15 @@ exports.removeParticipant = async (req, res) => {
         console.log(`📥 [Controller] DELETE /participants/event/${eventId}/user/${userId}`);
 
         const event = await eventService.getEventById(eventId);
-        if (user.role !== 'Administrateur' && user.id !== event.id_org) {
-            return res.status(403).json({ message: "Non autorisé." });
+        if (!event) {
+            return res.status(404).json({ message: "Événement introuvable." });
+        }
+
+        const isAdmin = user.role === 'Administrateur';
+        const isSelf = user.id === parseInt(userId, 10);
+
+        if (!isAdmin && !isSelf) {
+            return res.status(403).json({ message: "Accès interdit à cet événement." });
         }
 
         const response = await participantService.removeParticipant(eventId, userId);

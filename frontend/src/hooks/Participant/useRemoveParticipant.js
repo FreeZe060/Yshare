@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { removeParticipant } from "../services/participantService";
+import { removeParticipant } from "../../services/participantService";
 
 function useRemoveParticipant() {
 	const [loading, setLoading] = useState(false);

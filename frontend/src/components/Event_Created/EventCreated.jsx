@@ -109,7 +109,7 @@ function Event_Created({
                                 </h4>
                             </div>
                             <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
-                                <Link to={`/event/${item.id}`} className="et-3-btn">
+                                <Link to={`/event/${item.id}`} className="et-3-btn w-max[161px]">
                                     Voir l'event
                                 </Link>
 
