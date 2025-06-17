@@ -16,12 +16,10 @@ class NotificationService {
     async getNotificationsByUser(userId, isAdmin) {
         try {
             console.log(`[GET ALL] Récupération des notifications pour userId: ${userId}, admin: ${isAdmin}`);
-            const notifications = isAdmin
-                ? await Notification.findAll({ order: [['date_sent', 'DESC']] })
-                : await Notification.findAll({
-                    where: { id_user: userId },
-                    order: [['date_sent', 'DESC']]
-                });
+            const notifications = await Notification.findAll({
+                where: { id_user: userId },
+                order: [['date_sent', 'DESC']]
+            });
             console.log(`[GET ALL] ${notifications.length} notifications trouvées.`);
             return notifications;
         } catch (error) {
@@ -33,14 +31,9 @@ class NotificationService {
     async getNotificationById(userId, notificationId, isAdmin) {
         try {
             console.log(`[GET ONE] userId: ${userId}, notificationId: ${notificationId}, admin: ${isAdmin}`);
-            let notification;
-            if (isAdmin) {
-                notification = await Notification.findByPk(notificationId);
-            } else {
-                notification = await Notification.findOne({
-                    where: { id: notificationId, id_user: userId }
-                });
-            }
+            const notification = await Notification.findOne({
+                where: { id: notificationId, id_user: userId }
+            });
 
             if (!notification) {
                 console.warn("[GET ONE] Notification non trouvée ou accès interdit.");
@@ -111,14 +104,9 @@ class NotificationService {
     async deleteNotification(userId, notificationId, isAdmin) {
         try {
             console.log(`[DELETE] userId: ${userId}, notificationId: ${notificationId}, admin: ${isAdmin}`);
-            let deletedCount;
-            if (isAdmin) {
-                deletedCount = await Notification.destroy({ where: { id: notificationId } });
-            } else {
-                deletedCount = await Notification.destroy({
-                    where: { id: notificationId, id_user: userId }
-                });
-            }
+            const deletedCount = await Notification.destroy({
+                where: { id: notificationId, id_user: userId }
+            });
             if (deletedCount === 0) {
                 console.warn("[DELETE] Aucune notification supprimée.");
                 throw new Error("Aucune notification supprimée (peut-être inexistante ou accès refusé).");

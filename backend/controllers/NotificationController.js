@@ -9,10 +9,7 @@ exports.getAllNotifications = async (req, res) => {
 
         console.log(`📩 Récupération des notifications pour userId=${req.user.id}, role=${req.user.role}`);
 
-        const notifications = await notificationService.getNotificationsByUser(
-            req.user.id,
-            req.user.role === "Administrateur"
-        );
+        const notifications = await notificationService.getNotificationsByUser(req.user.id);
 
         console.log(`✅ ${notifications.length} notifications récupérées`);
         res.status(200).json(notifications);
