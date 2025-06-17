@@ -12,75 +12,82 @@ import { useAuth } from '../config/authHeader';
 import NewsDetailsLeft from '../components/News_Details/NewsDetailsLeft';
 import NewsDetailsRight from '../components/News_Details/NewsDetailsRight';
 
-
 function NewsDetails() {
-
     const { newsId } = useParams();
-    const { newsDetails, loading, error } = useNewsDetails(newsId);
-    const { news, loading: loadingNews, error: errorNews } = useAllNews();
+    const { newsDetails, loading, error, setNewsDetails, refetchNewsDetails } = useNewsDetails(newsId);
+    const { news } = useAllNews();
     const { isOwner, isAdmin, update } = useUpdateNews(newsId);
+    const { categories: allCategories } = useCategories();
+
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState('');
     const [editedContent, setEditedContent] = useState('');
-    const { categories: allCategories } = useCategories();
     const [showAddCat, setShowAddCat] = useState(false);
+    const editorRef = useRef(null);
 
     const latestNews = [...news]
         .sort((a, b) => new Date(b.date_posted) - new Date(a.date_posted))
         .slice(0, 3);
 
-    const getCategoryStyle = (categoryName) => {
-        const name = categoryName?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        switch (name) {
-            case 'sport':
-                return 'bg-blue-100 text-blue-800';
-            case 'musique':
-                return 'bg-green-100 text-green-800';
-            case 'fete':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'foot':
-                return 'bg-purple-100 text-purple-800';
-            case 'art & design':
-                return 'bg-pink-100 text-pink-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
+    const getCategoryStyle = (name) => {
+        const clean = name?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return {
+            sport: 'bg-blue-100 text-blue-800',
+            musique: 'bg-green-100 text-green-800',
+            fete: 'bg-yellow-100 text-yellow-800',
+            foot: 'bg-purple-100 text-purple-800',
+            'art & design': 'bg-pink-100 text-pink-800',
+        }[clean] || 'bg-gray-100 text-gray-800';
     };
 
     const linkedCategoryIds = newsDetails?.categories?.map(cat => cat.id) || [];
     const availableCategories = allCategories.filter(cat => !linkedCategoryIds.includes(cat.id));
 
-    const editorRef = useRef(null);
-
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (editorRef.current && !editorRef.current.contains(e.target) && isEditing) {
-                if (
-                    editedTitle !== newsDetails.title ||
-                    editedContent !== newsDetails.content
-                ) {
-                    handleSave(); // auto-save
-                } else {
-                    setIsEditing(false);
+            if (editorRef.current && !editorRef.current.contains(e.target)) {
+                if (isEditing) {
+                    if (
+                        editedTitle !== newsDetails?.title ||
+                        editedContent !== newsDetails?.content
+                    ) {
+                        handleSave();
+                    } else {
+                        setIsEditing(false);
+                    }
                 }
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [isEditing, editedTitle, editedContent]);
+    }, [isEditing, editedTitle, editedContent, newsDetails]);
 
     const handleSave = async () => {
         const formData = new FormData();
         formData.append("title", editedTitle);
         formData.append("content", editedContent);
-
         try {
-            const updated = await update(formData);
-            Object.assign(newsDetails, updated);
+            await update(formData);
+            await refetchNewsDetails();
             setIsEditing(false);
         } catch (err) {
             Swal.fire("Erreur", err.message, "error");
+        }
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+            await update(formData);
+            await refetchNewsDetails(); 
+            Swal.fire("Succès", "Image mise à jour", "success");
+        } catch (err) {
+            Swal.fire("Erreur", err.message || "Erreur lors de l'upload", "error");
         }
     };
 
@@ -112,8 +119,8 @@ function NewsDetails() {
                 <div class="et-event-details-content py-[130px] lg:py-[80px] md:py-[60px]">
                     <div class="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full">
                         <div class="flex gap-[30px] lg:gap-[20px] md:flex-col md:items-center">
-                            
-                            <NewsDetailsLeft 
+
+                            <NewsDetailsLeft
                                 newsDetails={newsDetails}
                                 isOwner={isOwner}
                                 isAdmin={isAdmin}
@@ -135,9 +142,10 @@ function NewsDetails() {
                                 removeCategoryFromNews={removeCategoryFromNews}
                                 addCategoryToNews={addCategoryToNews}
                                 useAuth={useAuth}
+                                handleImageUpload={handleImageUpload}
                             />
 
-                            <NewsDetailsRight 
+                            <NewsDetailsRight
                                 latestNews={latestNews}
                             />
                         </div>

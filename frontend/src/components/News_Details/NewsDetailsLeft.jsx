@@ -23,12 +23,27 @@ function NewsDetailsLeft({
     addCategoryToNews,
     showAddCat,
     getCategoryStyle,
+    handleImageUpload
 }) {
     return (
         <div class="left grow space-y-[40px] md:space-y-[30px]">
             <div>
                 <div className="img overflow-hidden rounded-[8px] mb-[30px] relative">
                     <img src={`http://localhost:8080${newsDetails.image_url}`} alt="news-cover" className="w-full max-h-[400px] mx-auto object-cover" />
+                    {(isOwner || isAdmin) && (
+                        <div className="absolute top-[20px] right-[20px]">
+                            <label htmlFor="imageUpload" className="cursor-pointer bg-white text-etBlue px-3 py-1 text-sm rounded shadow hover:bg-etBlue hover:text-white transition">
+                                <i className="fas fa-image mr-1" /> Modifier l’image
+                            </label>
+                            <input
+                                type="file"
+                                id="imageUpload"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleImageUpload}
+                            />
+                        </div>
+                    )}
                     <div className="bg-etBlue rounded-[6px] absolute top-[20px] left-[20px] text-white px-[20px] py-[13px]">
                         <span className="block text-[24px] font-medium leading-[0.7] mb-[6px]">{day}</span>
                         <span className="block text-[12px] font-medium leading-[0.7]">{month}</span>
@@ -49,7 +64,7 @@ function NewsDetailsLeft({
                             </a>
                         </div>
 
-                        {newsDetails.categories.map((cat, idx) => (
+                        {newsDetails?.categories?.map((cat, idx) => (
                             <span
                                 key={idx}
                                 className={`text-[14px] font-medium px-[10px] py-[4px] rounded-full capitalize ${getCategoryStyle(cat.name)}`}
@@ -58,20 +73,6 @@ function NewsDetailsLeft({
                             </span>
                         ))}
                     </div>
-
-                    {(isOwner || isAdmin) && !isEditing && (
-                        <motion.button
-                            onClick={() => {
-                                setEditedTitle(newsDetails.title);
-                                setEditedContent(newsDetails.content);
-                                setIsEditing(true);
-                            }}
-                            whileHover={{ scale: 1.1 }}
-                            className="mb-2 text-etBlue hover:underline text-sm font-medium"
-                        >
-                            <i className="fas fa-pen mr-1"></i> Modifier la news
-                        </motion.button>
-                    )}
 
                     <AnimatePresence>
                         {(isOwner || isAdmin) && isEditing && (
@@ -103,21 +104,21 @@ function NewsDetailsLeft({
                                     placeholder="Contenu"
                                 />
 
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 mt-2">
                                     <motion.button
                                         type="submit"
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-green-600 text-white p-2 rounded hover:bg-green-700 transition"
+                                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded shadow transition"
                                     >
-                                        <i className="fas fa-check"></i>
+                                        <i className="fas fa-check"></i> Enregistrer
                                     </motion.button>
                                     <motion.button
                                         type="button"
                                         onClick={() => setIsEditing(false)}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition"
+                                        className="flex items-center gap-2 px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded shadow transition"
                                     >
-                                        <i className="fas fa-times"></i>
+                                        <i className="fas fa-times"></i> Annuler
                                     </motion.button>
                                 </div>
                             </motion.form>
@@ -130,6 +131,20 @@ function NewsDetailsLeft({
                             <p className="font-light text-[16px] text-etGray mb-[16px]">{newsDetails.content}</p>
                         </>
                     )}
+
+                    {(isOwner || isAdmin) && !isEditing && (
+                        <motion.button
+                            onClick={() => {
+                                setEditedTitle(newsDetails.title);
+                                setEditedContent(newsDetails.content);
+                                setIsEditing(true);
+                            }}
+                            whileHover={{ scale: 1.1 }}
+                            className="mb-2 text-etBlue hover:underline text-sm font-medium"
+                        >
+                            <i className="fas fa-pen mr-1"></i> Modifier la news
+                        </motion.button>
+                    )}
                 </div>
             </div>
 
@@ -137,7 +152,7 @@ function NewsDetailsLeft({
                 <div className="flex gap-[28px] items-start">
                     <h6 className="font-medium text-[16px] text-etBlack">Catégories :</h6>
                     <div className="flex flex-wrap gap-[13px]">
-                        {newsDetails.categories.map((cat) => (
+                        {newsDetails?.categories?.map((cat) => (
                             <div
                                 key={cat.id}
                                 className={`relative border border-[#e5e5e5] text-[14px] text-[#181818] px-[12px] py-[5px] rounded-[4px] hover:bg-etBlue hover:border-etBlue hover:text-white transition-all duration-300`}

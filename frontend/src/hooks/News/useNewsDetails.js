@@ -2,29 +2,28 @@ import { useEffect, useState } from "react";
 import { fetchNewsWithDetails } from "../../services/newsService";
 
 function useNewsDetails(newsId) {
-    const [newsDetails, setNews] = useState(null);
+    const [newsDetails, setNewsDetails] = useState(null); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
+    const fetchDetails = async () => {
         if (!newsId) return;
+        setLoading(true);
+        try {
+            const data = await fetchNewsWithDetails(newsId);
+            setNewsDetails(data); 
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        const getNews = async () => {
-            setLoading(true);
-            try {
-                const data = await fetchNewsWithDetails(newsId);
-                setNews(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        getNews();
+    useEffect(() => {
+        fetchDetails();
     }, [newsId]);
 
-    return { newsDetails, loading, error };
+    return { newsDetails, setNewsDetails, loading, error, refetchNewsDetails: fetchDetails };
 }
 
 export default useNewsDetails;
