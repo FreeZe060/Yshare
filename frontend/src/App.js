@@ -13,6 +13,7 @@ import PrivateRoute from './components/Route/PrivateRoute';
 import CreateEventPage from './pages/CreateEventPage';
 import Admin from './pages/DashboardPage';
 import AdminRoute from './components/Route/AdminRoute';
+import Events from './pages/Events';
 import EventDetails from './pages/EventDetails';
 import TeamPage from './pages/TeamPage';
 import NewsPage from './pages/NewsPage';
@@ -45,6 +46,7 @@ function App() {
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
+				<Route path="/events" element={<Events/>} />
 				<Route path="/event/:eventId" element={<EventDetails />} />
 			</Routes>
 		</>
