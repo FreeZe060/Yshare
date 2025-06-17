@@ -19,6 +19,7 @@ import useAddParticipant from '../hooks/Participant/useAddParticipant';
 import EventHeaderInfo from '../components/Event_Details/EventHeaderInfo';
 import EventMainLeftColumn from '../components/Event_Details/EventMainLeftColumn';
 import EventMainRightColumn from '../components/Event_Details/EventMainRightColumn';
+import RatingBanner from '../components/Event_Details/RatingBanner';
 
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
@@ -236,6 +237,8 @@ function EventDetails() {
         }
     };
 
+    const isParticipant = event?.isParticipant;
+    const hasRated = event?.hasRatedByUser;
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -276,9 +279,20 @@ function EventDetails() {
                 </section>
 
                 <section className="z-[1] relative overflow-hidden">
+                    {event && event.status === "Terminé" && isParticipant && !hasRated && (
+                        <RatingBanner
+                            eventId={eventId}
+                            userId={user?.id}
+                            eventStatus={event?.status}
+                            hasRated={hasRated}
+                            isParticipant={isParticipant}
+                        />
+                    )}
                     <div className="py-[130px] md:py-[60px] lg:py-[80px] et-event-details-content">
                         <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full container">
-                            <EventHeaderInfo event={event} />
+                            <EventHeaderInfo
+                                event={event}
+                            />
                             <div className="flex md:flex-col md:items-center gap-[30px] lg:gap-[20px]">
                                 <EventMainLeftColumn
                                     event={event}

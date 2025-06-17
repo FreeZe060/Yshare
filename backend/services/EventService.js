@@ -1,4 +1,4 @@
-const { Event, Category, EventImage, Participant, User, EventGuest } = require('../models');
+const { Event, Category, EventImage, Participant, User, EventGuest, Rating } = require('../models');
 const { Op, fn, col } = require('sequelize');
 
 class EventService {
@@ -87,8 +87,8 @@ class EventService {
         return { events, total };
     }
 
-    async getEventById(eventId) {
-        return await Event.findByPk(eventId, {
+    async getEventById(eventId, userId = null) {
+        const event = await Event.findByPk(eventId, {
             include: [
                 {
                     model: Category,
@@ -102,9 +102,38 @@ class EventService {
                     model: User,
                     as: 'organizer',
                     attributes: ['id', 'name', 'lastname', 'profileImage']
-                }
+                },
+                ...(userId ? [{
+                    model: Rating,
+                    where: { id_user: userId },
+                    required: false, 
+                    attributes: ['id'], 
+                }] : [])
             ]
         });
+
+        if (!event) throw new Error("Événement introuvable.");
+
+        event.dataValues.isParticipant = false;
+        event.dataValues.hasRatedByUser = false;
+
+        if (userId) {
+            const participant = await Participant.findOne({
+                where: {
+                    id_event: eventId,
+                    id_user: userId,
+                    status: 'Inscrit'
+                }
+            });
+
+            if (participant) {
+                event.dataValues.isParticipant = true;
+            }
+
+            event.dataValues.hasRatedByUser = (event.Ratings && event.Ratings.length > 0);
+        }
+
+        return event;
     }
 
     async createEvent(data, images = []) {
@@ -242,10 +271,14 @@ class EventService {
                 });
 
                 if (participants.length > 0) {
-                    console.log(`📬 ${participants.length} participant(s) seront notifiés.`);
-
                     const subject = `Statut mis à jour : ${event.title}`;
-                    const message = `Bonjour,\n\nLe statut de l'événement "${event.title}" a été automatiquement mis à jour en "${newStatus}".\n\nMerci de votre attention.`;
+                    let message;
+
+                    if (newStatus === 'Terminé') {
+                        message = `Bonjour,\n\nL'événement "${event.title}" est maintenant terminé.\n\nNous serions ravis d’avoir votre avis !\n\n👉 Cliquez ici pour évaluer votre expérience : http://localhost:3000/rating?eventId=${event.id}\n\nMerci et à bientôt !`;
+                    } else {
+                        message = `Bonjour,\n\nLe statut de l'événement "${event.title}" a été automatiquement mis à jour en "${newStatus}".\n\nMerci de votre attention.`;
+                    }
 
                     for (const participant of participants) {
                         const user = await User.findByPk(participant.id_user);

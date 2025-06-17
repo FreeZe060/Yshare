@@ -37,9 +37,11 @@ exports.getAllEvents = async (req, res) => {
 exports.getEventById = async (req, res) => {
     try {
         const eventId = req.params.id;
-        console.log(`[getEventById] Récupération de l'événement ID: ${eventId}`);
+        const userId = req.user?.id || null; 
 
-        const event = await eventService.getEventById(eventId);
+        console.log(`[getEventById] Récupération de l'événement ID: ${eventId} pour user ${userId}`);
+
+        const event = await eventService.getEventById(eventId, userId); 
 
         if (!event) {
             console.warn(`[getEventById] Événement non trouvé pour l'ID: ${eventId}`);

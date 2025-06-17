@@ -26,4 +26,4 @@ function useNewsDetails(newsId) {
     return { newsDetails, setNewsDetails, loading, error, refetchNewsDetails: fetchDetails };
 }
 
-export default useNewsDetails;
+export default useNewsDetails;  
