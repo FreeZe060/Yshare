@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import StarRating from '../StarRating';
+import StarRating from './StarRating';
 import { FiUser, FiEdit2, FiX } from 'react-icons/fi';
 import { FaMapMarkerAlt, FaBriefcase, FaEnvelope } from 'react-icons/fa';
 import { useAuth } from '../../config/authHeader';
@@ -382,32 +382,46 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 									{(editable || currentUser?.role === 'Administrateur' || (user.showEmail && user.email)) && (
 										<div className="flex items-center">
 											<FaEnvelope className="mr-4 text-blue-600 text-2xl" />
-											<span className={editable ? "cursor-pointer" : ""} onClick={() => editable && setEditingField('email')}>
+											<span
+												className={editable ? "cursor-pointer" : ""}
+												onClick={() => editable && setEditingField('email')}
+											>
 												{editingField === 'email' ? (
 													<input
 														type="email"
 														className="border px-2 py-1 rounded"
 														defaultValue={user.email || ''}
 														placeholder="Votre email"
-														onBlur={(e) => { handleFieldChange('email', e.target.value); setEditingField(null); }}
+														onBlur={(e) => {
+															handleFieldChange('email', e.target.value);
+															setEditingField(null);
+														}}
 													/>
 												) : (
-													user.email || (
-														<span className="italic text-gray-400">
-															{"Aucune adresse email n’a encore été entrée pour le moment"}
-														</span>
+													// 💡 CORRECTION PRINCIPALE ICI : on affiche toujours l’email si admin ou propriétaire
+													user.email ? (
+														(editable || currentUser?.role === 'Administrateur' || user.showEmail)
+															? user.email
+															: <span className="italic text-gray-400">{"Adresse email masquée"}</span>
+													) : (
+														<span className="italic text-gray-400">{"Aucune adresse email n’a encore été entrée pour le moment"}</span>
 													)
 												)}
 											</span>
+
 											{editable && (
 												<button
 													className="ml-2 text-gray-500 hover:text-blue-600"
 													onClick={() => handleFieldChange('showEmail', !user.showEmail)}
-													title={user.showEmail ? "Cacher l'email" : "Afficher l'email"}>
-													{user.showEmail ? <i class="fa-regular fa-eye"></i> : <i class="fa-regular fa-eye-slash"></i>}
+													title={user.showEmail ? "Cacher l'email" : "Afficher l'email"}
+												>
+													{user.showEmail
+														? <i className="fa-regular fa-eye"></i>
+														: <i className="fa-regular fa-eye-slash"></i>}
 												</button>
 											)}
 										</div>
+
 									)}
 
 									{(editable || currentUser?.role === 'Administrateur' || (user.showPhone && user.phone)) && (

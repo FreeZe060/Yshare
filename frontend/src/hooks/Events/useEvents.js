@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchEvents } from '../../services/eventService';
 
-function useEvents(filters, page, limit, autoFetch = true) {
+function useEvents(filters, page, limit, autoFetch = true, refreshKey = 0) {
 	const [events, setEvents] = useState([]);
 	const [total, setTotal] = useState(0);
 	const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ function useEvents(filters, page, limit, autoFetch = true) {
 
 	useEffect(() => {
 		if (autoFetch) fetchData();
-	}, [fetchData, autoFetch]);
+	}, [fetchData, autoFetch, refreshKey]);
 
 	return {
 		events,
@@ -32,5 +32,4 @@ function useEvents(filters, page, limit, autoFetch = true) {
 		fetchData,
 	};
 }
-
 export default useEvents;

@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../components/Partials/Header";
+import Footer from "../components/Partials/Footer";
 
 const Section = ({ title, children }) => (
     <div className="flex flex-col min-h-screen">

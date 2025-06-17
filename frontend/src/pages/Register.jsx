@@ -6,8 +6,7 @@ import useRegister from '../hooks/User/useRegister';
 import Swal from 'sweetalert2';
 import 'animate.css';
 
-import CustomSelect from '../utils/CustomSelect';
-import Header from '../components/Header';
+import Header from '../components/Partials/Header';
 
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
@@ -20,12 +19,9 @@ const Register = () => {
 	const [gender, setGender] = useState('');
 	const [profileImage, setProfileImage] = useState(null);
 	const [showPassword, setShowPassword] = useState(false);
-	const [shakeKey, setShakeKey] = useState(0);
+	const [invalidPasswordRules, setInvalidPasswordRules] = useState([]);
 	const [shakeRules, setShakeRules] = useState(false);
-
-	const [passwordTouched, setPasswordTouched] = useState(false);
-	const [formSubmitted, setFormSubmitted] = useState(false);
-
+	const [passwordFocused, setPasswordFocused] = useState(false);
 
 
 	const handleNameChange = (e) => {
@@ -46,9 +42,7 @@ const Register = () => {
 	const handlePasswordChange = (e) => {
 		const sanitized = sanitizeInput(e.target.value);
 		setPassword(sanitized);
-		if (!passwordTouched) setPasswordTouched(true);
 	};
-
 
 	const handleGenderChange = (e) => {
 		const sanitized = sanitizeInput(e.target.value);
@@ -92,8 +86,6 @@ const Register = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		setFormSubmitted(true);
-
 		const newErrors = {};
 		if (!name.trim()) newErrors.name = 'Veuillez entrer votre prénom';
 		if (!lastname.trim()) newErrors.lastname = 'Veuillez entrer votre nom';
@@ -104,32 +96,20 @@ const Register = () => {
 			newErrors.email = 'Veuillez entrer un email valide';
 		}
 		if (!password) newErrors.password = 'Veuillez entrer un mot de passe';
-
 		if (!gender) newErrors.gender = 'Veuillez sélectionner votre genre';
 
 		const rules = checkPasswordRules(password);
 		const failedRules = rules.filter(r => !r.isValid);
 
 		if (Object.keys(newErrors).length > 0 || failedRules.length > 0) {
-			setShakeKey(prev => prev + 1);
-			if (failedRules.length > 0) {
-				setShakeRules(true);
-				setTimeout(() => setShakeRules(false), 1000);
-			}
-			setErrors({ ...newErrors });
-			return;
-		}
-
-
-		if (Object.keys(newErrors).length > 0 || failedRules.length > 0) {
 			if (failedRules.length > 0) {
 				const failedMessages = failedRules.map(r => `• ${r.label}`).join('\n');
-				// await Swal.fire({
-				// 	icon: 'error',
-				// 	title: 'Mot de passe invalide',
-				// 	html: `Votre mot de passe ne respecte pas les conditions suivantes :<br><strong>${failedRules.map(r => r.label).join('<br>')}</strong>`,
-				// 	confirmButtonText: 'OK'
-				// });
+				await Swal.fire({
+					icon: 'error',
+					title: 'Mot de passe invalide',
+					html: `Votre mot de passe ne respecte pas les conditions suivantes :<br><strong>${failedRules.map(r => r.label).join('<br>')}</strong>`,
+					confirmButtonText: 'OK'
+				});
 				setShakeRules(true);
 				setTimeout(() => setShakeRules(false), 1000);
 			}
@@ -163,23 +143,24 @@ const Register = () => {
 		}
 	};
 
-	const getPasswordStrength = (password) => {
-		if (!password) return { level: 'empty', message: '' };
-
-		const hasUppercase = /[A-Z]/.test(password);
-		const hasNumber = /\d/.test(password);
-		const hasMinLength = password.length >= 8;
-
-		if (hasUppercase && hasNumber && hasMinLength) {
-			return { level: 'strong', message: 'Mot de passe sécurisé' };
-		} else if ((hasUppercase || hasNumber) && password.length >= 6) {
-			return { level: 'medium', message: 'Mot de passe faible' };
-		} else {
-			return { level: 'weak', message: 'Au moins une majuscule, un chiffre et 8 caractères' };
-		}
+	const checkPasswordRules = (password) => {
+		return [
+			{ label: 'Au moins 8 caractères', isValid: password.length >= 8 },
+			{ label: 'Une majuscule', isValid: /[A-Z]/.test(password) },
+			{ label: 'Un chiffre', isValid: /\d/.test(password) }
+		];
 	};
 
-	const passwordStrength = getPasswordStrength(password);
+	const getPasswordLevel = (rules) => {
+		const validCount = rules.filter(r => r.isValid).length;
+		if (validCount === 3) return 'strong';
+		if (validCount === 2) return 'medium';
+		return 'weak';
+	};
+
+	const passwordRules = checkPasswordRules(password);
+	const passwordLevel = getPasswordLevel(passwordRules);
+
 
 	const strengthStyle = {
 		strong: {
@@ -254,7 +235,7 @@ const Register = () => {
 					</div>
 				</div>
 
-				<div class="md:absolute flex justify-center items-center bg-white md:bg-transparent py-10 pt-[104px] xs:pt-[0px] pb-[0px] xs:pb-[104px] w-1/2 md:w-full md:h-full rev-slide-up">
+				<div class="md:absolute flex justify-center items-center bg-white md:bg-transparent py-10 w-1/2 md:w-full md:h-full rev-slide-up">
 					<form onSubmit={handleSubmit} class="bg-white md:p-6 md:rounded-xl min-w-[20%]">
 						<h1 className="mb-3 font-bold text-gray-800 text-3xl text-center anim-text">Créer un compte!</h1>
 						<p className="mb-6 font-normal text-gray-600 text-base text-center anim-text">Rejoignez-nous</p>
@@ -305,13 +286,7 @@ const Register = () => {
 							<p className="mt-2 text-gray-500 text-xs">Cliquez pour choisir une photo</p>
 						</div>
 
-						<div
-							key={`name-${shakeKey}`}
-							className={`
-								flex items-center border-2 py-2 px-3 rounded-2xl
-								${errors.name ? 'border-red-400 bg-red-50 animate__animated animate__headShake' : 'mb-4'}
-							`}
-						>
+						<div className={`flex items-center border-2 py-2 px-3 rounded-2xl ${errors.name ? 'border-red-400 bg-red-50' : 'mb-4'}`}>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -328,13 +303,7 @@ const Register = () => {
 						</div>
 						{errors.name && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.name}</p>}
 
-						<div
-							key={`lastname-${shakeKey}`}
-							className={`
-								flex items-center border-2 py-2 px-3 rounded-2xl
-								${errors.lastname ? 'border-red-400 bg-red-50 animate__animated animate__headShake' : 'mb-4'}
-							`}
-						>
+						<div className={`flex items-center border-2 py-2 px-3 rounded-2xl ${errors.lastname ? 'border-red-400 bg-red-50' : 'mb-4'}`}>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" viewBox="0 0 20 20"
 								fill="currentColor">
 								<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
@@ -345,25 +314,25 @@ const Register = () => {
 						</div>
 						{errors.lastname && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.lastname}</p>}
 
-						<CustomSelect
-							name="gender"
-							value={gender}
-							onChange={handleGenderChange}
-							options={["Homme", "Femme", "Autre", "Préféré ne pas dire"]}
-							error={errors.gender}
-							shakeKey={shakeKey}
-							iconClass="fa-solid fa-venus-mars"
-						/>
+						<div className={`flex items-center border-2 py-2 px-3 rounded-2xl ${errors.gender ? 'border-red-400 bg-red-50' : 'mb-4'}`}>
+							<i className="flex justify-center items-center w-5 h-5 text-gray-400 fa-solid fa-venus-mars"></i>
+							<select
+								name="gender"
+								value={gender}
+								onChange={handleGenderChange}
+								className={`bg-transparent pl-2 border-none outline-none w-full ${gender === '' ? 'text-gray-400' : 'text-gray-700'}`}
+							>
+								<option value="" disabled hidden className="text-gray-400">Genre</option>
+								<option value="Homme">Homme</option>
+								<option value="Femme">Femme</option>
+								<option value="Autre">Autre</option>
+								<option value="Préféré ne pas dire">Préféré ne pas dire</option>
+							</select>
+						</div>
 
-						{errors.gender && <p className="-mt-3 mb-2 w-full text-red-500 text-xs text-center">{errors.gender}</p>}
+						{errors.gender && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.gender}</p>}
 
-						<div
-							key={`email-${shakeKey}`}
-							className={`
-								flex items-center border-2 py-2 px-3 rounded-2xl
-								${errors.email ? 'border-red-400 bg-red-50 animate__animated animate__headShake' : 'mb-4'}
-							`}
-						>
+						<div className={`flex items-center border-2 py-2 px-3 rounded-2xl ${errors.email ? 'border-red-400 bg-red-50' : 'mb-4'}`}>
 							<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
 								stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -374,17 +343,12 @@ const Register = () => {
 						</div>
 						{errors.email && <p className="mt-1 mb-2 w-full text-red-500 text-xs text-center">{errors.email}</p>}
 
-						<div
-							key={`password-${shakeKey}`}
-							className={`
-								relative flex items-center border-2 py-2 px-3 pr-10 rounded-2xl
-								${errors.password ? 'border-red-400 bg-red-50 animate__animated animate__headShake' : ''}
-								${passwordLevel === 'strong' ? 'border-green-400 bg-green-50' : ''}
-								${passwordLevel === 'medium' ? 'border-yellow-400 bg-yellow-50' : ''}
-								${passwordLevel === 'weak' && password ? 'border-red-400 bg-red-50' : ''}
-								${!password ? 'mb-4' : ''}
-							`}
-						>
+						<div className={`relative flex items-center border-2 py-2 px-3 pr-10 rounded-2xl
+							${passwordLevel === 'strong' ? 'border-green-400 bg-green-50' : ''}
+							${passwordLevel === 'medium' ? 'border-yellow-400 bg-yellow-50' : ''}
+							${passwordLevel === 'weak' && password ? 'border-red-400 bg-red-50' : ''}
+							${!password ? 'mb-4' : ''}
+						`}>
 							<svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
 								<path
 									fillRule="evenodd"
@@ -397,6 +361,8 @@ const Register = () => {
 								type={showPassword ? 'text' : 'password'}
 								name="password"
 								value={password}
+								onFocus={() => setPasswordFocused(true)}
+								onBlur={() => setPasswordFocused(password.length > 0)}
 								onChange={handlePasswordChange}
 								placeholder="Mot de passe"
 							/>
@@ -405,7 +371,7 @@ const Register = () => {
 								onClick={() => setShowPassword(!showPassword)}
 								className="right-3 absolute focus:outline-none text-gray-400"
 							>
-								<div className="w-6">
+								<div class="w-6">
 									{showPassword ? (
 										<i className="fa-solid fa-eye" />
 									) : (
@@ -416,23 +382,23 @@ const Register = () => {
 						</div>
 						{password && (
 							<p className={`text-xs mt-1 mb-2 text-center transition-all duration-300 ${passwordLevel === 'strong' ? 'text-green-600' :
-								passwordLevel === 'medium' ? 'text-yellow-600' :
-									'text-red-600'
+									passwordLevel === 'medium' ? 'text-yellow-600' :
+										'text-red-600'
 								}`}>
 								{passwordLevel === 'strong' ? 'Mot de passe sécurisé' :
 									passwordLevel === 'medium' ? 'Mot de passe moyen' :
 										'Mot de passe faible'}
 							</p>
 						)}
-						{(passwordTouched || formSubmitted) && (
-							<div className="flex flex-col gap-2 mt-2 mb-4 text-xs">
+						{passwordFocused && (
+							<div className="mt-2 mb-4 flex flex-col gap-2 text-xs">
 								{checkPasswordRules(password).map((rule, idx) => {
 									const shouldShake = shakeRules && !rule.isValid;
 									return (
 										<div
 											key={idx}
 											className={`
-												flex items-center gap-2 px-3 rounded-xl transition-all duration-300 text-xs
+												flex items-center gap-2 px-3 py-1 rounded-xl transition-all duration-300
 												${rule.isValid ? 'text-green-700 text-sm animate__fadeIn animate__animated' : 'text-red-600 text-base'}
 												${shouldShake ? 'animate__animated animate__headShake' : ''}
 											`}
@@ -445,10 +411,9 @@ const Register = () => {
 							</div>
 						)}
 
-
-						{/* {error && (
+						{error && (
 							<p className="mt-3 text-red-500 text-sm text-center">{error}</p>
-						)} */}
+						)}
 
 						<button
 							type="submit"
@@ -473,7 +438,7 @@ const Register = () => {
 								Se connecter ici
 							</a>
 						</span>
-						
+
 					</form>
 				</div>
 			</div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { markNotificationAsRead } from "../services/notificationService";
-import { useAuth } from "../context/AuthContext";
+import { markNotificationAsRead } from "../../services/notificationService";
+import { useAuth } from "../../config/authHeader";
 
 function useMarkNotificationAsRead() {
 	const [loading, setLoading] = useState(false);

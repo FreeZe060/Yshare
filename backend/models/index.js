@@ -15,6 +15,9 @@ const ReportFile = require('./ReportFileModel');
 const ReportMessage = require('./ReportMessageModel');
 const NewsCategory = require('./NewsCategoryModel');
 const CommentReaction = require('./CommentReactionModel');
+const EventGuest = require('./EventGuestModel');
+const Conversation = require('./ConversationModel');
+const Message = require('./MessageModel');
 
 // Associations
 User.hasMany(Event, { foreignKey: 'id_org' });
@@ -89,6 +92,29 @@ CommentReaction.belongsTo(User, { foreignKey: 'id_user' });
 Comment.hasMany(CommentReaction, { foreignKey: 'id_comment', as: 'reactions' });
 CommentReaction.belongsTo(Comment, { foreignKey: 'id_comment' });
 
+Participant.hasMany(EventGuest, { foreignKey: 'id_participant', as: 'guests' });
+EventGuest.belongsTo(Participant, { foreignKey: 'id_participant' });
+
+User.hasMany(Conversation, { foreignKey: 'user1_id', as: 'conversationsAsUser1' });
+User.hasMany(Conversation, { foreignKey: 'user2_id', as: 'conversationsAsUser2' });
+Conversation.belongsTo(User, { foreignKey: 'user1_id', as: 'user1' });
+Conversation.belongsTo(User, { foreignKey: 'user2_id', as: 'user2' });
+
+Conversation.belongsTo(Event, { foreignKey: 'event_id' });
+Conversation.belongsTo(News, { foreignKey: 'news_id' });
+
+Conversation.hasMany(Message, { foreignKey: 'conversation_id', as: 'messages' });
+Message.belongsTo(Conversation, { foreignKey: 'conversation_id' });
+
+User.hasMany(Message, { foreignKey: 'sender_id', as: 'sentMessage' });
+Message.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
+
+Message.hasMany(Message, { foreignKey: 'reply_to_message_id', as: 'replies' });
+Message.belongsTo(Message, { foreignKey: 'reply_to_message_id', as: 'replyTo' });
+
+Favoris.belongsTo(Event, { foreignKey: 'id_event', as: 'Event', });
+Favoris.belongsTo(User, { foreignKey: 'id_user', as: 'User', });
+
 module.exports = {
   sequelize,
   User,
@@ -106,4 +132,8 @@ module.exports = {
   ReportFile,
   ReportMessage,
   CommentReaction,
+  EventGuest,
+  EventCategory,
+  Conversation,
+  Message,
 };

@@ -1,25 +1,30 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/dbManager');
-const Event = require('./eventModel');
 
 const Favoris = sequelize.define('Favoris', {
-  id_user: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-    references: { model: 'users', key: 'id' }
-  },
-  id_event: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    allowNull: false,
-    references: { model: 'events', key: 'id' }
-  }
+    id_user: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        references: {
+            model: 'users',
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
+    },
+    id_event: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        references: {
+            model: 'events',
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
+    }
 }, {
-  tableName: 'favoris',
-  timestamps: false,
+    tableName: 'favoris',
+    timestamps: false
 });
-
-Favoris.belongsTo(Event, { foreignKey: 'id_event' });
 
 module.exports = Favoris;

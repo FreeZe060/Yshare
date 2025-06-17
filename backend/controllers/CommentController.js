@@ -131,7 +131,7 @@ exports.replyComment = async (req, res) => {
         if (parseInt(parentComment.id_event) !== parseInt(eventId)) {
             console.error(`🟥 [replyComment] Tentative de réponse à un commentaire d'un autre événement : parent.event=${parentComment.id_event} ≠ demandé=${eventId}`);
             return res.status(400).json({
-                message: "Impossible de répondre à un commentaire d’un autre événement."
+                message: "Impossible de répondre à un commentaire d'un autre événement."
             });
         }
 
@@ -194,23 +194,44 @@ exports.getUserComments = async (req, res) => {
 
 exports.deleteComment = async (req, res) => {
     try {
+        console.log('[deleteComment] Début de la suppression du commentaire');
+        console.log('[deleteComment] Utilisateur:', {
+            id: req.user.id,
+            role: req.user.role
+        });
+
         if (!req.user) {
+            console.log('[deleteComment] Utilisateur non authentifié');
             return res.status(401).json({ message: "Utilisateur non authentifié." });
         }
+
         const { commentId } = req.params;
+        console.log('[deleteComment] ID du commentaire à supprimer:', commentId);
 
         const comment = await commentService.getCommentById(commentId);
         if (!comment) {
+            console.log('[deleteComment] Commentaire non trouvé');
             return res.status(404).json({ message: "Commentaire non trouvé." });
         }
 
-        if (req.user.id !== comment.id_user && req.user.role !== 'admin') {
-            return res.status(403).json({ message: "Vous n'êtes pas autorisé à supprimer ce commentaire." });
+        console.log('[deleteComment] Commentaire trouvé:', {
+            id: comment.id,
+            userId: comment.id_user,
+            userRole: req.user.role
+        });
+
+        // Vérification des permissions
+        if (req.user.role === 'Administrateur' || req.user.id === comment.id_user) {
+            console.log('[deleteComment] Permissions OK, suppression en cours');
+            const result = await commentService.deleteComment(commentId);
+            console.log('[deleteComment] Commentaire supprimé avec succès');
+            return res.status(200).json(result);
         }
 
-        const result = await commentService.deleteComment(commentId);
-        return res.status(200).json(result);
+        console.log('[deleteComment] Permissions insuffisantes');
+        return res.status(403).json({ message: "Vous n'êtes pas autorisé à supprimer ce commentaire." });
     } catch (error) {
+        console.error('[deleteComment] Erreur:', error);
         return res.status(500).json({ message: error.message });
     }
 };

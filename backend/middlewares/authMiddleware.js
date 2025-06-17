@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutes
+const INACTIVITY_LIMIT = 30 * 60 * 1000;
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;

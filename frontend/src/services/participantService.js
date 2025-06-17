@@ -47,10 +47,10 @@ export async function getParticipantsByEvent(eventId) {
 /**
  * ✅ Ajouter un participant à un événement
  */
-export async function addParticipant(eventId, token, message) {
-	console.log(`📝 [POST] /events/${eventId}/participants`);
-	console.log("📨 Données envoyées au backend :", { message });
 
+export async function addParticipant(eventId, token, message, guests = []) {
+	console.log(`📝 [POST] /events/${eventId}/participants`);
+	console.log("📨 Données envoyées au backend :", { message, guests });
 	try {
 		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
 			method: 'POST',
@@ -58,7 +58,7 @@ export async function addParticipant(eventId, token, message) {
 				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ message }), 
+			body: JSON.stringify({ message, guests }),
 			credentials: 'include',
 		});
 
@@ -118,6 +118,32 @@ export async function updateParticipantStatus(eventId, participantId, status, to
 		return json;
 	} catch (err) {
 		console.error("❌ updateParticipantStatus - Exception :", err.message);
+		throw err;
+	}
+}
+
+export async function getUserEventHistory(userId, token) {
+	console.log(`📜 [GET] /participants/history/${userId}`);
+	try {
+		const res = await fetch(`${API_BASE_URL}/participants/history/${userId}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			credentials: 'include',
+		});
+
+		const json = await res.json();
+
+		if (!res.ok) {
+			console.error(`❌ Erreur récupération historique user #${userId} :`, json.message);
+			throw new Error(json.message);
+		}
+
+		console.log(`✅ Historique récupéré pour user #${userId} (${json.length} événements)`);
+		return json;
+	} catch (err) {
+		console.error("❌ getUserEventHistory - Exception :", err.message);
 		throw err;
 	}
 }
