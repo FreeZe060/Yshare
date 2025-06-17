@@ -15,6 +15,9 @@
   "license": "ISC",
   "dependencies": {
     "dayjs": "^1.11.13",
+    "dayjs-plugin-duration": "^0.0.1-security",
+    "install": "^0.13.0",
+    "npm": "^11.4.2",
     "yshare": "file:"
   }
 }

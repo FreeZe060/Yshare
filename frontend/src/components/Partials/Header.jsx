@@ -147,15 +147,21 @@ const Header = () => {
                             </Link>
 
                             <Link
+                                to="/events"
+                                className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/events" ? "text-gray-300" : ""
+                                    }`}
+                            >
+                                <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-champagne-glasses" />
+                                <span className="mx-1">Events</span>
+                            </Link>
+
+                            <Link
                                 to="/news"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/artists" ? "text-gray-300" : ""
                                     }`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
                                 <span className="mx-1">News</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    5
-                                </span>
                             </Link>
 
                             <Link
@@ -164,9 +170,7 @@ const Header = () => {
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
                                 <span className="mx-1">Créer des Evénements</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
+
                             </Link>
 
                             <Link
@@ -176,9 +180,6 @@ const Header = () => {
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
                                 <span className="mx-1">About Us</span>
-                                <span className="left-0 absolute bg-gray-700 shadow-lg -mt-2 ml-8 px-2 rounded-full font-medium text-xs">
-                                    8
-                                </span>
                             </Link>
 
                             <Link

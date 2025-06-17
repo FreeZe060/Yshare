@@ -1515,4 +1515,24 @@ input[type=radio]:checked+span::after {
 	}
 }
 
+@keyframes waveBackground {
+	0% {
+		background-position: -200% 0;
+	}
+
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.wave-overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background: linear-gradient(120deg, rgba(255, 0, 225, 0.3) 20%, rgba(255, 123, 240, 0.1) 50%, rgba(255, 0, 225, 0.3) 80%);
+	background-size: 200% 100%;
+	animation: waveBackground 2.5s linear infinite;
+	border-radius: inherit;
+	pointer-events: none; }
+
 /*# sourceMappingURL=style.css.map */

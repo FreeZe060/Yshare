@@ -8,6 +8,7 @@ import '../assets/css/style.css';
 
 import Header from "../components/Partials/Header";
 import Footer from '../components/Partials/Footer';
+import CustomSelect from '../utils/CustomSelect';
 
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
@@ -37,8 +38,7 @@ function Events() {
 
     const { categories: allCategories, loading: catLoading } = useCategories();
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-
-    const displayedCategories = [{ id: null, name: 'Tous' }, ...allCategories.slice(0, 3)];
+    const categoryOptions = ['Tous', ...allCategories.slice(0, 3).map(cat => capitalizeFirstLetter(cat.name))];
 
     const { user, isAuthenticated } = useAuth();
     const { favoris, loading: favLoading, error, refreshFavoris } = useFavoris();
@@ -46,11 +46,15 @@ function Events() {
     const { add } = useAddFavoris();
     const { remove } = useRemoveFavoris();
 
+    const selectedCategoryName = categoryOptions.find((_, idx) => idx === (selectedCategoryId === null ? 0 : allCategories.findIndex(cat => cat.id === selectedCategoryId) + 1));
+
     const filters = useMemo(() => {
-        return selectedCategoryId !== null ? { categoryId: selectedCategoryId } : undefined;
+        if (selectedCategoryId === null) return undefined;
+        return { categoryId: selectedCategoryId };
     }, [selectedCategoryId]);
 
-    const { events, loading: eventsLoading } = useEvents(filters, 1, selectedCategoryId === null ? 100 : 5, true, refreshKey);
+
+    const { events, loading: eventsLoading } = useEvents(filters, 1,  100, true, refreshKey);
 
     useSlideUpAnimation('.rev-slide-up', events);
     useTextAnimation();
@@ -131,15 +135,17 @@ function Events() {
                         <h2 className="mb-[26px] text-center anim-text et-3-section-title">À l’affiche prochainement</h2>
 
                         <div className="*:before:-z-[1] *:z-[1] *:before:absolute *:relative *:before:inset-0 flex flex-wrap justify-center gap-[30px] xxs:gap-[15px] *:before:bg-gradient-to-r *:before:from-[#550ECA] *:before:to-[#F929BB] *:before:opacity-0 *:px-[25px] *:border *:border-[#8E8E93] *:h-[30px] *:text-[17px] et-3-event-tab-navs">
-                            {displayedCategories.map((cat, i) => (
-                                <button
-                                    key={cat.id ?? 'all'}
-                                    className={`tab-nav ${selectedCategoryId === cat.id ? 'active' : ''}`}
-                                    onClick={() => setSelectedCategoryId(cat.id)}
-                                >
-                                    {capitalizeFirstLetter(cat.name)}
-                                </button>
-                            ))}
+                            <CustomSelect
+                                name="category"
+                                value={selectedCategoryName || 'Tous'}
+                                onChange={(e) => {
+                                    const selectedName = e.target.value;
+                                    const matched = allCategories.find(cat => capitalizeFirstLetter(cat.name) === selectedName);
+                                    setSelectedCategoryId(matched ? matched.id : null);
+                                }}
+                                options={categoryOptions}
+                                placeholder="Catégorie"
+                            />
                         </div>
                     </div>
 
@@ -150,13 +156,8 @@ function Events() {
                             </div>
                         ))
                     ) : (() => {
-                        const filteredUpcomingEvents = events
-                            .filter(event => new Date(event.start_time) > new Date())
-                            .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
 
-                        const upcomingEvents = filteredUpcomingEvents.slice(0, 5);
-
-                        if (upcomingEvents.length === 0) {
+                        if (events.length === 0) {
                             return (
                                 <div className="text-center mt-10 animate__animated animate__fadeIn">
                                     <p className="text-[20px] font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB]">
@@ -169,7 +170,7 @@ function Events() {
 
                         return (
                             <>
-                                {upcomingEvents.map((event, index) => {
+                                {events.map((event, index) => {
                                     const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];
                                     const imageUrl = mainImage?.image_url?.startsWith('http')
                                         ? mainImage.image_url

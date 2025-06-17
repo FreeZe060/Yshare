@@ -1,6 +1,8 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import 'animate.css';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import { time } from 'framer-motion';
 
 const STATUS_STYLES = {
     'Planifié': 'bg-gradient-to-r from-[#550ECA] to-[#7A2AE1] text-white animate__fadeIn shadow-md',
@@ -9,13 +11,16 @@ const STATUS_STYLES = {
     'Annulé': 'bg-gradient-to-r from-[#F929BB] to-red-500 text-white animate__shakeX shadow-md',
 };
 
+dayjs.extend(duration);
+
 const formatTimeLeft = (milliseconds) => {
-    const duration = dayjs.duration(milliseconds);
-    const hours = String(duration.hours()).padStart(2, '0');
-    const minutes = String(duration.minutes()).padStart(2, '0');
-    const seconds = String(duration.seconds()).padStart(2, '0');
+    const time = dayjs.duration(milliseconds);
+    const hours = String(time.hours()).padStart(2, '0');
+    const minutes = String(time.minutes()).padStart(2, '0');
+    const seconds = String(time.seconds()).padStart(2, '0');
     return `${hours}:${minutes}:${seconds}`;
 };
+
 
 const EventStatusTag = ({ date, status }) => {
     const [timeLeft, setTimeLeft] = useState(null);
@@ -58,17 +63,23 @@ const EventStatusTag = ({ date, status }) => {
     }, [computedStatus, date]);
 
     return (
-        <div className="relative inline-block">
+        <div className="relative inline-block animate__animated animate__fadeInUp">
             {computedStatus === 'Planifié' && timeLeft !== null && (
-                <div className="absolute -top-2 -right-2 text-[11px] px-2 py-[1px] rounded-full bg-white text-[#550ECA] font-semibold shadow animate__animated animate__fadeInUp">
-                    ⏳ {formatTimeLeft(timeLeft)}
-                </div>
+                <>
+                    <div className="absolute z-10 -top-4 -right-2 text-[13px] px-2 py-[1px] rounded-full bg-[#F929BB] text-white font-semibold shadow">
+                        {formatTimeLeft(timeLeft)}
+                    </div>
+                </>
             )}
             <span
-                className={`inline-block text-[13px] font-medium px-3 py-1 rounded-full w-fit animate__animated
+                className={`inline-block text-[13px] font-medium px-3 py-1 rounded-full w-fit animate__animated ${timeLeft !== null ? 'border-2 border-[#F929BB]' : ''}
                     backdrop-blur-sm ring-1 ring-white/20 ${STATUS_STYLES[computedStatus] || 'bg-gray-100 text-gray-700'}
                 `}
             >
+                {/* Wave effect */}
+                {computedStatus === 'Planifié' && timeLeft !== null && (
+                    <div className="wave-overlay" />
+                )}
                 {computedStatus}
             </span>
 
