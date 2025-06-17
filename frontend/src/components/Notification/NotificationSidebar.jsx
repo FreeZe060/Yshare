@@ -4,15 +4,17 @@ import 'dayjs/locale/fr';
 import utc from 'dayjs/plugin/utc';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
+import timezone from 'dayjs/plugin/timezone';
 
-dayjs.extend(duration);
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.extend(relativeTime);
 dayjs.locale('fr');
-dayjs.extend(utc);
 
-const formatDateLabel = (date) => {
-    const createdAt = dayjs.utc(date);
-    const now = dayjs.utc();
+const SERVER_TIMEZONE = 'Europe/Paris';
+
+const formatDateLabel = (date, now = dayjs()) => {
+    const createdAt = dayjs.tz(date, SERVER_TIMEZONE);
 
     const diffInMinutes = now.diff(createdAt, 'minute');
     const diffInHours = now.diff(createdAt, 'hour');
@@ -21,21 +23,16 @@ const formatDateLabel = (date) => {
     const diffInMonths = now.diff(createdAt, 'month');
     const diffInYears = now.diff(createdAt, 'year');
 
-    if (diffInMinutes < 1) {
-        return "À l’instant";
-    } else if (diffInMinutes < 60) {
-        return `Il y a ${diffInMinutes} min`;
-    } else if (diffInHours < 24) {
-        return `Il y a ${diffInHours} h`;
-    } else if (diffInDays < 7) {
-        return `Il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
-    } else if (diffInWeeks < 5) {
-        return `Il y a ${diffInWeeks} semaine${diffInWeeks > 1 ? 's' : ''}`;
-    } else if (diffInMonths < 12) {
-        return `Il y a ${diffInMonths} mois`;
-    } else {
-        return createdAt.local().format('D MMM YYYY');
-    }
+    if (diffInMinutes < 1) return "À l’instant";
+    if (diffInMinutes < 60) return `Il y a ${diffInMinutes} min`;
+    if (diffInHours < 24) return `Il y a ${diffInHours} h`;
+    if (diffInDays < 7) return `Il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
+    if (diffInWeeks < 5) return `Il y a ${diffInWeeks} semaine${diffInWeeks > 1 ? 's' : ''}`;
+    if (diffInMonths < 12) return `Il y a ${diffInMonths} mois`;
+
+    const months = diffInMonths % 12;
+    const years = diffInYears;
+    return `Il y a ${years} an${years > 1 ? 's' : ''}${months ? ` et ${months} mois` : ''}`;
 };
 
 const NotificationSidebar = ({
@@ -53,6 +50,7 @@ const NotificationSidebar = ({
     const [isVisible, setIsVisible] = useState(false);
     const [showAll, setShowAll] = useState(false);
     const [localNotifications, setLocalNotifications] = useState([]);
+    const [currentTime, setCurrentTime] = useState(dayjs());
 
     const panelRef = useRef(null);
 
@@ -94,6 +92,13 @@ const NotificationSidebar = ({
             return () => document.removeEventListener("mousedown", handleClickOutside);
         }
     }, [isOpen, setIsOpen]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(dayjs());
+        }, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     if (!shouldRender || loading) return null;
 
@@ -167,7 +172,9 @@ const NotificationSidebar = ({
                                         <p className="text-white text-sm leading-snug">
                                             <span className="font-semibold text-orange-500">Notification</span> {notif.title} - {notif.message}
                                         </p>
-                                        <p className="pt-1 text-gray-200 text-xs">{formatDateLabel(notif.date_sent)}</p>
+                                        <p className="pt-1 text-gray-200 text-xs">
+                                            {formatDateLabel(notif.date_sent, currentTime)}
+                                        </p>
                                     </div>
 
                                     <div className="flex-shrink-0">
