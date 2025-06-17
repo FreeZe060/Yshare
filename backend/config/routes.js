@@ -61,6 +61,7 @@ router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOw
 router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
 router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
 router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
+router.get('/events-count', eventController.getTotalEventCount);
 
 //////// USER ROUTES ////////
 

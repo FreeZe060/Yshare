@@ -53,6 +53,16 @@ exports.getEventById = async (req, res) => {
     }
 };
 
+exports.getTotalEventCount = async (req, res) => {
+    try {
+        const total = await eventService.countAllEvents();
+        res.status(200).json({ total });
+    } catch (error) {
+        console.error("[getTotalEventCount] ❌ Erreur :", error);
+        res.status(500).json({ message: "Erreur lors du comptage des événements", error: error.message });
+    }
+};
+
 exports.createEvent = async (req, res) => {
     try {
         if (!req.user) {

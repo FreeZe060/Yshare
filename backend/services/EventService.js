@@ -102,7 +102,17 @@ class EventService {
                     model: User,
                     as: 'organizer',
                     attributes: ['id', 'name', 'lastname', 'profileImage']
+<<<<<<< Updated upstream
                 }
+=======
+                },
+                ...(userId ? [{
+                    model: Rating,
+                    where: { id_user: userId },
+                    required: false,
+                    attributes: ['id'],
+                }] : [])
+>>>>>>> Stashed changes
             ]
         });
     }
@@ -172,6 +182,11 @@ class EventService {
         console.log('Événement créé avec ID:', event.id);
 
         return await this.getEventById(event.id);
+    }
+
+    async countAllEvents() {
+        const total = await Event.count();
+        return total;
     }
 
     async updateEventStatus(eventId, newStatus) {
