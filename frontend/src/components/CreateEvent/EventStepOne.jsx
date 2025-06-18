@@ -51,25 +51,30 @@ const EventStepOne = ({ formData, onChange }) => {
 	}, [formData]);
 
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+		<div className="grid grid-cols-1 gap-6">
 			<Input label="Titre" name="title" value={formData.title} onChange={handleChange} required />
-			<div className="md:col-span-2">
-				<Input label="Description" name="description" value={formData.description} onChange={handleChange} />
-			</div>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+			<Input label="Description" name="description" value={formData.description} onChange={handleChange} />
+
+			<div className="grid sm:grid-cols-1 md:grid-cols-2 grid-cols-4 gap-6">
 				<Input label="Date de début" name="date" value={formData.date} onChange={handleChange} type="date" required error={errors.date} />
 				<Input label="Heure de début" name="start_time" value={formData.start_time} onChange={handleChange} type="time" required />
-			</div>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<Input label="Date de fin" name="end_date" value={formData.end_date} onChange={handleChange} type="date" required error={errors.end_date} />
 				<Input label="Heure de fin" name="end_time" value={formData.end_time} onChange={handleChange} type="time" required />
 			</div>
-			<Input label="Participants maximum" name="max_participants" value={formData.max_participants} onChange={handleChange} type="number" />
-			<Input label="Prix" name="price" value={formData.price} onChange={handleChange} type="number" />
-			<Input label="Ville" name="city" value={formData.city} onChange={handleChange} required />
-			<Input label="Code Postal" name="postal_code" value={formData.postal_code} onChange={handleChange} required />
-			<Input label="Rue" name="street" value={formData.street} onChange={handleChange} />
-			<Input label="Numéro de rue" name="street_number" value={formData.street_number} onChange={handleChange} />
+
+			<div className="grid sm:grid-cols-1 grid-cols-2 gap-6">
+				<Input label="Participants maximum" name="max_participants" value={formData.max_participants} onChange={handleChange} type="number" />
+				<Input label="Prix" name="price" value={formData.price} onChange={handleChange} type="number" />
+			</div>
+
+			<div className="grid sm:grid-cols-1 md:grid-cols-2 grid-cols-4 gap-6">
+				<Input label="Ville" name="city" value={formData.city} onChange={handleChange} required />
+				<Input label="Code Postal" name="postal_code" value={formData.postal_code} onChange={handleChange} required />
+				<Input label="Rue" name="street" value={formData.street} onChange={handleChange} />
+				<Input label="Numéro de rue" name="street_number" value={formData.street_number} onChange={handleChange} />
+			</div>
+
 			<SelectCategories
 				selected={formData.categories[0] || ''}
 				onChange={(value) => onChange('categories', [value])}
