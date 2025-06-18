@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useSlideUpAnimation from '../../hooks/Animations/useSlideUpAnimation';
 import '../../assets/css/style.css';
@@ -109,7 +109,7 @@ function Event_Created({
                                 </h4>
                             </div>
                             <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
-                                <Link to={`/event/${item.id}`} className="et-3-btn w-max[161px]">
+                                <Link to={`/event/${item.id}`} className="et-3-btn min-w-[166px]">
                                     Voir l'event
                                 </Link>
 
