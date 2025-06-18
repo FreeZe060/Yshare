@@ -2,8 +2,7 @@ import React from 'react';
 import 'animate.css';
 import Header from "../components/Partials/Header";
 import Footer from "../components/Partials/Footer";
-import useTextAnimation from '../hooks/Animations/useTextAnimation';
-import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
+import vector1 from '../assets/img/et-3-event-vector.svg';
 
 const TeamPage = () => {
 
@@ -11,7 +10,14 @@ const TeamPage = () => {
         <>
             <Header />
             <main>
-                <section className="z-[1] before:-z-[1] before:absolute relative before:inset-0 bg-[#000D83] before:bg-cover before:bg-no-repeat before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
+                <section style={{
+                    backgroundImage: `linear-gradient(to top right, #580FCA, #F929BB), url(${vector1})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundBlendMode: 'overlay',
+                }}
+                    className="z-[1] before:-z-[1] before:absolute relative bg-gradient-to-tr from-[#580FCA] to-[#F929BB] before:bg-cover before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
                     <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
                         <h1 className="font-medium text-[56px] xs:text-[45px] md:text-[50px] et-breadcrumb-title">Notre Équipe</h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
@@ -35,7 +41,7 @@ const TeamPage = () => {
 
                                     <div className="before:-top-[33px] before:left-0 z-[1] before:-z-[1] before:absolute relative bg-white before:bg-white shadow-[0_4px_60px_rgba(18,96,254,0.12)] mx-[25px] xs:mx-[5px] md:mx-[15px] -mt-[44px] xs:mt-0 md:-mt-[15px] px-[25px] md:px-[15px] pb-[30px] md:pb-[20px] rounded-[16px] before:rounded-[16px] before:w-full before:h-full before:skew-y-[4deg] et-member__txt">
                                         <div className="-top-[43px] right-[20px] absolute et-member-socials">
-                                             <div className="bottom-[calc(100%+8px)] -z-[2] absolute flex flex-col gap-[8px] opacity-0 group-hover:opacity-100 text-[14px] transition translate-y-[100%] group-hover:translate-y-0 duration-[400ms] et-speaker__socials">
+                                            <div className="bottom-[calc(100%+8px)] -z-[2] absolute flex flex-col gap-[8px] opacity-0 group-hover:opacity-100 text-[14px] transition translate-y-[100%] group-hover:translate-y-0 duration-[400ms] et-speaker__socials">
                                                 <a href="#" className="flex justify-center items-center hover:bg-etBlue border border-white hover:border-etBlue rounded-full w-[36px] h-[36px] text-white"><i className="fa-brands fa-twitter"></i></a>
                                                 <a href="#" className="flex justify-center items-center hover:bg-etBlue border border-white hover:border-etBlue rounded-full w-[36px] h-[36px] text-white"><i className="fa-brands fa-linkedin-in"></i></a>
                                                 <a href="#" className="flex justify-center items-center hover:bg-etBlue border border-white hover:border-etBlue rounded-full w-[36px] h-[36px] text-white"><i className="fa-brands fa-instagram"></i></a>

@@ -15,10 +15,11 @@ exports.getAllParticipants = async (req, res) => {
 exports.getParticipantsForEvent = async (req, res) => {
     try {
         const { eventId } = req.params;
-        const includeAll = req.query.all === 'true';
 
-        console.log(`📥 [Controller] GET /participants/event/${eventId}?all=${includeAll}`);
-        const data = await participantService.getParticipantsByEventId(eventId, includeAll);
+        console.log(`📥 [Controller] GET /participants/event/${eventId}`);
+        console.log(`👤 Utilisateur connecté : ${req.user?.id || 'non connecté'} | rôle: ${req.user?.role || 'anonyme'}`);
+
+        const data = await participantService.getParticipantsByEventId(eventId, req.user);
         res.status(200).json(data);
     } catch (err) {
         console.error('❌ Erreur getParticipantsForEvent :', err.message);

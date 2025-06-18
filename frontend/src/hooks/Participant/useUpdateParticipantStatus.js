@@ -5,11 +5,11 @@ function useUpdateParticipantStatus() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	const updateStatus = async (eventId, id, status) => {
+	const updateStatus = async (eventId, participantId, status, organizerResponse) => {
 		setLoading(true);
 		setError(null);
 		try {
-			const result = await updateParticipantStatus(eventId, id, status);
+			const result = await updateParticipantStatus(eventId, participantId, status, organizerResponse);
 			return result;
 		} catch (err) {
 			setError(err.message);

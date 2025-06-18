@@ -6,6 +6,7 @@ import useAllNews from '../hooks/News/useAllNews';
 import useCategories from "../hooks/Categorie/useCategories";
 import NewsLeftColumn from '../components/News/NewsLeftColumn';
 import NewsRightColumn from '../components/News/NewsRightColumn';
+import vector1 from '../assets/img/et-3-event-vector.svg';
 
 function NewsPage() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -69,8 +70,15 @@ function NewsPage() {
         <>
             <Header />
             <main>
-                <section className="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
-                    <div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
+                <section style={{
+                    backgroundImage: `linear-gradient(to top right, #580FCA, #F929BB), url(${vector1})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundBlendMode: 'overlay',
+                }}
+                    className="z-[1] before:-z-[1] before:absolute relative bg-gradient-to-tr from-[#580FCA] to-[#F929BB] before:bg-cover before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
+                    <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
                         <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">Toutes les actualités</h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li className="opacity-80"><a href="/" className="hover:text-etBlue">Accueil</a></li>

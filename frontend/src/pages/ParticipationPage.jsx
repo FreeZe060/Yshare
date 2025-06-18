@@ -4,6 +4,7 @@ import useUserEventHistory from '../hooks/Participant/useUserEventHistory';
 import EventParticipant from '../components/Participant/EventParticipant';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
+import vector1 from '../assets/img/et-3-event-vector.svg';
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 import useUpdateMessage from '../hooks/Participant/useUpdateMessage';
 import useUpdateGuests from '../hooks/Participant/useUpdateGuests';
@@ -88,8 +89,15 @@ const UserParticipationPage = () => {
         <>
             <Header />
             <main>
-                <section className="et-breadcrumb bg-[#000D83] pt-[210px] lg:pt-[190px] sm:pt-[160px] pb-[130px] lg:pb-[110px] sm:pb-[80px] relative z-[1] before:absolute before:inset-0 before:bg-no-repeat before:bg-cover before:bg-center before:-z-[1] before:opacity-30">
-                    <div className="container mx-auto max-w-[1200px] px-[12px] xl:max-w-full text-center text-white">
+                <section style={{
+                    backgroundImage: `linear-gradient(to top right, #580FCA, #F929BB), url(${vector1})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundBlendMode: 'overlay',
+                }}
+                    className="z-[1] before:-z-[1] before:absolute relative bg-gradient-to-tr from-[#580FCA] to-[#F929BB] before:bg-cover before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
+                    <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
                         <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">
                             Toutes vos participations
                         </h1>
@@ -110,7 +118,7 @@ const UserParticipationPage = () => {
                         </ul>
                     </div>
                 </section>
-
+                
                 {!loading && !error && (
                     <EventParticipant
                         formatEuro={formatEuro}

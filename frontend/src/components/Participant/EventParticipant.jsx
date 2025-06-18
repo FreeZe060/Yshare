@@ -145,7 +145,7 @@ function Event_Participated({
                     <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
                         Vos participations
                     </h6>
-                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">\u00c9vénements auxquels vous participez</h2>
+                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements auxquels vous participez</h2>
                     <FiltreParticipant
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}

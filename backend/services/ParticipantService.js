@@ -17,31 +17,61 @@ class ParticipantService {
             order: [['joined_at', 'DESC']]
         });
 
-        return participants.map(p => ({
-            id: p.id,
-            userId: p.User.id,
-            name: p.User.name,
-            lastname: p.User.lastname,
-            email: p.User.email,
-            profileImage: p.User.profileImage,
-            eventId: p.Event?.id,
-            eventTitle: p.Event?.title || 'Événement supprimé',
-            status: p.status,
-            joinedAt: p.joined_at,
-            guests: p.guests?.map(g => ({
-                id: g.id,
-                firstname: g.firstname,
-                lastname: g.lastname,
-                email: g.email
-            })) || []
-        }));
+        console.log(`📊 ${participants.length} participants récupérés.`);
+
+        return participants.map((p, index) => {
+            console.log(`➡️ Participant #${index + 1} (${p.User.name} ${p.User.lastname}) → Event: ${p.Event?.title || '❌ Supprimé'}`);
+            return {
+                id: p.id,
+                userId: p.User.id,
+                name: p.User.name,
+                lastname: p.User.lastname,
+                email: p.User.email,
+                profileImage: p.User.profileImage,
+                eventId: p.Event?.id,
+                eventTitle: p.Event?.title || 'Événement supprimé',
+                status: p.status,
+                joinedAt: p.joined_at,
+                guests: p.guests?.map((g, i) => {
+                    console.log(`   👤 Invité #${i + 1}: ${g.firstname} ${g.lastname}`);
+                    return {
+                        id: g.id,
+                        firstname: g.firstname,
+                        lastname: g.lastname,
+                        email: g.email
+                    };
+                }) || []
+            };
+        });
     }
 
-    async getParticipantsByEventId(eventId, includeAllStatuses = false) {
-        console.log(`🔍 [Service] Récupération participants pour event #${eventId} (all=${includeAllStatuses})`);
+    async getParticipantsByEventId(eventId, currentUser) {
+        console.log(`🔍 [Service] Récupération participants pour event #${eventId}`);
+
+        const event = await Event.findByPk(eventId, {
+            include: { model: User, as: 'organizer', attributes: ['id', 'name', 'lastname'] }
+        });
+
+        if (!event) {
+            console.warn(`❌ Événement #${eventId} introuvable.`);
+            throw new Error('Événement introuvable.');
+        }
+
+        console.log(`✅ Événement trouvé : ${event.title}`);
+        console.log(`👤 Organisateur de l’événement : ${event.organizer?.name} ${event.organizer?.lastname}`);
+
+        const isAdmin = currentUser?.role === 'admin';
+        const isOrganizer = event.organizer?.id === currentUser?.id;
+        const includeAllStatuses = isAdmin || isOrganizer;
+
+        console.log(`👤 Utilisateur courant : ID=${currentUser?.id}, rôle=${currentUser?.role}`);
+        console.log(`🔓 Accès complet aux statuts : ${includeAllStatuses}`);
 
         const where = { id_event: eventId };
-        if (!includeAllStatuses) where.status = 'Inscrit';
+        if (!includeAllStatuses) {
+            where.status = 'Inscrit';
+            console.log(`📎 Filtrage uniquement sur statut = "Inscrit"`);
+        }
 
         const participants = await Participant.findAll({
             where,
@@ -66,9 +96,19 @@ class ParticipantService {
             order: [['id', 'ASC']]
         });
 
-        return participants.map(p => {
+        console.log(`📦 ${participants.length} participants récupérés.`);
+
+        return participants.map((p, index) => {
             const organizer = p.Event?.organizer;
-            const result = {
+
+            console.log(`➡️ Participant #${index + 1} : ${p.User.name} ${p.User.lastname} (statut: ${p.status})`);
+            if (p.guests?.length) {
+                p.guests.forEach((g, i) => {
+                    console.log(`   👥 Invité #${i + 1}: ${g.firstname} ${g.lastname}`);
+                });
+            }
+
+            return {
                 participantId: p.id,
                 user: {
                     id: p.User.id,
@@ -80,6 +120,7 @@ class ParticipantService {
                 },
                 status: p.status,
                 joinedAt: p.joined_at,
+                validatedAt: p.validated_at || null,
                 requestMessage: p.request_message || '(aucun message)',
                 organizerResponse: p.organizer_response || '(aucune réponse)',
                 guests: p.guests?.map(g => ({
@@ -95,9 +136,6 @@ class ParticipantService {
                     email: organizer.email
                 } : null
             };
-
-            console.log(`🧾 Participant #${p.id} - ${p.User.name}: statut="${p.status}", msg="${p.request_message}"`);
-            return result;
         });
     }
 
@@ -287,7 +325,7 @@ class ParticipantService {
         const validStatuses = ['Inscrit', 'Refusé', 'Annulé', 'En Attente'];
         if (!validStatuses.includes(status)) throw new Error('Statut invalide.');
 
-        if (!organizerResponse || organizerResponse.trim() === '') {
+        if ((!organizerResponse || organizerResponse.trim() === '') && req.user.role !== 'admin') {
             throw new Error('Un message est requis pour cette mise à jour.');
         }
 
@@ -296,7 +334,16 @@ class ParticipantService {
         });
         if (!participant) throw new Error('Participant non trouvé.');
 
-        await participant.update({ status, organizer_response: organizerResponse });
+        const updateData = {
+            status,
+            organizer_response: organizerResponse
+        };
+
+        if (status === 'Inscrit') {
+            updateData.validated_at = new Date();
+        }
+
+        await participant.update(updateData);
 
         const user = participant.User;
         const event = participant.Event;
@@ -420,8 +467,8 @@ class ParticipantService {
                 id_event: event.id,
                 event_status: event.status,
                 status: p.status,
-                id_user: p.id_user, 
-                participant_id: p.id, 
+                id_user: p.id_user,
+                participant_id: p.id,
                 image: EventImages?.[0]?.image_url || null,
                 request_message: p.request_message || null,
                 organizer_response: p.organizer_response || null,
@@ -433,7 +480,7 @@ class ParticipantService {
                     image: organizer.profileImage
                 } : null,
                 guests: p.guests?.map(g => ({
-                    id: g.id, 
+                    id: g.id,
                     firstname: g.firstname,
                     lastname: g.lastname,
                     email: g.email

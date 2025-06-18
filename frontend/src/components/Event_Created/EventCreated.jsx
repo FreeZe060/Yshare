@@ -29,14 +29,6 @@ function Event_Created({
     events,
     inputProps
 }) {
-    const [visibleParticipants, setVisibleParticipants] = useState({});
-
-    const toggleParticipants = (eventId) => {
-        setVisibleParticipants((prev) => ({
-            ...prev,
-            [eventId]: !prev[eventId]
-        }));
-    };
 
     useSlideUpAnimation('.rev-slide-up', filtered);
 
@@ -114,34 +106,11 @@ function Event_Created({
                                 </Link>
 
                                 {item.participants?.length > 0 && (
-                                    <button
-                                        onClick={() => toggleParticipants(item.id)}
-                                        className="et-3-btn"
-                                    >
-                                        {visibleParticipants[item.id] ? "Masquer participants" : "Voir participants"}
-                                    </button>
+                                    <Link to={`/event/${item.id}/participants`} className="et-3-btn">
+                                        Voir participants
+                                    </Link>
                                 )}
                             </div>
-
-                            {visibleParticipants[item.id] && (
-                                <div className="mt-4 w-full bg-gray-50 p-4 rounded-lg border">
-                                    <h5 className="text-lg font-bold mb-2">Participants inscrits</h5>
-                                    {item.participants?.map((p, i) => (
-                                        <div key={i} className="flex items-center gap-4 mb-3">
-                                            <img
-                                                src={`http://localhost:8080${p.User?.profileImage || ''}`}
-                                                alt={`${p.User?.name || 'Participant'}`}
-                                                className="w-10 h-10 rounded-full object-cover border"
-                                            />
-                                            <div className="text-left">
-                                                <div className="font-semibold">{p.User?.name} {p.User?.lastname}</div>
-                                                <div className="text-sm text-gray-500">{p.User?.email}</div>
-                                                <div className="text-xs italic text-gray-400">Statut : {p.status}</div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     );
                 })}

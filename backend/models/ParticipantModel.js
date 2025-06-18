@@ -24,6 +24,10 @@ const Participant = sequelize.define('Participant', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    validated_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
     organizer_response: {
         type: DataTypes.TEXT,
         allowNull: true

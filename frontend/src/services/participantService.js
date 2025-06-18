@@ -27,10 +27,18 @@ export async function getAllParticipantsForAdmin(token) {
 /**
  * ✅ [PUBLIC] Récupérer les participants d’un événement
  */
-export async function getParticipantsByEvent(eventId) {
+export async function getParticipantsByEvent(eventId, token = null) {
 	console.log(`🌍 [GET] /events/${eventId}/participants/all`);
 	try {
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/all`);
+		const headers = token
+			? { Authorization: `Bearer ${token}` }
+			: {};
+
+		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/all`, {
+			headers,
+			credentials: 'include',
+		});
+
 		const json = await res.json();
 		if (!res.ok) {
 			console.error(`❌ Erreur /events/${eventId}/participants/all :`, json.message);
@@ -43,6 +51,7 @@ export async function getParticipantsByEvent(eventId) {
 		throw err;
 	}
 }
+
 
 /**
  * ✅ Ajouter un participant à un événement
@@ -97,8 +106,10 @@ export async function addParticipantAdmin(eventId, userId, token) {
 /**
  * ✅ Mettre à jour le statut d’un participant
  */
-export async function updateParticipantStatus(eventId, participantId, status, token) {
-	console.log(`🔁 [PUT] /events/${eventId}/participants/${participantId} → "${status}"`);
+export async function updateParticipantStatus(eventId, participantId, status, organizerResponse, token) {
+
+	console.log(`🔁 [PUT] /events/${eventId}/participants/${participantId} → "${status}", message: "${organizerResponse}"`);
+
 	try {
 		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${participantId}`, {
 			method: 'PUT',
@@ -106,14 +117,19 @@ export async function updateParticipantStatus(eventId, participantId, status, to
 				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify({ status }),
+			body: JSON.stringify({
+				status,
+				organizerResponse, 
+			}),
 			credentials: 'include',
 		});
+
 		const json = await res.json();
 		if (!res.ok) {
 			console.error(`❌ Erreur updateStatus [${status}] :`, json.message);
 			throw new Error(json.message);
 		}
+
 		console.log(`✅ Statut mis à jour pour participant #${participantId} (${status})`);
 		return json;
 	} catch (err) {

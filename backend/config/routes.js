@@ -114,7 +114,7 @@ router.delete('/categories/:id', authenticateToken, categoryController.deleteCat
 
 router.get('/participants/all', authenticateToken, isAdmin, participantController.getAllParticipants);
 router.get('/users/:userId/participation-count', participantController.getParticipationCount);
-router.get('/events/:eventId/participants/all', participantController.getParticipantsForEvent);
+router.get('/events/:eventId/participants/all', extractUserFromToken, participantController.getParticipantsForEvent);
 router.get('/events/:eventId/participants/user/:userId', authenticateToken, isEventOwnerOrAdmin, participantController.getParticipantByUser);
 router.post('/events/:eventId/participants', authenticateToken, participantController.addParticipant);
 router.post('/admin/events/:eventId/participants/:userId', authenticateToken, isAdmin, participantController.adminAddParticipant );
