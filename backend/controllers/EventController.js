@@ -55,6 +55,18 @@ exports.getEventById = async (req, res) => {
     }
 };
 
+exports.getDashboardStats = async (req, res) => {
+	try {
+		console.log("[getDashboardStats] 📊 Récupération des statistiques du tableau de bord...");
+		const stats = await eventService.getDashboardStats();
+		console.log("[getDashboardStats] ✅ Statistiques récupérées avec succès.");
+		res.status(200).json(stats);
+	} catch (error) {
+		console.error("[getDashboardStats] ❌ Erreur lors de la récupération des stats :", error);
+		res.status(500).json({ message: "Erreur lors de la récupération des statistiques", error: error.message });
+	}
+};
+
 exports.getTotalEventCount = async (req, res) => {
     try {
         const total = await eventService.countAllEvents();

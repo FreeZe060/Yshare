@@ -1,14 +1,11 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import useAllUsers from '../../../hooks/Admin/useAllUsers';
+import useDashboardStats from '../../../hooks/Admin/useDashboardStats';
 import useReports from '../../../hooks/Report/useReports';
-import useEvents from '../../../hooks/Events/useEvents';
 
 const StatsSection = ({ setActiveSection }) => {
-	const { users } = useAllUsers();
+	const { stats, loading, error } = useDashboardStats();
 	const { reports } = useReports();
-	const filters = useMemo(() => ({}), []);
-	const { total } = useEvents(filters, 1, 1);
 
 	const cardClasses = "bg-white shadow-md p-6 rounded-lg";
 
@@ -31,22 +28,26 @@ const StatsSection = ({ setActiveSection }) => {
 					<div className="flex flex-row space-x-4 items-center">
 						<i className="fa-regular fa-user text-indigo-500 text-3xl xxs:text-xl" />
 						<div>
-							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Users</p>
-							<p className="text-gray-900 font-bold text-2xl">{users?.length || 0}</p>
+							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Active Users</p>
+							<p className="text-gray-900 font-bold text-2xl">
+								{loading ? '...' : stats?.activeUsers ?? 0}
+							</p>
 						</div>
 					</div>
 				</motion.div>
 
 				<motion.div
 					className={`cursor-pointer ${cardClasses}`}
-					onClick={() => setActiveSection('events')}
+					onClick={() => setActiveSection('participants')}
 					whileHover={hoverAnimation}
 				>
 					<div className="flex flex-row space-x-4 items-center">
 						<i className="fa-regular fa-calendar text-indigo-500 text-3xl xxs:text-xl" />
 						<div>
-							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Events</p>
-							<p className="text-gray-900 font-bold text-2xl">{total || 0}</p>
+							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Total Participants</p>
+							<p className="text-gray-900 font-bold text-2xl">
+								{loading ? '...' : stats?.totalParticipants ?? 0}
+							</p>
 						</div>
 					</div>
 				</motion.div>
@@ -66,6 +67,7 @@ const StatsSection = ({ setActiveSection }) => {
 				</motion.div>
 
 			</div>
+			{error && <p className="text-red-500 mt-4">Erreur : {error}</p>}
 		</div>
 	);
 };

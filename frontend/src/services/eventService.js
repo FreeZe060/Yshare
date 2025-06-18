@@ -194,3 +194,19 @@ export async function deleteEvent(eventId, status = 'Annulé', token) {
 
 	return result;
 }
+
+export async function getDashboardStats(token) {
+	const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+		method: 'GET',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`, 
+		},
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des statistiques");
+
+	return result;
+}

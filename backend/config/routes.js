@@ -70,6 +70,7 @@ router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin,
 router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
 router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
 router.get('/events-count', eventController.getTotalEventCount);
+router.get('/admin/stats', authenticateToken, isAdmin, eventController.getDashboardStats);
 
 //////// USER ROUTES ////////
 

@@ -106,8 +106,8 @@ class EventService {
                 ...(userId ? [{
                     model: Rating,
                     where: { id_user: userId },
-                    required: false, 
-                    attributes: ['id'], 
+                    required: false,
+                    attributes: ['id'],
                 }] : [])
             ]
         });
@@ -294,6 +294,92 @@ class EventService {
 
         console.log('✅ Tous les statuts ont été mis à jour (et notifications envoyées si nécessaire).');
     }
+
+    async getDashboardStats() {
+        console.log("[getDashboardStats] 📊 Démarrage de la récupération des statistiques...");
+
+        const [activeUsers, eventsPerCategory, participationStats] = await Promise.all([
+            // Utilisateurs actifs = créateurs OU participants (tous statuts)
+            (async () => {
+                const eventCreators = await Event.findAll({
+                    attributes: [[fn('DISTINCT', col('id_org')), 'userId']],
+                    raw: true
+                });
+
+                const participants = await Participant.findAll({
+                    attributes: [[fn('DISTINCT', col('id_user')), 'userId']],
+                    raw: true
+                });
+
+                const creatorIds = eventCreators.map(e => e.userId);
+                const participantIds = participants.map(p => p.userId);
+                const allActiveUserIds = new Set([...creatorIds, ...participantIds]);
+
+                console.log(`[getDashboardStats] 👥 Créateurs d'événements : ${creatorIds.length}`);
+                console.log(`[getDashboardStats] 👥 Participants : ${participantIds.length}`);
+                console.log(`[getDashboardStats] 👥 Utilisateurs actifs (fusionnés) : ${allActiveUserIds.size}`);
+
+                return allActiveUserIds.size;
+            })(),
+
+            // Événements par catégorie
+            (async () => {
+                const events = await Event.findAll({
+                    include: [{
+                        model: Category,
+                        through: { attributes: [] },
+                    }],
+                    attributes: ['id'],
+                });
+
+                const categoryCounts = {};
+                for (const evt of events) {
+                    for (const cat of evt.Categories) {
+                        categoryCounts[cat.name] = (categoryCounts[cat.name] || 0) + 1;
+                    }
+                }
+
+                console.log("[getDashboardStats] 📚 Événements par catégorie :", categoryCounts);
+                return categoryCounts;
+            })(),
+
+            // Participation totale (tous statuts)
+            (async () => {
+                const participants = await Participant.findAll({
+                    attributes: ['id_event']
+                });
+
+                const eventMap = {};
+                for (const p of participants) {
+                    eventMap[p.id_event] = (eventMap[p.id_event] || 0) + 1;
+                }
+
+                const totalEvents = Object.keys(eventMap).length;
+                const totalParticipants = Object.values(eventMap).reduce((sum, n) => sum + n, 0);
+                const average = totalEvents ? (totalParticipants / totalEvents).toFixed(1) : 0;
+
+                console.log(`[getDashboardStats] 📈 Total événements avec participants : ${totalEvents}`);
+                console.log(`[getDashboardStats] 👤 Total participants (tous statuts) : ${totalParticipants}`);
+                console.log(`[getDashboardStats] 🔢 Participation moyenne : ${average}`);
+
+                return {
+                    average: parseFloat(average),
+                    totalParticipants
+                };
+            })()
+        ]);
+
+        const finalStats = {
+            activeUsers,
+            eventsPerCategory,
+            totalParticipants: participationStats.totalParticipants,
+            avgParticipation: participationStats.average
+        };
+
+        console.log("[getDashboardStats] ✅ Statistiques finales générées :", finalStats);
+        return finalStats;
+    }
+
 
     async updateEvent(eventId, update, userId, userRole) {
         const event = await Event.findByPk(eventId);

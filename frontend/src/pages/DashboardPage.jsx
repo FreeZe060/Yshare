@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/admin/Sidebar/Sidebar';
 import StatsSection from '../components/admin/Stats/StatsSection';
 import LastEventSection from '../components/admin/Stats/LestEventSection';
-import LastUsersSection from '../components/admin/Stats/LastUsersSection';
+import LastUsersSection from '../components/admin/User/UserSection';
 import ReportSection from '../components/admin/Report/ReportSection';
 import ParticipantSection from '../components/admin/Participant/ParticipantSection';
 import CommentSection from '../components/admin/Comment/CommentSection';
 import EventSection from '../components/admin/Event/EventSection';
 import NewsSection from '../components/admin/News/NewsSection';
+import UserCamembert from '../components/admin/Stats/UserCamembert';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
 
@@ -29,7 +30,7 @@ export default function DashboardPage() {
 					<>
 						<StatsSection setActiveSection={setActiveSection} />
 						<LastEventSection />
-						<LastUsersSection />
+						<UserCamembert setActiveSection={setActiveSection} />
 					</>
 				);
             case 'users':
