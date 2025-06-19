@@ -235,19 +235,44 @@ const Header = () => {
                                                 className="right-0 z-50 absolute bg-white shadow-lg mt-2 p-3 rounded-xl w-48 font-medium animate-fade-in"
                                             >
                                                 {user?.role === "Administrateur" ? (
-                                                    <Link
-                                                        to={`/admin`}
-                                                        className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
-                                                    >
-                                                        Dashboard
-                                                    </Link>
+                                                    <>
+                                                        <Link
+                                                            to={`/admin`}
+                                                            className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
+                                                        >
+                                                            Dashboard
+                                                        </Link>
+                                                        <hr className="my-2 border-gray-300" />
+                                                        <Link
+                                                            to={`/profile/${user?.id}`}
+                                                            className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
+                                                        >
+                                                            Profil
+                                                        </Link>
+                                                    </>
                                                 ) : (
-                                                    <Link
-                                                        to={`/profile/${user?.id}`}
-                                                        className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
-                                                    >
-                                                        Profil
-                                                    </Link>
+                                                    <>
+                                                        <Link
+                                                            to={`/profile/${user?.id}`}
+                                                            className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
+                                                        >
+                                                            Profil
+                                                        </Link>
+
+                                                        <Link
+                                                            to={`event-created`}
+                                                            className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
+                                                        >
+                                                            Toutes vos créations
+                                                        </Link>
+
+                                                        <Link
+                                                            to={`/participation`}
+                                                            className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
+                                                        >
+                                                            Toutes vos participations
+                                                        </Link>
+                                                    </>
                                                 )}
                                                 <hr className="my-2 border-gray-300" />
                                                 <Link
@@ -327,11 +352,6 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-
-            {/* {menuOpen && (
-            <div className="md:hidden flex flex-col gap-4 mt-4 w-full">
-            </div>
-            )} */}
         </>
     );
 };

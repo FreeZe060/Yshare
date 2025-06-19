@@ -1,11 +1,7 @@
-import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import useEvents from '../../../hooks/Events/useEvents';
+import React from 'react';
 import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
 
-const LastEventSection = () => {
-	const filters = useMemo(() => ({}), []);
-	const { events, loading, error } = useEvents(filters, 1, 5);
+const LastEventSection = ({ events, loading, error, Link }) => {
 
 	if (loading) {
         return (

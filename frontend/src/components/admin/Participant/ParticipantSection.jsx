@@ -1,13 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
-
-import useAllParticipantsForAdmin from '../../../hooks/Admin/useAllParticipantsForAdmin';
-import useUpdateParticipantStatus from '../../../hooks/Participant/useUpdateParticipantStatus';
-import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
-import { useAuth } from '../../../config/authHeader';
-import { getStatusColor, getStatusOptions } from '../../../utils/status';
 
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import AssignParticipantModal from './AssignParticipantModal';
@@ -17,25 +10,40 @@ const sortIcon = (direction) =>
         ? <i className="fas fa-sort-up text-gray-800" />
         : <i className="fas fa-sort-down text-gray-800" />;
 
-const ParticipantSection = () => {
-    const { participants, loading, error, refetch } = useAllParticipantsForAdmin();
-    const { updateStatus } = useUpdateParticipantStatus();
-    const { user } = useAuth();
-    const navigate = useNavigate();
+const ParticipantSection = ({
+    participants,
+    loading,
+    error,
+    onUpdateStatus,
+    updatingId,
+    showAssignModal,
+    setShowAssignModal,
+    refetchParticipants,
+    getStatusColor,
+    navigate,
+    AnimatePresence,
+    user,
+    useSortedAndPaginatedData,
+    statusFilter = 'Tous',
+    setStatusFilter,
+    theadRef,
+}) => {
+    
+    
 
-    const [statusFilter, setStatusFilter] = useState('Tous');
-    const [updatingId, setUpdatingId] = useState(null);
-    const [showAssignModal, setShowAssignModal] = useState(false);
+    // const [statusFilter, setStatusFilter] = useState('Tous');
+    // const [updatingId, setUpdatingId] = useState(null);
+    // const [showAssignModal, setShowAssignModal] = useState(false);
 
-    const theadRef = useRef();
+    // const theadRef = useRef();
 
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (theadRef.current && !theadRef.current.contains(e.target)) return;
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    // useEffect(() => {
+    //     const handleClickOutside = (e) => {
+    //         if (theadRef.current && !theadRef.current.contains(e.target)) return;
+    //     };
+    //     document.addEventListener('mousedown', handleClickOutside);
+    //     return () => document.removeEventListener('mousedown', handleClickOutside);
+    // }, []);
 
     const {
         paginatedItems,
@@ -47,37 +55,37 @@ const ParticipantSection = () => {
         8
     );
 
-    const handleStatusUpdate = async (participant) => {
-        const choices = getStatusOptions(participant.status);
+    // const handleStatusUpdate = async (participant) => {
+    //     const choices = getStatusOptions(participant.status);
 
-        const result = await Swal.fire({
-            title: "Mettre à jour le statut",
-            text: "Choisissez un nouveau statut.",
-            icon: "question",
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: choices[0],
-            denyButtonText: choices[1],
-            cancelButtonText: "Annuler",
-            reverseButtons: true,
-        });
+    //     const result = await Swal.fire({
+    //         title: "Mettre à jour le statut",
+    //         text: "Choisissez un nouveau statut.",
+    //         icon: "question",
+    //         showCancelButton: true,
+    //         showDenyButton: true,
+    //         confirmButtonText: choices[0],
+    //         denyButtonText: choices[1],
+    //         cancelButtonText: "Annuler",
+    //         reverseButtons: true,
+    //     });
 
-        const newStatus = result.isConfirmed ? choices[0] : result.isDenied ? choices[1] : null;
+    //     const newStatus = result.isConfirmed ? choices[0] : result.isDenied ? choices[1] : null;
 
-        if (!newStatus || newStatus === participant.status) return;
+    //     if (!newStatus || newStatus === participant.status) return;
 
-        try {
-            setUpdatingId(participant.id);
-            await updateStatus(participant.eventId, participant.id, newStatus, user.token);
-            await refetch();
-            Swal.fire("Succès", `Le statut a été mis à jour en "${newStatus}"`, "success");
-        } catch (err) {
-            console.error("❌ Erreur lors de la mise à jour :", err);
-            Swal.fire("Erreur", "Impossible de mettre à jour le statut.", "error");
-        } finally {
-            setUpdatingId(null);
-        }
-    };
+    //     try {
+    //         setUpdatingId(participant.id);
+    //         await updateStatus(participant.eventId, participant.id, newStatus, user.token);
+    //         await refetch();
+    //         Swal.fire("Succès", `Le statut a été mis à jour en "${newStatus}"`, "success");
+    //     } catch (err) {
+    //         console.error("❌ Erreur lors de la mise à jour :", err);
+    //         Swal.fire("Erreur", "Impossible de mettre à jour le statut.", "error");
+    //     } finally {
+    //         setUpdatingId(null);
+    //     }
+    // };
 
     if (loading) {
         return (
@@ -120,7 +128,7 @@ const ParticipantSection = () => {
                     <AssignParticipantModal
                         token={user.token}
                         onClose={() => setShowAssignModal(false)}
-                        onSubmit={refetch}
+                        onSubmit={refetchParticipants}
                     />
                 )}
             </AnimatePresence>
@@ -193,7 +201,7 @@ const ParticipantSection = () => {
                                             <i
                                                 className="fas fa-sync-alt hover:text-yellow-600 cursor-pointer"
                                                 title="Changer le statut"
-                                                onClick={() => handleStatusUpdate(p)}
+                                                onClick={() => onUpdateStatus(p)}
                                             ></i>
                                         )}
                                     </td>
@@ -213,8 +221,8 @@ const ParticipantSection = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => goToPage(i + 1)}
                             className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition ${page === i + 1
-                                    ? 'bg-blue-500 text-white border-blue-500'
-                                    : 'border-blue-500 text-blue-500 hover:bg-blue-100'
+                                ? 'bg-blue-500 text-white border-blue-500'
+                                : 'border-blue-500 text-blue-500 hover:bg-blue-100'
                                 }`}
                         >
                             {i + 1}

@@ -1,35 +1,20 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import useEvents from '../../../hooks/Events/useEvents';
+import React from 'react';
 import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
-import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { useAuth } from '../../../config/authHeader';
-import useUpdateEventStatus from '../../../hooks/Events/useUpdateEventStatus';
 
-const ITEMS_PER_PAGE = 6;
-
-const EventSection = () => {
-	const [currentPage, setCurrentPage] = useState(1);
-	const [sortOption, setSortOption] = useState('');
-	const [statusFilter, setStatusFilter] = useState('');
-	const { user } = useAuth();
-	const { updateStatus } = useUpdateEventStatus();
-
-	const filters = useMemo(() => {
-		const f = {};
-		if (statusFilter) f.status = statusFilter;
-		if (sortOption === 'a-z') f.sort = 'title_asc';
-		else if (sortOption === 'date-newest') f.sort = 'start_time_desc';
-		else if (sortOption === 'date-oldest') f.sort = 'start_time_asc';
-		return f;
-	}, [statusFilter, sortOption]);
-
-	const { events, total, loading, error } = useEvents(filters, currentPage, ITEMS_PER_PAGE, true);
-	const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-
-	useEffect(() => {
-		window.scrollTo({ top: 0, behavior: 'smooth' });
-	}, [currentPage]);
+const EventSection = ({
+	events,
+	loading,
+	error,
+	currentPage,
+	setCurrentPage,
+	sortOption,
+	setSortOption,
+	statusFilter,
+	setStatusFilter,
+	totalPages,
+	onUpdateStatus,
+	Link
+}) => {
 
 	if (loading) {
 		return (
@@ -65,7 +50,7 @@ const EventSection = () => {
 					<select
 						value={statusFilter}
 						onChange={(e) => {
-							setCurrentPage(1); 
+							setCurrentPage(1);
 							setStatusFilter(e.target.value);
 						}}
 						className="border rounded px-3 py-1 text-sm text-black shadow-sm"
@@ -148,48 +133,7 @@ const EventSection = () => {
 
 									<div className="flex shrink-0 items-center">
 										<a
-											onClick={async () => {
-												const { value: newStatus } = await Swal.fire({
-													title: 'Modifier le statut de l’événement',
-													input: 'select',
-													inputOptions: {
-														Planifié: 'Planifié',
-														'En Cours': 'En Cours',
-														Terminé: 'Terminé',
-														Annulé: 'Annulé',
-													},
-													inputPlaceholder: 'Choisir un statut',
-													showCancelButton: true,
-													confirmButtonText: 'Mettre à jour',
-													cancelButtonText: 'Annuler',
-													confirmButtonColor: '#2563eb',
-													inputValidator: value => {
-														if (!value) {
-															return 'Vous devez sélectionner un statut';
-														}
-													}
-												});
-
-												if (newStatus) {
-													try {
-														await updateStatus(event.id, newStatus, user?.token);
-														Swal.fire({
-															icon: 'success',
-															title: 'Statut mis à jour !',
-															text: `Le statut de l’événement est maintenant "${newStatus}"`,
-															timer: 2000,
-															showConfirmButton: false,
-														});
-														window.location.reload();
-													} catch (error) {
-														Swal.fire({
-															icon: 'error',
-															title: 'Erreur',
-															text: error.message,
-														});
-													}
-												}
-											}}
+											onClick={() => onUpdateStatus(event.id)}
 											className="et-btn border cursor-pointer border-etBlue text-etBlue inline-flex items-center justify-center gap-x-[10px] h-[36px] px-[12px] text-sm rounded-full transition-all duration-300 hover:bg-etBlue hover:text-white hover:scale-105"
 										>
 											Modifier le statut

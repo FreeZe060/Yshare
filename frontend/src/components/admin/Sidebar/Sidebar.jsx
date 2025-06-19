@@ -1,42 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../../config/authHeader';
+import React from 'react';
 
-const Sidebar = ({ active, setActive }) => {
-	const { user } = useAuth();
-	const [version, setVersion] = useState("");
-	const [openSubMenu, setOpenSubMenu] = useState(active === 'all-events' || active === 'participants');
-	const sidebarRef = useRef(null);
-
-	const handleClick = (key, hasSub) => {
-		if (hasSub) {
-			setOpenSubMenu(prev => key === 'events' ? !prev : true);
-		} else {
-			setActive(key);
-			if (!['all-events', 'participants'].includes(key)) {
-				setOpenSubMenu(false);
-			}
-		}
-	};
-
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-				setOpenSubMenu(false);
-			}
-		};
-	
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, []);
-	
-	useEffect(() => {
-		fetch("/version.txt")
-			.then(response => response.text())
-			.then(text => setVersion(text.trim()));
-	}, []);
+const Sidebar = ({
+	user,
+	active,
+	setActive,
+	version,
+	openSubMenu,
+	setOpenSubMenu,
+	handleClick,
+	sidebarRef,
+	Link
+}) => {
 
 	if (!user || !user.id) return null;
 
@@ -47,7 +21,7 @@ const Sidebar = ({ active, setActive }) => {
 		{ key: 'events', icon: 'fa-calendar', label: 'Events', desc: 'Manage Events', hasSub: true },
 		{ key: 'comments', icon: 'fa-comments', label: 'Comments', desc: 'Manage Comments' },
 		{ key: 'news', icon: 'fa-newspaper', label: 'News', desc: 'Manage News' },
-		{ key: 'categories', icon: 'fa-tags', label: 'Categories', desc: 'Manage Categories' },
+		{ key: 'categories', icon: 'fa-folder', label: 'Categories', desc: 'Manage Categories' },
 		{ key: 'ratings', icon: 'fa-star', label: 'Ratings', desc: 'Manage Ratings' },
 	];
 

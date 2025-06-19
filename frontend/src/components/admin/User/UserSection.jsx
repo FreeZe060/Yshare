@@ -1,119 +1,34 @@
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import Swal from 'sweetalert2';
-
-import { useAuth } from '../../../config/authHeader';
-import useAllUsers from '../../../hooks/Admin/useAllUsers';
-import useUpdateUserStatus from '../../../hooks/Admin/useUpdateUserStatus';
-import useDeleteUser from '../../../hooks/Admin/useDeleteUser';
-import useAdminCreateUser from '../../../hooks/Admin/useAdminCreateUser';
-
+import { motion } from 'framer-motion';
 import useClickOutside from '../../../hooks/Utils/useClickOutside';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
-
-import { showStatusSelection, showConfirmation } from '../../../utils/alert';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
-import { capitalizeFirstLetter } from '../../../utils/format';
 
 const sortIcon = (direction) =>
     direction === 'asc'
         ? <i className="fas fa-sort-up text-gray-500" />
         : <i className="fas fa-sort-down text-gray-500" />;
 
-const LastUsersSection = ({ showAll = false }) => {
-    const { user: authUser } = useAuth();
-    const updateStatus = useUpdateUserStatus(authUser?.token);
-    const deleteUser = useDeleteUser(authUser?.token);
-    const { create, loading: creatingUser } = useAdminCreateUser();
-
-    const { users, loading, error, refetch: fetchUsers } = useAllUsers();
-
+const LastUsersSection = ({
+    users,
+    loading,
+    error,
+    onSuspend,
+    onDelete,
+    onCreate,
+    showAll = false,
+    capitalizeFirstLetter,
+    Link,
+    AnimatePresence,
+}) => {
     const theadRef = useRef();
-    useClickOutside(theadRef, () => sort.setSortField(null));
-
     const {
         paginatedItems,
         sort,
         pagination
     } = useSortedAndPaginatedData(users || [], user => showAll || true, 8);
 
-    const handleSuspendToggle = async (user) => {
-        const isSuspended = user.status === 'Suspended';
-        const nextStatus = isSuspended ? 'Approved' : 'Suspended';
-        const action = isSuspended ? 'débannir' : 'suspendre';
-
-        const { isConfirmed } = await showConfirmation({
-            title: `Voulez-vous ${action} ${user.name} ${user.lastname} ?`,
-            text: `Cette action ${isSuspended ? 'restaurera l’accès' : 'restreindra l’accès'} à l’utilisateur.`,
-            icon: 'warning',
-            confirmText: `Oui, ${action}`
-        });
-
-        if (!isConfirmed) return;
-
-        try {
-            await updateStatus(user.id, nextStatus);
-            await fetchUsers();
-        } catch (err) {
-            console.error(`❌ Erreur lors de la mise à jour du statut de ${user.name} :`, err.message);
-        }
-    };
-
-    const handleDelete = async (user) => {
-        const { isConfirmed } = await showConfirmation({
-            title: 'Supprimer cet utilisateur ?',
-            text: `${user.name} ${user.lastname} - Cette action est irréversible !`,
-            icon: 'error',
-            confirmText: 'Oui, supprimer',
-        });
-
-        if (isConfirmed) {
-            try {
-                await deleteUser(user.id);
-                await fetchUsers();
-            } catch (err) {
-                console.error(`❌ Erreur lors de la suppression de ${user.name} :`, err.message);
-            }
-        }
-    };
-
-    const handleCreateUser = async () => {
-        const { value: formValues } = await Swal.fire({
-            title: 'Créer un nouvel utilisateur',
-            html:
-                '<input id="swal-name" class="swal2-input" placeholder="Prénom">' +
-                '<input id="swal-lastname" class="swal2-input" placeholder="Nom">' +
-                '<input id="swal-email" class="swal2-input" placeholder="Email">' +
-                '<input id="swal-password" type="password" class="swal2-input" placeholder="Mot de passe">',
-            focusConfirm: false,
-            showCancelButton: true,
-            confirmButtonText: 'Créer',
-            cancelButtonText: 'Annuler',
-            preConfirm: () => {
-                const name = document.getElementById('swal-name').value;
-                const lastname = document.getElementById('swal-lastname').value;
-                const email = document.getElementById('swal-email').value;
-                const password = document.getElementById('swal-password').value;
-
-                if (!name || !lastname || !email || !password) {
-                    Swal.showValidationMessage('Tous les champs sont requis');
-                    return;
-                }
-                return { name, lastname, email, password };
-            }
-        });
-
-        if (!formValues) return;
-
-        try {
-            await create(formValues);
-            await fetchUsers();
-            Swal.fire('Succès', 'Utilisateur créé avec succès', 'success');
-        } catch (err) {
-            Swal.fire('Erreur', err.message, 'error');
-        }
-    };
+    useClickOutside(theadRef, () => sort.setSortField(null));
 
     if (loading) {
         return (
@@ -141,7 +56,7 @@ const LastUsersSection = ({ showAll = false }) => {
 
             <div className="flex justify-end mb-4">
                 <button
-                    onClick={handleCreateUser}
+                    onClick={onCreate}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
                 >
                     <i className="fas fa-user-plus mr-2" />
@@ -202,14 +117,14 @@ const LastUsersSection = ({ showAll = false }) => {
                                                 <i className="fas fa-pen" />
                                             </Link>
                                             <button
-                                                onClick={() => handleSuspendToggle(user)}
+                                                onClick={() => onSuspend(user)}
                                                 title={user.status === 'Suspended' ? 'Débannir' : 'Suspendre'}
                                                 className={`transition ${user.status === 'Suspended' ? 'hover:text-green-600' : 'hover:text-yellow-600'}`}
                                             >
                                                 <i className={`fas ${user.status === 'Suspended' ? 'fa-lock-open' : 'fa-ban'}`} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(user)}
+                                                onClick={() => onDelete(user)}
                                                 title="Supprimer"
                                                 className="hover:text-red-600 transition"
                                             >

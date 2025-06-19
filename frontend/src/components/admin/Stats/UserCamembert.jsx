@@ -1,23 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import { motion } from 'framer-motion';
-import useDashboardStats from '../../../hooks/Admin/useDashboardStats';
-import useAllUsers from '../../../hooks/Admin/useAllUsers';
-import useUpdateUserStatus from '../../../hooks/Admin/useUpdateUserStatus';
-import useDeleteUser from '../../../hooks/Admin/useDeleteUser';
-import { useAuth } from '../../../config/authHeader';
 
 Chart.register(ArcElement, Tooltip, Legend);
 
-const UserCamembert = ({ setActiveSection }) => {
-	const { user: authUser } = useAuth();
-	const updateStatus = useUpdateUserStatus(authUser?.token);
-	const deleteUser = useDeleteUser(authUser?.token);
-	const { users, loading: usersLoading, error: usersError, refetch: fetchUsers } = useAllUsers();
-	const { stats, loading: statsLoading, error: statsError } = useDashboardStats();
+const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, statsError, usersLoading, statsLoading, onSuspend,
+    onDelete }) => {
 
 	if (usersLoading || statsLoading) return <div>Chargement...</div>;
 	if (usersError) return <div className="text-red-500">Erreur utilisateurs : {usersError}</div>;
@@ -35,41 +25,6 @@ const UserCamembert = ({ setActiveSection }) => {
 			backgroundColor: ['#6366F1', '#E0E7FF'],
 			borderWidth: 0,
 		}]
-	};
-
-	const handleSuspendToggle = async (user) => {
-		const isSuspended = user.status === 'Suspended';
-		const nextStatus = isSuspended ? 'Approved' : 'Suspended';
-
-		const { isConfirmed } = await Swal.fire({
-			title: `Voulez-vous ${isSuspended ? 'débannir' : 'suspendre'} ${user.name} ${user.lastname} ?`,
-			text: isSuspended
-				? 'Cela restaurera l’accès à l’utilisateur.'
-				: 'Cela restreindra l’accès à l’utilisateur.',
-			icon: 'warning',
-			showCancelButton: true,
-			confirmButtonText: 'Oui',
-			cancelButtonText: 'Annuler'
-		});
-
-		if (!isConfirmed) return;
-		await updateStatus(user.id, nextStatus);
-		await fetchUsers();
-	};
-
-	const handleDelete = async (user) => {
-		const { isConfirmed } = await Swal.fire({
-			title: `Supprimer ${user.name} ${user.lastname} ?`,
-			text: 'Cette action est irréversible.',
-			icon: 'error',
-			showCancelButton: true,
-			confirmButtonText: 'Oui, supprimer',
-			cancelButtonText: 'Annuler'
-		});
-
-		if (!isConfirmed) return;
-		await deleteUser(user.id);
-		await fetchUsers();
 	};
 
 	return (
@@ -98,10 +53,10 @@ const UserCamembert = ({ setActiveSection }) => {
 								</div>
 							</div>
 							<div className="flex items-center gap-3 text-indigo-600 text-lg">
-								<motion.button whileHover={{ scale: 1.1 }} onClick={() => handleSuspendToggle(user)}>
+								<motion.button whileHover={{ scale: 1.1 }} onClick={() => onSuspend(user)}>
 									<i className={`fas ${user.status === 'Suspended' ? 'fa-lock-open' : 'fa-ban'}`} />
 								</motion.button>
-								<motion.button whileHover={{ scale: 1.1 }} onClick={() => handleDelete(user)}>
+								<motion.button whileHover={{ scale: 1.1 }} onClick={() => onDelete(user)}>
 									<i className="fas fa-trash-alt text-red-500" />
 								</motion.button>
 							</div>

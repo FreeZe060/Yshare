@@ -352,7 +352,13 @@ exports.adminCreateUser = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await userService.createUser(name, lastname, email, hashedPassword);
+        const newUser = await userService.createUser({
+            name,
+            lastname,
+            email,
+            password: hashedPassword,
+            isAdmin: true 
+        });
 
         return res.status(201).json({
             message: "Utilisateur créé avec succès par l'administrateur.",

@@ -17,17 +17,17 @@ class UserService {
         return await User.findByPk(id);
     }
 
-    async createUser(
-        { name, lastname, email, password, gender, profileImage, provider = null, bio = null, city = null, street = null, streetNumber = null, bannerImage = null,
-            phone = null, birthdate = null, linkedinUrl = null, instaUrl = null, websiteUrl = null }) {
-
+    async createUser({
+        name, lastname, email, password, gender, profileImage,
+        provider = null, bio = null, city = null, street = null, streetNumber = null,
+        bannerImage = null, phone = null, birthdate = null, linkedinUrl = null, instaUrl = null,
+        websiteUrl = null, isAdmin = false
+    }) {
         console.log("[createUser] Données reçues :", {
-            name, lastname, email, gender, profileImage, provider,
-            bio, city, street, streetNumber, bannerImage, phone,
-            birthdate, linkedinUrl, instaUrl, websiteUrl
+            name, lastname, email, gender, isAdmin, provider
         });
 
-        if (!provider) {
+        if (!provider && !isAdmin) {
             if (!password || password.trim() === '') {
                 throw new Error("Le mot de passe est requis pour une inscription locale.");
             }
@@ -36,12 +36,28 @@ class UserService {
             }
         }
 
-        return await User.create(
-            {
-                name, lastname, email, password, gender, profileImage, provider, bio, city, street, streetNumber, bannerImage,
-                phone, birthdate, linkedinUrl, instaUrl, websiteUrl, showEmail: true, showPhone: false, showAddress: true
-            }
-        );
+        return await User.create({
+            name,
+            lastname,
+            email,
+            password,
+            gender,
+            profileImage,
+            provider,
+            bio,
+            city,
+            street,
+            streetNumber,
+            bannerImage,
+            phone,
+            birthdate,
+            linkedinUrl,
+            instaUrl,
+            websiteUrl,
+            showEmail: true,
+            showPhone: false,
+            showAddress: true
+        });
     }
 
     async updateUser(userId, updatedData) {

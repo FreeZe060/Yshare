@@ -1,11 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import useDashboardStats from '../../../hooks/Admin/useDashboardStats';
-import useReports from '../../../hooks/Report/useReports';
 
-const StatsSection = ({ setActiveSection }) => {
-	const { stats, loading, error } = useDashboardStats();
-	const { reports } = useReports();
+const StatsSection = ({ setActiveSection, stats, loading, error, reports }) => {
 
 	const cardClasses = "bg-white shadow-md p-6 rounded-lg";
 
