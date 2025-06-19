@@ -1,21 +1,19 @@
 import { useState } from "react";
-import { deleteCategorie } from "../../services/categorieService";
+import { deleteRating } from "../../services/ratingService";
 import { useAuth } from "../../config/authHeader";
 
-function useDeleteCategorie() {
+function useDeleteRating() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const { user } = useAuth();
 
 	const remove = async (id) => {
-		if (!user?.token) {
-			throw new Error("Non autorisé : utilisateur non connecté");
-		}
-
+		if (!user?.token) throw new Error("Utilisateur non autorisé");
 		setLoading(true);
 		setError(null);
+
 		try {
-			const result = await deleteCategorie(id, user.token);
+			const result = await deleteRating(id, user.token);
 			return result;
 		} catch (err) {
 			setError(err.message);
@@ -28,4 +26,4 @@ function useDeleteCategorie() {
 	return { remove, loading, error };
 }
 
-export default useDeleteCategorie;
+export default useDeleteRating;

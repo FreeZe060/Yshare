@@ -10,22 +10,24 @@ class CategoryService {
         }
     }
 
-    async createCategory(name) {
+    async createCategory({ name, parent_id = null, display_order = 0 }) {
         try {
-            const category = await Category.create({ name });
+            const category = await Category.create({ name, parent_id, display_order });
             return category;
         } catch (error) {
             throw new Error('Erreur lors de la création de la catégorie : ' + error.message);
         }
     }
 
-    async updateCategory(id, name) {
+    async updateCategory(id, { name, parent_id = null, display_order = 0 }) {
         try {
             const category = await Category.findByPk(id);
             if (!category) {
                 throw new Error('Catégorie non trouvée');
             }
             category.name = name;
+            category.parent_id = parent_id;
+            category.display_order = display_order;
             await category.save();
             return category;
         } catch (error) {

@@ -9,6 +9,8 @@ import CommentSection from '../components/admin/Comment/CommentSection';
 import EventSection from '../components/admin/Event/EventSection';
 import NewsSection from '../components/admin/News/NewsSection';
 import UserCamembert from '../components/admin/Stats/UserCamembert';
+import CategorySection from '../components/admin/Categorie/CategorySection';
+import AdminRatingSection from '../components/admin/Rating/AdminRatingSection';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
 
@@ -94,6 +96,27 @@ export default function DashboardPage() {
 						exit={{ opacity: 0, y: -20 }}
 						transition={{ duration: 0.5 }}>
 						<NewsSection />
+					</motion.div>
+				);
+			case 'categories':
+				return (
+					<motion.div 
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}>
+						<CategorySection />
+					</motion.div>
+				);
+			case 'ratings':
+				return (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.5 }}
+					>
+						<AdminRatingSection />
 					</motion.div>
 				);
 			default:

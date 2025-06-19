@@ -23,7 +23,7 @@ export async function getAllCategories() {
 /**
  * POST /categories
  */
-export async function createCategorie(name, token) {
+export async function createCategorie(data, token) {
 	const response = await fetch(`${API_BASE_URL}/categories`, {
 		method: "POST",
 		credentials: "include",
@@ -31,7 +31,7 @@ export async function createCategorie(name, token) {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify({ name }),
+		body: JSON.stringify(data), 
 	});
 	const result = await response.json();
 	if (!response.ok) {
@@ -43,7 +43,7 @@ export async function createCategorie(name, token) {
 /**
  * PUT /categories/:id
  */
-export async function updateCategorie(id, name, token) {
+export async function updateCategorie(id, data, token) {
 	const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
 		method: "PUT",
 		credentials: "include",
@@ -51,7 +51,7 @@ export async function updateCategorie(id, name, token) {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify({ name }),
+		body: JSON.stringify(data), 
 	});
 	const result = await response.json();
 	if (!response.ok) {

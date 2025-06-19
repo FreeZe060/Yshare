@@ -299,7 +299,6 @@ class EventService {
         console.log("[getDashboardStats] 📊 Démarrage de la récupération des statistiques...");
 
         const [activeUsers, eventsPerCategory, participationStats] = await Promise.all([
-            // Utilisateurs actifs = créateurs OU participants (tous statuts)
             (async () => {
                 const eventCreators = await Event.findAll({
                     attributes: [[fn('DISTINCT', col('id_org')), 'userId']],
@@ -322,7 +321,6 @@ class EventService {
                 return allActiveUserIds.size;
             })(),
 
-            // Événements par catégorie
             (async () => {
                 const events = await Event.findAll({
                     include: [{
@@ -343,7 +341,6 @@ class EventService {
                 return categoryCounts;
             })(),
 
-            // Participation totale (tous statuts)
             (async () => {
                 const participants = await Participant.findAll({
                     attributes: ['id_event']

@@ -47,3 +47,31 @@ exports.getUserAverageRating = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la récupération de la note", error: error.message });
     }
 };
+
+exports.getAllRatingsWithDetails = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Administrateur') {
+            return res.status(403).json({ message: "Accès interdit. Seuls les administrateurs peuvent voir toutes les notes." });
+        }
+
+        const allRatings = await ratingService.getAllRatingsWithDetails();
+        res.status(200).json(allRatings);
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la récupération des notes.", error: error.message });
+    }
+};
+
+exports.deleteRating = async (req, res) => {
+    try {
+        if (!req.user || req.user.role !== 'Administrateur') {
+            return res.status(403).json({ message: "Accès interdit. Seuls les administrateurs peuvent supprimer des notes." });
+        }
+
+        const { id } = req.params;
+        const result = await ratingService.deleteRating(id);
+        return res.status(200).json({ message: "Note supprimée avec succès." });
+    } catch (error) {
+        console.error("Erreur dans deleteRating:", error);
+        return res.status(500).json({ message: error.message });
+    }
+};

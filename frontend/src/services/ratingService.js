@@ -38,3 +38,42 @@ export async function getUserAverageRating(userId) {
 
 	return parseFloat(result.rating);
 }
+
+export async function getAllRatings(token) {
+	const response = await fetch(`${API_BASE_URL}/ratings/admin/all`, {
+		method: "GET",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération des notes");
+	}
+
+	return result;
+}
+
+/**
+ * Supprimer une note (admin uniquement)
+ */
+export async function deleteRating(id, token) {
+	const response = await fetch(`${API_BASE_URL}/ratings/${id}`, {
+		method: "DELETE",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la suppression de la note");
+	}
+
+	return result;
+}

@@ -194,6 +194,8 @@ router.get('/conversations/between/:user1Id/:user2Id', authenticateToken, isAdmi
 
 router.get('/ratings/user/:userId', ratingController.getUserAverageRating);
 router.post('/ratings', authenticateToken, ratingController.rateEvent);
+router.get('/ratings/admin/all', authenticateToken, isAdmin, ratingController.getAllRatingsWithDetails);
+router.delete('/ratings/:id', authenticateToken, isAdmin, ratingController.deleteRating);
 
 //////// HISTORIQUE ROUTES ////////
 
