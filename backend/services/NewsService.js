@@ -152,7 +152,6 @@ class NewsService {
         };
     }
 
-
     async updateNews(newsId, updateData) {
         const { categories, ...newsFields } = updateData;
         console.log(`✏️ Mise à jour de la news ID #${newsId} avec données :`, newsFields);
@@ -218,8 +217,6 @@ class NewsService {
         await news.removeCategory(category); 
         return this.getNewsById(newsId);
     }
-
-
 }
 
 module.exports = new NewsService();

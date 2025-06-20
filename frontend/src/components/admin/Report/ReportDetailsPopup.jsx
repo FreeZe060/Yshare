@@ -149,7 +149,7 @@ const ReportDetailsPopup = ({ reportId, onClose }) => {
                                     </h5>
                                     <p className="text-sm text-gray-600">{report.event.description}</p>
                                     <div className="flex items-center gap-2 mt-2 text-xs text-gray-400">
-                                        <span>{new Date(report.event.date).toLocaleDateString()}</span>
+                                        <span>{new Date(report.event.date_created).toLocaleDateString()}</span>
                                         <ArrowRightIcon size={16} />
                                         <div className="flex items-center gap-2 cursor-pointer" onClick={() => goToProfile(report.event.organizer?.id)}>
                                             <img

@@ -169,7 +169,7 @@ router.get('/news/:newsId/details', newsController.getNewsDetails);
 router.get('/news/event/:eventId', newsController.getNewsByEventId);
 router.get('/news/my', authenticateToken, newsController.getNewsByUserId);
 router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.single('image'), newsController.updateNews);
-router.delete('/news/:newsId', isNewsOwnerOrAdmin, newsController.deleteNews);
+router.delete('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsController.deleteNews);
 router.post( '/news/:newsId/category', authenticateToken, isNewsOwnerOrAdmin, newsController.addCategoryToNews);
 router.delete( '/news/:newsId/category/:categoryId', authenticateToken, isNewsOwnerOrAdmin, newsController.removeCategoryFromNews);
 

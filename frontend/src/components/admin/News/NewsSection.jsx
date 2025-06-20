@@ -1,12 +1,9 @@
-import React, { useMemo } from 'react';
-import useAllNews from '../../../hooks/News/useAllNews';
+import React from 'react';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
-import { Link } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 2;
 
-const NewsSection = () => {
-    const { news, loading, error } = useAllNews();
+const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
 
     const {
         paginatedItems: paginatedNews,
@@ -98,6 +95,13 @@ const NewsSection = () => {
                                 <i className="fas fa-pen mr-1"></i> Modifier
                             </Link>
                         </div>
+
+                        <button
+                            onClick={() => { onDelete(item); refetch(); }}
+                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-xs rounded-full shadow transition-all duration-300 hover:scale-105 ml-2"
+                        >
+                            <i className="fas fa-trash-alt mr-1"></i> Supprimer
+                        </button>
                     </div>
                 );
             })}

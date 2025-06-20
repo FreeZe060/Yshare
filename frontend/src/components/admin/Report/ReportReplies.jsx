@@ -13,15 +13,17 @@ const roleColors = {
 
 const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
     const { user } = useAuth();
-    const { messages, loading } = useReportMessages(reportId);
+    const { messages, loading, refetch } = useReportMessages(reportId);
     const { sendReply, loading: sending } = useReplyToReport();
     const [newMessage, setNewMessage] = useState('');
     const bottomRef = useRef(null);
 
     const handleReply = async () => {
         if (!newMessage.trim()) return;
+
         await sendReply(reportId, newMessage);
         setNewMessage('');
+        await refetch(); 
     };
 
     useEffect(() => {
@@ -61,24 +63,22 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                             >
                                 {side === 'left' && (
                                     <img src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
-                                         alt="avatar"
-                                         className="w-8 h-8 rounded-full mr-2" />
+                                        alt="avatar"
+                                        className="w-8 h-8 rounded-full mr-2" />
                                 )}
                                 <div className={`relative max-w-xs px-4 py-2 rounded-xl text-sm shadow-md 
                                     ${roleStyle.bg} ${roleStyle.text} ${side === 'right' ? 'rounded-br-none' : 'rounded-bl-none'}`}>
                                     <p className="font-semibold mb-1">{msg.sender.name}</p>
                                     <p>{msg.message}</p>
                                     <p className="text-xs text-white/70 mt-1 text-right">{new Date(msg.date_sent).toLocaleTimeString()}</p>
-                                    <div className={`absolute bottom-0 ${
-                                        side === 'right' ? 'right-0 translate-x-full' : 'left-0 -translate-x-full'
-                                    } w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent ${
-                                        side === 'right' ? `border-l-[10px] ${roleStyle.triangle}` : `border-r-[10px] ${roleStyle.triangle}`
-                                    }`} />
+                                    <div className={`absolute bottom-0 ${side === 'right' ? 'right-0 translate-x-full' : 'left-0 -translate-x-full'
+                                        } w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent ${side === 'right' ? `border-l-[10px] ${roleStyle.triangle}` : `border-r-[10px] ${roleStyle.triangle}`
+                                        }`} />
                                 </div>
                                 {side === 'right' && (
                                     <img src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
-                                         alt="avatar"
-                                         className="w-8 h-8 rounded-full ml-2" />
+                                        alt="avatar"
+                                        className="w-8 h-8 rounded-full ml-2" />
                                 )}
                             </motion.div>
                         );

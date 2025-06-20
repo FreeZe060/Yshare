@@ -4,10 +4,6 @@ import { Dialog } from '@headlessui/react';
 import { XIcon, EyeIcon, ReplyIcon } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
-import useReports from '../../../hooks/Report/useReports';
-import { updateReportStatus } from '../../../services/reportService';
-import Swal from 'sweetalert2';
-import { useAuth } from '../../../config/authHeader';
 import ReportReplies from './ReportReplies';
 import ReportDetailsPopup from './ReportDetailsPopup';
 
@@ -39,9 +35,7 @@ const getReportTypeIcon = (type, onClick) => {
     ) : null;
 };
 
-const ReportSection = () => {
-    const { reports, refetch: fetchReports, loading, error } = useReports();
-    const { user } = useAuth();
+const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
     const [sortField, setSortField] = useState('date_reported');
     const [sortDirection, setSortDirection] = useState('desc');
     const [lightbox, setLightbox] = useState({ open: false, index: 0, images: [] });
@@ -70,54 +64,6 @@ const ReportSection = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
-
-    const handleUpdateStatus = async (report) => {
-        const normalizedStatus = report.status?.trim().toLowerCase();
-
-        const statusOptions = {
-            "en attente": ["Validé", "Rejeté"],
-            "validé": ["En attente", "Rejeté"],
-            "rejeté": ["En attente", "Validé"]
-        };
-
-        const options = statusOptions[normalizedStatus];
-
-        if (!options) {
-            console.error(`❌ Aucun statut valide trouvé pour: "${report.status}"`);
-            console.warn("⛔ Vérifiez que report.status correspond exactement à une des clés prévues dans statusOptions.");
-            return;
-        }
-
-        console.log(`🔄 Options possibles pour le statut "${report.status}" →`, options);
-
-        const result = await Swal.fire({
-            title: "Mettre à jour le statut",
-            text: "Choisissez le nouveau statut pour ce signalement.",
-            icon: "question",
-            showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: options[0],
-            denyButtonText: options[1],
-            cancelButtonText: "Annuler",
-            reverseButtons: true,
-            allowOutsideClick: false,
-            allowEscapeKey: true
-        });
-
-        let finalStatus = null;
-        if (result.isConfirmed) finalStatus = options[0];
-        else if (result.isDenied) finalStatus = options[1];
-
-        if (finalStatus) {
-            console.log(`✅ Mise à jour du statut vers "${finalStatus}" pour report ID ${report.id}`);
-            await updateReportStatus(report.id, finalStatus, user.token);
-            await fetchReports();
-            Swal.fire("Statut mis à jour", `Le signalement est maintenant "${finalStatus}".`, "success");
-        } else {
-            console.log("❎ Aucune action effectuée, mise à jour annulée.");
-        }
-    };
-
 
     if (loading) return <p>Chargement...</p>;
     if (error) return <p className="text-red-500">Erreur : {error}</p>;
@@ -196,7 +142,7 @@ const ReportSection = () => {
                                                 <button onClick={() => setPopupReport(report)} className="text-indigo-500 hover:text-indigo-700">
                                                     <EyeIcon size={18} />
                                                 </button>
-                                                <button onClick={() => handleUpdateStatus(report)} className="text-yellow-500 hover:text-yellow-600">
+                                                <button onClick={() => onUpdateStatus(report)} className="text-yellow-500 hover:text-yellow-600">
                                                     <i className="fas fa-sync-alt" />
                                                 </button>
                                                 <button onClick={() => setOpenPopupReplies(report)} className="text-green-500 hover:text-green-700">

@@ -8,13 +8,16 @@ function useReplyToReport() {
 	const [error, setError] = useState(null);
 
 	const sendReply = async (reportId, message) => {
-		if (!user?.token) return;
+		if (!user?.token) return null;
+
 		setLoading(true);
 		try {
-			await replyToReport(reportId, message, user.token);
+			const reply = await replyToReport(reportId, message, user.token);
 			setError(null);
+			return reply; 
 		} catch (err) {
 			setError(err.message);
+			return null;
 		} finally {
 			setLoading(false);
 		}

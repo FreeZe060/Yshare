@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { deleteEvent } from '../../services/eventService';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../config/authHeader';
 
 function useDeleteEvent() {
 	const [loading, setLoading] = useState(false);

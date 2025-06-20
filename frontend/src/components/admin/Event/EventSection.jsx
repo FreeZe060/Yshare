@@ -13,6 +13,7 @@ const EventSection = ({
 	setStatusFilter,
 	totalPages,
 	onUpdateStatus,
+	onDelete,
 	Link
 }) => {
 
@@ -125,7 +126,7 @@ const EventSection = ({
 									<div className="flex shrink-0 items-center">
 										<Link
 											to={`/event/${event.id}`}
-											className="et-btn border border-etBlue text-etBlue inline-flex items-center justify-center gap-x-2 h-[36px] px-4 text-sm rounded-full transition hover:bg-etBlue hover:text-white"
+											className="et-btn border border-etBlue text-etBlue inline-flex items-center justify-center min-w-[170px] gap-x-2 h-[36px] px-4 text-sm rounded-full transition hover:bg-etBlue hover:text-white"
 										>
 											Modifier l’événement
 										</Link>
@@ -134,9 +135,18 @@ const EventSection = ({
 									<div className="flex shrink-0 items-center">
 										<a
 											onClick={() => onUpdateStatus(event.id)}
-											className="et-btn border cursor-pointer border-etBlue text-etBlue inline-flex items-center justify-center gap-x-[10px] h-[36px] px-[12px] text-sm rounded-full transition-all duration-300 hover:bg-etBlue hover:text-white hover:scale-105"
+											className="et-btn border cursor-pointer border-etBlue text-etBlue inline-flex items-center min-w-[170px] justify-center gap-x-[10px] h-[36px] px-[12px] text-sm rounded-full transition-all duration-300 hover:bg-etBlue hover:text-white hover:scale-105"
 										>
 											Modifier le statut
+										</a>
+									</div>
+
+									<div className="flex shrink-0 items-center">
+										<a
+											onClick={() => onDelete(event)}
+											className="et-btn border cursor-pointer border-etBlue text-etBlue inline-flex items-center justify-center gap-x-[10px] h-[36px] px-[12px] text-sm rounded-full transition-all duration-300 hover:bg-etBlue hover:text-white hover:scale-105"
+										>
+											Supprimer l’événement
 										</a>
 									</div>
 								</div>

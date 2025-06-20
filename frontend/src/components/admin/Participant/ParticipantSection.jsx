@@ -24,7 +24,7 @@ const ParticipantSection = ({
     AnimatePresence,
     user,
     useSortedAndPaginatedData,
-    statusFilter = 'Tous',
+    statusFilter,
     setStatusFilter,
     theadRef,
 }) => {
@@ -51,7 +51,7 @@ const ParticipantSection = ({
         sort: { sortField, sortDirection, toggleSort }
     } = useSortedAndPaginatedData(
         participants,
-        (p) => statusFilter === 'Tous' || p.status === statusFilter,
+        (p) => statusFilter === '' || p.status === statusFilter,
         8
     );
 

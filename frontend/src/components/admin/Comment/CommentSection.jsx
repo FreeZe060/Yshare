@@ -3,10 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-
-import useAllComments from '../../../hooks/Comments/useAllComments';
-import useDeleteComment from '../../../hooks/Comments/useDeleteComment';
-import useUpdateComment from '../../../hooks/Comments/useUpdateComment';
 import useClickOutside from '../../../hooks/Utils/useClickOutside';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
@@ -44,10 +40,7 @@ const buildCommentChain = (comment, allComments, indent = 0) => {
     return buildCommentChain(parent, allComments, indent + 20) + currentHtml;
 };
 
-const CommentSection = () => {
-    const { comments, loading, error, refetch } = useAllComments();
-    const { remove } = useDeleteComment();
-    const { update } = useUpdateComment();
+const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch }) => {
     const theadRef = useRef();
     const [showModal, setShowModal] = useState(false);
 
@@ -67,25 +60,6 @@ const CommentSection = () => {
         { label: 'Date', field: 'createdAt' },
     ];
 
-    const handleDelete = async (c) => {
-        const result = await Swal.fire({
-            title: 'Supprimer ce commentaire ?',
-            text: c.message,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Oui, supprimer',
-            cancelButtonText: 'Annuler',
-        });
-        if (!result.isConfirmed) return;
-        try {
-            await remove(c.id);
-            await refetch();
-            Swal.fire('Supprimé !', 'Le commentaire a été supprimé.', 'success');
-        } catch (err) {
-            Swal.fire('Erreur', err.message, 'error');
-        }
-    };
-
     const handleViewThread = (comment) => {
         const threadHtml = buildCommentChain(comment, comments);
         MySwal.fire({
@@ -97,29 +71,6 @@ const CommentSection = () => {
             width: 680,
             backdrop: 'rgba(0, 0, 0, 0.4)',
         });
-    };
-
-    const handleEdit = async (comment) => {
-        const { value: message } = await Swal.fire({
-            title: 'Modifier le commentaire',
-            input: 'textarea',
-            inputLabel: 'Nouveau message',
-            inputValue: comment.message,
-            inputPlaceholder: 'Modifiez le texte ici...',
-            showCancelButton: true,
-            confirmButtonText: 'Enregistrer',
-            cancelButtonText: 'Annuler',
-        });
-
-        if (message && message !== comment.message) {
-            try {
-                await update(comment.id, { message });
-                await refetch();
-                Swal.fire('Modifié', 'Le commentaire a été mis à jour.', 'success');
-            } catch (err) {
-                Swal.fire('Erreur', err.message, 'error');
-            }
-        }   
     };
 
     if (loading) return <RowSkeleton count={6} />;
@@ -208,12 +159,12 @@ const CommentSection = () => {
                                                 className="transform hover:scale-110 transition"
                                             ><i className="fas fa-eye text-indigo-500" /></button>
                                             <button
-                                                onClick={() => handleEdit(comment)}
+                                                onClick={() => onEdit(comment)}
                                                 title="Modifier"
                                                 className="transform hover:scale-110 transition text-yellow-500"
                                             ><i className="fas fa-pen" /></button>
                                             <button
-                                                onClick={() => handleDelete(comment)}
+                                                onClick={() => onDelete(comment)}
                                                 title="Supprimer"
                                                 className="transform hover:scale-110 transition text-red-500"
                                             ><i className="fas fa-trash" /></button>
