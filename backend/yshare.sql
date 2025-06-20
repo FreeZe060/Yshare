@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`),
   CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.categories : ~4 rows (environ)
 DELETE FROM `categories`;
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   CONSTRAINT `FK_comments_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_comments_parent` FOREIGN KEY (`id_comment`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_comments_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.comments : ~12 rows (environ)
 DELETE FROM `comments`;
@@ -70,7 +70,7 @@ INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_com
 	(13, 18, 28, 'Réponse', 'sazsazsazsazssa', 12, '2025-05-07 12:31:05'),
 	(14, 18, 28, 'Réponse', 'sazsazsazsazs', 13, '2025-05-07 12:31:24'),
 	(15, 18, 30, 'Nouveau commentaire', 'dzdazdzadazdazdaz', NULL, '2025-05-07 14:38:50'),
-	(16, 18, 30, 'Réponse', 'dzadadadazda', 15, '2025-05-07 14:38:55');
+	(16, 18, 30, 'Réponse', 'dzadada', 15, '2025-05-07 14:38:55');
 
 -- Listage de la structure de table yshare. comment_reactions
 CREATE TABLE IF NOT EXISTS `comment_reactions` (
@@ -221,8 +221,8 @@ DELETE FROM `event_guests`;
 INSERT INTO `event_guests` (`id`, `id_participant`, `firstname`, `lastname`, `email`) VALUES
 	(3, 21, 'Tim', 'Vannnnnnnson', 'TimLePetitDYnov@gmail.com'),
 	(4, 21, 'bil', 'oute', 'biloute@gmail.com'),
-	(5, 18, 'moi', 'nous', 'moi@gmail.com'),
-	(6, 18, 'xav', 'perez', 'perez@gmail.com');
+	(5, 18, 'Marie', 'Dupont', 'marie.dupont@example.com'),
+	(6, 18, 'Pierr', 'pere', 'perez@gmail.co');
 
 -- Listage de la structure de table yshare. event_images
 CREATE TABLE IF NOT EXISTS `event_images` (
@@ -274,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `favoris` (
   CONSTRAINT `favoris_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.favoris : ~6 rows (environ)
+-- Listage des données de la table yshare.favoris : ~7 rows (environ)
 DELETE FROM `favoris`;
 INSERT INTO `favoris` (`id_user`, `id_event`) VALUES
 	(17, 3),
@@ -321,13 +321,14 @@ CREATE TABLE IF NOT EXISTS `news` (
   KEY `event_id` (`event_id`),
   CONSTRAINT `news_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `news_ibfk_2` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.news : ~0 rows (environ)
+-- Listage des données de la table yshare.news : ~3 rows (environ)
 DELETE FROM `news`;
 INSERT INTO `news` (`id`, `title`, `content`, `image_url`, `date_posted`, `user_id`, `event_id`) VALUES
 	(1, 'Ma première news', 'Voici le contenu complet.', '/news-images/1746534785010-94272694.png', '2025-05-06 12:33:05', 30, 4),
-	(2, 'une news pour mon super event', 'jai beaucoup de chose a dire zbi beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup de choseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee a dire voilaa', '/news-images/1746537846428-430132291.jpg', '2025-05-08 13:24:06', 30, 4);
+	(2, 'une news pour mon super events', 'jai beaucoup de chose a dire zbi beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup beaucoup de choseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee a dire voila', '/news-images/1750166446824-476917686.png', '2025-05-08 13:24:06', 28, 10),
+	(7, 'ezaezaezaeaea', 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', '/news-images/1750423778148-130853998.avif', '2025-06-20 12:49:38', 28, 16);
 
 -- Listage de la structure de table yshare. news_categories
 CREATE TABLE IF NOT EXISTS `news_categories` (
@@ -339,12 +340,13 @@ CREATE TABLE IF NOT EXISTS `news_categories` (
   CONSTRAINT `news_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.news_categories : ~2 rows (environ)
+-- Listage des données de la table yshare.news_categories : ~3 rows (environ)
 DELETE FROM `news_categories`;
 INSERT INTO `news_categories` (`news_id`, `category_id`) VALUES
 	(2, 1),
 	(1, 2),
-	(2, 3);
+	(2, 3),
+	(7, 4);
 
 -- Listage de la structure de table yshare. notifications
 CREATE TABLE IF NOT EXISTS `notifications` (
@@ -357,9 +359,9 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   PRIMARY KEY (`id`),
   KEY `id_user` (`id_user`),
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.notifications : ~20 rows (environ)
+-- Listage des données de la table yshare.notifications : ~22 rows (environ)
 DELETE FROM `notifications`;
 INSERT INTO `notifications` (`id`, `id_user`, `title`, `message`, `date_sent`, `read_status`) VALUES
 	(2, 13, 'Nouvelle demande - sustineo culpa laboriosam', 'Johnny souhaite rejoindre votre événement "sustineo culpa laboriosam".', '2025-03-17 16:15:51', 0),
@@ -381,7 +383,17 @@ INSERT INTO `notifications` (`id`, `id_user`, `title`, `message`, `date_sent`, `
 	(22, 28, 'Demande envoyée : "argumentum carbo blanditiis"', 'Votre demande est en attente de validation.', '2025-05-21 12:13:43', 1),
 	(23, 28, 'Demande envoyée : "argumentum carbo blanditiis"', 'Votre demande est en attente de validation.', '2025-05-21 12:33:39', 0),
 	(24, 29, 'Nouvelle demande pour "argumentum carbo blanditiis"', 'Alexandre souhaite rejoindre votre événement.', '2025-05-21 12:33:40', 0),
-	(25, 28, 'dzdzedez', 'test new notif', '2025-06-17 09:18:25', 0);
+	(25, 28, 'dzdzedez', 'test new notif', '2025-06-17 09:18:25', 0),
+	(26, 28, 'Retrait de l\'événement - Concert Open Air', 'Vous avez été retiré de l\'événement "Concert Open Air".', '2025-06-17 12:09:33', 0),
+	(27, 36, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : Inscrit.', '2025-06-18 12:29:00', 0),
+	(28, 29, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : En Attente.', '2025-06-20 07:30:38', 0),
+	(29, 29, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : Inscrit.', '2025-06-20 07:30:46', 0),
+	(30, 29, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : Refusé.', '2025-06-20 07:30:51', 0),
+	(31, 29, 'Ajout à un événement', 'Vous avez été ajouté à l\'événement "tergum deficio utrum".', '2025-06-20 07:31:02', 0),
+	(32, 29, 'Statut mis à jour - tergum deficio utrum', 'Votre statut pour l\'événement "tergum deficio utrum" est maintenant : Inscrit.', '2025-06-20 07:31:07', 0),
+	(33, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : En attente', '2025-06-20 08:05:00', 0),
+	(34, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : Validé', '2025-06-20 08:05:08', 0),
+	(35, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : Rejeté', '2025-06-20 08:05:14', 0);
 
 -- Listage de la structure de table yshare. participants
 CREATE TABLE IF NOT EXISTS `participants` (
@@ -392,31 +404,39 @@ CREATE TABLE IF NOT EXISTS `participants` (
   `joined_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `request_message` text,
   `organizer_response` text,
+  `validated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_event` (`id_event`),
   KEY `id_user` (`id_user`),
   CONSTRAINT `FK_participants_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`),
   CONSTRAINT `FK_participants_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.participants : ~15 rows (environ)
+-- Listage des données de la table yshare.participants : ~22 rows (environ)
 DELETE FROM `participants`;
-INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`, `joined_at`, `request_message`, `organizer_response`) VALUES
-	(3, 13, 9, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
-	(4, 13, 6, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
-	(5, 13, 7, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
-	(6, 13, 8, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
-	(7, 14, 3, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
-	(10, 28, 5, 'Inscrit', '2025-04-29 16:35:57', 'bonjour est ce quil reste de la place pour cet evenement', 'oui vasy viens sans probleme zbi'),
-	(11, 15, 5, 'En Attente', '2025-04-29 16:35:57', NULL, NULL),
-	(12, 30, 14, 'En Attente', '2025-05-02 13:16:08', NULL, NULL),
-	(13, 17, 4, 'En Attente', '2025-05-02 13:38:46', NULL, NULL),
-	(14, 17, 18, 'Inscrit', '2025-05-07 16:51:34', 'je veux vraiment rejoindre cet evenement', NULL),
-	(15, 28, 18, 'En Attente', '2025-05-09 14:04:56', 'jai des amis qui ont deja rejoints levenement laisse moi rejoindre stp', NULL),
-	(18, 28, 8, 'En Attente', '2025-05-21 12:33:36', 'jaime beaucoup cet evenement', NULL),
-	(19, 15, 10, 'Inscrit', '2025-06-11 11:32:07', 'pls laissez moi rejoindre ', 'ok pas de probleme'),
-	(20, 29, 10, 'Refusé', '2025-06-11 11:32:43', 'fait rentrer dans levent sinon on va se la mettre', 'non on accepte pas les gens dargenteuil '),
-	(21, 36, 10, 'En Attente', '2025-06-11 11:33:50', 'est ce que je peux rejoindre svp je serais avec mes potes', NULL);
+INSERT INTO `participants` (`id`, `id_user`, `id_event`, `status`, `joined_at`, `request_message`, `organizer_response`, `validated_at`) VALUES
+	(3, 13, 9, 'Inscrit', '2025-04-29 16:35:57', 'levent a lair incroyable ', 'ta vu cava etre dar', '2025-06-18 11:04:01'),
+	(4, 13, 6, 'Inscrit', '2025-04-29 16:35:57', 'jadore ce type devenement', 'je sais comme moi rejoinds vite', '2025-06-18 11:04:01'),
+	(5, 13, 7, 'Inscrit', '2025-04-29 16:35:57', 'je peux rejoindre stp', 'oe no probleme', '2025-06-18 11:04:00'),
+	(6, 13, 8, 'Inscrit', '2025-04-29 16:35:57', 'une super bonne idee pour un event', 'oe jai vraiment eu une bete didee', '2025-06-18 11:03:59'),
+	(7, 14, 3, 'Refusé', '2025-04-29 16:35:57', 'laisse rejoindre la jte dit', 'no', '2025-06-18 11:03:59'),
+	(10, 28, 5, 'Inscrit', '2025-04-29 16:35:57', 'bonjour est ce quil reste de la place pour cet evenement', 'oui vasy viens sans probleme zbi', '2025-06-18 11:01:55'),
+	(11, 15, 5, 'En Attente', '2025-04-29 16:35:57', 'dans lattente de rejoindre', NULL, NULL),
+	(12, 30, 14, 'En Attente', '2025-05-02 13:16:08', 'jimerais rejoindre a la cool', NULL, NULL),
+	(13, 17, 4, 'Inscrit', '2025-05-02 13:38:46', 'puis je rejoindre stp allez lom', 'oui alleeezzzz lom', '2025-06-18 11:03:53'),
+	(14, 17, 18, 'Inscrit', '2025-05-07 16:51:34', 'je veux vraiment rejoindre cet evenement', 'vasy rejoinds', '2025-06-18 11:01:49'),
+	(18, 28, 8, 'Refusé', '2025-05-21 12:33:36', 'jaime beaucoup cet evenement', 'oui mais on est deja complet desole', NULL),
+	(19, 15, 10, 'Inscrit', '2025-06-11 11:32:07', 'pls laissez moi rejoindre ', 'ok pas de probleme', '2025-06-18 11:01:53'),
+	(20, 29, 10, 'Refusé', '2025-06-11 11:32:43', 'fait rentrer dans levent sinon on va se la mettre', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsInJvbGUiOiJBZG1pbmlzdHJhdGV1ciIsImxhc3RBY3Rpdml0eSI6MTc1MDQwNDI4MDYwMiwiaWF0IjoxNzUwNDA0MjgwLCJleHAiOjE3NTA0NDAyODB9.snC4PoPU3mzH3jKcZMkx7t_ZnCU8BXd3XWvTvx0s8L4', '2025-06-20 07:30:44'),
+	(21, 36, 10, 'Inscrit', '2025-06-11 11:33:50', 'est ce que je peux rejoindre svp je serais avec mes potes', 'vasy rejoint levant pour etre avec tes potes a la cool', '2025-06-18 12:28:58'),
+	(22, 28, 2, 'Inscrit', '2025-06-18 11:53:19', 'stppp jai envie de faire levent', 'cest bon du calme il y a de la place pour tous le monde', '2025-06-18 11:53:48'),
+	(23, 29, 2, 'Inscrit', '2025-06-20 07:31:00', NULL, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsInJvbGUiOiJBZG1pbmlzdHJhdGV1ciIsImxhc3RBY3Rpdml0eSI6MTc1MDQwNDI4MDYwMiwiaWF0IjoxNzUwNDA0MjgwLCJleHAiOjE3NTA0NDAyODB9.snC4PoPU3mzH3jKcZMkx7t_ZnCU8BXd3XWvTvx0s8L4', '2025-06-20 07:31:05'),
+	(24, 36, 2, 'Inscrit', '2025-06-20 15:59:32', NULL, NULL, '2025-06-20 15:59:34'),
+	(25, 17, 2, 'Inscrit', '2025-06-20 15:59:52', NULL, NULL, '2025-06-20 15:59:53'),
+	(26, 14, 2, 'En Attente', '2025-06-20 16:00:08', NULL, NULL, '2025-06-20 16:00:09'),
+	(27, 16, 2, 'Inscrit', '2025-06-20 16:00:44', NULL, NULL, '2025-06-20 16:00:46'),
+	(28, 31, 2, 'Inscrit', '2025-06-20 16:07:29', NULL, NULL, '2025-06-20 16:07:29'),
+	(29, 33, 2, 'Inscrit', '2025-06-20 16:08:03', NULL, NULL, '2025-06-20 16:08:04');
 
 -- Listage de la structure de table yshare. ratings
 CREATE TABLE IF NOT EXISTS `ratings` (
@@ -432,14 +452,15 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   CONSTRAINT `FK_ratings_event` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_ratings_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_rating_range` CHECK (((`rating` >= 0) and (`rating` <= 5)))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.ratings : ~3 rows (environ)
+-- Listage des données de la table yshare.ratings : ~5 rows (environ)
 DELETE FROM `ratings`;
 INSERT INTO `ratings` (`id`, `id_event`, `id_user`, `rating`, `message`, `date_rated`) VALUES
-	(1, 5, 15, 4.50, 'Très bon événemen !', '2025-03-18 10:22:25'),
 	(2, 27, 29, 4.50, 'Un event vraiment super', '2025-04-11 09:45:10'),
-	(3, 27, 16, 5.00, 'Jamais eu un event aussi bien', '2025-04-11 09:45:56');
+	(3, 27, 16, 5.00, 'Jamais eu un event aussi bien', '2025-04-11 09:45:56'),
+	(4, 5, 28, 4.50, 'super event presque parfait', '2025-06-17 14:43:55'),
+	(5, 2, 28, 4.50, 'wow chokbar sah', '2025-06-18 09:54:35');
 
 -- Listage de la structure de table yshare. reports
 CREATE TABLE IF NOT EXISTS `reports` (
@@ -497,15 +518,19 @@ CREATE TABLE IF NOT EXISTS `report_messages` (
   KEY `sender_id` (`sender_id`),
   CONSTRAINT `report_messages_ibfk_1` FOREIGN KEY (`report_id`) REFERENCES `reports` (`id`) ON DELETE CASCADE,
   CONSTRAINT `report_messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.report_messages : ~3 rows (environ)
+-- Listage des données de la table yshare.report_messages : ~4 rows (environ)
 DELETE FROM `report_messages`;
 INSERT INTO `report_messages` (`id`, `report_id`, `sender_id`, `message`, `date_sent`) VALUES
 	(1, 3, 30, 'report verifier votre report a bien ete pris en compte et le necessaire a ete effectuer ', '2025-04-24 10:11:17'),
 	(2, 3, 28, 'merci pour votre retour super genial trop bien', '2025-04-24 10:13:35'),
 	(3, 3, 30, 'dzadaadadadzad', '2025-04-24 10:08:47'),
-	(4, 3, 30, 'dzrererer', '2025-04-25 08:31:13');
+	(4, 3, 30, 'dzrererer', '2025-04-25 08:31:13'),
+	(24, 3, 30, 'dadadadzaz', '2025-06-20 08:41:30'),
+	(25, 3, 30, 'dzadadda', '2025-06-20 08:46:17'),
+	(26, 3, 30, 'dazddadada', '2025-06-20 08:46:28'),
+	(27, 3, 30, 'dzadada', '2025-06-20 08:46:32');
 
 -- Listage de la structure de table yshare. users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -533,7 +558,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `insta_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `website_url` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table yshare.users : ~12 rows (environ)
 DELETE FROM `users`;
@@ -545,11 +570,11 @@ INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `pro
 	(17, 'alex', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1746777390451-588978481.png', '👋 Salut, moi c’est Alexandre Perez, j’ai 21 ans et je suis actuellement en 3ᵉ année de formation en développement web. Passionné par la tech, je suis ici pour mettre mes compétences au service de vos projets tout en continuant à monter en puissance dans ce domaine.\n\n💻 Je maîtrise un large éventail de technologies back-end et front-end, parmi lesquelles : JavaScript, Python (Django, Flask), PHP (Laravel, Symfony), Node.js, HTML/CSS, Bootstrap, Tailwind, React, Angular, Vue.js, mais aussi des outils orientés jeux et apps interactives comme Unreal Engine (C++), Unity (C#), ainsi que WordPress et Shopify.\n\n🚀 Mon objectif ? Allier apprentissage constant et valeur ajoutée pour vos idées. Si vous cherchez un profil jeune, motivé, et polyvalent, parlons de votre projet !\n', 'Argenteuil', 'avenue marie', '6', '/banner-images/1746777411791-984099653.jpg', 'Approved', NULL, 1, 0, 1, '2004-08-11', 'Homme', 'dazdzdaazdadaz', NULL, NULL),
 	(29, 'l\'ancien d\'argenteuil', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
-	(30, 'Alexandre', 'admin@gmail.com', 'Perez', '$2a$10$CC8h2k8x.P9UUweDZTjhzur7f6pTcXE6UoHcxAH9hvQPiS3ajVedu', 'Administrateur', NULL, '/profile-images/1744640026597-177124585.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
+	(30, 'Alexandre', 'admin@gmail.com', 'Perez', '$2a$10$CC8h2k8x.P9UUweDZTjhzur7f6pTcXE6UoHcxAH9hvQPiS3ajVedu', 'Administrateur', NULL, '/profile-images/1750251000770-443416497.png', NULL, NULL, NULL, NULL, '/banner-images/1750251282268-729051762.jpeg', 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(31, 'Corentin', 'alex@gmail.com', 'pinder-white', '$2a$10$f8hsvpLsoXZXEVkvBLx7nu4NDqfEQBNRqbCRJyHvnqS2KBLPmEnzi', 'Administrateur', NULL, '/profile-images/1745327857504-741394160.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(33, 'Alexandre', 'alex.pere70@gmail.com', 'Perez', '$2a$10$dhqJqW/qfmscjYnhLUeaPOuitPnJsGJXbOuR.ooWLyJY6Uh484fBG', 'Utilisateur', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, 'Autre', NULL, NULL, NULL),
 	(34, 'Alexandre', 'alex.pere@gmail.com', 'Perez', '$2a$10$D6J8bnO5ZymgXdE6EUwvk.FzoM.KOwiyO28GFD.P3yYTjKNPO4qT.', 'Utilisateur', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, 'Préféré ne pas dire', NULL, NULL, NULL),
-	(36, 'Witeez', 'alex.perez.ap460@gmail.com', 'Gaming live', NULL, 'Utilisateur', 'google', '/profile-images/221ae01c-8d93-4c9d-9041-e1fdac1028ce.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL);
+	(36, 'Witeez', 'alex.perez.ap460@gmail.com', 'Gaming live', NULL, 'Utilisateur', 'google', '/profile-images/221ae01c-8d93-4c9d-9041-e1fdac1028ce.jpg', 'Je suis un mec qui aime le foot, surtout au City d\'Argenteuil, et qui aime Marseille, mais qui déteste Paris vraiment, eux je peux pas les blairer. Nice sah cest pas mal cest vraiment bien on a de super trucs a faire il fait il fait cheau ces le moment pourrr miel pops nana trop bon crumch crumch ', NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

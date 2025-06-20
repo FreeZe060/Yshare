@@ -23,6 +23,8 @@ function EventMainLeftColumn({
             ? "text-yellow-600"
             : "text-green-600";
 
+    const displayedParticipants = participants?.slice(-4);
+
     return (
         <div className="left grow">
             <div className="relative rounded-[8px] overflow-hidden rev-slide-up">
@@ -59,43 +61,80 @@ function EventMainLeftColumn({
             </div>
 
             <div className="mt-[50px] animate-fade-in">
-                <h3 className="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">Liste des participants à l’événement</h3>
+                <h3 className="mb-[30px] xs:mb-[15px] font-semibold text-[30px] text-etBlack xs:text-[25px] anim-text">
+                    Liste des participants à l’événement
+                </h3>
                 <h3 className={`mb-[10px] font-semibold text-[20px] ${participantCountClass}`}>
                     Nombre de participants : {participants?.length} / {event?.max_participants}
                 </h3>
                 {participants?.length === 0 ? (
                     <div className="text-center p-[30px] border border-dashed border-[#C320C0] rounded-[12px] bg-[#fdf5ff] animate-fade-in">
-                        <h4 className="text-[24px] font-bold text-[#C320C0] mb-[10px] animate-bounce">Aucun participant n'est encore inscrit</h4>
-                        <p className="text-[16px] text-etGray mb-[10px] animate-slide-up">Soyez le premier à rejoindre cette aventure !</p>
-                        <a onClick={handleApplyToEvent} href="#" className="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse">Candidater maintenant</a>
+                        <h4 className="text-[24px] font-bold text-[#C320C0] mb-[10px] animate-bounce">
+                            Aucun participant n'est encore inscrit
+                        </h4>
+                        <p className="text-[16px] text-etGray mb-[10px] animate-slide-up">
+                            Soyez le premier à rejoindre cette aventure !
+                        </p>
+                        <a
+                            onClick={handleApplyToEvent}
+                            href="#"
+                            className="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse"
+                        >
+                            Candidater maintenant
+                        </a>
                     </div>
                 ) : (
-                    participants.map((participant, index) => {
-                        const user = participant?.user;
-                        console.log("Participants reçus :", participants);
-                        if (!user) return null;
-                        return (
-                            <div key={participant.participantId} className="flex xs:flex-col gap-x-[25px] gap-y-[10px] mb-[30px] p-[30px] lg:p-[20px] border border-[#d9d9d9] rounded-[12px]">
-                                <div className="rounded-[6px] overflow-hidden shrink-0">
-                                    <Link to={`/profile/${user.id}`}>
-                                        <img src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`} alt="Participant" className="w-[168px] aspect-square object-cover" />
-                                    </Link>
-                                </div>
-                                <div className="grow">
-                                    <div className="flex flex-wrap justify-between items-center gap-[10px] pb-[15px] border-[#d9d9d9] border-b">
-                                        <div>
-                                            <Link to={`/profile/${user.id}`}>
-                                                <h5 className="font-semibold text-[20px] text-etBlack">{user.name} {user.lastname}</h5>
-                                            </Link>
-                                            <span className="inline-block text-[16px] text-etGray2">{user.email}</span>
-                                        </div>
-                                        <span className="inline-block px-[12px] py-[4px] text-sm bg-green-100 text-green-700 rounded-full font-medium">{participant.status}</span>
+                    <>
+                        {displayedParticipants.map((participant, index) => {
+                            const user = participant?.user;
+                            console.log("Participants reçus :", participants);
+                            if (!user) return null;
+                            return (
+                                <div
+                                    key={participant.participantId}
+                                    className="flex xs:flex-col gap-x-[25px] gap-y-[10px] mb-[30px] p-[30px] lg:p-[20px] border border-[#d9d9d9] rounded-[12px]"
+                                >
+                                    <div className="rounded-[6px] overflow-hidden shrink-0">
+                                        <Link to={`/profile/${user.id}`}>
+                                            <img
+                                                src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`}
+                                                alt="Participant"
+                                                className="w-[168px] aspect-square object-cover"
+                                            />
+                                        </Link>
                                     </div>
-                                    <p className="pt-[20px] font-light text-[16px] text-etGray2">{user.bio || "Aucune biographie fournie."}</p>
+                                    <div className="grow">
+                                        <div className="flex flex-wrap justify-between items-center gap-[10px] pb-[15px] border-[#d9d9d9] border-b">
+                                            <div>
+                                                <Link to={`/profile/${user.id}`}>
+                                                    <h5 className="font-semibold text-[20px] text-etBlack">
+                                                        {user.name} {user.lastname}
+                                                    </h5>
+                                                </Link>
+                                                <span className="inline-block text-[16px] text-etGray2">{user.email}</span>
+                                            </div>
+                                            <span className="inline-block px-[12px] py-[4px] text-sm bg-green-100 text-green-700 rounded-full font-medium">
+                                                {participant.status}
+                                            </span>
+                                        </div>
+                                        <p className="pt-[20px] font-light text-[16px] text-etGray2">
+                                            {user.bio || "Aucune biographie fournie."}
+                                        </p>
+                                    </div>
                                 </div>
+                            );
+                        })}
+                        {participants?.length > 4 && (
+                            <div className="text-center mt-[10px]">
+                                <Link
+                                    to={`/event/${event?.id}/participants`}
+                                    className="inline-block px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow"
+                                >
+                                    Voir tous les participants
+                                </Link>
                             </div>
-                        );
-                    })
+                        )}
+                    </>
                 )}
             </div>
 

@@ -13,8 +13,16 @@ function EventHeaderInfo({ event }) {
                 <h1 className="font-bold text-[42px] text-etBlack xs:text-[32px] leading-tight">
                     {capitalizeFirstLetter(event?.title)}
                 </h1>
-                <EventStatusTag date={event.start_time} status={event.status} />
+                <div className="flex flex-col items-end gap-2">
+                    <EventStatusTag date={event.start_time} status={event.status} />
 
+                    <Link
+                        to="/create-news"
+                        className="px-4 mt-4 py-2 text-sm font-semibold rounded-full border-2 border-etBlue text-etBlue hover:bg-etBlue hover:text-white transition-all"
+                    >
+                        <i className="fas fa-plus mr-2"></i>Créer une news
+                    </Link>
+                </div>
             </div>
 
             <div className="flex flex-col gap-2">

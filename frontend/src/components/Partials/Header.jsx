@@ -258,19 +258,19 @@ const Header = () => {
                                                         >
                                                             Profil
                                                         </Link>
-
+                                                        <hr className="my-2 border-gray-300" />
                                                         <Link
                                                             to={`event-created`}
                                                             className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
                                                         >
-                                                            Toutes vos créations
+                                                            Vos créations
                                                         </Link>
-
+                                                        <hr className="my-2 border-gray-300" />
                                                         <Link
                                                             to={`/participation`}
                                                             className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
                                                         >
-                                                            Toutes vos participations
+                                                            Vos participations
                                                         </Link>
                                                     </>
                                                 )}

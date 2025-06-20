@@ -36,6 +36,25 @@ class NewsService {
         return allNews;
     }
 
+    async linkEventToNews(newsId, eventId, userId, userRole) {
+        console.log(`🔗 Liaison de l'événement #${eventId} à la news #${newsId} par user #${userId}`);
+
+        const news = await News.findByPk(newsId);
+        if (!news) throw new Error("News introuvable.");
+
+        if (news.user_id !== userId && userRole !== "Administrateur") {
+            throw new Error("Accès interdit pour lier un événement à cette news.");
+        }
+
+        const event = await Event.findByPk(eventId);
+        if (!event) throw new Error("Événement introuvable.");
+
+        news.event_id = eventId;
+        await news.save();
+
+        return this.getNewsWithEventDetails(newsId);
+    }
+
     async getNewsByEventId(eventId) {
         console.log(`📥 Récupération des news pour l'événement ID #${eventId}`);
         const eventNews = await News.findAll({
@@ -107,6 +126,14 @@ class NewsService {
                 {
                     model: User,
                     attributes: ['id', 'name', 'lastname', 'profile_image'],
+                    include: [
+                        {
+                            model: Event,
+                            as: 'Events',
+                            attributes: ['id', 'title'],
+                            order: [['date_created', 'DESC']]
+                        }
+                    ]
                 },
                 {
                     model: Category,
@@ -214,7 +241,7 @@ class NewsService {
             throw new Error("News ou catégorie introuvable.");
         }
 
-        await news.removeCategory(category); 
+        await news.removeCategory(category);
         return this.getNewsById(newsId);
     }
 }

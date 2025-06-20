@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -23,8 +23,27 @@ function NewsDetailsLeft({
     addCategoryToNews,
     showAddCat,
     getCategoryStyle,
-    handleImageUpload
+    handleImageUpload,
+    link,
+    linking,
+    linkError
 }) {
+
+    const [showSelect, setShowSelect] = useState(false);
+    const userEvents = newsDetails.User?.Events || [];
+
+    const handleLink = async (eventId) => {
+        if (!eventId) return;
+
+        try {
+            await link(newsId, eventId);
+            Swal.fire("Succès", "Événement lié/modifié avec succès", "success");
+            window.location.reload();
+        } catch (err) {
+            Swal.fire("Erreur", err.message || "Erreur lors de la liaison", "error");
+        }
+    };
+
     return (
         <div class="left grow space-y-[40px] md:space-y-[30px]">
             <div>
@@ -272,7 +291,23 @@ function NewsDetailsLeft({
                 </div>
             </div>
 
-            {newsDetails.Event && (
+            {!newsDetails.Event ? (
+                <div>
+                    <p className="text-sm text-gray-600 mb-2">
+                        Vous n’avez pas encore relié d’événement à cette actualité. Vous pouvez en lier un ci-dessous :
+                    </p>
+                    <select
+                        className="border border-gray-300 rounded px-4 py-2"
+                        onChange={(e) => handleLink(e.target.value)}
+                        defaultValue=""
+                    >
+                        <option value="" disabled>Sélectionnez un événement</option>
+                        {userEvents.map(event => (
+                            <option key={event.id} value={event.id}>{event.title}</option>
+                        ))}
+                    </select>
+                </div>
+            ) : (
                 <div id="et-event-tab1" className="et-tab active">
                     <h2 className="text-[28px] sm:text-[24px] font-semibold text-etBlack mb-[20px] border-l-4 border-etBlue pl-[12px]">
                         Événement lié à l'actualités
@@ -344,10 +379,34 @@ function NewsDetailsLeft({
                                 </div>
                             </div>
                         </div>
+                        {!showSelect && (
+                            <motion.button
+                                onClick={() => setShowSelect(true)}
+                                whileTap={{ scale: 0.95 }}
+                                className="text-etBlue hover:underline text-sm font-medium"
+                            >
+                                <i className="fas fa-pen mr-1"></i> Modifier l'événement lié
+                            </motion.button>
+                        )}
+
+                        {showSelect && (
+                            <div className="mt-2">
+                                <p className="text-sm text-gray-700 mb-1">Changer l'événement lié :</p>
+                                <select
+                                    className="border px-3 py-2 rounded w-full"
+                                    defaultValue={newsDetails.Event?.id || ''}
+                                    onChange={(e) => handleLink(e.target.value)}
+                                >
+                                    <option value="" disabled>Choisir un événement</option>
+                                    {userEvents.map(evt => (
+                                        <option key={evt.id} value={evt.id}>{evt.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
-
         </div>
     );
 }

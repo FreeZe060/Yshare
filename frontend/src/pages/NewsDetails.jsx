@@ -12,6 +12,7 @@ import { addCategoryToNews, removeCategoryFromNews } from '../services/newsServi
 import { useAuth } from '../config/authHeader';
 import NewsDetailsLeft from '../components/News_Details/NewsDetailsLeft';
 import NewsDetailsRight from '../components/News_Details/NewsDetailsRight';
+import useLinkEventToNews from '../hooks/News/useLinkEventToNews';
 
 function NewsDetails() {
     const { newsId } = useParams();
@@ -19,6 +20,7 @@ function NewsDetails() {
     const { news } = useAllNews();
     const { isOwner, isAdmin, update } = useUpdateNews(newsId);
     const { categories: allCategories } = useCategories();
+    const { link, loading: linking, error: linkError } = useLinkEventToNews();
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState('');
@@ -151,6 +153,9 @@ function NewsDetails() {
                                 addCategoryToNews={addCategoryToNews}
                                 useAuth={useAuth}
                                 handleImageUpload={handleImageUpload}
+                                link={link}
+                                linking={linking}
+                                linkError={linkError}
                             />
 
                             <NewsDetailsRight
