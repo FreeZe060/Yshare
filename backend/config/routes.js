@@ -60,6 +60,7 @@ router.post('/log-suspicious', (req, res) => {
 //////// EVENTS ROUTES ////////
 
 router.get('/events', eventController.getAllEvents);
+router.get('/events/mine', authenticateToken, eventController.getMyEvents);
 router.get('/events/:id', extractUserFromToken, eventController.getEventById);
 router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
 router.put('/events/:eventId', eventUpload.array('images'), authenticateToken, eventController.updateEvent);

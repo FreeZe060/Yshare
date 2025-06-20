@@ -401,6 +401,25 @@ class EventService {
         return await this.getEventById(eventId);
     }
 
+    async getEventsByUser(userId) {
+        return await Event.findAll({
+            where: { id_org: userId },
+            include: [
+                {
+                    model: Category,
+                    through: { attributes: [] }
+                },
+                {
+                    model: EventImage,
+                    as: 'EventImages',
+                    order: [['is_main', 'DESC']],
+                    limit: 1
+                }
+            ],
+            order: [['date_created', 'DESC']]
+        });
+    }
+
     async deleteEvent(eventId, userId, userRole, status) {
         const event = await Event.findByPk(eventId);
         if (!event) throw new Error("Événement introuvable.");

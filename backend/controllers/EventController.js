@@ -342,6 +342,19 @@ exports.setMainImage = async (req, res) => {
     }
 };
 
+exports.getMyEvents = async (req, res) => {
+    try {
+        console.log("[getMyEvents] appelé avec user:", req.user);
+        const userId = req.user.id;
+        const events = await eventService.getEventsByUser(userId);
+        console.log("[getMyEvents] événements trouvés:", events.length);
+        res.status(200).json(events);
+    } catch (error) {
+        console.error("[getMyEvents] ❌", error);
+        res.status(500).json({ message: "Erreur lors de la récupération des événements", error: error.message });
+    }
+};
+
 exports.deleteImageFromEvent = async (req, res) => {
     try {
         const { imageId } = req.params;

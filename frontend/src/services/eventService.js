@@ -195,6 +195,24 @@ export async function deleteEvent(eventId, status = 'Annulé', token) {
 	return result;
 }
 
+/**
+ * GET /events/mine (requires auth)
+ */
+
+export async function fetchMyEvents(token) {
+	const response = await fetch(`${API_BASE_URL}/events/mine`, {
+		credentials: 'include',
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des événements");
+	return result;
+}
+
 export async function getDashboardStats(token) {
 	const response = await fetch(`${API_BASE_URL}/admin/stats`, {
 		method: 'GET',

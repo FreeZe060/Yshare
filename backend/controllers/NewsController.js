@@ -7,6 +7,16 @@ exports.createNews = async (req, res) => {
         }
 
         const { title, content, event_id } = req.body;
+        let categories = [];
+
+        // Parse les catégories si envoyées depuis FormData
+        if (req.body.categories) {
+            try {
+                categories = JSON.parse(req.body.categories);
+            } catch (e) {
+                return res.status(400).json({ message: "Catégories mal formatées." });
+            }
+        }
 
         if (!title || !content) {
             return res.status(400).json({ message: "Le titre et le contenu sont obligatoires." });
@@ -23,6 +33,7 @@ exports.createNews = async (req, res) => {
             image_url,
             user_id: req.user.id,
             event_id: event_id || null,
+            categories, 
         });
 
         res.status(201).json({ message: "Actualité créée avec succès.", news });

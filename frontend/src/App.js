@@ -23,6 +23,7 @@ import UserParticipationPage from './pages/ParticipationPage';
 import EventCreated from './pages/EventCreated';
 import FavorisPage from './pages/FavorisPage';
 import ParticipantPage from './pages/ParticipantPage';
+import CreateNewsPage from './pages/CreateNewsPage';
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
 				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
 				<Route path="/event/:eventId/participants" element={<PrivateRoute><ParticipantPage /></PrivateRoute>} />
+				<Route path="/create-news" element={<PrivateRoute><CreateNewsPage /></PrivateRoute>} />
 				<Route path="/events" element={<Events/>} />
 				<Route path="/event/:eventId" element={<EventDetails />} />
 			</Routes>
