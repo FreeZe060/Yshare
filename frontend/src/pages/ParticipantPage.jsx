@@ -17,13 +17,22 @@ const ParticipantPage = () => {
     const { eventId } = useParams();
     const { participants, loading } = useParticipantsByEvent(eventId);
     const { updateStatus } = useUpdateParticipantStatus();
-    // const [expandedIndex, setExpandedIndex] = useState(null);
     const [expandedGuestsIndex, setExpandedGuestsIndex] = useState(null);
     const [expandedBioIndex, setExpandedBioIndex] = useState(null);
     const { user } = useAuth();
 
-    // const titleRef = useRef(null);
-    // const invitesRef = useRef(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const participantsPerPage = 6;
+
+    const indexOfLastParticipant = currentPage * participantsPerPage;
+    const indexOfFirstParticipant = indexOfLastParticipant - participantsPerPage;
+    const currentParticipants = participants.slice(indexOfFirstParticipant, indexOfLastParticipant);
+    const totalPages = Math.ceil(participants.length / participantsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleToggleBio = (index) => {
         setExpandedBioIndex(expandedBioIndex === index ? null : index);
@@ -137,7 +146,7 @@ const ParticipantPage = () => {
                                 <div className="justify-center gap-[30px] lg:gap-[20px] grid grid-cols-3 xxs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                                     {loading ? (
                                         <p className="text-center col-span-3">Chargement...</p>
-                                    ) : participants.map((participant, index) => (
+                                    ) : currentParticipants.map((participant, index) => (
                                         <div key={participant.participantId} className="group et-member">
                                             <div className="rounded-[16px] overflow-hidden et-member__img h-[280px]">
                                                 <img
@@ -237,6 +246,22 @@ const ParticipantPage = () => {
                                         </div>
                                     ))}
                                 </div>
+                                {totalPages > 1 && (
+                                    <div className="flex justify-center mt-10 space-x-3 min-h-[60px]">
+                                        {Array.from({ length: totalPages }, (_, i) => (
+                                            <button
+                                                key={i + 1}
+                                                onClick={() => handlePageChange(i + 1)}
+                                                className={`w-10 h-10 rounded-full border-2 transition-all duration-300 
+                                                ${currentPage === i + 1
+                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                        : 'bg-white text-blue-600 border-blue-600 hover:bg-blue-100'}`}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </section>
                     </div>

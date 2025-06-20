@@ -48,7 +48,7 @@ function App() {
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
-				<Route path="/event/:eventId/participants" element={<PrivateRoute><ParticipantPage /></PrivateRoute>} />
+				<Route path="/event/:eventId/participants" element={<ParticipantPage />} />
 				<Route path="/create-news" element={<PrivateRoute><CreateNewsPage /></PrivateRoute>} />
 				<Route path="/events" element={<Events/>} />
 				<Route path="/event/:eventId" element={<EventDetails />} />

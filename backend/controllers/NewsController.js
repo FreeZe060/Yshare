@@ -42,6 +42,21 @@ exports.createNews = async (req, res) => {
     }
 };
 
+exports.linkEventToNews = async (req, res) => {
+    try {
+        const { newsId } = req.params;
+        const { eventId } = req.body;
+        const userId = req.user.id;
+        const userRole = req.user.role;
+
+        const updatedNews = await newsService.linkEventToNews(newsId, eventId, userId, userRole);
+        res.status(200).json({ message: "Événement lié à la news avec succès", news: updatedNews });
+    } catch (error) {
+        console.error("[linkEventToNews] ❌", error.message);
+        res.status(500).json({ message: "Erreur lors de la liaison", error: error.message });
+    }
+};
+
 exports.getAllNews = async (req, res) => {
     try {
         const news = await newsService.getAllNews();

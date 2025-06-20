@@ -173,6 +173,7 @@ router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.si
 router.delete('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsController.deleteNews);
 router.post( '/news/:newsId/category', authenticateToken, isNewsOwnerOrAdmin, newsController.addCategoryToNews);
 router.delete( '/news/:newsId/category/:categoryId', authenticateToken, isNewsOwnerOrAdmin, newsController.removeCategoryFromNews);
+router.post('/news/:newsId/link-event', authenticateToken, isNewsOwnerOrAdmin, newsController.linkEventToNews);
 
 //////// CONVERSATION ROUTES ////////
 

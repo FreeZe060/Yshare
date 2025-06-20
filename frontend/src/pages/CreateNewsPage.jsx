@@ -10,6 +10,7 @@ import Footer from '../components/Partials/Footer';
 import Header from '../components/Partials/Header';
 import Swal from 'sweetalert2';
 import { useAuth } from '../config/authHeader';
+import vector1 from '../assets/img/et-3-event-vector.svg';
 
 const LOCAL_STORAGE_KEY = 'create_news_draft';
 
@@ -98,6 +99,25 @@ const CreateNewsPage = () => {
     return (
         <>
             <Header />
+            <section style={{
+                backgroundImage: `linear-gradient(to top right, #580FCA, #F929BB), url(${vector1})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundBlendMode: 'overlay',
+            }}
+                className="z-[1] before:-z-[1] before:absolute relative bg-gradient-to-tr from-[#580FCA] to-[#F929BB] before:bg-cover before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
+                <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
+                    <h1 className="font-medium text-[56px] xs:text-[45px] md:text-[50px] et-breadcrumb-title anim-text">Création d'actualité</h1>
+                    <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
+                        <li className="opacity-80"><a href="/" className="hover:text-[#C320C0] anim-text">Home</a></li>
+                        <li><i className="fa-angle-right fa-solid"></i><i className="fa-angle-right fa-solid"></i></li>
+                        <li className="opacity-80 hover:text-blue-400 cursor-pointer">
+                            <a href="/event-created">Création d'actualité</a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
             <div className="min-h-screen bg-gray-50 pt-28 md:pt-32 px-6 pb-20">
                 <h1 className="text-4xl font-extrabold text-center mb-12 font-sans">Création d'une news</h1>
 

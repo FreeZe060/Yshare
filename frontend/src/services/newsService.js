@@ -97,6 +97,22 @@ export async function updateNews(newsId, formData, token) {
     return result;
 }
 
+export async function linkEventToNews(newsId, eventId, token) {
+    const response = await fetch(`${API_BASE_URL}/news/${newsId}/link-event`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ eventId }),
+    });
+
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Erreur lors de la liaison de l'événement à la news");
+    return result;
+}
+
 /**
  * DELETE /news/:newsId (requires auth)
  */
