@@ -24,6 +24,7 @@ import EventCreated from './pages/EventCreated';
 import FavorisPage from './pages/FavorisPage';
 import ParticipantPage from './pages/ParticipantPage';
 import CreateNewsPage from './pages/CreateNewsPage';
+import ReportPage from './pages/ReportPage';
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
+				<Route path="/report" element={<PrivateRoute><ReportPage /></PrivateRoute>} />
 				<Route path="/event/:eventId/participants" element={<ParticipantPage />} />
 				<Route path="/create-news" element={<PrivateRoute><CreateNewsPage /></PrivateRoute>} />
 				<Route path="/events" element={<Events/>} />

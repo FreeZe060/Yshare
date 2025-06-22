@@ -205,11 +205,12 @@ router.delete('/ratings/:id', authenticateToken, isAdmin, ratingController.delet
 
 //////// REPORT ROUTES ////////
 
-router.post('/reports', authenticateToken, isAdmin, reportUpload.array('files', 6), reportController.createReport);
+router.post('/reports', authenticateToken, reportUpload.array('files', 6), reportController.createReport);
 router.get('/reports', authenticateToken, isAdmin, reportController.getReports);
-router.get('/reports/:reportId', authenticateToken, isAdmin, reportController.getReportDetails);
-router.post('/reports/:reportId/reply', authenticateToken, isAdmin, reportController.replyToReport);
-router.get('/reports/:reportId/messages', authenticateToken, isAdmin, reportController.getReportMessages);
+router.get('/reports/mine', authenticateToken, reportController.getMyReports);
+router.get('/reports/:reportId', authenticateToken, isReportOwnerOrAdmin, reportController.getReportDetails);
+router.post('/reports/:reportId/reply', authenticateToken, isReportOwnerOrAdmin, reportController.replyToReport);
+router.get('/reports/:reportId/messages', authenticateToken, isReportOwnerOrAdmin, reportController.getReportMessages);
 router.put('/reports/:reportId/status', authenticateToken, isAdmin, reportController.updateReportStatus);
 
 //////// AUTH ROUTES FRONT ////////

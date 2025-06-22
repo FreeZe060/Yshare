@@ -55,6 +55,22 @@ export async function getReportDetails(reportId, token) {
 	return result;
 }
 
+export async function getMyReports(token) {
+	if (!token) return [];
+	const response = await fetch(`${API_BASE_URL}/reports/mine`, {
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération de vos signalements");
+	}
+	return result;
+}
+
 /**
  * Récupérer tous les messages liés à un signalement (GET /reports/:reportId/messages)
  */
