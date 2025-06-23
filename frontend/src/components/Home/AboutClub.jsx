@@ -45,7 +45,7 @@ function AboutClub() {
                         <h2 className="max-w-[70%] xs:max-w-full anim-text et-3-section-title">Yshare</h2>
                         <div className="rev-slide-up">
                             <p className="mt-[17px] mb-[43px] text-[#8E8E93] text-[17px]">
-                                Yshare est un projet étudiant développé dans le cadre de notre formation à Ynov. Il a pour objectif de faciliter la gestion et la création d’événements entre étudiants. Que ce soit pour organiser des soirées, des conférences ou des activités de groupe, Yshare permet à chacun de proposer, rejoindre et suivre les événements du campus en toute simplicité.
+                                YShare est un projet étudiant développé dans le cadre de notre formation à Ynov. Il a pour objectif de faciliter la gestion et la création d’événements entre étudiants. Que ce soit pour organiser des soirées, des conférences ou des activités de groupe, Yshare permet à chacun de proposer, rejoindre et suivre les événements du campus en toute simplicité.
                             </p>
                             <a href="#" className="et-3-btn">
                                 Voir le club
