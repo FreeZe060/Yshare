@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../config/authHeader";
 import logo from "../../logo.png";
 import useNotifications from "../../hooks/Notification/useNotifications";
-import { AnimatePresence, motion } from "framer-motion";
 import NotificationSidebar from "../Notification/NotificationSidebar";
 import useMarkNotificationAsRead from "../../hooks/Notification/useMarkNotificationAsRead";
 import useMarkAllNotificationsAsRead from "../../hooks/Notification/useMarkAllNotificationsAsRead";
@@ -19,6 +18,7 @@ const Header = () => {
     const location = useLocation();
     const [showNotif, setShowNotif] = useState(false);
     const notifRef = useRef(null);
+    const notifButtonRef = useRef(null);
     const { markAsRead } = useMarkNotificationAsRead();
     const { markAsUnread } = useMarkNotificationAsUnread();
     const { markAllAsRead } = useMarkAllNotificationsAsRead();
@@ -121,6 +121,7 @@ const Header = () => {
                 onToggleRead={toggleReadStatus}
                 onMarkAllAsRead={handleMarkAllAsRead}
                 onDelete={handleDeleteNotification}
+                triggerRef={notifButtonRef}
                 loading={notifLoading}
             />
             <div id="navbar" className={`fixed w-full z-50 ${scrolled ? "p-4 md:top-0" : "p-0 md:top-0"} xs:bottom-0 xs:top-auto transition-all duration-300`} >
@@ -130,7 +131,7 @@ const Header = () => {
                             <img
                                 src={logo}
                                 alt="Logo Yshare"
-                                className="inline mx-auto -mt-1 rounded-full w-8 h-8"
+                                className="inline -mt-1 rounded-full w-8 h-8"
                             />
                         </span>
                     </Link>
@@ -148,10 +149,10 @@ const Header = () => {
 
                             <Link
                                 to="/events"
-                                className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/events" ? "text-gray-300" : ""
+                                className={`relative flex items-center justify-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/events" ? "text-gray-300" : ""
                                     }`}
                             >
-                                <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-champagne-glasses" />
+                                <i className="flex justify-center items-center bg-gray-800 p-2 rounded-full w-8 fa-solid fa-champagne-glasses" />
                                 <span className="mx-1">Events</span>
                             </Link>
 
@@ -160,35 +161,17 @@ const Header = () => {
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/artists" ? "text-gray-300" : ""
                                     }`}
                             >
-                                <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
-                                <span className="mx-1">News</span>
+                                <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-newspaper" />
+                                <span className="mx-1">Actu's</span>
                             </Link>
 
                             <Link
                                 to="/create-event"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300`}
                             >
-                                <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
+                                <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-calendar-days" />
                                 <span className="mx-1">Créer des Evénements</span>
 
-                            </Link>
-
-                            <Link
-                                to="/about"
-                                className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
-                                    }`}
-                            >
-                                <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1">About Us</span>
-                            </Link>
-
-                            <Link
-                                to="/team"
-                                className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300 ${location.pathname === "/albums" ? "text-gray-300" : ""
-                                    }`}
-                            >
-                                <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-briefcase" />
-                                <span className="mx-1"> Team</span>
                             </Link>
 
                         </div>
@@ -198,7 +181,10 @@ const Header = () => {
                                 <>
                                     <div className="relative">
                                         <span
-                                            onClick={() => setShowNotif(!showNotif)}
+                                            ref={notifButtonRef}
+                                            onClick={() =>
+                                                setShowNotif(!showNotif)
+                                            }
                                             className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
                                         >
                                             <i className="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
@@ -214,7 +200,9 @@ const Header = () => {
                                     </div>
                                     <div className="relative ml-4">
                                         <button
-                                            onClick={() => setMenuOpen((prev) => !prev)}
+                                            onClick={() =>
+                                                setMenuOpen((prev) => !prev)
+                                            }
                                             className="flex items-center gap-2 hover:text-white transition"
                                         >
                                             {user.profileImage ? (
