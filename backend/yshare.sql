@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.categories : ~4 rows (environ)
+-- Listage des données de la table yshare.categories : ~5 rows (environ)
 DELETE FROM `categories`;
 INSERT INTO `categories` (`id`, `name`, `parent_id`, `display_order`) VALUES
 	(1, 'Sport', NULL, 0),
@@ -143,11 +143,11 @@ CREATE TABLE IF NOT EXISTS `events` (
 DELETE FROM `events`;
 INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date_created`, `max_participants`, `status`, `street`, `street_number`, `city`, `postal_code`, `start_time`, `end_time`) VALUES
 	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', 0, '2025-03-23 00:00:00', 30, 'Terminé', 'place du marche', '3', 'Argenteuil', '95100', '2025-05-09 13:00:00', '2025-05-11 15:00:00'),
-	(3, 30, 'vinculum sub nobis', 'Super capitulus corpus suscipio. Ambitus commodo volva.', 10, '2025-02-10 00:00:00', 10, 'En Cours', 'avenue de la paix', '15', 'Paris', '75000', '2025-06-15 10:00:00', '2025-06-20 15:00:00'),
+	(3, 30, 'vinculum sub nobis', 'Super capitulus corpus suscipio. Ambitus commodo volva.', 10, '2025-02-10 00:00:00', 10, 'Terminé', 'avenue de la paix', '15', 'Paris', '75000', '2025-06-15 10:00:00', '2025-06-20 15:00:00'),
 	(4, 15, 'spectaculum autus pauper', 'Dolore pecus tyrannus accusantium argentum torqueo coruscus provident. Cresco verus tempora adopto.', 15, '2024-12-09 00:00:00', 80, 'Terminé', 'place du marche', '8', 'Argenteuil', '95100', '2025-05-18 10:00:00', '2025-05-19 10:00:00'),
 	(5, 13, 'sustineo culpa laboriosam', 'Pecus amissio alter tredecim vinculum. Supplanto crastinus bellum.', 0, '2024-12-21 00:00:00', 5, 'Terminé', 'avenue de la paix', '3', 'Paris', '75000', '2025-05-10 14:00:00', '2025-05-20 14:00:00'),
 	(6, 14, 'amplexus adulatio amaritudo', 'Baiulus clibanus curtus socius victoria thymbra consequatur bis aspernatur adiuvo. Abscido umbra quod deleniti titulus defungo accusator.', 0, '2025-01-24 00:00:00', 50, 'Terminé', 'rue du velodrome', '1', 'Marseille', '13000', '2025-05-30 12:00:00', '2025-05-30 14:00:00'),
-	(7, 16, 'cubicularis ciminatio depromo', 'Cubo tres praesentium comprehendo color adhaero aestivus comes. Vicissitudo celebrer carmen tonsor ex.', 5, '2025-01-12 00:00:00', 100, 'Planifié', 'rue de la plage', '8', 'Antibes', '06650', '2025-06-22 09:00:00', '2025-06-22 12:00:00'),
+	(7, 16, 'cubicularis ciminatio depromo', 'Cubo tres praesentium comprehendo color adhaero aestivus comes. Vicissitudo celebrer carmen tonsor ex.', 5, '2025-01-12 00:00:00', 100, 'Terminé', 'rue de la plage', '8', 'Antibes', '06650', '2025-06-22 09:00:00', '2025-06-22 12:00:00'),
 	(8, 29, 'argumentum carbo blanditiis', 'Defaeco reiciendis creta tyrannus. Antea spectaculum admoneo terga despecto desino bibo laboriosam solio utrum.', 0, '2025-03-29 00:00:00', 20, 'Terminé', 'avenue de la paix', '9', 'Paris', '75000', '2025-05-06 10:00:00', '2025-05-06 20:00:00'),
 	(9, 29, 'sponte veritatis consectetur', 'Cui templum talis teres causa clementia iusto. Theca conor velit temperantia.', 0, '2025-07-24 00:00:00', 50, 'Terminé', 'place sophie-laffite', '5', 'Sophia-Antipolis', '06560', '2025-06-02 15:00:00', '2025-06-03 15:00:00'),
 	(10, 28, 'tener tardus candidus', 'Porro repellat accusantium arceo tibi pectus addo atrox. Ocer clarus sophismata vulnero subseco contabesco clarus ulciscor volubilis.', 35, '2025-06-26 00:00:00', 30, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-05-20 14:00:00', '2025-05-20 18:00:00'),
@@ -340,7 +340,7 @@ CREATE TABLE IF NOT EXISTS `news_categories` (
   CONSTRAINT `news_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.news_categories : ~3 rows (environ)
+-- Listage des données de la table yshare.news_categories : ~5 rows (environ)
 DELETE FROM `news_categories`;
 INSERT INTO `news_categories` (`news_id`, `category_id`) VALUES
 	(2, 1),
@@ -361,7 +361,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.notifications : ~22 rows (environ)
+-- Listage des données de la table yshare.notifications : ~26 rows (environ)
 DELETE FROM `notifications`;
 INSERT INTO `notifications` (`id`, `id_user`, `title`, `message`, `date_sent`, `read_status`) VALUES
 	(2, 13, 'Nouvelle demande - sustineo culpa laboriosam', 'Johnny souhaite rejoindre votre événement "sustineo culpa laboriosam".', '2025-03-17 16:15:51', 0),
@@ -454,7 +454,7 @@ CREATE TABLE IF NOT EXISTS `ratings` (
   CONSTRAINT `chk_rating_range` CHECK (((`rating` >= 0) and (`rating` <= 5)))
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.ratings : ~5 rows (environ)
+-- Listage des données de la table yshare.ratings : ~4 rows (environ)
 DELETE FROM `ratings`;
 INSERT INTO `ratings` (`id`, `id_event`, `id_user`, `rating`, `message`, `date_rated`) VALUES
 	(2, 27, 29, 4.50, 'Un event vraiment super', '2025-04-11 09:45:10'),
@@ -482,13 +482,15 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `reports_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reports_ibfk_3` FOREIGN KEY (`id_reported_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null)) or ((`id_event` is null) and (`id_reported_user` is not null))))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.reports : ~2 rows (environ)
+-- Listage des données de la table yshare.reports : ~4 rows (environ)
 DELETE FROM `reports`;
 INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`) VALUES
 	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'Validé', '2025-03-17 16:38:10'),
-	(3, 28, 5, NULL, NULL, '[Titre offensant] Le titre m\'offense entant que char de combat ', 'Rejeté', '2025-04-11 11:56:22');
+	(3, 28, 5, NULL, NULL, '[Titre offensant] Le titre m\'offense entant que char de combat ', 'Rejeté', '2025-04-11 11:56:22'),
+	(4, 28, NULL, 31, NULL, 'cet utilisateur ma insulter ce fou', 'En Attente', '2025-06-23 09:11:28'),
+	(5, 28, NULL, 17, 10, 'ce message est pas sympa pour levent', 'En Attente', '2025-06-23 09:20:03');
 
 -- Listage de la structure de table yshare. report_files
 CREATE TABLE IF NOT EXISTS `report_files` (
@@ -520,7 +522,7 @@ CREATE TABLE IF NOT EXISTS `report_messages` (
   CONSTRAINT `report_messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.report_messages : ~4 rows (environ)
+-- Listage des données de la table yshare.report_messages : ~8 rows (environ)
 DELETE FROM `report_messages`;
 INSERT INTO `report_messages` (`id`, `report_id`, `sender_id`, `message`, `date_sent`) VALUES
 	(1, 3, 30, 'report verifier votre report a bien ete pris en compte et le necessaire a ete effectuer ', '2025-04-24 10:11:17'),
@@ -560,7 +562,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.users : ~12 rows (environ)
+-- Listage des données de la table yshare.users : ~13 rows (environ)
 DELETE FROM `users`;
 INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `provider`, `profile_image`, `bio`, `city`, `street`, `street_number`, `banner_image`, `status`, `phone`, `show_email`, `show_address`, `show_phone`, `birthdate`, `gender`, `linkedin_url`, `insta_url`, `website_url`) VALUES
 	(13, 'John', 'johndoe@example.com', 'Doe', '$2a$10$bOUc3pez25HnLJ514XI2ruQCmqxi92j8bQa/48Wj4z.3ijoWj/2OO', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),

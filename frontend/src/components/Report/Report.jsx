@@ -70,20 +70,48 @@ function Report({
                     <p className="text-lg text-center">Aucun signalement trouvé.</p>
                 ) : (
                     reports.map((report, index) => {
-                        const event = report.event;
-                        const imageUrl = event?.image?.startsWith('http')
-                            ? event.image
-                            : `${API_BASE_URL}${event?.image || ''}`;
+                        let imageUrl = vector1;
+                        let title = "Signalement";
+                        let subtitle = "";
+                        let statusInfo = "";
+                        const dateObj = new Date(report.date_reported);
+
+                        if (report.type === 'event' && report.event) {
+                            imageUrl = report.event.image?.startsWith('http')
+                                ? report.event.image
+                                : `${API_BASE_URL}${report.event.image}`;
+                            title = capitalizeFirstLetter(report.event.title || "Événement supprimé");
+                            subtitle = `Créateur de l'évènement ${report.event.organizer?.name || 'inconnu'}`;
+                            statusInfo = `Status de l'évènement : ${report.event.status}`;
+                        }
+
+                        if (report.type === 'user' && report.reportedUser) {
+                            imageUrl = report.reportedUser.profileImage?.startsWith('http')
+                                ? report.reportedUser.profileImage
+                                : `${API_BASE_URL}${report.reportedUser.profileImage}`;
+                            title = `Utilisateur : ${report.reportedUser.name}`;
+                            subtitle = `Statut du compte : ${report.reportedUser.status}`;
+                            statusInfo = "";
+                        }
+
+                        if (report.type === 'comment' && report.comment) {
+                            imageUrl = report.comment.author?.profileImage?.startsWith('http')
+                                ? report.comment.author.profileImage
+                                : `${API_BASE_URL}${report.comment.author?.profileImage || ''}`;
+                            title = `Commentaire : "${report.comment.content.slice(0, 50)}..."`;
+                            subtitle = `Auteur : ${report.comment.author?.name}`;
+                            statusInfo = "";
+                        }
 
                         return (
                             <div key={index} className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
                                 <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
-                                    {report.date_reported && !isNaN(new Date(report.date_reported)) ? (
+                                    {!isNaN(dateObj) ? (
                                         <>
                                             <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
-                                                {getFormattedDayAndMonthYear(report.date_reported).day}
+                                                {getFormattedDayAndMonthYear(dateObj).day}
                                             </span>
-                                            {getFormattedDayAndMonthYear(report.date_reported).monthYear}
+                                            {getFormattedDayAndMonthYear(dateObj).monthYear}
                                         </>
                                     ) : (
                                         <span className="text-etBlack">??</span>
@@ -92,8 +120,8 @@ function Report({
 
                                 <div className="shrink-0">
                                     <img
-                                        src={imageUrl || vector1}
-                                        alt="Event"
+                                        src={imageUrl}
+                                        alt="Illustration"
                                         className="rounded-xl w-full max-w-[300px] object-cover aspect-[300/128]"
                                     />
                                 </div>
@@ -102,16 +130,17 @@ function Report({
                                     <div className="min-w-0">
                                         <Link to={`/report/${report.id}`}>
                                             <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
-                                                {capitalizeFirstLetter(event?.title || 'Événement supprimé')}
+                                                {title}
                                             </h3>
                                         </Link>
-                                        <h6 className="text-[17px] text-etBlue">
-                                            Signalé par {report.reportingUser?.name}
-                                            {report.reportedUser && ` — Cible : ${report.reportedUser.name}`}
-                                        </h6>
-                                        <div className="text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2 bg-gray-100 text-gray-600">
-                                            Type : {report.type}
-                                        </div>
+                                        {subtitle && (
+                                            <h6 className="text-[17px] text-etBlue">{subtitle}</h6>
+                                        )}
+                                        {statusInfo && (
+                                            <div className="text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2 bg-gray-100 text-gray-600">
+                                                {statusInfo}
+                                            </div>
+                                        )}
                                     </div>
                                     <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
                                         {report.status}
@@ -120,7 +149,7 @@ function Report({
 
                                 <div className="pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
                                     <Link to={`/report/${report.id}`} className="et-3-btn">
-                                        Voir le détail
+                                        Voir le message
                                     </Link>
                                 </div>
                             </div>
