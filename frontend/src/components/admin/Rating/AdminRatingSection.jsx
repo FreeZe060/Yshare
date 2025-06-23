@@ -5,7 +5,7 @@ import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 const sortIcon = (dir) =>
     dir === 'asc' ? <i className="fas fa-sort-up" /> : <i className="fas fa-sort-down" />;
 
-const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, onDelete }) => {
+const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, onDelete, Link }) => {
     const theadRef = useRef();
 
     const columns = [
@@ -55,12 +55,28 @@ const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, 
                                     className="border-b border-gray-200 hover:bg-gray-50"
                                 >
                                     <td className="py-3 px-6 text-black">
-                                        <div className="flex items-center space-x-2">
-                                            <img src={`http://localhost:8080${rating.user?.profileImage || '/default-profile.jpg'}`} alt="pp" className="w-8 h-8 rounded-full" />
+
+                                        <Link to={`/profile/${rating.user?.id}`} className="flex items-center space-x-2 hover:underline">
+                                            <img
+                                                src={`http://localhost:8080${rating.user?.profileImage || '/default-profile.jpg'}`}
+                                                alt="pp"
+                                                className="w-8 h-8 rounded-full"
+                                            />
                                             <span>{rating.user?.name} {rating.user?.lastname}</span>
-                                        </div>
+                                        </Link>
                                     </td>
-                                    <td className="py-3 px-6 text-black">{rating.event?.title || '–'}</td>
+                                    <td className="py-3 px-6 text-black">
+                                        {rating.event ? (
+                                            <Link
+                                                to={`/event/${rating.event.id}`}
+                                                className="text-indigo-600 hover:underline"
+                                            >
+                                                {rating.event.title}
+                                            </Link>
+                                        ) : (
+                                            '–'
+                                        )}
+                                    </td>
                                     <td className="py-3 px-6 text-black">{rating.rating}</td>
                                     <td className="py-3 px-6 text-black">{rating.message}</td>
                                     <td className="py-3 px-6">

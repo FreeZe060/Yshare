@@ -16,6 +16,7 @@ class CommentService {
                     include: [
                         {
                             model: User,
+                            as: 'author',
                             attributes: ['id', 'name', 'lastname', 'profileImage'],
                         },
                         {
@@ -43,6 +44,7 @@ class CommentService {
                 include: [
                     {
                         model: User,
+                        as: 'author',
                         attributes: ['id', 'name', 'lastname', 'profileImage'],
                     },
                     {
@@ -71,12 +73,13 @@ class CommentService {
     async getReplies(commentId) {
         try {
             this.log('Fetching replies for comment:', commentId);
-    
+
             const replies = await Comment.findAll({
                 where: { id_comment: commentId },
                 include: [
                     {
                         model: User,
+                        as: 'author',
                         attributes: ['id', 'name', 'lastname', 'profileImage'],
                     },
                     {
@@ -90,22 +93,24 @@ class CommentService {
                 ],
                 order: [['date_posted', 'ASC']]
             });
-    
+
             for (let reply of replies) {
                 const count = await Comment.count({ where: { id_comment: reply.id } });
                 reply.dataValues.replyCount = count;
             }
-    
+
             return replies;
         } catch (error) {
             this.log('Error fetching replies:', error);
             throw new Error("Erreur lors de la récupération des réponses : " + error.message);
         }
-    }    
+    }
 
     async addComment(eventId, userId, title, message, parentCommentId = null) {
+        console.log(`[addComment] ➤ Ajout d’un commentaire pour event ID=${eventId} par user ID=${userId}`);
+        console.log(`[addComment] ➤ Titre: "${title}", Parent ID: ${parentCommentId ?? 'aucun'}`);
+
         try {
-            this.log('Adding comment:', { eventId, userId, title, parentCommentId });
             const newComment = await Comment.create({
                 id_event: eventId,
                 id_user: userId,
@@ -113,61 +118,53 @@ class CommentService {
                 message,
                 id_comment: parentCommentId
             });
-            this.log('Comment added successfully with ID:', newComment.id);
+
+            console.log(`[addComment] ✅ Commentaire ajouté avec succès : ID=${newComment.id}`);
             return newComment;
+
         } catch (error) {
-            this.log('Error adding comment:', error);
+            console.error('[addComment] ❌ Erreur lors de l’ajout du commentaire :', error.message);
             throw new Error("Erreur lors de l'ajout du commentaire : " + error.message);
         }
     }
 
     async updateComment(commentId, title, message) {
+        console.log(`[updateComment] ➤ Mise à jour du commentaire ID=${commentId}`);
+
         try {
-            this.log('Updating comment:', commentId);
             const comment = await this.getCommentById(commentId);
-            if (!comment) throw new Error("Commentaire non trouvé");
+            if (!comment) {
+                console.warn('[updateComment] ❌ Commentaire introuvable');
+                throw new Error("Commentaire non trouvé");
+            }
+
+            console.log('[updateComment] ➤ Ancien titre :', comment.title);
+            console.log('[updateComment] ➤ Ancien message :', comment.message);
 
             comment.title = title !== undefined ? title : comment.title;
             comment.message = message !== undefined ? message : comment.message;
+
             await comment.save();
-            this.log('Comment updated:', commentId);
+
+            console.log(`[updateComment] ✅ Commentaire ID=${commentId} mis à jour`);
             return comment;
+
         } catch (error) {
-            this.log('Error updating comment:', error);
+            console.error('[updateComment] ❌ Erreur lors de la mise à jour du commentaire :', error.message);
             throw new Error("Erreur lors de la mise à jour du commentaire : " + error.message);
-        }
-    }
-
-    async getCommentsByUser(userId) {
-        try {
-            this.log('Fetching comments by user:', userId);
-            const comments = await Comment.findAll({
-                where: { id_user: userId },
-                include: [
-                    { model: Event, attributes: ['id', 'title'] }
-                ],
-                order: [['date_posted', 'DESC']]
-            });
-
-            this.log(`Found ${comments.length} comments for user #${userId}`);
-            return { comments, totalComments: comments.length };
-        } catch (error) {
-            this.log('Error fetching user comments:', error);
-            throw new Error("Erreur lors de la récupération des commentaires de l'utilisateur : " + error.message);
         }
     }
 
     async deleteComment(commentId) {
         try {
             console.log(`[CommentService] Début de la suppression du commentaire ${commentId}`);
-            
+
             const comment = await this.getCommentById(commentId);
             if (!comment) {
                 console.log(`[CommentService] Commentaire ${commentId} non trouvé`);
                 throw new Error("Commentaire non trouvé");
             }
 
-            // Supprimer d'abord les réactions associées
             await CommentReaction.destroy({
                 where: {
                     id_comment: commentId
@@ -175,7 +172,6 @@ class CommentService {
             });
             console.log(`[CommentService] Réactions supprimées pour le commentaire ${commentId}`);
 
-            // Supprimer les réponses au commentaire
             await Comment.destroy({
                 where: {
                     id_comment: commentId
@@ -183,7 +179,6 @@ class CommentService {
             });
             console.log(`[CommentService] Réponses supprimées pour le commentaire ${commentId}`);
 
-            // Supprimer le commentaire lui-même
             await comment.destroy();
             console.log(`[CommentService] Commentaire ${commentId} supprimé avec succès`);
 
@@ -195,64 +190,81 @@ class CommentService {
     }
 
     async getAllCommentsWithUserAndEvent() {
-        this.log('Fetching all comments with user, event and parent info…');
-        const comments = await Comment.findAll({
-            include: [
-                {
-                    model: User,
-                    attributes: ['id', 'name', 'lastname', 'profileImage']
-                },
-                {
-                    model: Event,
-                    attributes: ['id', 'title', 'id_org']
-                },
-                {
-                    model: Comment,
-                    as: 'Parent',
-                    attributes: ['id', 'message']
-                },
-                {
-                    model: Comment,
-                    as: 'Replies',
-                    attributes: ['id', 'message', 'date_posted']
-                }
-            ],
-            order: [['date_posted', 'DESC']]
-        });
+        console.log('[getAllCommentsWithUserAndEvent] ➤ Récupération de tous les commentaires avec user, event, parent & replies');
 
-        return comments.map(c => ({
-            id: c.id,
-            author: `${c.User.name} ${c.User.lastname}`,
-            profileImage: c.User.profileImage,
-            message: c.message,
-            title: c.title,
-            eventTitle: c.Event?.title || null,
-            eventId: c.Event?.id,
-            eventCreatorId: c.Event?.id_org,
-            parentCommentId: c.Parent ? c.Parent.id : null,
-            createdAt: c.date_posted
-        }));
+        try {
+            const comments = await Comment.findAll({
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        attributes: ['id', 'name', 'lastname', 'profileImage']
+                    },
+                    {
+                        model: Event,
+                        attributes: ['id', 'title', 'id_org']
+                    },
+                    {
+                        model: Comment,
+                        as: 'Parent',
+                        attributes: ['id', 'message']
+                    },
+                    {
+                        model: Comment,
+                        as: 'Replies',
+                        attributes: ['id', 'message', 'date_posted']
+                    }
+                ],
+                order: [['date_posted', 'DESC']]
+            });
+
+            console.log(`[getAllCommentsWithUserAndEvent] ✅ ${comments.length} commentaire(s) trouvé(s).`);
+
+            const formatted = comments.map(c => ({
+                id: c.id,
+                author: `${c.author?.name || ''} ${c.author?.lastname || ''}`,
+                profileImage: c.author?.profileImage || null,
+                message: c.message,
+                title: c.title,
+                eventTitle: c.Event?.title || null,
+                eventId: c.Event?.id,
+                eventCreatorId: c.Event?.id_org,
+                parentCommentId: c.Parent ? c.Parent.id : null,
+                createdAt: c.date_posted
+            }));
+
+            console.log('[getAllCommentsWithUserAndEvent] ➤ Formatage terminé.');
+            return formatted;
+
+        } catch (error) {
+            console.error('[getAllCommentsWithUserAndEvent] ❌ Erreur lors de la récupération :', error.message);
+            throw new Error("Erreur lors de la récupération des commentaires : " + error.message);
+        }
     }
 
-
     async getCommentById(commentId) {
-        this.log('getCommentById() appelé avec ID =', commentId);
+        console.log('[getCommentById] ➤ Recherche du commentaire ID =', commentId);
+
         try {
             const comment = await Comment.findByPk(commentId);
+
             if (!comment) {
-                this.log('getCommentById() : Aucun enregistrement pour ID =', commentId);
+                console.warn('[getCommentById] ❌ Aucun commentaire trouvé pour ID =', commentId);
                 return null;
             }
-            this.log('getCommentById() : Enregistrement trouvé ->', {
+
+            console.log('[getCommentById] ✅ Commentaire trouvé :', {
                 id: comment.id,
                 id_event: comment.id_event,
                 id_user: comment.id_user,
                 id_comment: comment.id_comment,
                 date_posted: comment.date_posted
             });
+
             return comment;
+
         } catch (err) {
-            this.log('getCommentById() : ERREUR', err);
+            console.error('[getCommentById] ❌ Erreur Sequelize :', err.message);
             throw new Error("Erreur service getCommentById : " + err.message);
         }
     }

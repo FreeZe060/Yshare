@@ -17,7 +17,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
         return { day, month };
     };
 
-    if (loading) return <p>Chargement des actualités...</p>;
+    // if (loading) return <p>Chargement des actualités...</p>;
     if (error) return <p className="text-red-500">Erreur : {error}</p>;
 
     return (

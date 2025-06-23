@@ -92,13 +92,11 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 
 	return (
 		<div className="flex gap-4">
-			<Link
-				to={`/profile/${comment.User.id}`}
-			>
+			<Link to={`/profile/${comment.author?.id}`}>
 				<img
 					src={
-						comment.User?.profileImage
-							? `${API_BASE_URL}${comment.User.profileImage}`
+						comment.author?.profileImage
+							? `${API_BASE_URL}${comment.author.profileImage}`
 							: 'https://assets.codepen.io/285131/hat-man.png'
 					}
 					className="w-10 h-10 rounded-full object-cover"
@@ -108,11 +106,11 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 			<div className="flex-1 space-y-2">
 				<div className="text-sm text-gray-500">
 					<Link
-						to={`/profile/${comment.User.id}`}
+						to={`/profile/${comment.author?.id}`}
 					>
 						<span className="font-medium text-gray-800">
-							{comment.User ? `${comment.User.name} ${comment.User.lastname}` : 'Utilisateur'}
-						</span>{' '}
+							{comment.author ? `${comment.author.name} ${comment.author.lastname}` : 'Utilisateur'}
+						</span>
 					</Link>
 					– {new Date(comment.date_posted).toLocaleDateString()}
 				</div>

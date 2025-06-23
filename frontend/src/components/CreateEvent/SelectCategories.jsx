@@ -4,7 +4,7 @@ import useCategories from "../../hooks/Categorie/useCategories";
 const SelectCategories = ({ selected, onChange }) => {
     const { categories, loading, error } = useCategories();
 
-    if (loading) return <p>Chargement des catégories...</p>;
+    // if (loading) return <p>Chargement des catégories...</p>;
     if (error) return <p className="text-red-500">Erreur : {error}</p>;
 
     return (

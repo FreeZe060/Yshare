@@ -2,7 +2,11 @@ const { Report, ReportFile, ReportMessage, User, Event, Comment, EventImage } = 
 
 class ReportService {
     async createReport(userId, { id_event, id_reported_user, id_comment, message }, files = []) {
+        console.log('[createReport] ➤ Création d’un signalement');
+        console.log(`[createReport] Paramètres reçus : userId=${userId}, event=${id_event}, reportedUser=${id_reported_user}, comment=${id_comment}`);
+
         if (!id_event && !id_reported_user && !id_comment) {
+            console.warn('[createReport] ❌ Aucune cible fournie pour le signalement');
             throw new Error("Vous devez signaler un événement, un utilisateur ou un commentaire.");
         }
 
@@ -15,24 +19,33 @@ class ReportService {
                 message
             });
 
+            console.log(`[createReport] ✅ Signalement créé avec ID : ${report.id}`);
+
             if (files.length > 0) {
-                const uploads = files.map(file => ReportFile.create({
-                    report_id: report.id,
-                    file_path: `/report-files/${file.filename}`
-                }));
+                console.log(`[createReport] ➤ ${files.length} fichier(s) à associer`);
+                const uploads = files.map(file =>
+                    ReportFile.create({
+                        report_id: report.id,
+                        file_path: `/report-files/${file.filename}`
+                    })
+                );
                 await Promise.all(uploads);
-                console.log(`[createReport] ${files.length} fichiers attachés au signalement ID ${report.id}`);
+                console.log(`[createReport] ✅ Fichiers associés au signalement ID ${report.id}`);
+            } else {
+                console.log('[createReport] Aucun fichier joint au signalement');
             }
 
             return report;
 
         } catch (error) {
-            console.error("[createReport] Erreur lors de la création :", error);
+            console.error("[createReport] ❌ Erreur lors de la création du signalement :", error.message);
             throw new Error("Erreur lors de la création du signalement : " + error.message);
         }
     }
 
     async getAllReports() {
+        console.log('[getAllReports] ➤ Début de la récupération de tous les signalements');
+
         try {
             const reports = await Report.findAll({
                 include: [
@@ -50,7 +63,9 @@ class ReportService {
                 order: [['date_reported', 'DESC']],
             });
 
-            return reports.map(report => ({
+            console.log(`[getAllReports] ✅ ${reports.length} signalement(s) trouvé(s)`);
+
+            const formatted = reports.map(report => ({
                 id: report.id,
                 message: report.message,
                 status: report.status,
@@ -78,12 +93,19 @@ class ReportService {
                 files: report.files || [],
                 messageCount: report.messages?.length || 0,
             }));
+
+            console.log('[getAllReports] ➤ Transformation terminée');
+            return formatted;
+
         } catch (error) {
+            console.error('[getAllReports] ❌ Erreur :', error.message);
             throw new Error("Erreur lors de la récupération des signalements : " + error.message);
         }
     }
 
     async getReportsByUser(userId) {
+        console.log(`[getReportsByUser] ➤ Récupération des signalements pour l'utilisateur ID : ${userId}`);
+
         try {
             const reports = await Report.findAll({
                 where: { id_user: userId },
@@ -129,20 +151,15 @@ class ReportService {
                             }
                         ]
                     },
-                    {
-                        model: ReportFile,
-                        as: 'files'
-                    },
-                    {
-                        model: ReportMessage,
-                        as: 'messages',
-                        attributes: ['id']
-                    }
+                    { model: ReportFile, as: 'files' },
+                    { model: ReportMessage, as: 'messages', attributes: ['id'] }
                 ],
                 order: [['date_reported', 'DESC']]
             });
 
-            return reports.map(report => ({
+            console.log(`[getReportsByUser] ✅ ${reports.length} signalement(s) trouvé(s)`);
+
+            const formatted = reports.map(report => ({
                 id: report.id,
                 message: report.message,
                 status: report.status,
@@ -186,12 +203,18 @@ class ReportService {
                 files: report.files || [],
                 messageCount: report.messages?.length || 0
             }));
+
+            console.log('[getReportsByUser] ➤ Transformation des résultats terminée');
+            return formatted;
+
         } catch (error) {
+            console.error('[getReportsByUser] ❌ Erreur :', error.message);
             throw new Error("Erreur lors de la récupération des signalements : " + error.message);
         }
     }
 
     async getReportDetails(reportId) {
+        console.log(`[getReportDetails] ➤ Recherche du report ID : ${reportId}`);
         try {
             const report = await Report.findByPk(reportId, {
                 include: [
@@ -226,17 +249,22 @@ class ReportService {
             });
 
             if (!report) {
+                console.log(`[getReportDetails] ❌ Aucun report trouvé pour ID : ${reportId}`);
                 throw new Error("Signalement non trouvé.");
             }
 
+            console.log(`[getReportDetails] ✅ Report trouvé : ID ${report.id}, type : ${report.type}`);
             return report;
         } catch (error) {
+            console.error(`[getReportDetails] ❌ Erreur : ${error.message}`);
             throw new Error("Erreur lors de la récupération du signalement : " + error.message);
         }
     }
 
     async updateReportStatus(reportId, newStatus, isAdmin) {
+        console.log(`[updateReportStatus] ➤ Demande de changement de statut pour report ${reportId} → ${newStatus}`);
         if (!isAdmin) {
+            console.warn('[updateReportStatus] ❌ Refusé : utilisateur non administrateur');
             throw new Error("Seuls les administrateurs peuvent changer le statut d'un signalement.");
         }
 
@@ -247,16 +275,20 @@ class ReportService {
             );
 
             if (updatedCount === 0) {
+                console.warn('[updateReportStatus] ⚠️ Aucune ligne mise à jour.');
                 throw new Error("Aucune mise à jour effectuée.");
             }
 
+            console.log(`[updateReportStatus] ✅ Statut mis à jour en '${newStatus}' pour report ${reportId}`);
             return { message: `Statut mis à jour en '${newStatus}'.` };
         } catch (error) {
+            console.error(`[updateReportStatus] ❌ Erreur : ${error.message}`);
             throw new Error("Erreur lors de la mise à jour du signalement : " + error.message);
         }
     }
 
     async replyToReport(reportId, senderId, message) {
+        console.log(`[replyToReport] ➤ Ajout d'une réponse au report ${reportId} par l'utilisateur ${senderId}`);
         try {
             const response = await ReportMessage.create({
                 report_id: reportId,
@@ -264,13 +296,16 @@ class ReportService {
                 message
             });
 
+            console.log(`[replyToReport] ✅ Réponse ajoutée avec ID : ${response.id}`);
             return response;
         } catch (error) {
+            console.error(`[replyToReport] ❌ Erreur : ${error.message}`);
             throw new Error("Erreur lors de la réponse au signalement : " + error.message);
         }
     }
 
     async getReportMessages(reportId) {
+        console.log(`[getReportMessages] ➤ Récupération des messages du report ${reportId}`);
         try {
             const messages = await ReportMessage.findAll({
                 where: { report_id: reportId },
@@ -278,8 +313,10 @@ class ReportService {
                 order: [['date_sent', 'ASC']]
             });
 
+            console.log(`[getReportMessages] ✅ ${messages.length} message(s) trouvé(s)`);
             return messages;
         } catch (error) {
+            console.error(`[getReportMessages] ❌ Erreur : ${error.message}`);
             throw new Error("Erreur lors de la récupération des messages : " + error.message);
         }
     }

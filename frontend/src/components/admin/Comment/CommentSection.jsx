@@ -138,7 +138,7 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
                                     </td>
                                     <td className="py-2 px-4 max-w-xs truncate">
                                         <Link
-                                            to={`/events/${comment.eventId}`}
+                                            to={`/event/${comment.eventId}`}
                                             className="text-indigo-600 hover:underline font-semibold text-sm"
                                         >{comment.eventTitle}</Link>
                                     </td>

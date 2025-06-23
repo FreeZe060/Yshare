@@ -96,14 +96,14 @@ const LastUsersSection = ({
                                 >
                                     <td className="py-3 px-2 font-bold text-gray-800">
                                         <div className="inline-flex space-x-3 items-center">
-                                            <Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`}>
+                                            <Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`} className="flex items-center space-x-2 hover:text-indigo-600 transition">
                                                 <img
                                                     className="rounded-full w-8 h-8 object-cover hover:scale-105 transition duration-200"
                                                     src={`http://localhost:8080${user.profileImage || '/default-avatar.png'}`}
                                                     alt={`${user.name}`}
                                                 />
+                                                <span>{user.name} {user.lastname}</span>
                                             </Link>
-                                            <span>{user.name} {user.lastname}</span>
                                         </div>
                                     </td>
                                     <td className="py-3 px-2 text-gray-600">{user.email}</td>
