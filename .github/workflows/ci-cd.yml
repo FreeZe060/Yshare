@@ -90,9 +90,9 @@ jobs:
       with:
         languages: javascript
     
-    # - name: Perform CodeQL Analysis
-    #   uses: github/codeql-action/analyze@v3
-    #   continue-on-error: true
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      continue-on-error: true
 
   docker-build:
     runs-on: ubuntu-latest
