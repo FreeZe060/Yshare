@@ -220,6 +220,16 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 											</div>
 										</div>
 									</div>
+									{user.hasReported && (
+										<div className="absolute right-0 mt-8 mr-4">
+											<a
+												href="/report"
+												className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition-all text-sm"
+											>
+												Voir vos reports
+											</a>
+										</div>
+									)}
 								</div>
 
 								<div className="mt-[1rem]">

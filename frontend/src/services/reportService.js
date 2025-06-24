@@ -129,3 +129,19 @@ export async function updateReportStatus(reportId, status, token) {
 	}
 	return result;
 }
+
+export async function deleteReport(reportId, token) {
+	const response = await fetch(`${API_BASE_URL}/reports/${reportId}`, {
+		method: "DELETE",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	const result = await response.json();
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la suppression du signalement");
+	}
+	return result;
+}

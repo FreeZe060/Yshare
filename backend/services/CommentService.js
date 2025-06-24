@@ -70,6 +70,30 @@ class CommentService {
         }
     }
 
+    async getCommentsByUser(userId) {
+        try {
+            this.log(`🟡 [getCommentsByUser] ➤ Récupération des commentaires de l'utilisateur ID: ${userId}`);
+
+            const comments = await Comment.findAll({
+                where: { id_user: userId },
+                include: [{ model: Event, attributes: ['id', 'title'] }],
+                order: [['date_posted', 'DESC']]
+            });
+
+            this.log(`🟢 [getCommentsByUser] ✅ ${comments.length} commentaire(s) récupéré(s) pour l'utilisateur ${userId}`);
+
+            return {
+                comments,
+                totalComments: comments.length
+            };
+
+        } catch (error) {
+            this.log(`🔴 [getCommentsByUser] ❌ Erreur lors de la récupération : ${error.message}`);
+            console.error(error); // pour afficher la stack si besoin
+            throw new Error("Erreur lors de la récupération des commentaires de l'utilisateur : " + error.message);
+        }
+    }
+
     async getReplies(commentId) {
         try {
             this.log('Fetching replies for comment:', commentId);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -10,7 +10,8 @@ import SkeletonEventCard from '../SkeletonLoading/SkeletonEventCard';
 import vector1 from "../../assets/img/et-3-event-vector.svg";
 import vector2 from "../../assets/img/et-3-event-vector-2.svg";
 
-import FiltreParticipant from '../Participant/FiltreParticipant';
+import FiltreReport from './/FiltreReport';
+import ReportReplies from '../admin/Report/ReportReplies';
 
 function Report({
     formatEuro,
@@ -31,10 +32,15 @@ function Report({
     onSuggestionsClearRequested,
     statuses,
     events,
-    inputProps
+    inputProps,
+    onDeleteReport,
+    typeFilter,
+    setTypeFilter,
+    types
 }) {
     useSlideUpAnimation('.rev-slide-up', reports);
     useTextAnimation();
+    const [activeReportId, setActiveReportId] = useState(null);
 
     return (
         <section className="z-[1] relative py-[120px] md:py-[60px] xl:py-[80px] overflow-hidden">
@@ -44,7 +50,7 @@ function Report({
                         Signalements
                     </h6>
                     <h2 className="mb-[26px] text-center anim-text et-3-section-title">Mes signalements</h2>
-                    <FiltreParticipant
+                    <FiltreReport
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
                         eventFilter={eventFilter}
@@ -57,6 +63,9 @@ function Report({
                         statuses={statuses}
                         events={events}
                         inputProps={inputProps}
+                        typeFilter={typeFilter}
+                        setTypeFilter={setTypeFilter}
+                        types={types}
                     />
                 </div>
 
@@ -147,16 +156,46 @@ function Report({
                                     </h4>
                                 </div>
 
-                                <div className="pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
-                                    <Link to={`/report/${report.id}`} className="et-3-btn">
+                                <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0 min-w-[161px] sm:min-h-[161px]">
+                                    <button
+                                        onClick={() => setActiveReportId(report.id)}
+                                        className="et-3-btn min-w-[235px]"
+                                    >
                                         Voir le message
-                                    </Link>
+                                    </button>
+                                    <button
+                                        onClick={() => onDeleteReport(report.id)}
+                                        className="et-3-btn text-sm text-red-600 hover:text-red-800 transition min-w-[235px]"
+                                    >
+                                        Supprimer le signalement
+                                    </button>
                                 </div>
                             </div>
                         );
                     })
                 )}
             </div>
+            {activeReportId && (
+                <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
+                    onClick={() => setActiveReportId(null)}
+                >
+                    <div
+                        className="bg-white rounded-xl p-6 max-w-[600px] w-full max-h-[80vh] overflow-y-auto shadow-xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <ReportReplies reportId={activeReportId} />
+                        <div className="text-right mt-4">
+                            <button
+                                onClick={() => setActiveReportId(null)}
+                                className="text-sm text-red-600 hover:underline"
+                            >
+                                Fermer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* VECTORS + BACKGROUND */}
             <div className="*:-z-[1] *:absolute">

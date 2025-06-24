@@ -212,6 +212,7 @@ router.get('/reports/:reportId', authenticateToken, isReportOwnerOrAdmin, report
 router.post('/reports/:reportId/reply', authenticateToken, isReportOwnerOrAdmin, reportController.replyToReport);
 router.get('/reports/:reportId/messages', authenticateToken, isReportOwnerOrAdmin, reportController.getReportMessages);
 router.put('/reports/:reportId/status', authenticateToken, isAdmin, reportController.updateReportStatus);
+router.delete('/reports/:reportId', authenticateToken, isReportOwnerOrAdmin, reportController.deleteReport);
 
 //////// AUTH ROUTES FRONT ////////
 

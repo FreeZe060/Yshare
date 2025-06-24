@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
-import Report from '../components/Report/Report'; // ← Ton composant adapté pour afficher les reports
+import Report from '../components/Report/Report';
+import useDeleteReport from '../hooks/Report/useDeleteReport';
 import useMyReports from '../hooks/Report/useMyReports';
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import { useAuth } from '../config/authHeader';
+import Swal from 'sweetalert2';
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
@@ -18,6 +20,12 @@ export default function ReportsPage() {
     const [eventFilter, setEventFilter] = useState('');
     const [searchValue, setSearchValue] = useState('');
     const [suggestions, setSuggestions] = useState([]);
+    const [typeFilter, setTypeFilter] = useState('');
+    const { removeReport, loading: deleteLoading, error: deleteError } = useDeleteReport();
+
+    const types = Array.isArray(reports)
+        ? [...new Set(reports.map(r => r.type).filter(Boolean))]
+        : [];
 
     useEffect(() => {
         if (!Array.isArray(reports)) return;
@@ -25,9 +33,10 @@ export default function ReportsPage() {
         let data = [...reports];
         if (statusFilter) data = data.filter(r => r.status === statusFilter);
         if (eventFilter) data = data.filter(r => r.event?.title === eventFilter);
+        if (typeFilter) data = data.filter(r => r.type === typeFilter);
         if (searchValue) data = data.filter(r => r.event?.title?.toLowerCase().includes(searchValue.toLowerCase()));
         setFiltered(data);
-    }, [statusFilter, eventFilter, searchValue, reports]);
+    }, [statusFilter, eventFilter, typeFilter, searchValue, reports]);
 
     const statuses = Array.isArray(reports)
         ? [...new Set(reports.map(r => r.status).filter(Boolean))]
@@ -48,6 +57,39 @@ export default function ReportsPage() {
 
     const onSuggestionsClearRequested = () => {
         setSuggestions([]);
+    };
+
+    const handleDeleteReport = async (reportId) => {
+        const result = await Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: 'Cette action supprimera définitivement le signalement.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler',
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+            await removeReport(reportId);
+            await Swal.fire({
+                title: 'Supprimé !',
+                text: 'Le signalement a été supprimé avec succès.',
+                icon: 'success',
+                confirmButtonColor: '#580FCA'
+            });
+            window.location.reload();
+        } catch (err) {
+            await Swal.fire({
+                title: 'Erreur',
+                text: err.message || "Une erreur est survenue lors de la suppression.",
+                icon: 'error',
+                confirmButtonColor: '#d33'
+            });
+        }
     };
 
     const inputProps = {
@@ -103,6 +145,10 @@ export default function ReportsPage() {
                     statuses={statuses}
                     events={events}
                     inputProps={inputProps}
+                    onDeleteReport={handleDeleteReport}
+                    typeFilter={typeFilter}
+                    setTypeFilter={setTypeFilter}
+                    types={types}
                 />
             </main>
             <Footer />

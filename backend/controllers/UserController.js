@@ -4,6 +4,7 @@ const userService = require('../services/UserService');
 const path = require('path');
 const fs = require('fs');
 const ParticipantService = require('../services/ParticipantService');
+const reportService = require('../services/ReportService');
 
 const generateToken = (user) => {
     const payload = {
@@ -158,6 +159,10 @@ exports.getProfile = async (req, res) => {
         const isOwner = requesterId && Number(requesterId) === Number(user.id);
         const isPrivate = isOwner || isAdmin;
 
+        const hasReported = isPrivate && requesterId
+            ? await reportService.hasUserReported(requesterId)
+            : false;
+
         console.log(`[getProfile] 👤 Accès ${isPrivate ? 'privé' : 'public'} (admin: ${isAdmin}, owner: ${isOwner})`);
 
         const {
@@ -187,7 +192,8 @@ exports.getProfile = async (req, res) => {
             websiteUrl,
             showEmail,
             showPhone,
-            showAddress
+            showAddress,
+            hasReported
         };
 
         console.log(`[getProfile] ✅ Données renvoyées :`, {
@@ -357,7 +363,7 @@ exports.adminCreateUser = async (req, res) => {
             lastname,
             email,
             password: hashedPassword,
-            isAdmin: true 
+            isAdmin: true
         });
 
         return res.status(201).json({

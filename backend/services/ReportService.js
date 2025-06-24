@@ -320,6 +320,44 @@ class ReportService {
             throw new Error("Erreur lors de la récupération des messages : " + error.message);
         }
     }
+
+    async hasUserReported(userId) {
+        const count = await Report.count({ where: { id_user: userId } });
+        return count > 0;
+    }
+
+    async deleteReport(reportId) {
+        console.log(`[deleteReport] ➤ Suppression du report ID=${reportId}`);
+
+        try {
+            const report = await Report.findByPk(reportId, {
+                include: [
+                    { model: ReportFile, as: 'files' },
+                    { model: ReportMessage, as: 'messages' },
+                ]
+            });
+
+            if (!report) {
+                console.warn(`[deleteReport] ❌ Report ID ${reportId} introuvable`);
+                throw new Error("Signalement introuvable");
+            }
+
+            console.log(`[deleteReport] 🧹 Suppression des fichiers associés (${report.files.length})`);
+            await ReportFile.destroy({ where: { report_id: reportId } });
+
+            console.log(`[deleteReport] 🧹 Suppression des messages associés (${report.messages.length})`);
+            await ReportMessage.destroy({ where: { report_id: reportId } });
+
+            await report.destroy();
+            console.log(`[deleteReport] ✅ Report ID ${reportId} supprimé avec succès`);
+
+            return { message: "Signalement supprimé avec succès" };
+
+        } catch (error) {
+            console.error(`[deleteReport] ❌ Erreur :`, error);
+            throw new Error("Erreur lors de la suppression du signalement : " + error.message);
+        }
+    }
 }
 
 module.exports = new ReportService();
