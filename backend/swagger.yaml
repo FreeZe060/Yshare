@@ -2,11 +2,11 @@
 openapi: 3.0.0
 info:
   title: YShare API
-  version: 1.0.0
+  version: 1.1.2
   description: Documentation de l'API RESTful pour la plateforme YShare.
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/api/
     description: Serveur local
 
 tags:
@@ -1082,7 +1082,6 @@ paths:
             description: Accès interdit.
           '404':
             description: Commentaire non trouvé.
-        description: Accessible uniquement à l'auteur ou à un administrateur.
         security:
           - bearerAuth: []
       parameters:

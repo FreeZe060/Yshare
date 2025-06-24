@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import usePostRate from '../../hooks/Rating/usePostRate';
+import usePostRate from '../../../hooks/Rating/usePostRate';
 
 function RatingBanner({ eventId, userId, eventStatus, hasRated, isParticipant }) {
     const [show, setShow] = useState(false);
@@ -53,7 +53,7 @@ function RatingBanner({ eventId, userId, eventStatus, hasRated, isParticipant })
                         </div>
                     `).join('')}
                 </div>
-                <textarea id="message" placeholder="Laissez un commentaire (optionnel)" class="w-full px-3 py-2 border rounded-md mt-4"></textarea>
+                <textarea id="message" placeholder="Laissez un commentaire (optionnel)" class="mt-4 px-3 py-2 border rounded-md w-full"></textarea>
             `,
             showCancelButton: true,
             confirmButtonText: 'Valider',
@@ -135,15 +135,15 @@ function RatingBanner({ eventId, userId, eventStatus, hasRated, isParticipant })
     if (!show) return null;
 
     return (
-        <div className="bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white py-4 px-6 rounded-b-md shadow-md mb-6 animate-fadeIn z-99">
-            <div className="flex items-center justify-between gap-4">
+        <div className="z-99 bg-gradient-to-r from-[#580FCA] to-[#F929BB] shadow-md mb-6 px-6 py-4 rounded-b-md text-white animate-fadeIn">
+            <div className="flex justify-between items-center gap-4">
                 <div>
-                    <p className="text-lg font-semibold">🎉 Cet événement est terminé !</p>
+                    <p className="font-semibold text-lg">🎉 Cet événement est terminé !</p>
                     <p className="text-sm">Cliquez ici pour partager votre avis sur votre expérience.</p>
                 </div>
                 <button
                     onClick={handleRateClick}
-                    className="bg-white text-[#C320C0] px-4 py-2 rounded-md font-semibold hover:bg-gray-100"
+                    className="bg-white hover:bg-gray-100 px-4 py-2 rounded-md font-semibold text-[#C320C0]"
                 >
                     Noter maintenant
                 </button>

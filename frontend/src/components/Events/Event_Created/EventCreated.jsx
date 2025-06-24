@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import useSlideUpAnimation from '../../hooks/Animations/useSlideUpAnimation';
-import '../../assets/css/style.css';
-import '../../assets/css/style.css';
-import useTextAnimation from '../../hooks/Animations/useTextAnimation';
+import useSlideUpAnimation from '../../../hooks/Animations/useSlideUpAnimation';
+import '../../../assets/css/style.css';
+import useTextAnimation from '../../../hooks/Animations/useTextAnimation';
 
-import SkeletonEventCard from '../SkeletonLoading/SkeletonEventCard';
-import vector1 from "../../assets/img/et-3-event-vector.svg";
-import vector2 from "../../assets/img/et-3-event-vector-2.svg";
-import FiltreParticipant from '../Participant/FiltreParticipant';
+import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
+import vector1 from "../../../assets/img/et-3-event-vector.svg";
+import vector2 from "../../../assets/img/et-3-event-vector-2.svg";
+import FiltreParticipant from '../../Participant/FiltreParticipant';
 
 function Event_Created({
     filtered,
@@ -100,8 +99,8 @@ function Event_Created({
                                     {formatEuro(item.price)}
                                 </h4>
                             </div>
-                            <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
-                                <Link to={`/event/${item.id}`} className="et-3-btn min-w-[166px]">
+                            <div className="flex flex-col justify-center items-center lg:items-end gap-3 pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
+                                <Link to={`/event/${item.id}`} className="min-w-[166px] et-3-btn">
                                     Voir l'event
                                 </Link>
 

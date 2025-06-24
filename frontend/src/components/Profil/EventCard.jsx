@@ -7,12 +7,12 @@ const EventCard = ({ event }) => {
 
     return (
         <motion.div
-            className="relative bg-white rounded-2xl shadow-lg p-4 w-64 cursor-pointer transition-transform hover:shadow-xl"
+            className="relative bg-white shadow-lg hover:shadow-xl p-4 rounded-2xl w-64 transition-transform cursor-pointer"
             whileHover={{ scale: 1.05 }}
         >
             <Link to={`/event/${event.id}`}>
 
-                <div className="relative w-full h-40 rounded-md overflow-hidden shadow-inner">
+                <div className="relative shadow-inner rounded-md w-full h-40 overflow-hidden">
                     {event.image ? (
                         <>
                             <img
@@ -23,15 +23,15 @@ const EventCard = ({ event }) => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-40" />
                         </>
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gray-100">
+                        <div className="flex justify-center items-center bg-gray-100 w-full h-full text-gray-500">
                             Pas d'image
                         </div>
                     )}
                 </div>
 
-                <h3 className="mt-4 text-lg font-semibold text-gray-800 line-clamp-1">{event.title}</h3>
+                <h3 className="mt-4 font-semibold text-gray-800 text-lg line-clamp-1">{event.title}</h3>
 
-                <div className="flex items-center justify-between mt-2 text-sm text-gray-500">
+                <div className="flex justify-between items-center mt-2 text-gray-500 text-sm">
                     <span>{new Date(event.start_time).toLocaleDateString('fr-FR')}</span>
                     <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
                         ${event.event_status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
@@ -45,12 +45,12 @@ const EventCard = ({ event }) => {
             </Link>
 
             {isTermineEtInscrit && (
-                <div className="absolute left-0 right-0 top-[150px] translate-y-[-10%] bg-gradient-to-r from-[#580FCA] to-[#C320C0] text-white px-4 py-2 rounded-xl z-10">
+                <div className="top-[150px] right-0 left-0 z-10 absolute bg-gradient-to-r from-[#580FCA] to-[#C320C0] px-4 py-2 rounded-xl text-white translate-y-[-10%]">
                     <div className="flex items-center gap-1">
-                        <p className="text-xs font-medium">Événement terminé</p>
+                        <p className="font-medium text-xs">Événement terminé</p>
                         <Link
                             to={`/event/${event.id}`}
-                            className="text-xs px-3 py-0.5 bg-white text-[#580FCA] hover:text-white hover:bg-[#580FCA] border border-white rounded-full transition-all"
+                            className="bg-white hover:bg-[#580FCA] px-3 py-0.5 border border-white rounded-full text-[#580FCA] hover:text-white text-xs transition-all"
                         >
                             Voir les détails
                         </Link>
