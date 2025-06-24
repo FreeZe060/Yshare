@@ -4,7 +4,7 @@ import { capitalizeFirstLetter } from '../../utils/format';
 
 import EventStatusTag from '../../utils/EventStatusTag';
 
-function EventHeaderInfo({ event }) {
+function EventHeaderInfo({ event, canEditDate, editing, setEditing, newStartDate, setNewStartDate, newEndDate, setNewEndDate, handleSave }) {
     if (!event) return null;
 
     return (
@@ -47,31 +47,57 @@ function EventHeaderInfo({ event }) {
                 </div>
                 <div className="text-left">
                     <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
-                    <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
-                        <span className="text-etPurple font-bold">Du</span>{' '}
-                        {new Date(event?.start_time).toLocaleDateString("fr-FR", {
-                            weekday: "long",
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric",
-                        })}{' '}
-                        à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                        <br />
-                        <span className="text-etPink font-bold">Au</span>{' '}
-                        {new Date(event?.end_time).toLocaleDateString("fr-FR", {
-                            weekday: "long",
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric",
-                        })}{' '}
-                        à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                    </p>
+                    {!editing ? (
+                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
+                            <span className="text-etPurple font-bold">Du</span>{' '}
+                            {new Date(event?.start_time).toLocaleDateString("fr-FR", {
+                                weekday: "long",
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                            })}{' '}
+                            à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                            <br />
+                            <span className="text-etPink font-bold">Au</span>{' '}
+                            {new Date(event?.end_time).toLocaleDateString("fr-FR", {
+                                weekday: "long",
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                            })}{' '}
+                            à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                            {canEditDate && (
+                                <button onClick={() => setEditing(true)} className="ml-4 text-sm text-etBlue underline hover:text-etPurple">Modifier</button>
+                            )}
+                        </p>
+                    ) : (
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm text-etGray">Date de début :</label>
+                            <input
+                                type="datetime-local"
+                                value={newStartDate}
+                                onChange={(e) => setNewStartDate(e.target.value)}
+                                className="border rounded p-2"
+                            />
+                            <label className="text-sm text-etGray">Date de fin :</label>
+                            <input
+                                type="datetime-local"
+                                value={newEndDate}
+                                onChange={(e) => setNewEndDate(e.target.value)}
+                                className="border rounded p-2"
+                            />
+                            <div className="flex gap-3 mt-2">
+                                <button onClick={handleSave} className="bg-etBlue text-white px-4 py-1 rounded">Enregistrer</button>
+                                <button onClick={() => setEditing(false)} className="text-gray-600 underline">Annuler</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
             </div>

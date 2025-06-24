@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -15,6 +15,7 @@ import { useAuth } from '../config/authHeader';
 import useAddComment from '../hooks/Comments/useAddComment';
 import useReplyComment from '../hooks/Comments/useReplyComment';
 import useAddParticipant from '../hooks/Participant/useAddParticipant';
+import useUpdateEvent from '../hooks/Events/useUpdateEvent';
 
 import EventHeaderInfo from '../components/Event_Details/EventHeaderInfo';
 import EventMainLeftColumn from '../components/Event_Details/EventMainLeftColumn';
@@ -43,6 +44,11 @@ function EventDetails() {
     const [ticketCount, setTicketCount] = useState(1);
     const [errors, setError] = useState("");
     const [errorCount, setErrorCount] = useState(0);
+
+    const { handleUpdateEvent } = useUpdateEvent();
+    const [editing, setEditing] = useState(false);
+    const [newStartDate, setNewStartDate] = useState(event?.start_time);
+    const [newEndDate, setNewEndDate] = useState(event?.end_time);
 
     const [guestCount, setGuestCount] = useState(0);
     const maxGuests = 3;
@@ -237,6 +243,27 @@ function EventDetails() {
         }
     };
 
+    useEffect(() => {
+        if (event) {
+            setNewStartDate(event.start_time);
+            setNewEndDate(event.end_time);
+        }
+    }, [event]);
+
+    const canEditDate = user && (user.role === 'Administrateur' || user.id === event?.organizer?.id);
+
+    const handleSave = async () => {
+        try {
+            await handleUpdateEvent(event.id, {
+                start_time: newStartDate,
+                end_time: newEndDate
+            });
+            setEditing(false);
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour de l'événement:", error);
+        }
+    };
+
     const isParticipant = event?.isParticipant;
     const hasRated = event?.hasRatedByUser;
 
@@ -292,6 +319,14 @@ function EventDetails() {
                         <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full container">
                             <EventHeaderInfo
                                 event={event}
+                                canEditDate={canEditDate}
+                                editing={editing}
+                                setEditing={setEditing}
+                                newStartDate={newStartDate}
+                                setNewStartDate={setNewStartDate}
+                                newEndDate={newEndDate}
+                                setNewEndDate={setNewEndDate}
+                                handleSave={handleSave}
                             />
                             <div className="flex md:flex-col md:items-center gap-[30px] lg:gap-[20px]">
                                 <EventMainLeftColumn
