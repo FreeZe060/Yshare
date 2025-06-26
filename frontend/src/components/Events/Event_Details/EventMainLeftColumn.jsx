@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import CommentBlock from '../Event_Details/CommentBlock';
-import soiree from '../../assets/img/soiree.jpg';
+import CommentBlock from './CommentBlock';
+import soiree from '../../../assets/img/soiree.jpg';
 
 function EventMainLeftColumn({
     event,
@@ -68,17 +68,17 @@ function EventMainLeftColumn({
                     Nombre de participants : {participants?.length} / {event?.max_participants}
                 </h3>
                 {participants?.length === 0 ? (
-                    <div className="text-center p-[30px] border border-dashed border-[#C320C0] rounded-[12px] bg-[#fdf5ff] animate-fade-in">
-                        <h4 className="text-[24px] font-bold text-[#C320C0] mb-[10px] animate-bounce">
+                    <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in">
+                        <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px] animate-bounce">
                             Aucun participant n'est encore inscrit
                         </h4>
-                        <p className="text-[16px] text-etGray mb-[10px] animate-slide-up">
+                        <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
                             Soyez le premier à rejoindre cette aventure !
                         </p>
                         <a
                             onClick={handleApplyToEvent}
                             href="#"
-                            className="inline-block mt-[20px] px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow-lg animate-pulse"
+                            className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
                         >
                             Candidater maintenant
                         </a>
@@ -99,7 +99,7 @@ function EventMainLeftColumn({
                                             <img
                                                 src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`}
                                                 alt="Participant"
-                                                className="w-[168px] aspect-square object-cover"
+                                                className="w-[168px] object-cover aspect-square"
                                             />
                                         </Link>
                                     </div>
@@ -113,7 +113,7 @@ function EventMainLeftColumn({
                                                 </Link>
                                                 <span className="inline-block text-[16px] text-etGray2">{user.email}</span>
                                             </div>
-                                            <span className="inline-block px-[12px] py-[4px] text-sm bg-green-100 text-green-700 rounded-full font-medium">
+                                            <span className="inline-block bg-green-100 px-[12px] py-[4px] rounded-full font-medium text-green-700 text-sm">
                                                 {participant.status}
                                             </span>
                                         </div>
@@ -125,10 +125,10 @@ function EventMainLeftColumn({
                             );
                         })}
                         {participants?.length > 4 && (
-                            <div className="text-center mt-[10px]">
+                            <div className="mt-[10px] text-center">
                                 <Link
                                     to={`/event/${event?.id}/participants`}
-                                    className="inline-block px-[24px] py-[12px] text-white bg-[#C320C0] hover:bg-[#a51899] transition-all duration-300 rounded-full text-[16px] font-medium shadow"
+                                    className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all duration-300"
                                 >
                                     Voir tous les participants
                                 </Link>
@@ -139,11 +139,11 @@ function EventMainLeftColumn({
             </div>
 
             <div className="mt-[60px] animate-fade-in">
-                <h3 className="mb-[30px] text-[30px] font-semibold text-etBlack">Commentaires</h3>
-                <div className="rounded-[16px] border border-[#f0f0f0] shadow-lg p-[30px] bg-white space-y-[20px]">
+                <h3 className="mb-[30px] font-semibold text-[30px] text-etBlack">Commentaires</h3>
+                <div className="space-y-[20px] bg-white shadow-lg p-[30px] border border-[#f0f0f0] rounded-[16px]">
                     <div className="space-y-8">
                         <div className="flex gap-4">
-                            <img src={user?.profileImage ? `http://localhost:8080${user.profileImage}` : "https://assets.codepen.io/285131/hat-man.png"} className="w-10 h-10 rounded-full object-cover" alt="avatar" />
+                            <img src={user?.profileImage ? `http://localhost:8080${user.profileImage}` : "https://assets.codepen.io/285131/hat-man.png"} className="rounded-full w-10 h-10 object-cover" alt="avatar" />
                             <input
                                 type="text"
                                 value={newComment}

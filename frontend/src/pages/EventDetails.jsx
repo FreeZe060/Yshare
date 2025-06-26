@@ -16,10 +16,10 @@ import useAddComment from '../hooks/Comments/useAddComment';
 import useReplyComment from '../hooks/Comments/useReplyComment';
 import useAddParticipant from '../hooks/Participant/useAddParticipant';
 
-import EventHeaderInfo from '../components/Event_Details/EventHeaderInfo';
-import EventMainLeftColumn from '../components/Event_Details/EventMainLeftColumn';
-import EventMainRightColumn from '../components/Event_Details/EventMainRightColumn';
-import RatingBanner from '../components/Event_Details/RatingBanner';
+import EventHeaderInfo from '../components/Events/Event_Details/EventHeaderInfo';
+import EventMainLeftColumn from '../components/Events/Event_Details/EventMainLeftColumn';
+import EventMainRightColumn from '../components/Events/Event_Details/EventMainRightColumn';
+import RatingBanner from '../components/Events/Event_Details/RatingBanner';
 
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
@@ -67,12 +67,12 @@ function EventDetails() {
         let fields = '';
         for (let i = 1; i < count; i++) {
             fields += `
-            <hr class="border-t border-gray-300 my-4"/>
-            <div class="font-semibold text-[#C320C0] text-sm mb-2">Invité n°${i}</div>
+            <hr class="my-4 border-gray-300 border-t"/>
+            <div class="mb-2 font-semibold text-[#C320C0] text-sm">Invité n°${i}</div>
             <div class="space-y-3">
-                <input type="text" id="guest-firstname-${i}" placeholder="Prénom" class="w-full px-3 py-2 border rounded-md text-sm" />
-                <input type="text" id="guest-lastname-${i}" placeholder="Nom" class="w-full px-3 py-2 border rounded-md text-sm" />
-                <input type="email" id="guest-email-${i}" placeholder="Email" class="w-full px-3 py-2 border rounded-md text-sm" />
+                <input type="text" id="guest-firstname-${i}" placeholder="Prénom" class="px-3 py-2 border rounded-md w-full text-sm" />
+                <input type="text" id="guest-lastname-${i}" placeholder="Nom" class="px-3 py-2 border rounded-md w-full text-sm" />
+                <input type="email" id="guest-email-${i}" placeholder="Email" class="px-3 py-2 border rounded-md w-full text-sm" />
             </div>
         `;
         }
@@ -134,7 +134,7 @@ function EventDetails() {
             return Swal.fire({
                 icon: 'info',
                 title: 'Connexion requise',
-                html: `<p class="text-sm text-gray-700">Veuillez vous connecter pour candidater à cet événement.</p>`,
+                html: `<p class="text-gray-700 text-sm">Veuillez vous connecter pour candidater à cet événement.</p>`,
                 confirmButtonText: 'Se connecter',
                 cancelButtonText: 'Annuler',
                 showCancelButton: true,
@@ -152,29 +152,29 @@ function EventDetails() {
                 popup: 'p-0 overflow-hidden rounded-xl shadow-2xl',
             },
             html: `
-            <div class="flex flex-col text-left text-[15px] text-gray-700 bg-white">
+            <div class="flex flex-col bg-white text-[15px] text-gray-700 text-left">
     
                 <div class="relative overflow-hidden">
-                    <img src="${imageUrl}" class="w-full h-48 object-cover transition-transform duration-300 hover:scale-105" alt="Événement">
+                    <img src="${imageUrl}" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300" alt="Événement">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <div class="absolute bottom-2 left-4 text-white text-xl font-bold">${event.title}</div>
+                    <div class="bottom-2 left-4 absolute font-bold text-white text-xl">${event.title}</div>
                 </div>
     
-                <div class="px-6 pt-4 pb-1 space-y-4">
+                <div class="space-y-4 px-6 pt-4 pb-1">
                     <div>
-                        <h3 class="text-lg font-semibold text-[#C320C0]">🎯 Récapitulatif</h3>
-                        <div class="text-gray-800 mt-1">
+                        <h3 class="font-semibold text-[#C320C0] text-lg">🎯 Récapitulatif</h3>
+                        <div class="mt-1 text-gray-800">
                             <p><strong>📅 Date :</strong> ${new Date(event.start_time).toLocaleDateString('fr-FR')}</p>
                             <p><strong>📍 Lieu :</strong> ${event.city || 'À venir'}</p>
                             <p><strong>💰 Prix :</strong> ${event.price > 0 ? `${formatEuro(event.price)}` : 'Gratuit'}</p>
                         </div>
                     </div>
     
-                    <hr class="border-t border-gray-200"/>
+                    <hr class="border-gray-200 border-t"/>
     
                     <div>
-                        <label class="block font-medium text-sm text-gray-700 mb-1">💬 Message au créateur</label>
-                        <textarea id="message" class="w-full px-3 py-2 border rounded-md resize-none focus:ring-[#C320C0] focus:border-[#C320C0]" rows="4" placeholder="Expliquez pourquoi vous voulez participer..."></textarea>
+                        <label class="block mb-1 font-medium text-gray-700 text-sm">💬 Message au créateur</label>
+                        <textarea id="message" class="px-3 py-2 border focus:border-[#C320C0] rounded-md focus:ring-[#C320C0] w-full resize-none" rows="4" placeholder="Expliquez pourquoi vous voulez participer..."></textarea>
                     </div>
 
                     ${ticketCount > 1 ? renderGuestInputs(ticketCount) : ''}

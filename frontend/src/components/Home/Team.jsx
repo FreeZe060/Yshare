@@ -15,7 +15,7 @@ const Team = () => {
                 <div class="justify-center gap-[30px] lg:gap-[20px] grid grid-cols-3 xxs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                     <div class="group et-member">
                         <div class="rounded-[16px] overflow-hidden et-member__img">
-                            <img src="../../assets/img/team-member-1.jpg" alt="Team Member Image" class="w-full group-hover:scale-110 duration-[400ms]"/>
+                            <img src="../../assets/img/artist-5.jpg" alt="Team Member Image" class="w-full group-hover:scale-110 duration-[400ms]"/>
                         </div>
 
                         <div class="before:-top-[33px] before:left-0 z-[1] before:-z-[1] before:absolute relative bg-white before:bg-white shadow-[0_4px_60px_rgba(249,41,187,0.16)] mx-[25px] xs:mx-[5px] md:mx-[15px] -mt-[44px] xs:mt-0 md:-mt-[15px] px-[25px] md:px-[15px] pb-[30px] md:pb-[20px] rounded-[16px] before:rounded-[16px] before:w-full before:h-full before:skew-y-[4deg] et-member__txt">

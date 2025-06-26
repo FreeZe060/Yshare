@@ -135,11 +135,11 @@ function EventsListEventics() {
 
                     if (upcomingEvents.length === 0) {
                         return (
-                            <div className="text-center mt-10 animate__animated animate__fadeIn">
-                                <p className="text-[20px] font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB]">
+                            <div className="mt-10 text-center animate__animated animate__fadeIn">
+                                <p className="bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB] font-semibold text-[20px] text-transparent">
                                     Aucun événement à venir pour le moment.
                                 </p>
-                                <p className="text-sm text-gray-500 mt-2">Restez connecté, de nouvelles expériences arrivent bientôt !</p>
+                                <p className="mt-2 text-gray-500 text-sm">Restez connecté, de nouvelles expériences arrivent bientôt !</p>
                             </div>
                         );
                     }
@@ -213,10 +213,10 @@ function EventsListEventics() {
                             })}
 
                             {totalUpcomingEvents > 0 && (
-                                <div className="text-center mt-10">
+                                <div className="mt-10 text-center">
                                     <Link
                                         to="/events"
-                                        className="inline-block text-[18px] font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB] hover:underline transition-all duration-300"
+                                        className="inline-block bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB] font-medium text-[18px] text-transparent hover:underline transition-all duration-300"
                                     >
                                         + {totalUpcomingEvents} – Découvrir tous les events !
                                     </Link>
