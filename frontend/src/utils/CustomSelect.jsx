@@ -26,7 +26,7 @@ const CustomSelect = ({ options, label, value, onChange, multiple = false, isNes
 
         switch (event.key) {
             case "ArrowDown":
-                if (expandedIndex !== null && options[expandedIndex].subOptions) {
+                if (expandedIndex !== null && options[expandedIndex]?.subOptions) {
                     setHighlightedIndex((prev) => (prev + 1) % options[expandedIndex].subOptions.length);
                 } else {
                     setHighlightedIndex((prev) => (prev + 1) % options.length);
