@@ -26,7 +26,7 @@ const CustomSelect = ({ options, label, value, onChange, multiple = false, isNes
 
         switch (event.key) {
             case "ArrowDown":
-                if (expandedIndex !== null && options[expandedIndex].subOptions) {
+                if (expandedIndex !== null && options[expandedIndex]?.subOptions) {
                     setHighlightedIndex((prev) => (prev + 1) % options[expandedIndex].subOptions.length);
                 } else {
                     setHighlightedIndex((prev) => (prev + 1) % options.length);
@@ -98,7 +98,7 @@ const CustomSelect = ({ options, label, value, onChange, multiple = false, isNes
     }, [isOpen]);
 
     return (
-        <div className="space-y-1 w-full space">
+        <div className="space-y-1 w-full">
             <label className="block font-medium text-gray-700 text-sm leading-5">
                 {label}{" "}{label ? ":" : ""}
             </label>
