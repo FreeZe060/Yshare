@@ -1,5 +1,5 @@
 const eventService = require('../services/EventService');
-const eventImageService = require('../services/EventService');
+const eventImageService = require('../services/EventImageService');
 const participantService = require('../services/ParticipantService');
 const userService = require('../services/UserService');
 const notificationService = require('../services/NotificationService');

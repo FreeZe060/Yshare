@@ -7,14 +7,19 @@ function EventMainLeftColumn({
     event,
     mainImageUrl,
     user,
+    comments,
+    participants,
+    eventId,
     newComment,
     setNewComment,
     handleAddComment,
     handleApplyToEvent,
-    participants,
-    comments,
-    eventId,
     API_BASE_URL,
+    canEdit,
+    handleUpload,
+    handleDelete,
+    handleSetMain,
+    refetchEvent,
 }) {
 
     const participantCountClass = participants?.length >= event?.max_participants
@@ -39,13 +44,46 @@ function EventMainLeftColumn({
                 {event?.EventImages?.filter(img => !img.is_main).length > 0 && (
                     <div className="gap-[30px] lg:gap-[20px] grid grid-cols-2 xxs:grid-cols-1 mt-[38px] mb-[33px]">
                         {event.EventImages.filter(img => !img.is_main).map((img, index) => (
-                            <img
-                                key={index}
-                                src={`${API_BASE_URL}${img.image_url}`}
-                                alt="event-details-img"
-                                className="rounded-[8px] w-full h-[306px] object-cover"
-                            />
+                            <div key={index} className="relative">
+                                {canEdit && event.EventImages.length > 1 && (
+                                    <button
+                                        onClick={() => handleDelete(img.id)}
+                                        className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-red-700"
+                                        title="Supprimer l'image"
+                                    >
+                                        &times;
+                                    </button>
+                                )}
+                                <img
+                                    src={`${API_BASE_URL}${img.image_url}`}
+                                    alt="event-details-img"
+                                    className="rounded-[8px] w-full h-[306px] object-cover"
+                                />
+                                {canEdit && (
+                                    console.log("✅ Affichage du bouton de suppression activé"),
+                                <button
+                                    onClick={() => handleSetMain(img.id)}
+                                    className="absolute bottom-2 right-2 px-3 py-1 text-sm bg-[#C320C0] text-white rounded hover:bg-[#a51899]"
+                                >
+                                    Définir comme principale
+                                </button>
+                                )}
+                            </div>
                         ))}
+
+                        {canEdit && (
+                            console.log("✅ Affichage du bouton d’ajout d’image activé"),
+                            <label className="rounded-[8px] w-full h-[306px] flex items-center justify-center border-2 border-dashed border-[#C320C0] cursor-pointer hover:bg-[#f9e6f9] transition">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleUpload}
+                                    className="hidden"
+                                />
+                                <span className="text-[#C320C0] font-semibold text-[24px]">+</span>
+                            </label>
+                        )}
                     </div>
                 )}
             </div>

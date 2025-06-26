@@ -37,6 +37,13 @@ class EventImageService {
         console.log(`[getImages] ✅ ${images.length} image(s) trouvée(s)`);
         return images;
     }
+
+    async deleteImage(imageId) {
+        console.log(`[deleteImage] ➤ Suppression de l’image ID=${imageId}`);
+        const deleted = await EventImage.destroy({ where: { id: imageId } });
+        console.log(deleted ? `[deleteImage] ✅ Image supprimée` : `[deleteImage] ⚠️ Image introuvable`);
+        return deleted;
+    }
 }
 
 module.exports = new EventImageService();

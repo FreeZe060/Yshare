@@ -136,14 +136,18 @@ class EventService {
                 const participant = await Participant.findOne({
                     where: {
                         id_event: eventId,
-                        id_user: userId,
-                        status: 'Inscrit'
+                        id_user: userId
                     }
                 });
 
-                if (participant) {
+                if (participant && participant.status === 'Inscrit') {
                     event.dataValues.isParticipant = true;
                     console.log(`[getEventById] ✅ L'utilisateur ${userId} est inscrit à l’événement`);
+                }
+
+                if (participant) {
+                    event.dataValues.participantStatus = participant.status;
+                    console.log(`[getEventById] ➤ Statut d'inscription pour user=${userId} : ${participant.status}`);
                 }
 
                 event.dataValues.hasRatedByUser = (event.Ratings && event.Ratings.length > 0);

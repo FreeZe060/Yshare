@@ -22,6 +22,10 @@ import EventMainLeftColumn from '../components/Event_Details/EventMainLeftColumn
 import EventMainRightColumn from '../components/Event_Details/EventMainRightColumn';
 import RatingBanner from '../components/Event_Details/RatingBanner';
 
+import useAddEventImages from '../hooks/Events/useAddEventImages';
+import useDeleteEventImage from '../hooks/Events/useDeleteEventImage';
+import useSetMainEventImage from '../hooks/Events/useSetMainEventImage';
+
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
 
@@ -33,7 +37,7 @@ function EventDetails() {
     useTextAnimation();
 
     const { eventId } = useParams();
-    const { event, loading, error } = useEventDetails(eventId);
+    const { event, loading, error, refetchEvent } = useEventDetails(eventId);
     const { comments, refetchComments } = useComments(eventId);
     const { participants } = useParticipantsByEvent(eventId);
     const { add } = useAddComment();
@@ -53,6 +57,18 @@ function EventDetails() {
     const [guestCount, setGuestCount] = useState(0);
     const maxGuests = 3;
     const [guests, setGuests] = useState([]);
+
+    const { addImages } = useAddEventImages();
+    const { deleteImage } = useDeleteEventImage();
+    const { setMainImage } = useSetMainEventImage();
+
+    function formatDateForInput(datetime) {
+        if (!datetime) return '';
+        const date = new Date(datetime);
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+        return localDate.toISOString().slice(0, 16);
+    }
 
     const addGuestField = () => {
         if (guestCount < maxGuests) {
@@ -245,12 +261,12 @@ function EventDetails() {
 
     useEffect(() => {
         if (event) {
-            setNewStartDate(event.start_time);
-            setNewEndDate(event.end_time);
+            setNewStartDate(formatDateForInput(event.start_time));
+            setNewEndDate(formatDateForInput(event.end_time));
         }
     }, [event]);
 
-    const canEditDate = user && (user.role === 'Administrateur' || user.id === event?.organizer?.id);
+    const canEditDate = !!user && !!event && (user.role === 'Administrateur' || user.id === event.organizer?.id);
 
     const handleSave = async () => {
         try {
@@ -258,9 +274,77 @@ function EventDetails() {
                 start_time: newStartDate,
                 end_time: newEndDate
             });
+
             setEditing(false);
+            await refetchEvent();
+
+            Swal.fire({
+                toast: true,
+                position: 'bottom-end',
+                icon: 'success',
+                title: 'Changements enregistrés avec succès',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#f0f9ff',
+                color: '#0c5460',
+                iconColor: '#198754'
+            });
+
         } catch (error) {
             console.error("Erreur lors de la mise à jour de l'événement:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.message || "Impossible de modifier l'événement.",
+            });
+        }
+    };
+
+    const handleUpload = async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        try {
+            await addImages(event.id, files);
+            await refetchEvent();
+        } catch (err) {
+            Swal.fire('Erreur', err.message, 'error');
+        }
+    };
+
+    const handleDelete = async (imageId) => {
+        const confirm = await Swal.fire({
+            title: 'Supprimer cette image ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#C320C0',
+            confirmButtonText: 'Oui, supprimer'
+        });
+        if (confirm.isConfirmed) {
+            try {
+                await deleteImage(imageId);
+                await refetchEvent();
+            } catch (err) {
+                Swal.fire('Erreur', err.message, 'error');
+            }
+        }
+    };
+
+    const handleSetMain = async (imageId) => {
+        const confirm = await Swal.fire({
+            title: 'Définir comme image principale ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#C320C0',
+            confirmButtonText: 'Oui, définir'
+        });
+        if (confirm.isConfirmed) {
+            try {
+                await setMainImage(event.id, imageId);
+                await refetchEvent();
+            } catch (err) {
+                Swal.fire('Erreur', err.message, 'error');
+            }
         }
     };
 
@@ -333,16 +417,20 @@ function EventDetails() {
                                     event={event}
                                     mainImageUrl={mainImageUrl}
                                     user={user}
+                                    comments={comments}
+                                    participants={participants}
+                                    eventId={eventId}
                                     newComment={newComment}
                                     setNewComment={setNewComment}
                                     handleAddComment={handleAddComment}
                                     handleApplyToEvent={handleApplyToEvent}
-                                    participants={participants}
-                                    comments={comments}
-                                    eventId={eventId}
                                     API_BASE_URL={API_BASE_URL}
+                                    canEdit={canEditDate}
+                                    handleUpload={handleUpload}
+                                    handleDelete={handleDelete}
+                                    handleSetMain={handleSetMain}
+                                    refetchEvent={refetchEvent}
                                 />
-
                                 <EventMainRightColumn
                                     event={event}
                                     handleApplyToEvent={handleApplyToEvent}
