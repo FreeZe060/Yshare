@@ -421,37 +421,59 @@ class EventService {
     }
 
     async updateEvent(eventId, update, userId, userRole) {
-        console.log(`[updateEvent] ➤ Tentative de mise à jour de l'événement ID=${eventId} par user=${userId} (role=${userRole})`);
+        console.log(`[updateEvent] ➤ Début mise à jour partielle pour l'événement ID=${eventId}, par user=${userId}`);
 
         const event = await Event.findByPk(eventId);
         if (!event) {
-            console.warn('[updateEvent] ❌ Événement introuvable');
+            console.warn("[updateEvent] ❌ Événement introuvable");
             throw new Error("Événement introuvable.");
         }
 
         if (event.id_org !== userId && userRole !== "Administrateur") {
-            console.warn('[updateEvent] ❌ Accès refusé pour la modification de cet événement');
+            console.warn("[updateEvent] ❌ Accès refusé. userId:", userId, "event owner:", event.id_org);
             throw new Error("Accès refusé pour la modification de cet événement.");
         }
 
-        await event.update(update);
-        console.log('[updateEvent] ✅ Données de l’événement mises à jour');
+        const { images, categories, ...fieldsToUpdate } = update;
 
-        if (update.categories) {
-            console.log(`[updateEvent] ➤ Mise à jour des catégories (${update.categories.length})`);
-            await event.setCategories(update.categories);
+        console.log("[updateEvent] Données reçues (update) :", update);
+        console.log("[updateEvent] Champs à mettre à jour (hors images/catégories) :", fieldsToUpdate);
+
+        if (Object.keys(fieldsToUpdate).length > 0) {
+            await event.update(fieldsToUpdate);
+            console.log(`[updateEvent] ✅ Champs mis à jour : ${Object.keys(fieldsToUpdate).join(', ')}`);
+        } else {
+            console.log("[updateEvent] Aucun champ de base à mettre à jour.");
         }
 
-        if (update.images && Array.isArray(update.images)) {
-            console.log(`[updateEvent] ➤ Mise à jour des images (${update.images.length})`);
-            await EventImage.destroy({ where: { event_id: eventId } });
-            await EventImage.bulkCreate(
-                update.images.map(img => ({ ...img, event_id: eventId }))
-            );
+        if (Array.isArray(categories)) {
+            console.log("[updateEvent] ➤ Mise à jour des catégories avec :", categories);
+            await event.setCategories(categories);
+            console.log(`[updateEvent] ✅ Catégories mises à jour (${categories.length})`);
+        } else {
+            console.log("[updateEvent] Pas de mise à jour des catégories.");
         }
 
-        console.log('[updateEvent] ✅ Mise à jour terminée. Chargement des détails...');
+        console.log("[updateEvent] ✅ Fin de la mise à jour. Chargement de l'événement mis à jour...");
         return await this.getEventById(eventId);
+    }
+
+
+    async updateImageById(imageId, filename, user) {
+        const image = await EventImage.findByPk(imageId);
+        if (!image) throw new Error("Image non trouvée.");
+
+        const event = await Event.findByPk(image.event_id);
+        if (!event) throw new Error("Événement lié introuvable.");
+
+        if (event.id_org !== user.id && user.role !== "Administrateur") {
+            throw new Error("Accès refusé à cette image.");
+        }
+
+        image.image_url = `/event-images/${filename}`;
+        await image.save();
+
+        return image;
     }
 
     async getEventsByUser(userId) {
