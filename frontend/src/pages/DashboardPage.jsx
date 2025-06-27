@@ -811,6 +811,7 @@ export default function DashboardPage() {
 							sort={ratingsUtils.sort}
 							pagination={ratingsUtils.pagination}
 							onDelete={handleDeleteRating}
+							Link={Link}
 						/>
 					</motion.div>
 				);

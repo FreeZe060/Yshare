@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import CommentBlock from './CommentBlock';
 import soiree from '../../../assets/img/soiree.jpg';
@@ -7,16 +7,27 @@ function EventMainLeftColumn({
     event,
     mainImageUrl,
     user,
+    comments,
+    participants,
+    eventId,
     newComment,
     setNewComment,
     handleAddComment,
     handleApplyToEvent,
-    participants,
-    comments,
-    eventId,
     API_BASE_URL,
+    handleUpload,
+    handleDelete,
+    handleSetMain,
+    editing,
+    newTitle,
+    setNewTitle,
+    newDescription,
+    setNewDescription,
+    handleCancelTitleDescription,
+    newMaxParticipants,
+    setNewMaxParticipants,
+    originalMaxParticipants,
 }) {
-
     const participantCountClass = participants?.length >= event?.max_participants
         ? "text-red-600"
         : participants?.length >= event?.max_participants * 0.8
@@ -29,23 +40,116 @@ function EventMainLeftColumn({
         <div className="left grow">
             <div className="relative rounded-[8px] overflow-hidden rev-slide-up">
                 <img src={mainImageUrl || soiree} alt="event-details-img" className="bg-cover" />
-                <span className="inline-block top-[20px] left-[20px] absolute bg-[#C320C0] px-[12px] py-[5px] rounded-[6px] font-normal text-[16px] text-white">Hall No: 59</span>
+
+                <span className="inline-block top-[20px] left-[20px] absolute bg-[#C320C0] px-[12px] py-[5px] rounded-[6px] font-normal text-[16px] text-white">
+                    Hall No: 59
+                </span>
+
+                {editing && (
+                    <>
+                        <label className="absolute bottom-2 left-2 px-3 py-1 text-sm bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600">
+                            Modifier
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleUpload(e, event?.EventImages?.find(img => img.is_main)?.id)}
+                                className="hidden"
+                            />
+                        </label>
+                    </>
+                )}
             </div>
 
             <div className="rev-slide-up">
-                <h4 className="mt-[27px] mb-[11px] font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">{event?.title}</h4>
-                <p className="mb-[15px] font-light text-[16px] text-etGray">{event?.description}</p>
+                {editing ? (
+                    <>
+                        <input
+                            type="text"
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-md font-medium text-[22px] text-etBlack"
+                            placeholder="Titre"
+                        />
+                        <textarea
+                            value={newDescription}
+                            onChange={(e) => setNewDescription(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-md text-[16px] text-etGray"
+                            rows={3}
+                            placeholder="Description"
+                        />
+                        <div className="flex gap-3">
+                            <button
+                                onClick={handleCancelTitleDescription}
+                                className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="flex justify-between items-start gap-3">
+                            <h4 className="font-medium text-[30px] text-etBlack xs:text-[25px] xxs:text-[22px]">{event?.title}</h4>
+                        </div>
+                        <p className="font-light text-[16px] text-etGray">{event?.description}</p>
+                    </>
+                )}
 
-                {event?.EventImages?.filter(img => !img.is_main).length > 0 && (
+                {event?.EventImages?.length > 0 && (
                     <div className="gap-[30px] lg:gap-[20px] grid grid-cols-2 xxs:grid-cols-1 mt-[38px] mb-[33px]">
-                        {event.EventImages.filter(img => !img.is_main).map((img, index) => (
-                            <img
-                                key={index}
-                                src={`${API_BASE_URL}${img.image_url}`}
-                                alt="event-details-img"
-                                className="rounded-[8px] w-full h-[306px] object-cover"
-                            />
+                        {event.EventImages.map((img, index) => (
+                            <div key={index} className="relative group">
+                                {editing && event.EventImages.length > 1 && (
+                                    <button
+                                        onClick={() => handleDelete(img.id)}
+                                        className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-red-700"
+                                        title="Supprimer l'image"
+                                    >
+                                        &times;
+                                    </button>
+                                )}
+
+                                <img
+                                    src={`${API_BASE_URL}${img.image_url}`}
+                                    alt="event-img"
+                                    className="rounded-[8px] w-full h-[306px] object-cover"
+                                />
+
+                                {editing && !img.is_main && (
+                                    <button
+                                        onClick={() => handleSetMain(img.id)}
+                                        className="absolute bottom-2 right-2 px-3 py-1 text-sm bg-[#C320C0] text-white rounded hover:bg-[#a51899]"
+                                    >
+                                        Définir comme principale
+                                    </button>
+                                )}
+
+                                {editing && (
+                                    <label className="absolute bottom-2 left-2 px-3 py-1 text-sm bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600">
+                                        Modifier
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleUpload(e, img.id)}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                )}
+                            </div>
                         ))}
+
+                        {editing && (
+                            <label className="rounded-[8px] w-full h-[306px] flex items-center justify-center border-2 border-dashed border-[#C320C0] cursor-pointer hover:bg-[#f9e6f9] transition">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={(e) => handleUpload(e)}
+                                    className="hidden"
+                                />
+                                <span className="text-[#C320C0] font-semibold text-[24px]">+</span>
+                            </label>
+                        )}
                     </div>
                 )}
             </div>
@@ -65,7 +169,26 @@ function EventMainLeftColumn({
                     Liste des participants à l’événement
                 </h3>
                 <h3 className={`mb-[10px] font-semibold text-[20px] ${participantCountClass}`}>
-                    Nombre de participants : {participants?.length} / {event?.max_participants}
+                    Nombre de participants : {participants?.length} / {' '}
+                    {editing ? (
+                        <>
+                            <input
+                                type="number"
+                                min="1"
+                                value={newMaxParticipants}
+                                onChange={(e) => setNewMaxParticipants(parseInt(e.target.value))}
+                                className="border rounded px-2 py-1 w-20"
+                            />
+                            <button
+                                onClick={() => setNewMaxParticipants(originalMaxParticipants)}
+                                className="ml-2 text-sm text-gray-500 underline"
+                            >
+                                Annuler
+                            </button>
+                        </>
+                    ) : (
+                        event?.max_participants
+                    )}
                 </h3>
                 {participants?.length === 0 ? (
                     <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in">

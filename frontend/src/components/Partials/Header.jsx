@@ -269,6 +269,7 @@ const Header = () => {
                                                 >
                                                     Favoris
                                                 </Link>
+                                                <hr className="my-2 border-gray-300" />
                                                 <button
                                                     onClick={handleLogout}
                                                     className="hover:bg-red-50 px-4 py-2 rounded w-full text-red-600 text-left transition"

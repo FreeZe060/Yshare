@@ -103,10 +103,18 @@ const EventSection = ({
 									</div>
 
 									<h3 className="et-schedule-title text-[18px] sm:text-[16px] font-medium text-etBlack leading-tight mb-1 mt-1 anim-text transition duration-300 hover:text-etBlue">
-										<a href="#">{event.title}</a>
+										<a href={`/event/${event.id}`}>{event.title}</a>
 									</h3>
 
-									<p className="text-xs text-gray-500 font-semibold mb-1">Organisé par : {event.organizer?.name}</p>
+									<p className="text-xs text-gray-500 font-semibold mb-1">
+										Organisé par :{" "}
+										<Link
+											to={`/profile/${event.organizer?.id}`}
+											className="text-indigo-600 hover:underline"
+										>
+											{event.organizer?.name}
+										</Link>
+									</p>
 
 									<div className="et-schedule-loaction flex items-center gap-[8px] text-sm text-etGray">
 										<span className="icon">📍</span>

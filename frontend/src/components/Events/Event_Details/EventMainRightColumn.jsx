@@ -11,6 +11,22 @@ function EventMainRightColumn({
     address,
     googleMapUrl,
     formatEuro,
+    editing,
+    newPrice,
+    setNewPrice,
+    originalPrice,
+    newStreetNumber,
+    setNewStreetNumber,
+    originalStreetNumber,
+    newStreet,
+    setNewStreet,
+    originalStreet,
+    newPostalCode,
+    setNewPostalCode,
+    originalPostalCode,
+    newCity,
+    setNewCity,
+    originalCity
 }) {
 
     return (
@@ -47,7 +63,27 @@ function EventMainRightColumn({
                                 <span className="flex items-center">
                                     <input type="radio" name="options" checked readOnly className="appearance-none" />
                                     <span className="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] before:-translate-y-[50%] after:-translate-y-[50%]">
-                                        {event?.price ? `${event.price.toFixed(2)} €` : "Gratuit"}
+                                        {editing ? (
+                                            <>
+                                                <input
+                                                    type="number"
+                                                    value={newPrice}
+                                                    onChange={(e) => setNewPrice(parseFloat(e.target.value))}
+                                                    className="border rounded px-2 py-1 w-20"
+                                                    min="0"
+                                                    step="0.01"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setNewPrice(originalPrice)}
+                                                    className="ml-2 text-sm text-gray-500 underline"
+                                                >
+                                                    Annuler
+                                                </button>
+                                            </>
+                                        ) : (
+                                            event?.price ? `${event.price.toFixed(2)} €` : "Gratuit"
+                                        )}
                                     </span>
                                 </span>
                             </label>
@@ -79,7 +115,55 @@ function EventMainRightColumn({
 
             <div className="border border-[#e5e5e5] rounded-[16px]">
                 <div className="bg-[#C320C0] p-[16px] xxs:p-[12px] rounded-t-[16px]">
-                    <h5 className="font-medium text-[17px] text-white text-center"><i className="mr-2 fas fa-map-marker-alt"></i>{address}</h5>
+                    <h5 className="font-medium text-[17px] text-white text-center">
+                        <i className="mr-2 fas fa-map-marker-alt"></i>
+                        {editing ? (
+                            <div className="space-y-1 text-black">
+                                <input
+                                    type="text"
+                                    value={newStreetNumber}
+                                    onChange={(e) => setNewStreetNumber(e.target.value)}
+                                    placeholder="N°"
+                                    className="w-full px-2 py-1 rounded text-sm"
+                                />
+                                <input
+                                    type="text"
+                                    value={newStreet}
+                                    onChange={(e) => setNewStreet(e.target.value)}
+                                    placeholder="Rue"
+                                    className="w-full px-2 py-1 rounded text-sm"
+                                />
+                                <input
+                                    type="text"
+                                    value={newPostalCode}
+                                    onChange={(e) => setNewPostalCode(e.target.value)}
+                                    placeholder="Code postal"
+                                    className="w-full px-2 py-1 rounded text-sm"
+                                />
+                                <input
+                                    type="text"
+                                    value={newCity}
+                                    onChange={(e) => setNewCity(e.target.value)}
+                                    placeholder="Ville"
+                                    className="w-full px-2 py-1 rounded text-sm"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setNewStreetNumber(originalStreetNumber);
+                                        setNewStreet(originalStreet);
+                                        setNewPostalCode(originalPostalCode);
+                                        setNewCity(originalCity);
+                                    }}
+                                    className="text-sm text-gray-200 underline"
+                                >
+                                    Annuler
+                                </button>
+                            </div>
+                        ) : (
+                            address
+                        )}
+                    </h5>
                 </div>
                 {address && (
                     <iframe

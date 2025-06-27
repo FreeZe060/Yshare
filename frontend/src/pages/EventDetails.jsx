@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -15,11 +15,17 @@ import { useAuth } from '../config/authHeader';
 import useAddComment from '../hooks/Comments/useAddComment';
 import useReplyComment from '../hooks/Comments/useReplyComment';
 import useAddParticipant from '../hooks/Participant/useAddParticipant';
+import useUpdateEvent from '../hooks/Events/useUpdateEvent';
 
 import EventHeaderInfo from '../components/Events/Event_Details/EventHeaderInfo';
 import EventMainLeftColumn from '../components/Events/Event_Details/EventMainLeftColumn';
 import EventMainRightColumn from '../components/Events/Event_Details/EventMainRightColumn';
 import RatingBanner from '../components/Events/Event_Details/RatingBanner';
+
+import useAddEventImages from '../hooks/Events/useAddEventImages';
+import useDeleteEventImage from '../hooks/Events/useDeleteEventImage';
+import useSetMainEventImage from '../hooks/Events/useSetMainEventImage';
+import useUpdateEventImage from '../hooks/Events/useUpdateEventImage';
 
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import vector2 from "../assets/img/et-3-event-vector-2.svg";
@@ -31,22 +37,67 @@ function EventDetails() {
     useSlideUpAnimation();
     useTextAnimation();
 
-    const { eventId } = useParams();
-    const { event, loading, error } = useEventDetails(eventId);
-    const { comments, refetchComments } = useComments(eventId);
-    const { participants } = useParticipantsByEvent(eventId);
-    const { add } = useAddComment();
-    const { addNewParticipant } = useAddParticipant();
-    const { reply } = useReplyComment();
     const { user, isAuthenticated } = useAuth();
+    /***********
+    * EVENTS:
+    ************/
+    const { eventId } = useParams();
+    const { event, loading, error, refetchEvent } = useEventDetails(eventId);
+    /***********
+    * COMMENTS :
+    ************/
+    const { add } = useAddComment();
+    const { reply } = useReplyComment();
     const [newComment, setNewComment] = useState('');
+    const { participants } = useParticipantsByEvent(eventId);
+    const { comments, refetchComments } = useComments(eventId);
+    /***********
+    * PARTICIPANTS:
+    ************/
+    const { addNewParticipant } = useAddParticipant();
     const [ticketCount, setTicketCount] = useState(1);
     const [errors, setError] = useState("");
     const [errorCount, setErrorCount] = useState(0);
-
     const [guestCount, setGuestCount] = useState(0);
     const maxGuests = 3;
     const [guests, setGuests] = useState([]);
+    /***********
+    * IMAGES EVENT EDITING:
+    ************/
+    const { addImages } = useAddEventImages();
+    const { deleteImage } = useDeleteEventImage();
+    const { setMainImage } = useSetMainEventImage();
+    /***********
+     * EVENTS EDITING STATE:
+    ************/
+    const { handleUpdateEvent } = useUpdateEvent();
+    const { handleUpdateImage } = useUpdateEventImage();
+    const [editing, setEditing] = useState(false);
+    const [newStartDate, setNewStartDate] = useState(event?.start_time);
+    const [newEndDate, setNewEndDate] = useState(event?.end_time);
+    const [originalTitle, setOriginalTitle] = useState('');
+    const [originalDescription, setOriginalDescription] = useState('');
+    const [originalPrice, setOriginalPrice] = useState(0);
+    const [originalMaxParticipants, setOriginalMaxParticipants] = useState(0);
+    const [originalStreet, setOriginalStreet] = useState('');
+    const [originalStreetNumber, setOriginalStreetNumber] = useState('');
+    const [originalPostalCode, setOriginalPostalCode] = useState('');
+    const [originalCity, setOriginalCity] = useState('');
+    const [originalStartDate, setOriginalStartDate] = useState('');
+    const [originalEndDate, setOriginalEndDate] = useState('');
+
+    const [newTitle, setNewTitle] = useState('');
+    const [newDescription, setNewDescription] = useState('');
+    const [newPrice, setNewPrice] = useState(0);
+    const [newMaxParticipants, setNewMaxParticipants] = useState(0);
+    const [newStreet, setNewStreet] = useState('');
+    const [newStreetNumber, setNewStreetNumber] = useState('');
+    const [newPostalCode, setNewPostalCode] = useState('');
+    const [newCity, setNewCity] = useState('');
+
+    /***********
+    * PARTICIPANTS / EDIT:
+    ************/
 
     const addGuestField = () => {
         if (guestCount < maxGuests) {
@@ -96,36 +147,6 @@ function EventDetails() {
             if (newCount < 4) {
                 setError("");
             }
-        }
-    };
-
-    const handleAddComment = async () => {
-        if (!isAuthenticated) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Connexion requise',
-                text: '🛑 Vous devez être connecté pour écrire un commentaire.',
-                confirmButtonColor: '#C320C0',
-                confirmButtonText: 'Se connecter',
-            });
-            return;
-        }
-
-        if (!newComment.trim()) return;
-
-        try {
-            await add(eventId, {
-                title: 'Nouveau commentaire',
-                message: newComment,
-            });
-            setNewComment('');
-            await refetchComments();
-        } catch (err) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: err.message || 'Une erreur est survenue lors de l\'envoi du commentaire.',
-            });
         }
     };
 
@@ -237,6 +258,212 @@ function EventDetails() {
         }
     };
 
+    /***********
+    * COMMENTS:
+    ************/
+
+    const handleAddComment = async () => {
+        if (!isAuthenticated) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Connexion requise',
+                text: '🛑 Vous devez être connecté pour écrire un commentaire.',
+                confirmButtonColor: '#C320C0',
+                confirmButtonText: 'Se connecter',
+            });
+            return;
+        }
+
+        if (!newComment.trim()) return;
+
+        try {
+            await add(eventId, {
+                title: 'Nouveau commentaire',
+                message: newComment,
+            });
+            setNewComment('');
+            await refetchComments();
+        } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: err.message || 'Une erreur est survenue lors de l\'envoi du commentaire.',
+            });
+        }
+    };
+
+    /***********
+    * EVENTS EDITING STATE:
+    ************/
+
+    useEffect(() => {
+        if (event) {
+            setOriginalTitle(event.title);
+            setNewTitle(event.title);
+
+            setOriginalDescription(event.description);
+            setNewDescription(event.description);
+
+            setOriginalPrice(event.price || 0);
+            setNewPrice(event.price || 0);
+
+            setOriginalMaxParticipants(event.max_participants || 0);
+            setNewMaxParticipants(event.max_participants || 0);
+
+            setOriginalStreet(event.street || '');
+            setNewStreet(event.street || '');
+
+            setOriginalStreetNumber(event.street_number || '');
+            setNewStreetNumber(event.street_number || '');
+
+            setOriginalPostalCode(event.postal_code || '');
+            setNewPostalCode(event.postal_code || '');
+
+            setOriginalCity(event.city || '');
+            setNewCity(event.city || '');
+
+            setNewStartDate(formatDateForInput(event.start_time));
+            setNewEndDate(formatDateForInput(event.end_time));
+
+            setOriginalStartDate(formatDateForInput(event.start_time));
+            setOriginalEndDate(formatDateForInput(event.end_time));
+        }
+    }, [event]);
+
+    const handleSaveAllEdits = async () => {
+        if (!event) return;
+
+        const updatedFields = {};
+
+        if (newTitle !== originalTitle) updatedFields.title = newTitle;
+        if (newDescription !== originalDescription) updatedFields.description = newDescription;
+        if (newPrice !== originalPrice) updatedFields.price = newPrice;
+        if (newMaxParticipants !== originalMaxParticipants) updatedFields.max_participants = newMaxParticipants;
+        if (newStreet !== originalStreet) updatedFields.street = newStreet;
+        if (newStreetNumber !== originalStreetNumber) updatedFields.street_number = newStreetNumber;
+        if (newPostalCode !== originalPostalCode) updatedFields.postal_code = newPostalCode;
+        if (newCity !== originalCity) updatedFields.city = newCity;
+        if (newStartDate !== originalStartDate) updatedFields.start_time = newStartDate;
+        if (newEndDate !== originalEndDate) updatedFields.end_time = newEndDate;
+
+        if (Object.keys(updatedFields).length === 0) {
+            setEditing(false);
+            return;
+        }
+
+        try {
+            await handleUpdateEvent(event.id, updatedFields);
+            setOriginalTitle(newTitle);
+            setOriginalDescription(newDescription);
+            setOriginalPrice(newPrice);
+            setOriginalMaxParticipants(newMaxParticipants);
+            setOriginalStreet(newStreet);
+            setOriginalStreetNumber(newStreetNumber);
+            setOriginalPostalCode(newPostalCode);
+            setOriginalCity(newCity);
+            setOriginalStartDate(newStartDate);
+            setOriginalEndDate(newEndDate);
+
+            await refetchEvent();
+            Swal.fire({
+                toast: true,
+                position: 'bottom-end',
+                icon: 'success',
+                title: 'Modifications enregistrées avec succès',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement :", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.message || 'Une erreur est survenue lors de l’enregistrement.',
+            });
+        }
+
+        setEditing(false);
+    };
+
+    function formatDateForInput(datetime) {
+        if (!datetime) return '';
+        const date = new Date(datetime);
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - offset * 60 * 1000);
+        return localDate.toISOString().slice(0, 16);
+    }
+
+    const handleCancelTitleDescription = () => {
+        setNewTitle(originalTitle);
+        setNewDescription(originalDescription);
+    };
+
+    const handleCancelDates = () => {
+        setNewStartDate(originalStartDate);
+        setNewEndDate(originalEndDate);
+    };
+
+    /***********
+    * IMAGE EVENT EDITING:
+    ************/
+
+    const handleUpload = async (e, imageId = null) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        try {
+            if (imageId) {
+                await handleUpdateImage(imageId, files[0], user.token);
+            } else {
+                await addImages(event.id, files);
+            }
+
+            await refetchEvent();
+
+        } catch (err) {
+            Swal.fire('Erreur', err.message, 'error');
+        }
+    };
+
+    const handleDelete = async (imageId) => {
+        const confirm = await Swal.fire({
+            title: 'Supprimer cette image ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#C320C0',
+            confirmButtonText: 'Oui, supprimer'
+        });
+        if (confirm.isConfirmed) {
+            try {
+                await deleteImage(imageId);
+                await refetchEvent();
+            } catch (err) {
+                Swal.fire('Erreur', err.message, 'error');
+            }
+        }
+    };
+
+    const handleSetMain = async (imageId) => {
+        const confirm = await Swal.fire({
+            title: 'Définir comme image principale ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#C320C0',
+            confirmButtonText: 'Oui, définir'
+        });
+        if (confirm.isConfirmed) {
+            try {
+                await setMainImage(event.id, imageId);
+                await refetchEvent();
+            } catch (err) {
+                Swal.fire('Erreur', err.message, 'error');
+            }
+        }
+    };
+
+    const canEditDate = !!user && !!event && (user.role === 'Administrateur' || user.id === event.organizer?.id);
     const isParticipant = event?.isParticipant;
     const hasRated = event?.hasRatedByUser;
 
@@ -292,22 +519,43 @@ function EventDetails() {
                         <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full container">
                             <EventHeaderInfo
                                 event={event}
+                                canEditDate={canEditDate}
+                                editing={editing}
+                                setEditing={setEditing}
+                                newStartDate={newStartDate}
+                                setNewStartDate={setNewStartDate}
+                                newEndDate={newEndDate}
+                                setNewEndDate={setNewEndDate}
+                                handleSaveAllEdits={handleSaveAllEdits}
+                                handleCancelDates={handleCancelDates}
                             />
                             <div className="flex md:flex-col md:items-center gap-[30px] lg:gap-[20px]">
                                 <EventMainLeftColumn
                                     event={event}
                                     mainImageUrl={mainImageUrl}
                                     user={user}
+                                    comments={comments}
+                                    participants={participants}
+                                    eventId={eventId}
                                     newComment={newComment}
                                     setNewComment={setNewComment}
                                     handleAddComment={handleAddComment}
                                     handleApplyToEvent={handleApplyToEvent}
-                                    participants={participants}
-                                    comments={comments}
-                                    eventId={eventId}
                                     API_BASE_URL={API_BASE_URL}
+                                    canEdit={canEditDate}
+                                    handleUpload={handleUpload}
+                                    handleDelete={handleDelete}
+                                    handleSetMain={handleSetMain}
+                                    editing={editing}
+                                    newTitle={newTitle}
+                                    setNewTitle={setNewTitle}
+                                    newDescription={newDescription}
+                                    setNewDescription={setNewDescription}
+                                    newMaxParticipants={newMaxParticipants}
+                                    setNewMaxParticipants={setNewMaxParticipants}
+                                    originalMaxParticipants={originalMaxParticipants}
+                                    handleCancelTitleDescription={handleCancelTitleDescription}
                                 />
-
                                 <EventMainRightColumn
                                     event={event}
                                     handleApplyToEvent={handleApplyToEvent}
@@ -319,6 +567,27 @@ function EventDetails() {
                                     address={address}
                                     googleMapUrl={googleMapUrl}
                                     formatEuro={formatEuro}
+                                    editing={editing}
+                                    newPrice={newPrice}
+                                    setNewPrice={setNewPrice}
+                                    originalPrice={originalPrice}
+                                    setOriginalPrice={setOriginalPrice}
+                                    newStreet={newStreet}
+                                    setNewStreet={setNewStreet}
+                                    originalStreet={originalStreet}
+                                    setOriginalStreet={setOriginalStreet}
+                                    newStreetNumber={newStreetNumber}
+                                    setNewStreetNumber={setNewStreetNumber}
+                                    originalStreetNumber={originalStreetNumber}
+                                    setOriginalStreetNumber={setOriginalStreetNumber}
+                                    newPostalCode={newPostalCode}
+                                    setNewPostalCode={setNewPostalCode}
+                                    originalPostalCode={originalPostalCode}
+                                    setOriginalPostalCode={setOriginalPostalCode}
+                                    newCity={newCity}
+                                    setNewCity={setNewCity}
+                                    originalCity={originalCity}
+                                    setOriginalCity={setOriginalCity}
                                 />
                             </div>
                         </div>

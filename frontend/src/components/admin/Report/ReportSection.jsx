@@ -65,7 +65,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    if (loading) return <p>Chargement...</p>;
+    // if (loading) return <p>Chargement...</p>;
     if (error) return <p className="text-red-500">Erreur : {error}</p>;
 
     return (

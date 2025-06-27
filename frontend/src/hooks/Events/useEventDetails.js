@@ -6,23 +6,21 @@ export default function useEventDetails(eventId) {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+	const fetchEvent = async () => {
+		setLoading(true);
+		try {
+			const data = await getEventById(eventId);
+			setEvent(data);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		if (!eventId) return;
-
-		const fetchEvent = async () => {
-			setLoading(true);
-			try {
-				const data = await getEventById(eventId);
-				setEvent(data);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchEvent();
+		if (eventId) fetchEvent();
 	}, [eventId]);
 
-	return { event, loading, error };
+	return { event, loading, error, refetchEvent: fetchEvent };
 }

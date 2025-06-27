@@ -63,8 +63,9 @@ router.get('/events', eventController.getAllEvents);
 router.get('/events/mine', authenticateToken, eventController.getMyEvents);
 router.get('/events/:id', extractUserFromToken, eventController.getEventById);
 router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
-router.put('/events/:eventId', eventUpload.array('images'), authenticateToken, eventController.updateEvent);
-router.delete('/events/:eventId', authenticateToken, eventController.deleteEvent);
+router.put('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventController.updateEvent);
+router.put('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventUpload.single('image'), eventController.updateEventImages);
+router.delete('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteEvent);
 router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
@@ -205,12 +206,14 @@ router.delete('/ratings/:id', authenticateToken, isAdmin, ratingController.delet
 
 //////// REPORT ROUTES ////////
 
-router.post('/reports', authenticateToken, isAdmin, reportUpload.array('files', 6), reportController.createReport);
+router.post('/reports', authenticateToken, reportUpload.array('files', 6), reportController.createReport);
 router.get('/reports', authenticateToken, isAdmin, reportController.getReports);
-router.get('/reports/:reportId', authenticateToken, isAdmin, reportController.getReportDetails);
-router.post('/reports/:reportId/reply', authenticateToken, isAdmin, reportController.replyToReport);
-router.get('/reports/:reportId/messages', authenticateToken, isAdmin, reportController.getReportMessages);
+router.get('/reports/mine', authenticateToken, reportController.getMyReports);
+router.get('/reports/:reportId', authenticateToken, isReportOwnerOrAdmin, reportController.getReportDetails);
+router.post('/reports/:reportId/reply', authenticateToken, isReportOwnerOrAdmin, reportController.replyToReport);
+router.get('/reports/:reportId/messages', authenticateToken, isReportOwnerOrAdmin, reportController.getReportMessages);
 router.put('/reports/:reportId/status', authenticateToken, isAdmin, reportController.updateReportStatus);
+router.delete('/reports/:reportId', authenticateToken, isReportOwnerOrAdmin, reportController.deleteReport);
 
 //////// AUTH ROUTES FRONT ////////
 

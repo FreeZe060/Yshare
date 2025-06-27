@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { updateEvent } from '../../services/eventService';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../config/authHeader';
 
 function useUpdateEvent() {
 	const [loading, setLoading] = useState(false);

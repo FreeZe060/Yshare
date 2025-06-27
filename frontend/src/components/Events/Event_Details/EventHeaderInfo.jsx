@@ -4,7 +4,17 @@ import { capitalizeFirstLetter } from '../../../utils/format';
 
 import EventStatusTag from '../../../utils/EventStatusTag';
 
-function EventHeaderInfo({ event }) {
+function EventHeaderInfo({ event,
+    canEditDate,
+    editing,
+    setEditing,
+    newStartDate,
+    setNewStartDate,
+    newEndDate,
+    setNewEndDate,
+    handleCancelDates,
+    handleSaveAllEdits
+}) {
     if (!event) return null;
 
     return (
@@ -22,6 +32,20 @@ function EventHeaderInfo({ event }) {
                     >
                         <i className="mr-2 fas fa-plus"></i>Créer une news
                     </Link>
+                    {canEditDate && (
+                        <button
+                            onClick={() => {
+                                if (editing) {
+                                    handleSaveAllEdits(); 
+                                } else {
+                                    setEditing(true);
+                                }
+                            }}
+                            className="text-sm text-[#C320C0] underline hover:text-[#a51899]"
+                        >
+                            {editing ? "Quitter le mode édition" : "Mode édition"}
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -46,32 +70,59 @@ function EventHeaderInfo({ event }) {
                     )}
                 </div>
                 <div className="text-left">
-                    <p className="mb-1 font-light text-etGray text-sm uppercase tracking-wide">Quand</p>
-                    <p className="font-sans font-semibold text-[17px] text-etBlack leading-relaxed">
-                        <span className="font-bold text-etPurple">Du</span>{' '}
-                        {new Date(event?.start_time).toLocaleDateString("fr-FR", {
-                            weekday: "long",
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric",
-                        })}{' '}
-                        à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                        <br />
-                        <span className="font-bold text-etPink">Au</span>{' '}
-                        {new Date(event?.end_time).toLocaleDateString("fr-FR", {
-                            weekday: "long",
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric",
-                        })}{' '}
-                        à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                        })}
-                    </p>
+                    <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
+                    {editing ? (
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm text-etGray">Date de début :</label>
+                            <input
+                                type="datetime-local"
+                                value={newStartDate}
+                                onChange={(e) => setNewStartDate(e.target.value)}
+                                className="border rounded p-2"
+                            />
+                            <label className="text-sm text-etGray">Date de fin :</label>
+                            <input
+                                type="datetime-local"
+                                value={newEndDate}
+                                onChange={(e) => setNewEndDate(e.target.value)}
+                                className="border rounded p-2"
+                            />
+                            <div className="flex gap-3 mt-2">
+                                <button
+                                    onClick={handleCancelDates}
+                                    className="text-gray-600 underline"
+                                >
+                                    Annuler
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
+                            <span className="text-etPurple font-bold">Du</span>{' '}
+                            {new Date(event?.start_time).toLocaleDateString("fr-FR", {
+                                weekday: "long",
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                            })}{' '}
+                            à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                            <br />
+                            <span className="text-etPink font-bold">Au</span>{' '}
+                            {new Date(event?.end_time).toLocaleDateString("fr-FR", {
+                                weekday: "long",
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                            })}{' '}
+                            à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })}
+                        </p>
+                    )}
                 </div>
 
             </div>
