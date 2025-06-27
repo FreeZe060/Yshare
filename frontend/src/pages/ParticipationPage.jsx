@@ -10,7 +10,7 @@ import useUpdateMessage from '../hooks/Participant/useUpdateMessage';
 import useUpdateGuests from '../hooks/Participant/useUpdateGuests';
 import useRemoveParticipant from '../hooks/Participant/useRemoveParticipant';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 const UserParticipationPage = () => {
     const { user, token } = useAuth();
@@ -98,7 +98,7 @@ const UserParticipationPage = () => {
                 }}
                     className="z-[1] before:-z-[1] before:absolute relative bg-gradient-to-tr from-[#580FCA] to-[#F929BB] before:bg-cover before:bg-center before:opacity-30 pt-[210px] sm:pt-[160px] lg:pt-[190px] pb-[130px] sm:pb-[80px] lg:pb-[110px] et-breadcrumb">
                     <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full text-white text-center container">
-                        <h1 className="et-breadcrumb-title font-medium text-[56px] md:text-[50px] xs:text-[45px]">
+                        <h1 className="font-medium text-[56px] xs:text-[45px] md:text-[50px] et-breadcrumb-title">
                             Toutes vos participations
                         </h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
@@ -106,13 +106,13 @@ const UserParticipationPage = () => {
                                 <a href="/" className="hover:text-etBlue">Accueil</a>
                             </li>
                             <li>
-                                <i className="fa-solid fa-angle-right"></i>
+                                <i className="fa-angle-right fa-solid"></i>
                             </li>
                             <li className="opacity-80">
                                 <a href={profileLink} className="hover:text-etBlue">Profil</a>
                             </li>
                             <li>
-                                <i className="fa-solid fa-angle-right"></i>
+                                <i className="fa-angle-right fa-solid"></i>
                             </li>
                             <li className="current-page">Toutes vos participations</li>
                         </ul>

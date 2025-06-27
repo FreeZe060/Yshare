@@ -5,7 +5,7 @@ import { getFormattedDayAndMonthYear, capitalizeFirstLetter, formatEuro } from '
 import ParticipantAvatars from '../Home/ParticipantAvatars';
 import EventStatusTag from '../../utils/EventStatusTag';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
     const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];

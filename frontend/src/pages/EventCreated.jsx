@@ -8,7 +8,7 @@ import Event_Created from '../components/Events/Event_Created/EventCreated';
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 export default function EventCreated() {
 

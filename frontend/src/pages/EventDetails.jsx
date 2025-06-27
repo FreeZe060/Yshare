@@ -240,7 +240,7 @@ function EventDetails() {
     const isParticipant = event?.isParticipant;
     const hasRated = event?.hasRatedByUser;
 
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
     // if (loading) return <p className="mt-10 text-center">Chargement...</p>;
     if (error) return <p className="mt-10 text-red-600 text-center">Erreur: {error}</p>;
