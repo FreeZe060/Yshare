@@ -228,3 +228,72 @@ export async function getDashboardStats(token) {
 
 	return result;
 }
+
+export async function updateEventImage(imageId, file, token) {
+	const formData = new FormData();
+	formData.append('image', file);
+
+	const response = await fetch(`${API_BASE_URL}/events/images/${imageId}`, {
+		method: 'PUT',
+		credentials: 'include',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		body: formData,
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour de l'image");
+
+	return result;
+}
+
+export async function addImagesToEvent(eventId, files, token) {
+	const formData = new FormData();
+	files.forEach(file => formData.append('images', file));
+
+	const response = await fetch(`${API_BASE_URL}/events/${eventId}/images`, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		body: formData,
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de l'ajout des images");
+
+	return result.images;
+}
+
+export async function setMainEventImage(eventId, imageId, token) {
+	const response = await fetch(`${API_BASE_URL}/events/${eventId}/images/${imageId}/main`, {
+		method: 'PUT',
+		credentials: 'include',
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors du changement d'image principale");
+
+	return result;
+}
+
+export async function deleteEventImage(imageId, token) {
+	const response = await fetch(`${API_BASE_URL}/events/images/${imageId}`, {
+		method: 'DELETE',
+		credentials: 'include',
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	});
+
+	const result = await response.json();
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression de l'image");
+
+	return result;
+}
