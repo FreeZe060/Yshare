@@ -18,9 +18,7 @@ function EventMainLeftColumn({
     handleUpload,
     handleDelete,
     handleSetMain,
-    refetchEvent,
     editing,
-    setEditing,
     newTitle,
     setNewTitle,
     newDescription,
@@ -30,8 +28,6 @@ function EventMainLeftColumn({
     setNewMaxParticipants,
     originalMaxParticipants,
 }) {
-
-    const [isEditingBasics, setIsEditingBasics] = useState(false);
     const participantCountClass = participants?.length >= event?.max_participants
         ? "text-red-600"
         : participants?.length >= event?.max_participants * 0.8
