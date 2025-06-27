@@ -235,7 +235,7 @@ const Register = () => {
 					</div>
 				</div>
 
-				<div class="md:absolute flex justify-center items-center bg-white md:bg-transparent py-10 w-1/2 md:w-full md:h-full rev-slide-up">
+				<div class="md:absolute flex justify-center items-center bg-white md:bg-transparent mt-[104px] xs:mt-0 py-10 w-1/2 md:w-full md:h-full rev-slide-up">
 					<form onSubmit={handleSubmit} class="bg-white md:p-6 md:rounded-xl min-w-[20%]">
 						<h1 className="mb-3 font-bold text-gray-800 text-3xl text-center anim-text">Créer un compte!</h1>
 						<p className="mb-6 font-normal text-gray-600 text-base text-center anim-text">Rejoignez-nous</p>
@@ -391,15 +391,15 @@ const Register = () => {
 							</p>
 						)}
 						{passwordFocused && (
-							<div className="mt-2 mb-4 flex flex-col gap-2 text-xs">
+							<div className="flex flex-col mt-2 mb-4 text-xs">
 								{checkPasswordRules(password).map((rule, idx) => {
 									const shouldShake = shakeRules && !rule.isValid;
 									return (
 										<div
 											key={idx}
 											className={`
-												flex items-center gap-2 px-3 py-1 rounded-xl transition-all duration-300
-												${rule.isValid ? 'text-green-700 text-sm animate__fadeIn animate__animated' : 'text-red-600 text-base'}
+												flex items-center gap-2 px-3 rounded-xl transition-all duration-300 text-sm
+												${rule.isValid ? 'text-green-700 animate__fadeIn animate__animated' : 'text-red-600'}
 												${shouldShake ? 'animate__animated animate__headShake' : ''}
 											`}
 										>

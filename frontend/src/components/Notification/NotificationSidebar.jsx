@@ -43,6 +43,7 @@ const NotificationSidebar = ({
     onToggleRead,
     onMarkAllAsRead,
     onDelete,
+    triggerRef,
     loading
 }) => {
 
@@ -58,22 +59,24 @@ const NotificationSidebar = ({
         if (notifications) setLocalNotifications(notifications);
     }, [notifications]);
 
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+    // useEffect(() => {
+    //     if (isOpen) {
+    //         document.body.style.overflow = 'hidden';
+    //     } else {
+    //         document.body.style.overflow = '';
+    //     }
 
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [isOpen]);
+    //     return () => {
+    //         document.body.style.overflow = '';
+    //     };
+    // }, [isOpen]);
 
     useEffect(() => {
         if (isOpen) {
             setShouldRender(true);
-            requestAnimationFrame(() => setIsVisible(true));
+            setTimeout(() => {
+                setIsVisible(true);
+            }, 10);
         } else {
             setIsVisible(false);
             const timer = setTimeout(() => setShouldRender(false), 300);
@@ -83,15 +86,19 @@ const NotificationSidebar = ({
 
     useEffect(() => {
         function handleClickOutside(event) {
-            if (panelRef.current && !panelRef.current.contains(event.target)) {
+            const clickedOutsidePanel = panelRef.current && !panelRef.current.contains(event.target);
+            const clickedOutsideTrigger = triggerRef?.current && !triggerRef.current.contains(event.target);
+
+            if (clickedOutsidePanel && clickedOutsideTrigger) {
                 setIsOpen(false);
             }
         }
+
         if (isOpen) {
             document.addEventListener("mousedown", handleClickOutside);
             return () => document.removeEventListener("mousedown", handleClickOutside);
         }
-    }, [isOpen, setIsOpen]);
+    }, [isOpen, setIsOpen, triggerRef]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -106,14 +113,14 @@ const NotificationSidebar = ({
 
     return (
         <>
-            <div className="top-0 right-0 z-50 fixed w-full h-screen mt-[128px] overflow-x-hidden overflow-y-auto">
+            <div className="top-0 right-0 z-50 fixed mt-[128px] w-full h-screen overflow-x-hidden overflow-y-auto">
                 <div
                     className={`
                         w-full absolute z-5 right-0 h-full transform transition-transform duration-500 ease-in-out
                         ${isVisible ? 'translate-x-0' : 'translate-x-full'}
                     `}
                 >
-                    <div ref={panelRef} className="right-0 absolute rounded-xl bg-gray-900 p-8 md:w-full w-[600px] h-screen overflow-y-auto">
+                    <div ref={panelRef} className="right-0 absolute bg-gray-900 p-8 rounded-xl w-[600px] md:w-full h-screen overflow-y-auto">
                         <div className="flex justify-between items-center">
                             <p
                                 tabIndex="0"
@@ -124,7 +131,7 @@ const NotificationSidebar = ({
                             <label className="flex gap-2 min-w-36 mcui-checkbox">
                                 <input type="checkbox" checked={showAll} onChange={() => setShowAll(!showAll)} />
                                 <div>
-                                    <svg className="mcui-check cursor-pointer" viewBox="-2 -2 35 35" aria-hidden="true">
+                                    <svg className="cursor-pointer mcui-check" viewBox="-2 -2 35 35" aria-hidden="true">
                                         <polyline points="7.57 15.87 12.62 21.07 23.43 9.93" />
                                     </svg>
                                 </div>
@@ -162,48 +169,48 @@ const NotificationSidebar = ({
                         {filteredNotifications.map((notif, idx) => (
                             <div
                                 key={notif.id}
-                                className="relative group flex flex-col gap-1 mt-4 w-full transition-all duration-300 ease-in-out"
+                                className="group relative flex flex-col gap-1 mt-4 w-full transition-all duration-300 ease-in-out"
                             >
                                 <div
                                     className={`flex items-center gap-2 p-3 rounded-md transition-all duration-300 ease-in-out ${notif.read_status ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-700 hover:bg-gray-600'
-                                        } group-hover:translate-x-[-12px]`}
+                                        }`}
                                 >
                                     <div className="flex-grow">
                                         <p className="text-white text-sm leading-snug">
-                                            <span className="font-semibold text-orange-500">Notification</span> {notif.title} - {notif.message}
+                                            <span className="font-semibold text-[#c320c0]">Notification</span> {notif.title} - {notif.message}
                                         </p>
                                         <p className="pt-1 text-gray-200 text-xs">
                                             {formatDateLabel(notif.date_sent, currentTime)}
                                         </p>
                                     </div>
 
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onDelete(notif.id); }}
+                                        className="flex justify-center items-center bg-red-600 hover:bg-red-500 opacity-0 group-hover:opacity-100 shadow-md rounded-md w-[22px] h-[22px] text-white transition-all duration-300 ease-in-out"
+                                        title="Supprimer"
+                                    >
+                                        <i className="fa-solid fa-trash fa-xs"></i>
+                                    </button>
+
                                     <div className="flex-shrink-0">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); onToggleRead(notif); }}
-                                            className="group bg-orange-700 px-2 py-1 rounded transition-all duration-300 ease-in-out"
+                                            className="group bg-[rgb(165,2,162)] px-2 py-1 rounded transition-all duration-300 ease-in-out"
                                         >
                                             <i className={`fa-solid ${!notif.read_status
-                                                ? 'fa-envelope text-orange-100 animate-[wiggle_1s_ease-in-out_infinite]'
-                                                : 'fa-envelope-open text-orange-300 group-hover:text-orange-100'
+                                                ? 'fa-envelope text-purple-100 animate-[wiggle_1s_ease-in-out_infinite]'
+                                                : 'fa-envelope-open text-purple-300 group-hover:text-purple-100'
                                                 } transition-all duration-300 ease-in-out`}></i>
                                         </button>
                                     </div>
                                 </div>
-
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); onDelete(notif.id); }}
-                                    className="absolute right-[-27.5px] top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all duration-300 ease-in-out bg-red-600 text-white w-[36px] h-[36px] rounded-md flex items-center justify-center hover:bg-red-500 shadow-md"
-                                    title="Supprimer"
-                                >
-                                    <i className="fa-solid fa-trash"></i>
-                                </button>
                             </div>
                         ))}
 
                         {filteredNotifications.length > 0 && (
                             <div className="mt-6 text-center">
                                 <button
-                                    className="bg-orange-600 px-4 py-2 rounded text-sm hover:bg-orange-500"
+                                    className="bg-[#ad26ab] hover:bg-[#C320C0] px-4 py-2 rounded text-white text-sm"
                                     onClick={onMarkAllAsRead}
                                 >
                                     Tout marquer comme lu
@@ -211,7 +218,7 @@ const NotificationSidebar = ({
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between mt-10">
+                        <div className="flex justify-between items-center mt-10">
                             <hr className="w-full" />
                             <p tabIndex="0" className="flex flex-shrink-0 px-3 py-16 focus:outline-none text-gray-200 text-sm leading-normal">C'est tout pour l'instant :)</p>
                             <hr className="w-full" />

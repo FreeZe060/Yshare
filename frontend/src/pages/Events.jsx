@@ -22,6 +22,8 @@ import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '
 
 import ParticipantAvatars from '../components/Home/ParticipantAvatars';
 
+import CardEvent from '../components/Events/CardEvent';
+
 import useCategories from '../hooks/Categorie/useCategories';
 import useEvents from '../hooks/Events/useEvents';
 import useFavoris from '../hooks/Favoris/useFavoris';
@@ -40,6 +42,11 @@ function Events() {
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const categoryOptions = ['Tous', ...allCategories.slice(0, 3).map(cat => capitalizeFirstLetter(cat.name))];
 
+    const [selectedPrice, setSelectedPrice] = useState('Tous');
+    const [selectedDate, setSelectedDate] = useState('Tous');
+    const [selectedSort, setSelectedSort] = useState('Tous');
+    const [selectedCity, setSelectedCity] = useState('');
+
     const { user, isAuthenticated } = useAuth();
     const { favoris, loading: favLoading, error, refreshFavoris } = useFavoris();
     const [refreshKey, setRefreshKey] = useState(0);
@@ -49,12 +56,40 @@ function Events() {
     const selectedCategoryName = categoryOptions.find((_, idx) => idx === (selectedCategoryId === null ? 0 : allCategories.findIndex(cat => cat.id === selectedCategoryId) + 1));
 
     const filters = useMemo(() => {
-        if (selectedCategoryId === null) return undefined;
-        return { categoryId: selectedCategoryId };
-    }, [selectedCategoryId]);
+        const query = {};
+
+        if (selectedCategoryId !== null) {
+            query.categoryId = selectedCategoryId;
+        }
+
+        if (selectedCity) {
+            query.city = selectedCity;
+        }
+
+        const today = new Date();
+
+        if (selectedDate === "Aujourd’hui") {
+            query.date = today.toISOString().split("T")[0];
+        } else if (selectedDate === "Cette semaine") {
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+            query.date = startOfWeek.toISOString().split("T")[0];
+        } else if (selectedDate === "Ce mois") {
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            query.date = startOfMonth.toISOString().split("T")[0];
+        }
+
+        if (selectedSort === "Les plus récents") {
+            query.sort = "start_time_desc";
+        } else if (selectedSort === "Populaires") {
+            query.sort = "popularity"; // à gérer dans le backend
+        }
+
+        return query;
+    }, [selectedCategoryId, selectedCity, selectedDate, selectedSort]);
 
 
-    const { events, loading: eventsLoading } = useEvents(filters, 1,  100, true, refreshKey);
+    const { events, loading: eventsLoading } = useEvents(filters, 1, 100, true, refreshKey);
 
     useSlideUpAnimation('.rev-slide-up', events);
     useTextAnimation();
@@ -107,7 +142,7 @@ function Events() {
     return (
         <>
             <Header />
-            <main className="z-[1] relative py-[120px] md:py-[60px] xl:py-[80px] overflow-hidden">
+            <main className="">
                 <section style={{
                     backgroundImage: `linear-gradient(to top right, #580FCA, #F929BB), url(${vector1})`,
                     backgroundSize: 'cover',
@@ -127,130 +162,115 @@ function Events() {
                 </section>
 
 
-                <section className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
-                    <div className="mb-[60px] md:mb-[40px] pb-[60px] md:pb-[40px] border-[#8E8E93]/25 border-b">
-                        <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
-                            Ne manquez pas ça !
-                        </h6>
-                        <h2 className="mb-[26px] text-center anim-text et-3-section-title">À l’affiche prochainement</h2>
+                <section className="z-[1] relative py-[120px] md:py-[60px] xl:py-[80px] overflow-hidden">
+                    <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
+                        <div className="mb-[60px] md:mb-[40px] pb-[60px] md:pb-[40px] border-[#8E8E93]/25 border-b">
+                            <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
+                                Ne manquez pas ça !
+                            </h6>
+                            <h2 className="mb-[26px] text-center anim-text et-3-section-title">À l’affiche prochainement</h2>
 
-                        <div className="*:before:-z-[1] *:z-[1] *:before:absolute *:relative *:before:inset-0 flex flex-wrap justify-center gap-[30px] xxs:gap-[15px] *:before:bg-gradient-to-r *:before:from-[#550ECA] *:before:to-[#F929BB] *:before:opacity-0 *:px-[25px] *:border *:border-[#8E8E93] *:h-[30px] *:text-[17px] et-3-event-tab-navs">
-                            <CustomSelect
-                                name="category"
-                                value={selectedCategoryName || 'Tous'}
-                                onChange={(e) => {
-                                    const selectedName = e.target.value;
-                                    const matched = allCategories.find(cat => capitalizeFirstLetter(cat.name) === selectedName);
-                                    setSelectedCategoryId(matched ? matched.id : null);
-                                }}
-                                options={categoryOptions}
-                                placeholder="Catégorie"
-                            />
+                            <div className="flex flex-col flex-wrap justify-center gap-4 bg-white shadow px-4 py-2 rounded-xl">
+                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                    <CustomSelect
+                                        label="Catégorie"
+                                        options={categoryOptions}
+                                        value={selectedCategoryName}
+                                        onChange={(val) => {
+                                            if (val === 'Tous') {
+                                                setSelectedCategoryId(null);
+                                            } else {
+                                                const cat = allCategories.find((c) => capitalizeFirstLetter(c.name) === val);
+                                                if (cat) setSelectedCategoryId(cat.id);
+                                            }
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                    <CustomSelect
+                                        label="Prix"
+                                        options={['Tous', 'Gratuit', 'Payant']}
+                                        value={selectedPrice}
+                                        onChange={(val) => setSelectedPrice(val)}
+                                    />
+                                </div>
+
+                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                    <CustomSelect
+                                        label="Date"
+                                        options={['Tous', 'Aujourd’hui', 'Cette semaine', 'Ce mois']}
+                                        value={selectedDate}
+                                        onChange={(val) => setSelectedDate(val)}
+                                    />
+                                </div>
+
+                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                    <CustomSelect
+                                        label="Popularité"
+                                        options={['Tous', 'Populaires', 'Les plus récents']}
+                                        value={selectedSort}
+                                        onChange={(val) => setSelectedSort(val)}
+                                    />
+                                </div>
+                            </div>
                         </div>
+
+                        {catLoading || eventsLoading ? (
+                            [...Array(6)].map((_, i) => (
+                                <div key={i} className="rev-slide-up">
+                                    <SkeletonEventCard />
+                                </div>
+                            ))
+                        ) : (() => {
+
+                            if (events.length === 0) {
+                                return (
+                                    <div className="mt-10 text-center animate__animated animate__fadeIn">
+                                        <p className="bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB] font-semibold text-[20px] text-transparent">
+                                            Aucun événement à venir pour le moment.
+                                        </p>
+                                        <p className="mt-2 text-gray-500 text-sm">Restez connecté, de nouvelles expériences arrivent bientôt !</p>
+                                    </div>
+                                );
+                            }
+
+                            return (
+                                <>
+                                    {events.map((event, index) => {
+                                        const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];
+                                        const imageUrl = mainImage?.image_url?.startsWith('http')
+                                            ? mainImage.image_url
+                                            : `${API_BASE_URL}${mainImage?.image_url || ''}`;
+
+                                        return (
+                                            <CardEvent
+                                                key={event.id}
+                                                event={event}
+                                                isAuthenticated={isAuthenticated}
+                                                isFavoris={isFavoris}
+                                                toggleFavoris={toggleFavoris}
+                                            />
+                                        );
+                                    })}
+                                </>
+
+                            )
+
+                        })()}
                     </div>
 
-                    {catLoading || eventsLoading ? (
-                        [...Array(6)].map((_, i) => (
-                            <div key={i} className="rev-slide-up">
-                                <SkeletonEventCard />
-                            </div>
-                        ))
-                    ) : (() => {
 
-                        if (events.length === 0) {
-                            return (
-                                <div className="text-center mt-10 animate__animated animate__fadeIn">
-                                    <p className="text-[20px] font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#550ECA] to-[#F929BB]">
-                                        Aucun événement à venir pour le moment.
-                                    </p>
-                                    <p className="text-sm text-gray-500 mt-2">Restez connecté, de nouvelles expériences arrivent bientôt !</p>
-                                </div>
-                            );
-                        }
-
-                        return (
-                            <>
-                                {events.map((event, index) => {
-                                    const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];
-                                    const imageUrl = mainImage?.image_url?.startsWith('http')
-                                        ? mainImage.image_url
-                                        : `${API_BASE_URL}${mainImage?.image_url || ''}`;
-
-                                    return (
-                                        <div key={index} className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-
-                                            {isAuthenticated && (
-                                                <div
-                                                    className={`absolute top-3 right-3 cursor-pointer text-xl transition-all duration-300 transform 
-              ${isFavoris(event.id) ? 'text-red-600 hover:scale-110' : 'text-gray-400 hover:scale-110'}`}
-                                                    onClick={() => toggleFavoris(event.id)}
-                                                >
-                                                    {isFavoris(event.id) ? (
-                                                        <FaHeart className="animate-pulse" />
-                                                    ) : (
-                                                        <FaRegHeart />
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
-                                                <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
-                                                    {getFormattedDayAndMonthYear(event.start_time).day}
-                                                </span>
-                                                {getFormattedDayAndMonthYear(event.start_time).monthYear}
-                                            </h5>
-
-                                            <div className="shrink-0">
-                                                <img
-                                                    src={imageUrl}
-                                                    alt="Image de l'événement"
-                                                    className="rounded-xl w-full max-w-[300px] object-cover aspect-[300/128]"
-                                                />
-                                            </div>
-
-                                            <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
-                                                <div className="min-w-0">
-                                                    <Link to={`/event/${event.id}`}>
-                                                        <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
-                                                            {capitalizeFirstLetter(event.title)}
-                                                        </h3>
-                                                    </Link>
-                                                    <h6 className="text-[17px] text-etBlue">
-                                                        <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
-                                                        {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}
-                                                    </h6>
-                                                    <EventStatusTag date={event.start_time} status={event.status} />
-                                                </div>
-                                                <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
-                                                    {formatEuro(event.price)}
-                                                </h4>
-                                            </div>
-
-                                            <div className="pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
-                                                <ParticipantAvatars eventId={event.id} />
-                                                <Link to={`/event/${event.id}`} className="et-3-btn">
-                                                    Voir l'événement
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </>
-
-                        )
-
-                    })()}
+                    <div className="*:-z-[1] *:absolute">
+                        <h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">upcoming events</h3>
+                        <div className="-top-[195px] -left-[519px] bg-gradient-to-b from-etPurple to-etPink blur-[230px] rounded-full w-[688px] aspect-square"></div>
+                        <div className="-right-[319px] bottom-[300px] bg-gradient-to-b from-etPink to-etPink blur-[230px] rounded-full w-[588px] aspect-square"></div>
+                        <img src={vector1} alt="vector" className="top-0 left-0 opacity-25" />
+                        <img src={vector1} alt="vector" className="right-0 bottom-0 opacity-25 rotate-180" />
+                        <img src={vector2} alt="vector" className="top-[33px] -right-[175px] animate-[etSpin_7s_linear_infinite]" />
+                    </div>
 
                 </section>
-
-                <div className="*:-z-[1] *:absolute">
-                    <h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">upcoming events</h3>
-                    <div className="-top-[195px] -left-[519px] bg-gradient-to-b from-etPurple to-etPink blur-[230px] rounded-full w-[688px] aspect-square"></div>
-                    <div className="-right-[319px] bottom-[300px] bg-gradient-to-b from-etPink to-etPink blur-[230px] rounded-full w-[588px] aspect-square"></div>
-                    <img src={vector1} alt="vector" className="top-0 left-0 opacity-25" />
-                    <img src={vector1} alt="vector" className="right-0 bottom-0 opacity-25 rotate-180" />
-                    <img src={vector2} alt="vector" className="top-[33px] -right-[175px] animate-[etSpin_7s_linear_infinite]" />
-                </div>
             </main>
             <Footer />
         </>

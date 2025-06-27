@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Picker from 'emoji-picker-react';
 import Swal from 'sweetalert2';
-import useReplyComment from '../../hooks/Comments/useReplyComment';
-import { useAddReaction } from '../../hooks/Comments/useAddReaction';
-import { useRemoveReaction } from '../../hooks/Comments/useRemoveReaction';
-import useReplies from '../../hooks/Comments/useReplies';
-import { useReactions } from '../../hooks/Comments/useReactions';
-import { useAuth } from '../../config/authHeader';
+import useReplyComment from '../../../hooks/Comments/useReplyComment';
+import { useAddReaction } from '../../../hooks/Comments/useAddReaction';
+import { useRemoveReaction } from '../../../hooks/Comments/useRemoveReaction';
+import useReplies from '../../../hooks/Comments/useReplies';
+import { useReactions } from '../../../hooks/Comments/useReactions';
+import { useAuth } from '../../../config/authHeader';
 import { Link } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
@@ -99,12 +99,12 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 							? `${API_BASE_URL}${comment.author.profileImage}`
 							: 'https://assets.codepen.io/285131/hat-man.png'
 					}
-					className="w-10 h-10 rounded-full object-cover"
+					className="rounded-full w-10 h-10 object-cover"
 					alt="avatar"
 				/>
 			</Link>
 			<div className="flex-1 space-y-2">
-				<div className="text-sm text-gray-500">
+				<div className="text-gray-500 text-sm">
 					<Link
 						to={`/profile/${comment.author?.id}`}
 					>
@@ -114,9 +114,9 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 					</Link>
 					– {new Date(comment.date_posted).toLocaleDateString()}
 				</div>
-				<div className="border border-gray-200 rounded-md p-4 bg-gray-50 shadow-sm">
+				<div className="bg-gray-50 shadow-sm p-4 border border-gray-200 rounded-md">
 					<p className="text-gray-700">{comment.message}</p>
-					<div className="flex gap-2 mt-3 items-center">
+					<div className="flex items-center gap-2 mt-3">
 						{displayedEmojis.map((emoji) => (
 							<button
 								key={emoji}
@@ -133,7 +133,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 								}
 								setShowEmojiPicker(prev => !prev);
 							}}
-							className="w-8 h-8 rounded-full hover:bg-gray-200 text-gray-400 flex items-center justify-center"
+							className="flex justify-center items-center hover:bg-gray-200 rounded-full w-8 h-8 text-gray-400"
 						>
 							<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
 								<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zM7 12a5 5 0 0 0 10 0h-2a3 3 0 0 1-6 0H7z" />
@@ -165,9 +165,9 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 								if (!showReplies) await fetchReplies();
 								setShowReplies(!showReplies);
 							}}
-							className="flex items-center text-sm text-gray-500 hover:underline"
+							className="flex items-center text-gray-500 text-sm hover:underline"
 						>
-							<svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg className="mr-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11l4 4-4 4M19 15H8a4 4 0 010-8h1" />
 							</svg>
 							{showReplies
@@ -176,9 +176,9 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 						</button>
 
 						{showReplies && (
-							<div className="mt-2 space-y-4">
+							<div className="space-y-4 mt-2">
 								{loadingReplies ? (
-									<p className="text-sm text-gray-400 italic">Chargement…</p>
+									<p className="text-gray-400 text-sm italic">Chargement…</p>
 								) : (
 									replies.map((reply) => (
 										<CommentBlock
@@ -196,8 +196,8 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 
 				{showReplyInput && (
 					<div className="pt-2">
-						<div className="flex items-center justify-between mb-1">
-							<span className="text-sm text-gray-500">Répondre à ce commentaire</span>
+						<div className="flex justify-between items-center mb-1">
+							<span className="text-gray-500 text-sm">Répondre à ce commentaire</span>
 							<button
 								onClick={() => setShowReplyInput(false)}
 								className="text-gray-400 hover:text-gray-600"
@@ -211,7 +211,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 							onChange={(e) => setReplyText(e.target.value)}
 							onKeyDown={(e) => e.key === 'Enter' && handleReply()}
 							placeholder="Répondre..."
-							className="w-full h-10 px-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-100"
+							className="px-3 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-100 w-full h-10"
 						/>
 					</div>
 				)}

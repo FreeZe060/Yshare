@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
 	const currentYear = new Date().getFullYear();
@@ -8,34 +9,34 @@ const Footer = () => {
 			<div className="space-y-8 mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-screen-xl overflow-hidden">
 				<nav className="flex flex-wrap justify-center -mx-5 -my-2">
 					<div className="px-5 py-2">
-						<a href="#" className="text-gray-400 hover:text-white text-base leading-6">
+						<Link to="/aboutUs" className="text-gray-400 hover:text-white text-base leading-6">
 							À propos
-						</a>
+						</Link>
 					</div>
 					<div className="px-5 py-2">
-						<a href="#" className="text-gray-400 hover:text-white text-base leading-6">
-							Blog
-						</a>
-					</div>
-					<div className="px-5 py-2">
-						<a href="/team" className="text-gray-400 hover:text-white text-base leading-6">
+						<Link to="/aboutUs#team" className="text-gray-400 hover:text-white text-base leading-6">
 							Équipe
-						</a>
+						</Link>
 					</div>
 					<div className="px-5 py-2">
-						<a href="/mentions-legales" className="text-gray-400 hover:text-white text-base leading-6">
+						<Link to="/news" className="text-gray-400 hover:text-white text-base leading-6">
+							Actu's
+						</Link>
+					</div>
+					<div className="px-5 py-2">
+						<Link to="/mentions-legales" className="text-gray-400 hover:text-white text-base leading-6">
 							Mentions légales
-						</a>
+						</Link>
 					</div>
 					<div className="px-5 py-2">
-						<a href="/politique-confidentialite" className="text-gray-400 hover:text-white text-base leading-6">
+						<Link to="/politique-confidentialite" className="text-gray-400 hover:text-white text-base leading-6">
 							Politique de confidentialité
-						</a>
+						</Link>
 					</div>
 					<div className="px-5 py-2">
-						<a href="/conditions-utilisation" className="text-gray-400 hover:text-white text-base leading-6">
+						<Link to="/conditions-utilisation" className="text-gray-400 hover:text-white text-base leading-6">
 							CGU
-						</a>
+						</Link>
 					</div>
 				</nav>
 
@@ -58,7 +59,7 @@ const Footer = () => {
 				</div>
 
 				<p className="mt-8 text-gray-400 text-base text-center leading-6">
-					© {currentYear} YShare, Inc. Tous droits réservés.
+					© {currentYear} YShare. Tous droits réservés.
 				</p>
 			</div>
 		</footer>

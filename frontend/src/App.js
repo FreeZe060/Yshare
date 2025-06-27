@@ -15,10 +15,10 @@ import Admin from './pages/DashboardPage';
 import AdminRoute from './components/Route/AdminRoute';
 import Events from './pages/Events';
 import EventDetails from './pages/EventDetails';
-import TeamPage from './pages/TeamPage';
 import NewsPage from './pages/NewsPage';
 import { LegalMentions, PrivacyPolicy, TermsOfUse, TermsOfSale } from './pages/LegalPages';
 import NewsDetails from './pages/NewsDetails';
+import AboutUs from './pages/AboutUs';
 import UserParticipationPage from './pages/ParticipationPage';
 import EventCreated from './pages/EventCreated';
 import FavorisPage from './pages/FavorisPage';
@@ -34,26 +34,32 @@ function App() {
 			<SaveLastVisitedPage />
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="/team" element={<TeamPage />} />
-				<Route path="/mentions-legales" element={<LegalMentions />} />
-				<Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
-				<Route path="/conditions-utilisation" element={<TermsOfUse />} />
-				<Route path="/conditions-vente" element={<TermsOfSale />} />
+
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
+
 				<Route path="/profile/:userId" element={<Profil />} />
-				<Route path="/news" element={<NewsPage />}/>
-				<Route path="/news/:newsId" element={<NewsDetails />}/>
 				<Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
 				<Route path="/participation" element={<PrivateRoute><UserParticipationPage /></PrivateRoute>} />
 				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
+
 				<Route path="/report" element={<PrivateRoute><ReportPage /></PrivateRoute>} />
-				<Route path="/event/:eventId/participants" element={<ParticipantPage />} />
+				
+				<Route path="/news" element={<NewsPage />} />
+				<Route path="/news/:newsId" element={<NewsDetails />} />
 				<Route path="/create-news" element={<PrivateRoute><CreateNewsPage /></PrivateRoute>} />
-				<Route path="/events" element={<Events/>} />
+
+				<Route path="/events" element={<Events />} />
 				<Route path="/event/:eventId" element={<EventDetails />} />
+				<Route path="/event/:eventId/participants" element={<ParticipantPage />} />
+
+				<Route path="/aboutUs" element={<AboutUs />} />
+				<Route path="/mentions-legales" element={<LegalMentions />} />
+				<Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
+				<Route path="/conditions-utilisation" element={<TermsOfUse />} />
+				<Route path="/conditions-vente" element={<TermsOfSale />} />
 			</Routes>
 		</>
 

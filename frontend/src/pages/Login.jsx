@@ -151,7 +151,7 @@ const Login = () => {
 
 						<div className="flex justify-center items-center mt-4 mb-2">
 							<a
-								href="http://localhost:8080/api/auth/google"
+								href="http://localhost:8080/api/v1/auth/google"
 								className="flex items-center hover:bg-gray-100 px-4 py-2 border border-gray-300 rounded-lg transition"
 							>
 								<img src="/google-icon.svg" alt="Google" className="mr-2 w-5 h-5" />

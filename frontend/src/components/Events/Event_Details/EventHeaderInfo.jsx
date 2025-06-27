@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { capitalizeFirstLetter } from '../../utils/format';
+import { capitalizeFirstLetter } from '../../../utils/format';
 
-import EventStatusTag from '../../utils/EventStatusTag';
+import EventStatusTag from '../../../utils/EventStatusTag';
 
 function EventHeaderInfo({ event,
     canEditDate,
@@ -28,9 +28,9 @@ function EventHeaderInfo({ event,
 
                     <Link
                         to="/create-news"
-                        className="px-4 mt-4 py-2 text-sm font-semibold rounded-full border-2 border-etBlue text-etBlue hover:bg-etBlue hover:text-white transition-all"
+                        className="hover:bg-etBlue mt-4 px-4 py-2 border-2 border-etBlue rounded-full font-semibold text-etBlue hover:text-white text-sm transition-all"
                     >
-                        <i className="fas fa-plus mr-2"></i>Créer une news
+                        <i className="mr-2 fas fa-plus"></i>Créer une news
                     </Link>
                     {canEditDate && (
                         <button
@@ -58,7 +58,7 @@ function EventHeaderInfo({ event,
                                 <img
                                     src={`http://localhost:8080${event.organizer.profileImage}`}
                                     alt="Organizer"
-                                    className="w-8 h-8 rounded-full inline-block mr-2"
+                                    className="inline-block mr-2 rounded-full w-8 h-8"
                                 />
                                 <span className="font-medium text-[#C320C0]">
                                     {event.organizer.name} {event.organizer.lastname}
