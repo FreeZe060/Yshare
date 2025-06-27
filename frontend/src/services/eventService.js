@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * GET /events (public)
@@ -10,8 +10,8 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 	if (filters.city) queryParams.append('city', filters.city);
 	if (filters.date) queryParams.append('date', filters.date);
 	if (filters.categoryId) queryParams.append('categoryId', filters.categoryId);
-	if (filters.status) queryParams.append('status', filters.status);
-	if (filters.sort) queryParams.append('sort', filters.sort);
+	if (filters.status) queryParams.append('status', filters.status); 
+	if (filters.sort) queryParams.append('sort', filters.sort);      
 
 	queryParams.append('page', page);
 	queryParams.append('limit', limit);
@@ -107,40 +107,40 @@ export async function updateEventStatus(eventId, newStatus, token) {
  */
 export async function createEvent(eventData, token) {
 	const formData = new FormData();
-
+  
 	for (const key in eventData) {
 		if (key === 'images') {
-			eventData.images.forEach(img => formData.append('images', img.file));
+		  eventData.images.forEach(img => formData.append('images', img.file));
 		} else if (Array.isArray(eventData[key])) {
-			formData.append(key, JSON.stringify(eventData[key]));
+		  formData.append(key, JSON.stringify(eventData[key]));
 		} else {
-			if (eventData[key] !== '') {
-				formData.append(key, eventData[key]);
-			}
+		  if (eventData[key] !== '') {
+			formData.append(key, eventData[key]);
+		  }
 		}
-	}
-
+	}	  
+  
 	console.log('📦 FormData envoyée :');
 	for (let [key, value] of formData.entries()) {
-		console.log(`${key}:`, value);
+	  console.log(`${key}:`, value);
 	}
-
+  
 	const response = await fetch(`${API_BASE_URL}/events`, {
-		method: 'POST',
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-		body: formData,
+	  method: 'POST',
+	  credentials: 'include',
+	  headers: {
+		Authorization: `Bearer ${token}`,
+	  },
+	  body: formData,
 	});
-
+  
 	const result = await response.json();
-
+  
 	if (!response.ok) {
-		console.error('❌ Erreur backend :', result);
-		throw new Error(result.message || "Erreur lors de la création de l'événement");
+	  console.error('❌ Erreur backend :', result);
+	  throw new Error(result.message || "Erreur lors de la création de l'événement");
 	}
-
+  
 	return result;
 }
 
@@ -148,27 +148,19 @@ export async function createEvent(eventData, token) {
  * PUT /events/:eventId (multipart/form-data)
  */
 export async function updateEvent(eventId, eventData, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
-		method: 'PUT',
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(eventData),
-	});
-
-	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour des données de l'événement");
-
-	return result;
-}
-
-export async function updateEventImage(imageId, file, token) {
 	const formData = new FormData();
-	formData.append('image', file);
 
-	const response = await fetch(`${API_BASE_URL}/events/images/${imageId}`, {
+	for (const key in eventData) {
+		if (key === 'images') {
+			eventData.images.forEach(file => formData.append('images', file));
+		} else if (Array.isArray(eventData[key])) {
+			formData.append(key, JSON.stringify(eventData[key]));
+		} else {
+			formData.append(key, eventData[key]);
+		}
+	}
+
+	const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
@@ -178,7 +170,7 @@ export async function updateEventImage(imageId, file, token) {
 	});
 
 	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour de l'image");
+	if (!response.ok) throw new Error(result.message || "Erreur lors de la mise à jour de l'événement");
 
 	return result;
 }
@@ -227,62 +219,12 @@ export async function getDashboardStats(token) {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
+			Authorization: `Bearer ${token}`, 
 		},
 	});
 
 	const result = await response.json();
 	if (!response.ok) throw new Error(result.message || "Erreur lors de la récupération des statistiques");
-
-	return result;
-}
-
-export async function addImagesToEvent(eventId, files, token) {
-	const formData = new FormData();
-	files.forEach(file => formData.append('images', file));
-
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/images`, {
-		method: 'POST',
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-		body: formData,
-	});
-
-	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de l'ajout des images");
-
-	return result.images;
-}
-
-export async function setMainEventImage(eventId, imageId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/images/${imageId}/main`, {
-		method: 'PUT',
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-
-	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors du changement d'image principale");
-
-	return result;
-}
-
-export async function deleteEventImage(imageId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/images/${imageId}`, {
-		method: 'DELETE',
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	});
-
-	const result = await response.json();
-	if (!response.ok) throw new Error(result.message || "Erreur lors de la suppression de l'image");
 
 	return result;
 }
