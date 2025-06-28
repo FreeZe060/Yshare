@@ -69,7 +69,8 @@ router.delete('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventC
 router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
-router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
+router.patch('/events/:eventId/status', authenticateToken, isEventOwnerOrAdmin, eventController.updateEventStatus);
+router.patch('/events/:eventId/status/auto', eventController.updateEventStatusById);
 router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
 router.get('/events-count', eventController.getTotalEventCount);
 router.get('/admin/stats', authenticateToken, isAdmin, eventController.getDashboardStats);

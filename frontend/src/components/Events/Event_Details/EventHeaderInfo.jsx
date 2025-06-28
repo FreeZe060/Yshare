@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../../utils/format';
 
 import EventStatusTag from '../../../utils/EventStatusTag';
 
-function EventHeaderInfo({ event,
+function EventHeaderInfo({
+    event,
     canEditDate,
     editing,
     setEditing,
@@ -15,7 +16,17 @@ function EventHeaderInfo({ event,
     handleCancelDates,
     handleSaveAllEdits
 }) {
+    const [localStatus, setLocalStatus] = useState(event?.status ?? '');
+
+    useEffect(() => {
+        setLocalStatus(event?.status ?? '');
+    }, [event?.status]);
+
     if (!event) return null;
+
+    const handleStatusChange = (newStatus) => {
+        setLocalStatus(newStatus);
+    };
 
     return (
         <div className="flex md:flex-row flex-col justify-between items-start md:items-end gap-4 mb-12 pb-8 border-[#e5e5e5] border-b">
@@ -24,7 +35,12 @@ function EventHeaderInfo({ event,
                     {capitalizeFirstLetter(event?.title)}
                 </h1>
                 <div className="flex flex-col items-end gap-2">
-                    <EventStatusTag date={event.start_time} status={event.status} />
+                    <EventStatusTag
+                        date={event.start_time}
+                        status={localStatus}
+                        eventId={event.id}
+                        onStatusChange={(newStatus) => handleStatusChange(newStatus)}
+                    />
 
                     <Link
                         to="/create-news"
@@ -36,7 +52,7 @@ function EventHeaderInfo({ event,
                         <button
                             onClick={() => {
                                 if (editing) {
-                                    handleSaveAllEdits(); 
+                                    handleSaveAllEdits();
                                 } else {
                                     setEditing(true);
                                 }
@@ -124,9 +140,9 @@ function EventHeaderInfo({ event,
                         </p>
                     )}
                 </div>
-
             </div>
         </div>
     );
 }
+
 export default EventHeaderInfo;
