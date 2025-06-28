@@ -13,7 +13,11 @@ function EventHeaderInfo({ event,
     newEndDate,
     setNewEndDate,
     handleCancelDates,
-    handleSaveAllEdits
+    handleSaveAllEdits,
+    averageRating,
+    ratingLoading,
+    ratings,
+    onClickRating
 }) {
     if (!event) return null;
 
@@ -25,6 +29,35 @@ function EventHeaderInfo({ event,
                 </h1>
                 <div className="flex flex-col items-end gap-2">
                     <EventStatusTag date={event.start_time} status={event.status} />
+                    {event.status === 'Terminé' && averageRating !== null && (
+                        <div className="flex flex-col items-center mt-2" onClick={onClickRating} style={{ cursor: 'pointer' }}>
+                            <div className="flex">
+                                {Array.from({ length: 5 }, (_, index) => {
+                                    const fillPercentage = Math.min(Math.max(averageRating - index, 0), 1) * 100;
+
+                                    return (
+                                        <svg
+                                            key={index}
+                                            className="w-6 h-6"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <defs>
+                                                <linearGradient id={`grad${index}`}>
+                                                    <stop offset={`${fillPercentage}%`} stopColor="#facc15" /> {/* jaune */}
+                                                    <stop offset={`${fillPercentage}%`} stopColor="#d1d5db" /> {/* gris clair */}
+                                                </linearGradient>
+                                            </defs>
+                                            <path
+                                                fill={`url(#grad${index})`}
+                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.173c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.285-3.97a1 1 0 00-.364-1.118L2.63 9.397c-.783-.57-.38-1.81.588-1.81h4.173a1 1 0 00.95-.69l1.286-3.97z"
+                                            />
+                                        </svg>
+                                    );
+                                })}
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">{averageRating ? averageRating.toFixed(2) : "0.00"} / 5</p>
+                        </div>
+                    )}
 
                     <Link
                         to="/create-news"
@@ -36,7 +69,7 @@ function EventHeaderInfo({ event,
                         <button
                             onClick={() => {
                                 if (editing) {
-                                    handleSaveAllEdits(); 
+                                    handleSaveAllEdits();
                                 } else {
                                     setEditing(true);
                                 }

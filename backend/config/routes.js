@@ -196,6 +196,8 @@ router.get('/conversations/between/:user1Id/:user2Id', authenticateToken, isAdmi
 //////// RATING ROUTES ////////
 
 router.get('/ratings/user/:userId', ratingController.getUserAverageRating);
+router.get('/ratings/event/:eventId', ratingController.getEventAverageRating);
+router.get('/ratings/organizer/:userId', authenticateToken, ratingController.getAllRatingsByOrganizer);
 router.post('/ratings', authenticateToken, ratingController.rateEvent);
 router.get('/ratings/admin/all', authenticateToken, isAdmin, ratingController.getAllRatingsWithDetails);
 router.delete('/ratings/:id', authenticateToken, isAdmin, ratingController.deleteRating);
