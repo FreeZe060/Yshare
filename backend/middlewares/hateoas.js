@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 function hateoas(resourceType, resourceIdField = 'id') {
     return (req, res, next) => {
         const originalJson = res.json.bind(res);
@@ -5,11 +7,10 @@ function hateoas(resourceType, resourceIdField = 'id') {
         res.json = (data) => {
             if (!data) return originalJson(data);
 
-            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            const baseUrl = process.env.API_BASE_URL || `${req.protocol}://${req.get('host')}/api/v1`;
 
             const toPlainObject = (item) => {
                 if (!item) return item;
-                // Convertit Sequelize instance en JSON si besoin
                 if (typeof item.toJSON === 'function') {
                     return item.toJSON();
                 }
@@ -84,6 +85,21 @@ function generateLinks(resourceType, id, baseUrl) {
                 users: { href: `${baseUrl}/users`, method: "GET" },
                 createUser: { href: `${baseUrl}/admin/users`, method: "POST" },
                 categories: { href: `${baseUrl}/categories`, method: "GET" }
+            };
+        case 'news':
+            return {
+                self: { href: `${baseUrl}/news/${id}/details`, method: "GET" },
+                update: { href: `${baseUrl}/news/${id}`, method: "PUT" },
+                delete: { href: `${baseUrl}/news/${id}`, method: "DELETE" },
+                linkEvent: { href: `${baseUrl}/news/${id}/link-event`, method: "POST" }
+            };
+        case 'report':
+            return {
+                self: { href: `${baseUrl}/reports/${id}`, method: "GET" },
+                updateStatus: { href: `${baseUrl}/reports/${id}/status`, method: "PUT" },
+                delete: { href: `${baseUrl}/reports/${id}`, method: "DELETE" },
+                messages: { href: `${baseUrl}/reports/${id}/messages`, method: "GET" },
+                reply: { href: `${baseUrl}/reports/${id}/reply`, method: "POST" }
             };
         default:
             return {

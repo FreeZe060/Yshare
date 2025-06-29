@@ -1,2141 +1,2137 @@
-
 openapi: 3.0.0
 info:
-  title: YShare API
-  version: 1.1.2
-  description: Documentation de l'API RESTful pour la plateforme YShare.
+    title: YShare API
+    version: 1.1.2
+    description: Documentation de l'API RESTful pour la plateforme YShare.
 
 servers:
-  - url: http://localhost:8080/api/v1/
-    description: Serveur local
+    - url: http://localhost:8080/api/v1/
+      description: Serveur local
 
 tags:
-  - name: Auth
-    description: Authentification des utilisateurs
-  - name: Users
-    description: Gestion des utilisateurs
-  - name: Events
-    description: Gestion des événements
-  - name: Comments
-    description: Commentaires et réponses
-  - name: Participants
-    description: Gestion des participants
-  - name: Notifications
-    description: Gestion des notifications
-  - name: News
-    description: Actualités liées aux événements
-  - name: Favorites
-    description: Événements favoris
+    - name: Auth
+      description: Authentification des utilisateurs
+    - name: Users
+      description: Gestion des utilisateurs
+    - name: Events
+      description: Gestion des événements
+    - name: Comments
+      description: Commentaires et réponses
+    - name: Participants
+      description: Gestion des participants
+    - name: Notifications
+      description: Gestion des notifications
+    - name: News
+      description: Actualités liées aux événements
+    - name: Favorites
+      description: Événements favoris
 
 security:
-  - bearerAuth: []
+    - bearerAuth: []
 paths:
-
-  /participants/all:
-    get:
-      tags: [Participants]
-      summary: Obtenir tous les participants (admin)
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Liste de tous les participants
-
-  /users/{userId}/participation-count:
-    get:
-      tags: [Participants]
-      summary: Compteur de participation d'un utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Compte de participations
-
-  /events/{eventId}/participants/all:
-    get:
-      tags: [Participants]
-      summary: Obtenir les participants d’un événement
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des participants
-
-  /events/{eventId}/participants/user/{userId}:
-    get:
-      tags: [Participants]
-      summary: Obtenir la participation d’un utilisateur à un événement
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détail de la participation
-
-  /events/{eventId}/participants:
-    post:
-      tags: [Participants]
-      summary: Participer à un événement
-      description: |
-        Requiert une authentification par token JWT.
-        L'utilisateur doit être connecté pour s'inscrire à un événement.
-      security:
-        - bearerAuth: []
-      responses:
-        '201':
-          description: Participation enregistrée.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '404':
-          description: Événement non trouvé.
-        description: |
-          Requiert une authentification.
-          L'utilisateur doit être connecté pour s'inscrire à un événement.
-        responses:
-          '201':
-            description: Participation enregistrée.
-          '401':
-            description: Non authentifié.
-          '404':
-            description: Événement non trouvé.
-        security:
-          - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-          responses:
-            '201':
-              description: Participation enregistrée
-
-  /admin/events/{eventId}/participants/{userId}:
-    post:
-      tags: [Participants]
-      summary: Ajouter un participant en tant qu’admin
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '201':
-          description: Participant ajouté
-
-  /events/{eventId}/participants/{participantId}:
-    put:
-      tags: [Participants]
-      summary: Mettre à jour le statut d’un participant
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: participantId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Statut mis à jour
-
-  /events/{eventId}/participants/{userId}:
-    delete:
-      tags: [Participants]
-      summary: Supprimer un participant d’un événement
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Participant supprimé
-
-  /participants/history/{userId}:
-    get:
-      tags: [Participants]
-      summary: Historique des événements d’un utilisateur
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Historique récupéré
-
-  /conversations:
-    get:
-      tags: [Conversations]
-      summary: Obtenir toutes les conversations (admin)
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Conversations récupérées
-
-    post:
-      tags: [Conversations]
-      summary: Créer ou récupérer une conversation
-      security:
-        - bearerAuth: []
-      responses:
-        '201':
-          description: Conversation créée ou retrouvée
-
-  /conversations/my:
-    get:
-      tags: [Conversations]
-      summary: Obtenir les conversations de l'utilisateur connecté
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Conversations personnelles récupérées
-
-  /conversations/{conversationId}:
-    delete:
-      tags: [Conversations]
-      summary: Supprimer une conversation
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: conversationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Conversation supprimée
-
-  /conversations/{conversationId}/link:
-    patch:
-      tags: [Conversations]
-      summary: Lier une conversation à un événement ou une news
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: conversationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Conversation liée
-
-  /conversations/{conversationId}/update-link:
-    patch:
-      tags: [Conversations]
-      summary: Mettre à jour le lien de la conversation
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: conversationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lien mis à jour
-
-  /conversations/{conversationId}/unlink:
-    patch:
-      tags: [Conversations]
-      summary: Supprimer le lien avec un événement ou une news
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: conversationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lien supprimé
-
-  /conversations/between/{user1Id}/{user2Id}:
-    get:
-      tags: [Conversations]
-      summary: Récupérer la conversation entre deux utilisateurs (admin)
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: user1Id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user2Id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Conversation trouvée
-
-  /messages:
-    post:
-      tags: [Messages]
-      summary: Envoyer un message
-      security:
-        - bearerAuth: []
-      responses:
-        '201':
-          description: Message envoyé
-
-  /messages/{messageId}:
-    put:
-      tags: [Messages]
-      summary: Modifier un message
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: messageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Message modifié
-
-    delete:
-      tags: [Messages]
-      summary: Supprimer un message
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: messageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Message supprimé
-
-  /messages/{messageId}/reactions:
-    post:
-      tags: [Messages]
-      summary: Réagir à un message
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: messageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '201':
-          description: Réaction ajoutée
-
-    delete:
-      tags: [Messages]
-      summary: Supprimer une réaction
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: messageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Réaction supprimée
-
-  /messages/{messageId}/seen:
-    patch:
-      tags: [Messages]
-      summary: Marquer un message comme vu
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: messageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Message marqué comme vu
-
-
-  /categories:
-    get:
-      tags: [Categories]
-      summary: Récupérer toutes les catégories
-      responses:
-        '200':
-          description: Liste des catégories
-
-  /notifications:
-    get:
-      tags: [Notifications]
-      summary: Récupérer toutes les notifications de l'utilisateur
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Liste des notifications
-
-  /notifications/{notificationId}:
-    get:
-      tags: [Notifications]
-      summary: Obtenir une notification par ID
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: notificationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détail de la notification
-
-    delete:
-      tags: [Notifications]
-      summary: Supprimer une notification
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: notificationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Notification supprimée
-
-  /notifications/{notificationId}/read:
-    put:
-      tags: [Notifications]
-      summary: Marquer une notification comme lue
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: notificationId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Notification lue
-
-  /notifications/read-all:
-    put:
-      tags: [Notifications]
-      summary: Marquer toutes les notifications comme lues
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Toutes les notifications lues
-
-  /favoris:
-    get:
-      tags: [Favorites]
-      summary: Récupérer tous les événements favoris de l'utilisateur
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Liste des favoris
-
-  /favoris/{eventId}:
-    get:
-      tags: [Favorites]
-      summary: Vérifier si un événement est en favori
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détail du favori
-
-    post:
-      tags: [Favorites]
-      summary: Ajouter un événement aux favoris
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '201':
-          description: Favori ajouté
-
-    delete:
-      tags: [Favorites]
-      summary: Supprimer un événement
-      description: |
-        Requiert une authentification par token JWT.
-        L'utilisateur doit être l'organisateur de l'événement ou un administrateur.
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Événement supprimé.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit  permissions insuffisantes.
-        '404':
-          description: Événement non trouvé.""
-        description: |
-          🔐 Requiert une authentification.
-          🎯 Accessible uniquement à l'organisateur de l'événement ou un administrateur.
-        responses:
-          '200':
-            description: Événement supprimé avec succès.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-          '404':
-            description: Événement non trouvé. des favoris
-        security:
-          - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-          responses:
-            '200':
-              description: Favori supprimé
-
-  /news:
-    get:
-      tags: [News]
-      summary: Récupérer toutes les actualités
-      responses:
-        '200':
-          description: Liste des actualités
-
-    post:
-      tags: [News]
-      summary: Créer une nouvelle actualité
-      description: |
-        Requiert une authentification par token JWT.
-        Tout utilisateur connecté peut créer une actualité.
-      security:
-        - bearerAuth: []
-      responses:
-        '201':
-          description: News créée.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        description: |
-          Requiert une authentification.
-          Un utilisateur connecté peut publier une news liée à un événement.
-        responses:
-          '201':
-            description: News créée avec succès.
-          '401':
-            description: Non authentifié.
-        security:
-          - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                content:
-                  type: string
-                image:
-                  type: string
-                  format: binary
-          responses:
-            '201':
-              description: News créée
-
-  /news/{newsId}/details:
-    get:
-      tags: [News]
-      summary: Détail d'une actualité
-      parameters:
-        - name: newsId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détails de l'actualité
-
-  /news/event/{eventId}:
-    get:
-      tags: [News]
-      summary: Récupérer les news d'un événement
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des news liées à l'événement
-
-  /news/my:
-    get:
-      tags: [News]
-      summary: Récupérer les news de l'utilisateur connecté
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: News de l'utilisateur
-
-  /news/{newsId}:
-    put:
-      tags: [News]
-      summary: Modifier une actualité
-      description: Accessible uniquement à l'auteur ou à un administrateur.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: newsId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: News mise à jour
-
-    delete:
-      tags: [News]
-      summary: Supprimer une actualité
-      description: |
-        Requiert une authentification par token JWT.
-        Seul l'auteur ou un administrateur peut supprimer une actualité.
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: News supprimée.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit.
-        '404':
-          description: News non trouvée.
-        description: |
-          Requiert une authentification.
-          Seul l'auteur de la news ou un administrateur peut la supprimer.
-        responses:
-          '200':
-            description: News supprimée.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-          '404':
-            description: News non trouvée.
-          description: Accessible uniquement à l'auteur ou à un administrateur.
-        security:
-          - bearerAuth: []
-      parameters:
-        - name: newsId
-          in: path
-          required: true
-          schema:
-            type: string
-          responses:
-            '200':
-              description: News supprimée
-
-  /news/{newsId}/category:
-    post:
-      tags: [News]
-      summary: Ajouter une catégorie à une news
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: newsId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Catégorie ajoutée
-
-  /news/{newsId}/category/{categoryId}:
-    delete:
-      tags: [News]
-      summary: Supprimer une catégorie d'une news
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: newsId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: categoryId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Catégorie supprimée
-
-  /reports:
-    get:
-      tags: [Reports]
-      summary: Récupérer tous les signalements (admin)
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Liste des signalements
-
-    post:
-      tags: [Reports]
-      summary: Créer un signalement
-      description: |
-        Requiert une authentification par token JWT.
-        Réservé aux utilisateurs administrateurs.
-      security:
-        - bearerAuth: []
-      responses:
-        '201':
-          description: Signalement enregistré.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit  rôle administrateur requis.
-        description: |
-          🔐 Requiert une authentification.
-          🚨 L'utilisateur doit être administrateur.
-        responses:
-          '201':
-            description: Signalement créé.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-        security:
-          - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                files:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-          responses:
-            '201':
-              description: Signalement créé
-
-  /reports/{reportId}:
-    get:
-      tags: [Reports]
-      summary: Détail d'un signalement
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détail du rapport
-
-  /reports/{reportId}/messages:
-    get:
-      tags: [Reports]
-      summary: Messages liés à un signalement
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Messages du rapport
-
-  /reports/{reportId}/reply:
-    post:
-      tags: [Reports]
-      summary: Répondre à un signalement
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-      responses:
-        '200':
-          description: Réponse enregistrée
-
-  /reports/{reportId}/status:
-    put:
-      tags: [Reports]
-      summary: Mettre à jour le statut d’un signalement
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-      responses:
-        '200':
-          description: Statut mis à jour
-
-  /ratings/user/{userId}:
-    get:
-      tags: [Ratings]
-      summary: Obtenir la note moyenne d’un utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Note moyenne
-
-  /ratings:
-    post:
-      tags: [Ratings]
-      summary: Évaluer un événement
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                eventId:
-                  type: string
-                rating:
-                  type: number
-      responses:
-        '201':
-          description: Évaluation enregistrée
-
-
-  /events/{eventId}/comments:
-    get:
-      tags: [Comments]
-      summary: Obtenir les commentaires d'un événement
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des commentaires
-
-    post:
-      tags: [Comments]
-      summary: Ajouter un commentaire à un événement
-      description: |
-        Requiert une authentification par token JWT.
-        Tout utilisateur connecté peut commenter un événement.
-      security:
-        - bearerAuth: []
-      responses:
-        '201':
-          description: Commentaire ajouté.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '404':
-          description: Événement non trouvé.
-        description: |
-          Requiert une authentification.
-          Tout utilisateur connecté peut commenter un événement.
-        responses:
-          '201':
-            description: Commentaire ajouté.
-          '401':
-            description: Non authentifié.
-          '404':
-            description: Événement non trouvé.
-        security:
-          - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                content:
-                  type: string
-          responses:
-            '201':
-              description: Commentaire ajouté
-
-  /events/{eventId}/comments/{commentId}/reply:
-    post:
-      tags: [Comments]
-      summary: Répondre à un commentaire
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                content:
-                  type: string
-      responses:
-        '201':
-          description: Réponse ajoutée
-
-  /comments/{commentId}:
-    get:
-      tags: [Admin]
-      summary: Obtenir un commentaire par ID (admin)
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détail du commentaire
-
-    put:
-      tags: [Comments]
-      summary: Modifier un commentaire
-      description: Accessible uniquement à l'auteur ou à un administrateur.
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                content:
-                  type: string
-      responses:
-        '200':
-          description: Commentaire mis à jour
-
-    delete:
-      tags: [Comments]
-      summary: Supprimer un commentaire
-      description: |
-        Requiert une authentification par token JWT.
-        Seul l'auteur du commentaire ou un administrateur peut le supprimer.
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Commentaire supprimé.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit.
-        '404':
-          description: Commentaire non trouvé.
-        description: |
-          Requiert une authentification.
-          Seul l'auteur du commentaire ou un administrateur peut le supprimer.
-        responses:
-          '200':
-            description: Commentaire supprimé.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-          '404':
-            description: Commentaire non trouvé.
-        security:
-          - bearerAuth: []
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-          responses:
-            '200':
-              description: Commentaire supprimé
-
-  /comments/all:
-    get:
-      tags: [Admin]
-      summary: Obtenir tous les commentaires (admin)
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Liste de tous les commentaires
-
-  /comments/{commentId}/replies:
-    get:
-      tags: [Comments]
-      summary: Obtenir les réponses à un commentaire
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des réponses
-
-  /users/{userId}/comments:
-    get:
-      tags: [Comments]
-      summary: Obtenir les commentaires d'un utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des commentaires de l'utilisateur
-
-  /comments/{commentId}/reactions:
-    get:
-      tags: [Comments]
-      summary: Obtenir les réactions d'un commentaire
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Réactions au commentaire
-
-    post:
-      tags: [Comments]
-      summary: Ajouter une réaction à un commentaire
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                type:
-                  type: string
-      responses:
-        '201':
-          description: Réaction ajoutée
-
-    delete:
-      tags: [Comments]
-      summary: Supprimer une réaction à un commentaire
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Réaction supprimée
-
-  /comments/{commentId}/reactions/stats:
-    get:
-      tags: [Comments]
-      summary: Obtenir les statistiques de réaction d'un commentaire
-      parameters:
-        - name: commentId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Statistiques de réactions
-
-
-  /events/{eventId}:
-    put:
-      tags: [Events]
-      summary: Modifier un événement
-      description: |
-        Requiert une authentification par token JWT.
-        Seul l'organisateur ou un administrateur peut modifier un événement.
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Événement mis à jour.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit.
-        '404':
-          description: Événement non trouvé.
-        description: |
-          Requiert une authentification.
-          Seul l'organisateur ou un administrateur peut modifier l'événement.
-        responses:
-          '200':
-            description: Événement mis à jour.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-          '404':
-            description: Événement non trouvé.
-          description: Accessible uniquement à l'organisateur de l'événement ou à un administrateur.
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                images:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-        responses:
-          '200':
-            description: Événement mis à jour
-
-    delete:
-      tags: [Events]
-      summary: Supprimer un événement
-      description: |
-        Requiert une authentification par token JWT.
-        L'utilisateur doit être l'organisateur de l'événement ou un administrateur.
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Événement supprimé.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit permissions insuffisantes.
-        '404':
-          description: Événement non trouvé.
-        description: |
-           Requiert une authentification.
-           Accessible uniquement à l'organisateur de l'événement ou un administrateur.
-        responses:
-          '200':
-            description: Événement supprimé avec succès.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-          '404':
-            description: Événement non trouvé.
-          description: Accessible uniquement à l'organisateur de l'événement ou à un administrateur.
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-          responses:
-            '200':
-              description: Événement supprimé
-
-  /events/{eventId}/images:
-    post:
-      tags: [Events]
-      summary: Ajouter des images à un événement
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                images:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-      responses:
-        '200':
-          description: Images ajoutées
-
-  /events/{eventId}/images/{imageId}/main:
-    put:
-      tags: [Events]
-      summary: Définir une image principale pour un événement
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: imageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Image principale définie
-
-  /events/images/{imageId}:
-    delete:
-      tags: [Events]
-      summary: Supprimer une image d'un événement
-      parameters:
-        - name: imageId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Image supprimée
-
-  /events/{eventId}/status:
-    patch:
-      tags: [Events]
-      summary: Mettre à jour le statut d’un événement
-      parameters:
-        - name: eventId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-      responses:
-        '200':
-          description: Statut mis à jour
-
-  /events/update-statuses:
-    patch:
-      tags: [Events]
-      summary: Mettre à jour le statut de tous les événements expirés automatiquement
-      responses:
-        '200':
-          description: Statuts mis à jour
-
-  /auth/google:
-    get:
-      tags: [Auth]
-      summary: Redirection vers Google OAuth
-      responses:
-        '302':
-          description: Redirigé vers Google
-
-  /auth/google/callback:
-    get:
-      tags: [Auth]
-      summary: Callback de Google OAuth
-      responses:
-        '200':
-          description: Authentification Google réussie
-
-  /auth/facebook:
-    get:
-      tags: [Auth]
-      summary: Redirection vers Facebook OAuth
-      responses:
-        '302':
-          description: Redirigé vers Facebook
-
-  /auth/facebook/callback:
-    get:
-      tags: [Auth]
-      summary: Callback de Facebook OAuth
-      responses:
-        '200':
-          description: Authentification Facebook réussie
-
-  /users:
-    get:
-      tags: [Admin]
-      summary: Récupérer tous les utilisateurs (admin)
-      responses:
-        '200':
-          description: Liste des utilisateurs
-
-  /users/{userId}/events:
-    get:
-      tags: [Admin]
-      summary: Récupérer les événements d’un utilisateur (admin)
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Événements de l'utilisateur
-
-  /admin/users:
-    post:
-      tags: [Admin]
-      summary: Créer un utilisateur en tant qu’admin
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-                name:
-                  type: string
-                lastname:
-                  type: string
-      responses:
-        '201':
-          description: Utilisateur admin créé
+    /participants/all:
+        get:
+            tags: [Participants]
+            summary: Obtenir tous les participants (admin)
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Liste de tous les participants
+
+    /users/{userId}/participation-count:
+        get:
+            tags: [Participants]
+            summary: Compteur de participation d'un utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Compte de participations
+
+    /events/{eventId}/participants/all:
+        get:
+            tags: [Participants]
+            summary: Obtenir les participants d’un événement
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Liste des participants
+
+    /events/{eventId}/participants/user/{userId}:
+        get:
+            tags: [Participants]
+            summary: Obtenir la participation d’un utilisateur à un événement
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détail de la participation
+
+    /events/{eventId}/participants:
+        post:
+            tags: [Participants]
+            summary: Participer à un événement
+            description: |
+                Requiert une authentification par token JWT.
+                L'utilisateur doit être connecté pour s'inscrire à un événement.
+            security:
+                - bearerAuth: []
+            responses:
+                "201":
+                    description: Participation enregistrée.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "404":
+                    description: Événement non trouvé.
+                description: |
+                    Requiert une authentification.
+                    L'utilisateur doit être connecté pour s'inscrire à un événement.
+                responses:
+                    "201":
+                        description: Participation enregistrée.
+                    "401":
+                        description: Non authentifié.
+                    "404":
+                        description: Événement non trouvé.
+                security:
+                    - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  responses:
+                      "201":
+                          description: Participation enregistrée
+
+    /admin/events/{eventId}/participants/{userId}:
+        post:
+            tags: [Participants]
+            summary: Ajouter un participant en tant qu’admin
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "201":
+                    description: Participant ajouté
+
+    /events/{eventId}/participants/{participantId}:
+        put:
+            tags: [Participants]
+            summary: Mettre à jour le statut d’un participant
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: participantId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Statut mis à jour
+
+    /events/{eventId}/participants/{userId}:
+        delete:
+            tags: [Participants]
+            summary: Supprimer un participant d’un événement
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Participant supprimé
+
+    /participants/history/{userId}:
+        get:
+            tags: [Participants]
+            summary: Historique des événements d’un utilisateur
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Historique récupéré
+
+    /conversations:
+        get:
+            tags: [Conversations]
+            summary: Obtenir toutes les conversations (admin)
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Conversations récupérées
+
+        post:
+            tags: [Conversations]
+            summary: Créer ou récupérer une conversation
+            security:
+                - bearerAuth: []
+            responses:
+                "201":
+                    description: Conversation créée ou retrouvée
+
+    /conversations/my:
+        get:
+            tags: [Conversations]
+            summary: Obtenir les conversations de l'utilisateur connecté
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Conversations personnelles récupérées
+
+    /conversations/{conversationId}:
+        delete:
+            tags: [Conversations]
+            summary: Supprimer une conversation
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: conversationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Conversation supprimée
+
+    /conversations/{conversationId}/link:
+        patch:
+            tags: [Conversations]
+            summary: Lier une conversation à un événement ou une news
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: conversationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Conversation liée
+
+    /conversations/{conversationId}/update-link:
+        patch:
+            tags: [Conversations]
+            summary: Mettre à jour le lien de la conversation
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: conversationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Lien mis à jour
+
+    /conversations/{conversationId}/unlink:
+        patch:
+            tags: [Conversations]
+            summary: Supprimer le lien avec un événement ou une news
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: conversationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Lien supprimé
+
+    /conversations/between/{user1Id}/{user2Id}:
+        get:
+            tags: [Conversations]
+            summary: Récupérer la conversation entre deux utilisateurs (admin)
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: user1Id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: user2Id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Conversation trouvée
+
+    /messages:
+        post:
+            tags: [Messages]
+            summary: Envoyer un message
+            security:
+                - bearerAuth: []
+            responses:
+                "201":
+                    description: Message envoyé
+
+    /messages/{messageId}:
+        put:
+            tags: [Messages]
+            summary: Modifier un message
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: messageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Message modifié
+
+        delete:
+            tags: [Messages]
+            summary: Supprimer un message
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: messageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Message supprimé
+
+    /messages/{messageId}/reactions:
+        post:
+            tags: [Messages]
+            summary: Réagir à un message
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: messageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "201":
+                    description: Réaction ajoutée
+
+        delete:
+            tags: [Messages]
+            summary: Supprimer une réaction
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: messageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Réaction supprimée
+
+    /messages/{messageId}/seen:
+        patch:
+            tags: [Messages]
+            summary: Marquer un message comme vu
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: messageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Message marqué comme vu
 
     /categories:
-      post:
-        tags: [Admin]
-        summary: Créer une catégorie
-        description: Accessible uniquement aux administrateurs.
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  name:
-                    type: string
-        responses:
-          '201':
-            description: Catégorie créée
+        get:
+            tags: [Categories]
+            summary: Récupérer toutes les catégories
+            responses:
+                "200":
+                    description: Liste des catégories
 
-  /categories/{id}:
-    put:
-      tags: [Admin]
-      summary: Modifier une catégorie
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-      responses:
-        '200':
-          description: Catégorie mise à jour
+    /notifications:
+        get:
+            tags: [Notifications]
+            summary: Récupérer toutes les notifications de l'utilisateur
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Liste des notifications
 
-    delete:
-      tags: [Admin]
-      summary: Supprimer une catégorie
-      description: Accessible uniquement aux administrateurs.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Catégorie supprimée
+    /notifications/{notificationId}:
+        get:
+            tags: [Notifications]
+            summary: Obtenir une notification par ID
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: notificationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détail de la notification
 
+        delete:
+            tags: [Notifications]
+            summary: Supprimer une notification
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: notificationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Notification supprimée
 
-  /profile/{userId}:
-    get:
-      tags: [Users]
-      summary: Obtenir le profil d'un utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détails du profil utilisateur
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
+    /notifications/{notificationId}/read:
+        put:
+            tags: [Notifications]
+            summary: Marquer une notification comme lue
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: notificationId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Notification lue
 
-    put:
-      tags: [Users]
-      summary: Modifier un profil utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                lastname:
-                  type: string
-                profileImage:
-                  type: string
-                  format: binary
-      responses:
-        '200':
-          description: Profil mis à jour
+    /notifications/read-all:
+        put:
+            tags: [Notifications]
+            summary: Marquer toutes les notifications comme lues
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Toutes les notifications lues
 
-  /profile/banner/{userId}:
-    put:
-      tags: [Users]
-      summary: Mettre à jour la bannière de profil
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                bannerImage:
-                  type: string
-                  format: binary
-      responses:
-        '200':
-          description: Bannière mise à jour
+    /favoris:
+        get:
+            tags: [Favorites]
+            summary: Récupérer tous les événements favoris de l'utilisateur
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Liste des favoris
 
-  /users/{userId}:
-    delete:
-      tags: [Users]
-      summary: Supprimer un utilisateur
-      description: |
-        Requiert une authentification par token JWT.
-        Seul l'utilisateur lui-même ou un administrateur peut le faire.
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Utilisateur supprimé.
-        '401':
-          description: L'utilisateur n'est pas connecté.
-        '403':
-          description: Accès interdit.
-        '404':
-          description: Utilisateur non trouvé.
-        description: |
-          Requiert une authentification.
-          L'utilisateur concerné ou un administrateur peut effectuer cette action.
-        responses:
-          '200':
-            description: Utilisateur supprimé.
-          '401':
-            description: Non authentifié.
-          '403':
-            description: Accès interdit.
-          '404':
-            description: Utilisateur non trouvé.
-          description: Accessible uniquement à l'utilisateur lui-même ou à un administrateur.
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-          responses:
-            '200':
-              description: Utilisateur supprimé
+    /favoris/{eventId}:
+        get:
+            tags: [Favorites]
+            summary: Vérifier si un événement est en favori
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détail du favori
 
-  /status/{userId}:
-    patch:
-      tags: [Users]
-      summary: Mettre à jour le statut d’un utilisateur
-      description: |
-        🔐 Requiert une authentification.
-        ⚠️ Réservé aux administrateurs.
-      responses:
-        '200':
-          description: Statut mis à jour.
-        '401':
-          description: Non authentifié.
-        '403':
-          description: Accès interdit.
-        '404':
-          description: Utilisateur non trouvé. (admin)
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-        responses:
-          '200':
-            description: Statut mis à jour
+        post:
+            tags: [Favorites]
+            summary: Ajouter un événement aux favoris
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "201":
+                    description: Favori ajouté
 
-  /users/{userId}/event-history:
-    get:
-      tags: [Users]
-      summary: Obtenir l’historique de participation d’un utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Historique de participation
+        delete:
+            tags: [Favorites]
+            summary: Supprimer un événement
+            description: |
+                Requiert une authentification par token JWT.
+                L'utilisateur doit être l'organisateur de l'événement ou un administrateur.
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Événement supprimé.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit  permissions insuffisantes.
+                "404":
+                    description: Événement non trouvé.""
+                description: |
+                    🔐 Requiert une authentification.
+                    🎯 Accessible uniquement à l'organisateur de l'événement ou un administrateur.
+                responses:
+                    "200":
+                        description: Événement supprimé avec succès.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                    "404":
+                        description: Événement non trouvé. des favoris
+                security:
+                    - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  responses:
+                      "200":
+                          description: Favori supprimé
 
-  /users/{userId}/created-events:
-    get:
-      tags: [Users]
-      summary: Obtenir les événements créés par un utilisateur
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Liste des événements créés
+    /news:
+        get:
+            tags: [News]
+            summary: Récupérer toutes les actualités
+            responses:
+                "200":
+                    description: Liste des actualités
+        post:
+            tags: [News]
+            summary: Créer une nouvelle actualité
+            description: |
+                Requiert une authentification par token JWT.
+                Tout utilisateur connecté peut créer une actualité.
+            security:
+                - bearerAuth: []
+            responses:
+                "201":
+                    description: News créée.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                description: |
+                    Requiert une authentification.
+                    Un utilisateur connecté peut publier une news liée à un événement.
+                responses:
+                    "201":
+                        description: News créée avec succès.
+                    "401":
+                        description: Non authentifié.
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+                                content:
+                                    type: string
+                                image:
+                                    type: string
+                                    format: binary
+                    responses:
+                        "201":
+                            description: News créée
 
-  /auth/check:
-    get:
-      tags: [Auth]
-      summary: Vérifier l'authentification de l'utilisateur connecté
-      responses:
-        '200':
-          description: Utilisateur authentifié
-        '401':
-          description: Non authentifié
+    /news/{newsId}/details:
+        get:
+            tags: [News]
+            summary: Détail d'une actualité
+            parameters:
+                - name: newsId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détails de l'actualité
 
-  /logout:
-    post:
-      tags: [Auth]
-      summary: Déconnexion de l'utilisateur
-      responses:
-        '200':
-          description: Déconnexion réussie
+    /news/event/{eventId}:
+        get:
+            tags: [News]
+            summary: Récupérer les news d'un événement
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Liste des news liées à l'événement
 
-  /register:
-    post:
-      tags: [Auth]
-      summary: Enregistrement d'un nouvel utilisateur
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-                name:
-                  type: string
-                lastname:
-                  type: string
-                profileImage:
-                  type: string
-                  format: binary
-      responses:
-        '201':
-          description: Utilisateur créé
-        '400':
-          description: Erreur de validation
+    /news/my:
+        get:
+            tags: [News]
+            summary: Récupérer les news de l'utilisateur connecté
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: News de l'utilisateur
 
-  /login:
-    post:
-      tags: [Auth]
-      summary: Connexion utilisateur
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-      responses:
-        '200':
-          description: Connexion réussie
-        '401':
-          description: Identifiants invalides
+    /news/{newsId}:
+        put:
+            tags: [News]
+            summary: Modifier une actualité
+            description: Accessible uniquement à l'auteur ou à un administrateur.
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: newsId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: News mise à jour
 
-  /events:
-    get:
-      tags: [Events]
-      summary: Obtenir tous les événements
-      responses:
-        '200':
-          description: Liste des événements
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Event'
-    post:
-      tags: [Events]
-      summary: Créer un événement
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                description:
-                  type: string
-                images:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-      responses:
-        '201':
-          description: Événement créé
+        delete:
+            tags: [News]
+            summary: Supprimer une actualité
+            description: |
+                Requiert une authentification par token JWT.
+                Seul l'auteur ou un administrateur peut supprimer une actualité.
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: News supprimée.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit.
+                "404":
+                    description: News non trouvée.
+                description: |
+                    Requiert une authentification.
+                    Seul l'auteur de la news ou un administrateur peut la supprimer.
+                responses:
+                    "200":
+                        description: News supprimée.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                    "404":
+                        description: News non trouvée.
+                    description: Accessible uniquement à l'auteur ou à un administrateur.
+                security:
+                    - bearerAuth: []
+            parameters:
+                - name: newsId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  responses:
+                      "200":
+                          description: News supprimée
 
-  /events/{id}:
-    get:
-      tags: [Events]
-      summary: Obtenir un événement par ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Détails de l'événement
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Event'
-        '404':
-          description: Événement non trouvé
+    /news/{newsId}/category:
+        post:
+            tags: [News]
+            summary: Ajouter une catégorie à une news
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: newsId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Catégorie ajoutée
+
+    /news/{newsId}/category/{categoryId}:
+        delete:
+            tags: [News]
+            summary: Supprimer une catégorie d'une news
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: newsId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Catégorie supprimée
+
+    /reports:
+        get:
+            tags: [Reports]
+            summary: Récupérer tous les signalements (admin)
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Liste des signalements
+
+        post:
+            tags: [Reports]
+            summary: Créer un signalement
+            description: |
+                Requiert une authentification par token JWT.
+                Réservé aux utilisateurs administrateurs.
+            security:
+                - bearerAuth: []
+            responses:
+                "201":
+                    description: Signalement enregistré.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit  rôle administrateur requis.
+                description: |
+                    🔐 Requiert une authentification.
+                    🚨 L'utilisateur doit être administrateur.
+                responses:
+                    "201":
+                        description: Signalement créé.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                security:
+                    - bearerAuth: []
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+                                files:
+                                    type: array
+                                    items:
+                                        type: string
+                                        format: binary
+                    responses:
+                        "201":
+                            description: Signalement créé
+
+    /reports/{reportId}:
+        get:
+            tags: [Reports]
+            summary: Détail d'un signalement
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: reportId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détail du rapport
+
+    /reports/{reportId}/messages:
+        get:
+            tags: [Reports]
+            summary: Messages liés à un signalement
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: reportId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Messages du rapport
+
+    /reports/{reportId}/reply:
+        post:
+            tags: [Reports]
+            summary: Répondre à un signalement
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: reportId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+            responses:
+                "200":
+                    description: Réponse enregistrée
+
+    /reports/{reportId}/status:
+        put:
+            tags: [Reports]
+            summary: Mettre à jour le statut d’un signalement
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: reportId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+            responses:
+                "200":
+                    description: Statut mis à jour
+
+    /ratings/user/{userId}:
+        get:
+            tags: [Ratings]
+            summary: Obtenir la note moyenne d’un utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Note moyenne
+
+    /ratings:
+        post:
+            tags: [Ratings]
+            summary: Évaluer un événement
+            security:
+                - bearerAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                eventId:
+                                    type: string
+                                rating:
+                                    type: number
+            responses:
+                "201":
+                    description: Évaluation enregistrée
+
+    /events/{eventId}/comments:
+        get:
+            tags: [Comments]
+            summary: Obtenir les commentaires d'un événement
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Liste des commentaires
+
+        post:
+            tags: [Comments]
+            summary: Ajouter un commentaire à un événement
+            description: |
+                Requiert une authentification par token JWT.
+                Tout utilisateur connecté peut commenter un événement.
+            security:
+                - bearerAuth: []
+            responses:
+                "201":
+                    description: Commentaire ajouté.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "404":
+                    description: Événement non trouvé.
+                description: |
+                    Requiert une authentification.
+                    Tout utilisateur connecté peut commenter un événement.
+                responses:
+                    "201":
+                        description: Commentaire ajouté.
+                    "401":
+                        description: Non authentifié.
+                    "404":
+                        description: Événement non trouvé.
+                security:
+                    - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                content:
+                                    type: string
+                    responses:
+                        "201":
+                            description: Commentaire ajouté
+
+    /events/{eventId}/comments/{commentId}/reply:
+        post:
+            tags: [Comments]
+            summary: Répondre à un commentaire
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                content:
+                                    type: string
+            responses:
+                "201":
+                    description: Réponse ajoutée
+
+    /comments/{commentId}:
+        get:
+            tags: [Admin]
+            summary: Obtenir un commentaire par ID (admin)
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détail du commentaire
+
+        put:
+            tags: [Comments]
+            summary: Modifier un commentaire
+            description: Accessible uniquement à l'auteur ou à un administrateur.
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                content:
+                                    type: string
+            responses:
+                "200":
+                    description: Commentaire mis à jour
+
+        delete:
+            tags: [Comments]
+            summary: Supprimer un commentaire
+            description: |
+                Requiert une authentification par token JWT.
+                Seul l'auteur du commentaire ou un administrateur peut le supprimer.
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Commentaire supprimé.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit.
+                "404":
+                    description: Commentaire non trouvé.
+                description: |
+                    Requiert une authentification.
+                    Seul l'auteur du commentaire ou un administrateur peut le supprimer.
+                responses:
+                    "200":
+                        description: Commentaire supprimé.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                    "404":
+                        description: Commentaire non trouvé.
+                security:
+                    - bearerAuth: []
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  responses:
+                      "200":
+                          description: Commentaire supprimé
+
+    /comments/all:
+        get:
+            tags: [Admin]
+            summary: Obtenir tous les commentaires (admin)
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Liste de tous les commentaires
+
+    /comments/{commentId}/replies:
+        get:
+            tags: [Comments]
+            summary: Obtenir les réponses à un commentaire
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Liste des réponses
+
+    /users/{userId}/comments:
+        get:
+            tags: [Comments]
+            summary: Obtenir les commentaires d'un utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Liste des commentaires de l'utilisateur
+
+    /comments/{commentId}/reactions:
+        get:
+            tags: [Comments]
+            summary: Obtenir les réactions d'un commentaire
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Réactions au commentaire
+
+        post:
+            tags: [Comments]
+            summary: Ajouter une réaction à un commentaire
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                type:
+                                    type: string
+            responses:
+                "201":
+                    description: Réaction ajoutée
+
+        delete:
+            tags: [Comments]
+            summary: Supprimer une réaction à un commentaire
+            security:
+                - bearerAuth: []
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Réaction supprimée
+
+    /comments/{commentId}/reactions/stats:
+        get:
+            tags: [Comments]
+            summary: Obtenir les statistiques de réaction d'un commentaire
+            parameters:
+                - name: commentId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Statistiques de réactions
+
+    /events/{eventId}:
+        put:
+            tags: [Events]
+            summary: Modifier un événement
+            description: |
+                Requiert une authentification par token JWT.
+                Seul l'organisateur ou un administrateur peut modifier un événement.
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Événement mis à jour.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit.
+                "404":
+                    description: Événement non trouvé.
+                description: |
+                    Requiert une authentification.
+                    Seul l'organisateur ou un administrateur peut modifier l'événement.
+                responses:
+                    "200":
+                        description: Événement mis à jour.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                    "404":
+                        description: Événement non trouvé.
+                    description: Accessible uniquement à l'organisateur de l'événement ou à un administrateur.
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+                                description:
+                                    type: string
+                                images:
+                                    type: array
+                                    items:
+                                        type: string
+                                        format: binary
+                responses:
+                    "200":
+                        description: Événement mis à jour
+
+        delete:
+            tags: [Events]
+            summary: Supprimer un événement
+            description: |
+                Requiert une authentification par token JWT.
+                L'utilisateur doit être l'organisateur de l'événement ou un administrateur.
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Événement supprimé.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit permissions insuffisantes.
+                "404":
+                    description: Événement non trouvé.
+                description: |
+                    Requiert une authentification.
+                    Accessible uniquement à l'organisateur de l'événement ou un administrateur.
+                responses:
+                    "200":
+                        description: Événement supprimé avec succès.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                    "404":
+                        description: Événement non trouvé.
+                    description: Accessible uniquement à l'organisateur de l'événement ou à un administrateur.
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  responses:
+                      "200":
+                          description: Événement supprimé
+
+    /events/{eventId}/images:
+        post:
+            tags: [Events]
+            summary: Ajouter des images à un événement
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                images:
+                                    type: array
+                                    items:
+                                        type: string
+                                        format: binary
+            responses:
+                "200":
+                    description: Images ajoutées
+
+    /events/{eventId}/images/{imageId}/main:
+        put:
+            tags: [Events]
+            summary: Définir une image principale pour un événement
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                - name: imageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Image principale définie
+
+    /events/images/{imageId}:
+        delete:
+            tags: [Events]
+            summary: Supprimer une image d'un événement
+            parameters:
+                - name: imageId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Image supprimée
+
+    /events/{eventId}/status:
+        patch:
+            tags: [Events]
+            summary: Mettre à jour le statut d’un événement
+            parameters:
+                - name: eventId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+            responses:
+                "200":
+                    description: Statut mis à jour
+
+    /events/update-statuses:
+        patch:
+            tags: [Events]
+            summary: Mettre à jour le statut de tous les événements expirés automatiquement
+            responses:
+                "200":
+                    description: Statuts mis à jour
+
+    /auth/google:
+        get:
+            tags: [Auth]
+            summary: Redirection vers Google OAuth
+            responses:
+                "302":
+                    description: Redirigé vers Google
+
+    /auth/google/callback:
+        get:
+            tags: [Auth]
+            summary: Callback de Google OAuth
+            responses:
+                "200":
+                    description: Authentification Google réussie
+
+    /auth/facebook:
+        get:
+            tags: [Auth]
+            summary: Redirection vers Facebook OAuth
+            responses:
+                "302":
+                    description: Redirigé vers Facebook
+
+    /auth/facebook/callback:
+        get:
+            tags: [Auth]
+            summary: Callback de Facebook OAuth
+            responses:
+                "200":
+                    description: Authentification Facebook réussie
+
+    /users:
+        get:
+            tags: [Admin]
+            summary: Récupérer tous les utilisateurs (admin)
+            responses:
+                "200":
+                    description: Liste des utilisateurs
+
+    /users/{userId}/events:
+        get:
+            tags: [Admin]
+            summary: Récupérer les événements d’un utilisateur (admin)
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Événements de l'utilisateur
+
+    /admin/users:
+        post:
+            tags: [Admin]
+            summary: Créer un utilisateur en tant qu’admin
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+                                name:
+                                    type: string
+                                lastname:
+                                    type: string
+            responses:
+                "201":
+                    description: Utilisateur admin créé
+
+        /categories:
+            post:
+                tags: [Admin]
+                summary: Créer une catégorie
+                description: Accessible uniquement aux administrateurs.
+                requestBody:
+                    required: true
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    name:
+                                        type: string
+                responses:
+                    "201":
+                        description: Catégorie créée
+
+    /categories/{id}:
+        put:
+            tags: [Admin]
+            summary: Modifier une catégorie
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+            responses:
+                "200":
+                    description: Catégorie mise à jour
+
+        delete:
+            tags: [Admin]
+            summary: Supprimer une catégorie
+            description: Accessible uniquement aux administrateurs.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Catégorie supprimée
+
+    /profile/{userId}:
+        get:
+            tags: [Users]
+            summary: Obtenir le profil d'un utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détails du profil utilisateur
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+
+        put:
+            tags: [Users]
+            summary: Modifier un profil utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                lastname:
+                                    type: string
+                                profileImage:
+                                    type: string
+                                    format: binary
+            responses:
+                "200":
+                    description: Profil mis à jour
+
+    /profile/banner/{userId}:
+        put:
+            tags: [Users]
+            summary: Mettre à jour la bannière de profil
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                bannerImage:
+                                    type: string
+                                    format: binary
+            responses:
+                "200":
+                    description: Bannière mise à jour
+
+    /users/{userId}:
+        delete:
+            tags: [Users]
+            summary: Supprimer un utilisateur
+            description: |
+                Requiert une authentification par token JWT.
+                Seul l'utilisateur lui-même ou un administrateur peut le faire.
+            security:
+                - bearerAuth: []
+            responses:
+                "200":
+                    description: Utilisateur supprimé.
+                "401":
+                    description: L'utilisateur n'est pas connecté.
+                "403":
+                    description: Accès interdit.
+                "404":
+                    description: Utilisateur non trouvé.
+                description: |
+                    Requiert une authentification.
+                    L'utilisateur concerné ou un administrateur peut effectuer cette action.
+                responses:
+                    "200":
+                        description: Utilisateur supprimé.
+                    "401":
+                        description: Non authentifié.
+                    "403":
+                        description: Accès interdit.
+                    "404":
+                        description: Utilisateur non trouvé.
+                    description: Accessible uniquement à l'utilisateur lui-même ou à un administrateur.
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                  responses:
+                      "200":
+                          description: Utilisateur supprimé
+
+    /status/{userId}:
+        patch:
+            tags: [Users]
+            summary: Mettre à jour le statut d’un utilisateur
+            description: |
+                🔐 Requiert une authentification.
+                ⚠️ Réservé aux administrateurs.
+            responses:
+                "200":
+                    description: Statut mis à jour.
+                "401":
+                    description: Non authentifié.
+                "403":
+                    description: Accès interdit.
+                "404":
+                    description: Utilisateur non trouvé. (admin)
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                status:
+                                    type: string
+                responses:
+                    "200":
+                        description: Statut mis à jour
+
+    /users/{userId}/event-history:
+        get:
+            tags: [Users]
+            summary: Obtenir l’historique de participation d’un utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Historique de participation
+
+    /users/{userId}/created-events:
+        get:
+            tags: [Users]
+            summary: Obtenir les événements créés par un utilisateur
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Liste des événements créés
+
+    /auth/check:
+        get:
+            tags: [Auth]
+            summary: Vérifier l'authentification de l'utilisateur connecté
+            responses:
+                "200":
+                    description: Utilisateur authentifié
+                "401":
+                    description: Non authentifié
+
+    /logout:
+        post:
+            tags: [Auth]
+            summary: Déconnexion de l'utilisateur
+            responses:
+                "200":
+                    description: Déconnexion réussie
+
+    /register:
+        post:
+            tags: [Auth]
+            summary: Enregistrement d'un nouvel utilisateur
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+                                name:
+                                    type: string
+                                lastname:
+                                    type: string
+                                profileImage:
+                                    type: string
+                                    format: binary
+            responses:
+                "201":
+                    description: Utilisateur créé
+                "400":
+                    description: Erreur de validation
+
+    /login:
+        post:
+            tags: [Auth]
+            summary: Connexion utilisateur
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                "200":
+                    description: Connexion réussie
+                "401":
+                    description: Identifiants invalides
+
+    /events:
+        get:
+            tags: [Events]
+            summary: Obtenir tous les événements
+            responses:
+                "200":
+                    description: Liste des événements
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Event"
+        post:
+            tags: [Events]
+            summary: Créer un événement
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                title:
+                                    type: string
+                                description:
+                                    type: string
+                                images:
+                                    type: array
+                                    items:
+                                        type: string
+                                        format: binary
+            responses:
+                "201":
+                    description: Événement créé
+
+    /events/{id}:
+        get:
+            tags: [Events]
+            summary: Obtenir un événement par ID
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Détails de l'événement
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Event"
+                "404":
+                    description: Événement non trouvé
 
 components:
-  schemas:
-    Category:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        parent_id:
-          type: integer
-        display_order:
-          type: integer
-    Comment:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_event:
-          type: integer
-        id_user:
-          type: integer
-        title:
-          type: string
-        message:
-          type: string
-        id_comment:
-          type: integer
-        date_posted:
-          type: string
-          format: date-time
-    CommentReaction:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_comment:
-          type: integer
-        id_user:
-          type: integer
-        emoji:
-          type: string
-        date_reacted:
-          type: string
-          format: date-time
-    Conversation:
-      type: object
-      properties:
-        id:
-          type: integer
-        user1_id:
-          type: integer
-        user2_id:
-          type: integer
-        normalized_user1_id:
-          type: integer
-        normalized_user2_id:
-          type: integer
-        event_id:
-          type: integer
-        news_id:
-          type: integer
-        created_at:
-          type: string
-          format: date-time
-    EventCategory:
-      type: object
-      properties:
-        id_event:
-          type: integer
-        id_category:
-          type: integer
-    EventGuest:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_participant:
-          type: integer
-        firstname:
-          type: string
-        lastname:
-          type: string
-        email:
-          type: string
-    EventImage:
-      type: object
-      properties:
-        id:
-          type: integer
-        event_id:
-          type: integer
-        image_url:
-          type: string
-        is_main:
-          type: boolean
-    event:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_org:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
-        price:
-          type: integer
-        date_created:
-          type: string
-          format: date-time
-        max_participants:
-          type: integer
-        status:
-          type: string
-        street:
-          type: string
-        street_number:
-          type: string
-        city:
-          type: string
-        postal_code:
-          type: string
-        start_time:
-          type: string
-          format: date-time
-        end_time:
-          type: string
-          format: date-time
-    Favoris:
-      type: object
-      properties:
-        id_user:
-          type: integer
-        id_event:
-          type: integer
-    Message:
-      type: object
-      properties:
-        id:
-          type: integer
-        conversation_id:
-          type: integer
-        sender_id:
-          type: integer
-        content:
-          type: string
-        reply_to_message_id:
-          type: integer
-        emoji:
-          type: string
-        sent_at:
-          type: string
-          format: date-time
-        seen:
-          type: boolean
-    NewsCategory:
-      type: object
-      properties:
-        news_id:
-          type: integer
-        category_id:
-          type: integer
-    News:
-      type: object
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        content:
-          type: string
-        image_url:
-          type: string
-        date_posted:
-          type: string
-          format: date-time
-        user_id:
-          type: integer
-        event_id:
-          type: integer
-    Notification:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_user:
-          type: integer
-        title:
-          type: string
-        message:
-          type: string
-        date_sent:
-          type: string
-          format: date-time
-        read_status:
-          type: boolean
-    Participant:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_user:
-          type: integer
-        id_event:
-          type: integer
-        status:
-          type: string
-        request_message:
-          type: string
-        organizer_response:
-          type: string
-        joined_at:
-          type: string
-          format: date-time
-    Rating:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_event:
-          type: integer
-        id_user:
-          type: integer
-        rating:
-          type: number
-        message:
-          type: string
-        date_rated:
-          type: string
-          format: date-time
-    ReportFile:
-      type: object
-      properties:
-        id:
-          type: integer
-        report_id:
-          type: integer
-        file_path:
-          type: string
-    ReportMessage:
-      type: object
-      properties:
-        id:
-          type: integer
-        report_id:
-          type: integer
-        sender_id:
-          type: integer
-        message:
-          type: string
-        date_sent:
-          type: string
-          format: date-time
-    Report:
-      type: object
-      properties:
-        id:
-          type: integer
-        id_user:
-          type: integer
-        id_event:
-          type: integer
-        id_reported_user:
-          type: integer
-        id_comment:
-          type: integer
-        message:
-          type: string
-        status:
-          type: string
-        date_reported:
-          type: string
-          format: date-time
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        lastname:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        role:
-          type: string
-        profileImage:
-          type: string
-        provider:
-          type: string
-        bio:
-          type: string
-        city:
-          type: string
-        street:
-          type: string
-        streetNumber:
-          type: string
-        bannerImage:
-          type: string
-        status:
-          type: string
-        phone:
-          type: string
-        showEmail:
-          type: boolean
-        showAddress:
-          type: boolean
-        showPhone:
-          type: boolean
-        birthdate:
-          type: string
-          format: date-time
-        gender:
-          type: string
-        linkedinUrl:
-          type: string
-        instaUrl:
-          type: string
-        websiteUrl:
-          type: string
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+    schemas:
+        Category:
+            type: object
+            properties:
+                id:
+                    type: integer
+                name:
+                    type: string
+                parent_id:
+                    type: integer
+                display_order:
+                    type: integer
+        Comment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_event:
+                    type: integer
+                id_user:
+                    type: integer
+                title:
+                    type: string
+                message:
+                    type: string
+                id_comment:
+                    type: integer
+                date_posted:
+                    type: string
+                    format: date-time
+        CommentReaction:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_comment:
+                    type: integer
+                id_user:
+                    type: integer
+                emoji:
+                    type: string
+                date_reacted:
+                    type: string
+                    format: date-time
+        Conversation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                user1_id:
+                    type: integer
+                user2_id:
+                    type: integer
+                normalized_user1_id:
+                    type: integer
+                normalized_user2_id:
+                    type: integer
+                event_id:
+                    type: integer
+                news_id:
+                    type: integer
+                created_at:
+                    type: string
+                    format: date-time
+        EventCategory:
+            type: object
+            properties:
+                id_event:
+                    type: integer
+                id_category:
+                    type: integer
+        EventGuest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_participant:
+                    type: integer
+                firstname:
+                    type: string
+                lastname:
+                    type: string
+                email:
+                    type: string
+        EventImage:
+            type: object
+            properties:
+                id:
+                    type: integer
+                event_id:
+                    type: integer
+                image_url:
+                    type: string
+                is_main:
+                    type: boolean
+        event:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_org:
+                    type: integer
+                title:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: integer
+                date_created:
+                    type: string
+                    format: date-time
+                max_participants:
+                    type: integer
+                status:
+                    type: string
+                street:
+                    type: string
+                street_number:
+                    type: string
+                city:
+                    type: string
+                postal_code:
+                    type: string
+                start_time:
+                    type: string
+                    format: date-time
+                end_time:
+                    type: string
+                    format: date-time
+        Favoris:
+            type: object
+            properties:
+                id_user:
+                    type: integer
+                id_event:
+                    type: integer
+        Message:
+            type: object
+            properties:
+                id:
+                    type: integer
+                conversation_id:
+                    type: integer
+                sender_id:
+                    type: integer
+                content:
+                    type: string
+                reply_to_message_id:
+                    type: integer
+                emoji:
+                    type: string
+                sent_at:
+                    type: string
+                    format: date-time
+                seen:
+                    type: boolean
+        NewsCategory:
+            type: object
+            properties:
+                news_id:
+                    type: integer
+                category_id:
+                    type: integer
+        News:
+            type: object
+            properties:
+                id:
+                    type: integer
+                title:
+                    type: string
+                content:
+                    type: string
+                image_url:
+                    type: string
+                date_posted:
+                    type: string
+                    format: date-time
+                user_id:
+                    type: integer
+                event_id:
+                    type: integer
+        Notification:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_user:
+                    type: integer
+                title:
+                    type: string
+                message:
+                    type: string
+                date_sent:
+                    type: string
+                    format: date-time
+                read_status:
+                    type: boolean
+        Participant:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_user:
+                    type: integer
+                id_event:
+                    type: integer
+                status:
+                    type: string
+                request_message:
+                    type: string
+                organizer_response:
+                    type: string
+                joined_at:
+                    type: string
+                    format: date-time
+        Rating:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_event:
+                    type: integer
+                id_user:
+                    type: integer
+                rating:
+                    type: number
+                message:
+                    type: string
+                date_rated:
+                    type: string
+                    format: date-time
+        ReportFile:
+            type: object
+            properties:
+                id:
+                    type: integer
+                report_id:
+                    type: integer
+                file_path:
+                    type: string
+        ReportMessage:
+            type: object
+            properties:
+                id:
+                    type: integer
+                report_id:
+                    type: integer
+                sender_id:
+                    type: integer
+                message:
+                    type: string
+                date_sent:
+                    type: string
+                    format: date-time
+        Report:
+            type: object
+            properties:
+                id:
+                    type: integer
+                id_user:
+                    type: integer
+                id_event:
+                    type: integer
+                id_reported_user:
+                    type: integer
+                id_comment:
+                    type: integer
+                message:
+                    type: string
+                status:
+                    type: string
+                date_reported:
+                    type: string
+                    format: date-time
+        User:
+            type: object
+            properties:
+                id:
+                    type: integer
+                name:
+                    type: string
+                lastname:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+                role:
+                    type: string
+                profileImage:
+                    type: string
+                provider:
+                    type: string
+                bio:
+                    type: string
+                city:
+                    type: string
+                street:
+                    type: string
+                streetNumber:
+                    type: string
+                bannerImage:
+                    type: string
+                status:
+                    type: string
+                phone:
+                    type: string
+                showEmail:
+                    type: boolean
+                showAddress:
+                    type: boolean
+                showPhone:
+                    type: boolean
+                birthdate:
+                    type: string
+                    format: date-time
+                gender:
+                    type: string
+                linkedinUrl:
+                    type: string
+                instaUrl:
+                    type: string
+                websiteUrl:
+                    type: string
