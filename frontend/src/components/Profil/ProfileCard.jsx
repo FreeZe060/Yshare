@@ -20,7 +20,7 @@ const calculateProfileCompletion = (user) => {
 	return score;
 };
 
-const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSections }) => {
+const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSections, ratings, ratingsLoading, onClickRating }) => {
 	const auth = useAuth();
 	const currentUser = auth?.user;
 	const editable = currentUser?.id === user.id || currentUser?.role === "Administrateur";
@@ -232,7 +232,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 									)}
 								</div>
 
-								<div className="mt-[1rem]">
+								<div className="mt-[1rem]" onClick={onClickRating} style={{ cursor: 'pointer' }}>
 									<StarRating rating={user.rating || 0} />
 								</div>
 

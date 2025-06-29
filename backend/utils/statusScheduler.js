@@ -1,6 +1,6 @@
 const EventService = require('../services/EventService');
 
-function startStatusScheduler(intervalMinutes = 5) {
+function startStatusScheduler(intervalMinutes = 1) {
 	console.log(`[Scheduler] Lancement de la vérification automatique toutes les ${intervalMinutes} minutes.`);
 
 	setInterval(async () => {

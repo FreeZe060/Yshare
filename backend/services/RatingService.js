@@ -45,11 +45,88 @@ class RatingService {
                 raw: true
             });
 
-            console.log(`[getEventAverageRating] ✅ Moyenne calculée : ${avgResult.avgRating}`);
-            return avgResult.avgRating;
+            const ratings = await Rating.findAll({
+                where: { id_event },
+                include: [
+                    {
+                        model: User,
+                        attributes: ['id', 'name', 'lastname', 'profileImage']
+                    }
+                ],
+                attributes: ['id', 'rating', 'message', 'date_rated'],
+                order: [['date_rated', 'DESC']]
+            });
+
+            const formattedRatings = ratings.map(r => ({
+                id: r.id,
+                rating: r.rating,
+                message: r.message,
+                date: r.date_rated,
+                user: {
+                    id: r.User.id,
+                    name: r.User.name,
+                    lastname: r.User.lastname,
+                    profileImage: r.User.profileImage
+                }
+            }));
+
+            console.log(`[getEventAverageRating] ✅ Moyenne calculée : ${avgResult.avgRating}, ${formattedRatings.length} note(s) récupérée(s)`);
+
+            return {
+                avgRating: avgResult.avgRating,
+                ratings: formattedRatings
+            };
+
         } catch (error) {
             console.error(`[getEventAverageRating] ❌ Erreur : ${error.message}`);
             throw new Error("Erreur lors du calcul de la note moyenne de l'événement : " + error.message);
+        }
+    }
+
+    async getAllRatingsByOrganizer(userId) {
+        console.log(`[getAllRatingsByOrganizer] ➤ Récupération de toutes les notes des events créés par user=${userId}`);
+
+        try {
+            const ratings = await Rating.findAll({
+                include: [
+                    {
+                        model: User,
+                        attributes: ['id', 'name', 'lastname', 'profileImage']
+                    },
+                    {
+                        model: Event,
+                        where: { id_org: userId },
+                        attributes: ['id', 'title']
+                    }
+                ],
+                order: [['date_rated', 'DESC']]
+            });
+
+            console.log(`[getAllRatingsByOrganizer] ✅ ${ratings.length} note(s) récupérée(s)`);
+
+            const formatted = ratings.map(r => ({
+                id: r.id,
+                rating: r.rating,
+                message: r.message,
+                date: r.date_rated,
+                user: {
+                    id: r.User.id,
+                    name: r.User.name,
+                    lastname: r.User.lastname,
+                    profileImage: r.User.profileImage
+                },
+                event: {
+                    id: r.Event.id,
+                    title: r.Event.title
+                }
+            }));
+
+            console.log('[getAllRatingsByOrganizer] ➤ Transformation des données terminée');
+            return formatted;
+
+        } catch (error) {
+            console.error('[getAllRatingsByOrganizer] ❌ Erreur :', error.message);
+            throw new Error("Erreur lors de la récupération des notes des événements de l'utilisateur : " + error.message);
         }
     }
 

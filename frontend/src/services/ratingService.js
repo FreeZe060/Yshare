@@ -58,6 +58,53 @@ export async function getAllRatings(token) {
 }
 
 /**
+ * Récupérer la note moyenne d'un événement (GET /ratings/event/:eventId)
+ */
+export async function getEventAverageRating(eventId) {
+	const response = await fetch(`${API_BASE_URL}/ratings/event/${eventId}`, {
+		method: "GET",
+		credentials: "include",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	const result = await response.json();
+
+	if (!response.ok) {
+		throw new Error(result.message || "Erreur lors de la récupération de la note moyenne de l'événement");
+	}
+
+	return {
+		avgRating: result.averageRating !== null ? parseFloat(result.averageRating) : null,
+		ratings: result.ratings || []
+	};
+}
+
+/**
+ * Récupérer toutes les notes des événements créés par un organisateur spécifique
+ * (GET /ratings/organizer/:userId)
+ */
+export async function getAllRatingsByOrganizer(userId, token) {
+    const response = await fetch(`${API_BASE_URL}/ratings/organizer/${userId}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || "Erreur lors de la récupération des notes de l'organisateur");
+    }
+
+    return result;
+}
+
+/**
  * Supprimer une note (admin uniquement)
  */
 export async function deleteRating(id, token) {

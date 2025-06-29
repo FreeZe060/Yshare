@@ -30,6 +30,7 @@ const isParticipantOwnerOrAdmin = require('../middlewares/isParticipantOwnerOrAd
 const isReportOwnerOrAdmin = require('../middlewares/isReportOwnerOrAdmin');
 const isRatingOwnerOrAdmin = require('../middlewares/isRatingOwnerOrAdmin');
 const { extractUserFromToken } = require('../middlewares/authOptional');
+const hateoas = require('../middlewares/hateoas');
 const { profileUpload, eventUpload, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
 
 
@@ -59,20 +60,21 @@ router.post('/log-suspicious', (req, res) => {
 
 //////// EVENTS ROUTES ////////
 
-router.get('/events', eventController.getAllEvents);
-router.get('/events/mine', authenticateToken, eventController.getMyEvents);
-router.get('/events/:id', extractUserFromToken, eventController.getEventById);
-router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
-router.put('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventController.updateEvent);
-router.put('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventUpload.single('image'), eventController.updateEventImages);
-router.delete('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteEvent);
-router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
-router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
-router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
-router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
-router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
-router.get('/events-count', eventController.getTotalEventCount);
-router.get('/admin/stats', authenticateToken, isAdmin, eventController.getDashboardStats);
+router.get('/events', hateoas('event'), eventController.getAllEvents);
+router.get('/events/mine', hateoas('event'), authenticateToken, eventController.getMyEvents);
+router.get('/events/:id', hateoas('event'), extractUserFromToken, eventController.getEventById);
+router.post('/events', hateoas('event'), eventUpload.array('images'), authenticateToken, eventController.createEvent);
+router.put('/events/:eventId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.updateEvent);
+router.put('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.single('image'), eventController.updateEventImages);
+router.delete('/events/:eventId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteEvent);
+router.post('/events/:eventId/images', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
+router.put('/events/:eventId/images/:imageId/main', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
+router.delete('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
+router.patch('/events/:eventId/status', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.updateEventStatus);
+router.patch('/events/:eventId/status/auto', hateoas('event'), eventController.updateEventStatusById);
+router.patch('/events/update-statuses', hateoas('event'), eventController.updateAllEventStatusesByDate);
+router.get('/events-count', hateoas('event'), eventController.getTotalEventCount);
+router.get('/admin/stats', hateoas('event'), authenticateToken, isAdmin, eventController.getDashboardStats);
 
 //////// USER ROUTES ////////
 
@@ -112,6 +114,7 @@ router.post('/admin/users', authenticateToken, isAdmin, userController.adminCrea
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
+router.get('/admin/stats', authenticateToken, isAdmin, eventController.getDashboardStats);
 
 //////// PARTICIPANT ROUTES ////////
 
@@ -196,6 +199,8 @@ router.get('/conversations/between/:user1Id/:user2Id', authenticateToken, isAdmi
 //////// RATING ROUTES ////////
 
 router.get('/ratings/user/:userId', ratingController.getUserAverageRating);
+router.get('/ratings/event/:eventId', ratingController.getEventAverageRating);
+router.get('/ratings/organizer/:userId', authenticateToken, ratingController.getAllRatingsByOrganizer);
 router.post('/ratings', authenticateToken, ratingController.rateEvent);
 router.get('/ratings/admin/all', authenticateToken, isAdmin, ratingController.getAllRatingsWithDetails);
 router.delete('/ratings/:id', authenticateToken, isAdmin, ratingController.deleteRating);
