@@ -25,6 +25,9 @@ import FavorisPage from './pages/FavorisPage';
 import ParticipantPage from './pages/ParticipantPage';
 import CreateNewsPage from './pages/CreateNewsPage';
 import ReportPage from './pages/ReportPage';
+import RatingsPage from './pages/RatingsPage';
+
+import NotFound from './pages/NotFound';
 
 import NotFound from './pages/NotFound';
 
@@ -43,15 +46,16 @@ function App() {
 				<Route path="/profile/:userId" element={<Profil />} />
 				<Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
 				<Route path="/participation" element={<PrivateRoute><UserParticipationPage /></PrivateRoute>} />
-				<Route path="/create-event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
-				<Route path="/event-created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
+				<Route path="/create/event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
+				<Route path="/event/created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
+				<Route path="/users/:userId/ratings" element={<RatingsPage />} />
 
 				<Route path="/report" element={<PrivateRoute><ReportPage /></PrivateRoute>} />
 				
 				<Route path="/news" element={<NewsPage />} />
 				<Route path="/news/:newsId" element={<NewsDetails />} />
-				<Route path="/create-news" element={<PrivateRoute><CreateNewsPage /></PrivateRoute>} />
+				<Route path="/news/create" element={<PrivateRoute><CreateNewsPage /></PrivateRoute>} />
 
 				<Route path="/events" element={<Events />} />
 				<Route path="/event/:eventId" element={<EventDetails />} />

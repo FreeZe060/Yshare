@@ -50,7 +50,6 @@ function CalendarEventSection({ events }) {
                     </div>
                 </div>
 
-                {/* SLIDER */}
                 <div className="overflow-visible et-3-event-slider swiper rev-slide-up">
                     <Swiper
                         modules={[Autoplay]}
