@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import '../../assets/css/style.css';
 
@@ -47,9 +48,9 @@ function AboutClub() {
                             <p className="mt-[17px] mb-[43px] text-[#8E8E93] text-[17px]">
                                 YShare est un projet étudiant développé dans le cadre de notre formation à Ynov. Il a pour objectif de faciliter la gestion et la création d’événements entre étudiants. Que ce soit pour organiser des soirées, des conférences ou des activités de groupe, Yshare permet à chacun de proposer, rejoindre et suivre les événements du campus en toute simplicité.
                             </p>
-                            <a href="#" className="et-3-btn">
+                            <Link to="/aboutUs" className="et-3-btn">
                                 Voir le club
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

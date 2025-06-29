@@ -27,6 +27,8 @@ import CreateNewsPage from './pages/CreateNewsPage';
 import ReportPage from './pages/ReportPage';
 import RatingsPage from './pages/RatingsPage';
 
+import NotFound from './pages/NotFound';
+
 function App() {
 
 	return (
@@ -62,6 +64,9 @@ function App() {
 				<Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
 				<Route path="/conditions-utilisation" element={<TermsOfUse />} />
 				<Route path="/conditions-vente" element={<TermsOfSale />} />
+
+				{/* 💥 Catch-all 404 route */}
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>
 

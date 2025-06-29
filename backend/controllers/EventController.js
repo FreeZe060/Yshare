@@ -255,6 +255,21 @@ exports.updateAllEventStatusesByDate = async (req, res) => {
     }
 };
 
+exports.updateEventStatusById = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+
+        console.log(`[updateEventStatusById] 🔄 Mise à jour automatique du statut de l'événement ID: ${eventId}`);
+
+        const updatedEvent = await eventService.updateEventStatusByDate(eventId);
+
+        res.status(200).json({ message: "Statut mis à jour automatiquement.", event: updatedEvent });
+
+    } catch (error) {
+        console.error("[updateEventStatusById] ❌ Erreur :", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour automatique du statut", error: error.message });
+    }
+};
 
 exports.deleteEvent = async (req, res) => {
     try {

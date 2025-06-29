@@ -338,6 +338,33 @@ class EventService {
         console.log('✅ Tous les statuts ont été mis à jour (et notifications envoyées si nécessaire).');
     }
 
+    async updateEventStatusByDate(eventId) {
+        const event = await Event.findByPk(eventId);
+        if (!event) throw new Error("Événement introuvable.");
+
+        const now = new Date();
+        const startDateTime = new Date(event.start_time);
+        const endDateTime = new Date(event.end_time);
+        let newStatus = event.status;
+
+        if (now < startDateTime) {
+            newStatus = 'Planifié';
+        } else if (now >= startDateTime && now < endDateTime) {
+            newStatus = 'En Cours';
+        } else if (now >= endDateTime) {
+            newStatus = 'Terminé';
+        }
+
+        if (event.status !== newStatus) {
+            console.log(`✅ Mise à jour : Événement ID ${event.id} : ${event.status} ➡️ ${newStatus}`);
+            await event.update({ status: newStatus });
+        } else {
+            console.log(`ℹ️ Aucun changement de statut nécessaire pour l'événement ID ${event.id} (statut actuel : ${event.status})`);
+        }
+
+        return event;
+    }
+
     async getDashboardStats() {
         console.log("[getDashboardStats] 📊 Démarrage de la récupération des statistiques...");
 

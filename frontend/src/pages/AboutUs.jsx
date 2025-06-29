@@ -16,6 +16,7 @@ import vector2 from "../assets/img/et-3-event-vector-2.svg";
 
 import AboutClub from '../components/Home/AboutClub';
 import Team from '../components/Home/Team';
+import Contact from '../components/AboutUs/Contact';
 
 function AboutUs() {
     useSlideUpAnimation();
@@ -43,13 +44,12 @@ function AboutUs() {
                     </div>
                 </section>
 
-                <div>
-                                    
-                <AboutClub/>
 
-                <Team/>
+                <AboutClub />
 
-                </div>
+                <Team />
+
+                <Contact />
 
 
                 {/* <section className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
@@ -167,15 +167,6 @@ function AboutUs() {
                     })()}
 
                 </section> */}
-
-                <div className="*:-z-[1] *:absolute">
-                    <h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">YNOV</h3>
-                    <div className="-top-[195px] -left-[519px] bg-gradient-to-b from-etPurple to-etPink blur-[230px] rounded-full w-[688px] aspect-square"></div>
-                    <div className="-right-[319px] bottom-[300px] bg-gradient-to-b from-etPink to-etPink blur-[230px] rounded-full w-[588px] aspect-square"></div>
-                    <img src={vector1} alt="vector" className="top-0 left-0 opacity-25" />
-                    <img src={vector1} alt="vector" className="right-0 bottom-0 opacity-25 rotate-180" />
-                    <img src={vector2} alt="vector" className="top-[33px] -right-[175px] animate-[etSpin_7s_linear_infinite]" />
-                </div>
             </main>
             <Footer />
         </>

@@ -70,9 +70,11 @@ router.delete('/events/:eventId', hateoas('event'), authenticateToken, isEventOw
 router.post('/events/:eventId/images', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
-router.patch('/events/:eventId/status', hateoas('event'), authenticateToken, UserOrAdmin, eventController.updateEventStatus);
+router.patch('/events/:eventId/status', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.updateEventStatus);
+router.patch('/events/:eventId/status/auto', hateoas('event'), eventController.updateEventStatusById);
 router.patch('/events/update-statuses', hateoas('event'), eventController.updateAllEventStatusesByDate);
 router.get('/events-count', hateoas('event'), eventController.getTotalEventCount);
+router.get('/admin/stats', hateoas('event'), authenticateToken, isAdmin, eventController.getDashboardStats);
 
 //////// USER ROUTES ////////
 
