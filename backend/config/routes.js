@@ -30,6 +30,7 @@ const isParticipantOwnerOrAdmin = require('../middlewares/isParticipantOwnerOrAd
 const isReportOwnerOrAdmin = require('../middlewares/isReportOwnerOrAdmin');
 const isRatingOwnerOrAdmin = require('../middlewares/isRatingOwnerOrAdmin');
 const { extractUserFromToken } = require('../middlewares/authOptional');
+const hateoas = require('../middlewares/hateoas');
 const { profileUpload, eventUpload, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
 
 
@@ -72,7 +73,6 @@ router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin,
 router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
 router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
 router.get('/events-count', eventController.getTotalEventCount);
-router.get('/admin/stats', authenticateToken, isAdmin, eventController.getDashboardStats);
 
 //////// USER ROUTES ////////
 
@@ -112,6 +112,7 @@ router.post('/admin/users', authenticateToken, isAdmin, userController.adminCrea
 router.post('/categories', authenticateToken, categoryController.createCategory);
 router.put('/categories/:id', authenticateToken, categoryController.updateCategory);
 router.delete('/categories/:id', authenticateToken, categoryController.deleteCategory);
+router.get('/admin/stats', authenticateToken, isAdmin, eventController.getDashboardStats);
 
 //////// PARTICIPANT ROUTES ////////
 

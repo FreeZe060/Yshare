@@ -69,6 +69,13 @@ function EventDetails() {
     const maxGuests = 3;
     const [guests, setGuests] = useState([]);
     /***********
+   * ACCESS CONTROL:
+   ************/
+    const isCreator = user && event && user.id === event.organizer?.id;
+    const isAdmin = user && user.role === 'Administrateur';
+    const isParticipantRegistered = participants?.some(p => p.user.id === user?.id && p.status === "Inscrit");
+    const eventTermine = event?.status === "Terminé";
+    /***********
     * IMAGES EVENT EDITING:
     ************/
     const { addImages } = useAddEventImages();
@@ -520,6 +527,7 @@ function EventDetails() {
                             eventStatus={event?.status}
                             hasRated={hasRated}
                             isParticipant={isParticipant}
+                            openPopup={() => setShowRatingsPopup(true)}
                         />
                     )}
                     <div className="py-[130px] md:py-[60px] lg:py-[80px] et-event-details-content">
@@ -566,6 +574,12 @@ function EventDetails() {
                                     setNewMaxParticipants={setNewMaxParticipants}
                                     originalMaxParticipants={originalMaxParticipants}
                                     handleCancelTitleDescription={handleCancelTitleDescription}
+                                    isCreator={isCreator}
+                                    isAdmin={isAdmin}
+                                    isParticipantRegistered={isParticipantRegistered}
+                                    eventTermine={eventTermine}
+                                    onRateClick={() => setShowRatingsPopup(true)}
+                                    hasRated={hasRated}
                                 />
                                 <EventMainRightColumn
                                     event={event}

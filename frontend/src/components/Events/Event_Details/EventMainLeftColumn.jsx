@@ -27,6 +27,12 @@ function EventMainLeftColumn({
     newMaxParticipants,
     setNewMaxParticipants,
     originalMaxParticipants,
+    isCreator,
+    isAdmin,
+    isParticipantRegistered,
+    eventTermine,
+    hasRated,
+    onRateClick
 }) {
     const participantCountClass = participants?.length >= event?.max_participants
         ? "text-red-600"
@@ -191,26 +197,197 @@ function EventMainLeftColumn({
                     )}
                 </h3>
                 {participants?.length === 0 ? (
-                    <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in">
-                        <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px] animate-bounce">
-                            Aucun participant n'est encore inscrit
-                        </h4>
-                        <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
-                            Soyez le premier à rejoindre cette aventure !
-                        </p>
-                        <a
-                            onClick={handleApplyToEvent}
-                            href="#"
-                            className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
-                        >
-                            Candidater maintenant
-                        </a>
+                    <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in mb-6">
+                        {eventTermine ? (
+                            isCreator ? (
+                                <>
+                                    <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                        Votre événement est maintenant terminé
+                                    </h4>
+                                    <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                        N'hésitez pas à en créer un autre ici.
+                                    </p>
+                                    <Link
+                                        to="/event/create"
+                                        className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
+                                    >
+                                        Créer un nouvel événement
+                                    </Link>
+                                </>
+                            ) : isAdmin ? (
+                                <>
+                                    <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                        Cet événement est maintenant terminé
+                                    </h4>
+                                    <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                        Vous pouvez consulter l'ensemble des participants ici.
+                                    </p>
+                                    <Link
+                                        to={`/event/${event?.id}/participants`}
+                                        className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all duration-300"
+                                    >
+                                        Voir tous les participants
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                        Cet événement est maintenant terminé
+                                    </h4>
+                                    <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                        Vous ne pouvez plus postuler.
+                                    </p>
+                                </>
+                            )
+                        ) : isCreator ? (
+                            <>
+                                <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                    Vous n'avez pas encore de participants
+                                </h4>
+                                <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                    N'hésitez pas à créer une news pour mettre en avant votre événement.
+                                </p>
+                                <Link
+                                    to="/news/create"
+                                    className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
+                                >
+                                    Créer une news
+                                </Link>
+                            </>
+                        ) : isAdmin ? (
+                            <>
+                                <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                    Cet événement n'a pour l'instant pas encore de participants
+                                </h4>
+                                <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                    Si vous souhaitez y participer, vous pouvez postuler ici.
+                                </p>
+                                <a
+                                    onClick={handleApplyToEvent}
+                                    href="#"
+                                    className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
+                                >
+                                    Postuler maintenant
+                                </a>
+                            </>
+                        ) : (
+                            <>
+                                <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px] animate-bounce">
+                                    Aucun participant n'est encore inscrit
+                                </h4>
+                                <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                    Soyez le premier à rejoindre cette aventure !
+                                </p>
+                                <a
+                                    onClick={handleApplyToEvent}
+                                    href="#"
+                                    className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
+                                >
+                                    Candidater maintenant
+                                </a>
+                            </>
+                        )}
                     </div>
                 ) : (
                     <>
+                        {eventTermine && !isAdmin && !isCreator && (
+                            <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in mb-6">
+                                <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                    Cet événement est maintenant terminé
+                                </h4>
+
+                                {!isParticipantRegistered && (
+                                    <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                        Vous ne pouvez plus postuler.
+                                    </p>
+                                )}
+
+                                {isParticipantRegistered && (
+                                    hasRated ? (
+                                        <>
+                                            <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                                Vous pouvez consulter votre note ici.
+                                            </p>
+                                            <Link
+                                                to={`/users/${user?.id}/ratings`}
+                                                className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow mt-[10px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all duration-300"
+                                            >
+                                                Voir ma note
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                                N'hésitez pas à noter l'événement.
+                                            </p>
+                                            <button
+                                                onClick={onRateClick}
+                                                className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow mt-[10px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all duration-300"
+                                            >
+                                                Noter l'événement
+                                            </button>
+                                        </>
+                                    )
+                                )}
+                            </div>
+                        )}
+
+                        {eventTermine && isCreator && (
+                            <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in mb-6">
+                                <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                    Votre événement est maintenant terminé
+                                </h4>
+                                <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                    N'hésitez pas à en créer un autre ici.
+                                </p>
+                                <Link
+                                    to="/events/create"
+                                    className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow-lg mt-[20px] px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all animate-pulse duration-300"
+                                >
+                                    Créer un nouvel événement
+                                </Link>
+
+                                {participants?.length > 0 && (
+                                    <>
+                                        <p className="mb-[10px] text-[16px] text-etGray animate-slide-up mt-4">
+                                            Vous pouvez consulter l'ensemble des participants ayant rejoint votre événement ici.
+                                        </p>
+                                        <Link
+                                            to={`/event/${event?.id}/participants`}
+                                            className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all duration-300"
+                                        >
+                                            Voir tous les participants
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {eventTermine && isAdmin && participants?.length > 0 && (
+                            <div className="bg-[#fdf5ff] p-[30px] border border-[#C320C0] border-dashed rounded-[12px] text-center animate-fade-in mb-6">
+                                <h4 className="mb-[10px] font-bold text-[#C320C0] text-[24px]">
+                                    Cet événement est maintenant terminé
+                                </h4>
+                                <p className="mb-[10px] text-[16px] text-etGray animate-slide-up">
+                                    Vous pouvez consulter l'ensemble des participants ici.
+                                </p>
+                                <Link
+                                    to={`/event/${event?.id}/participants`}
+                                    className="inline-block bg-[#C320C0] hover:bg-[#a51899] shadow px-[24px] py-[12px] rounded-full font-medium text-[16px] text-white transition-all duration-300"
+                                >
+                                    Voir tous les participants
+                                </Link>
+
+                                {isParticipantRegistered && (
+                                    <p className="mt-4 text-[16px] text-etGray animate-slide-up">
+                                        N'hésitez pas à noter cet événement.
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
                         {displayedParticipants.map((participant, index) => {
                             const user = participant?.user;
-                            console.log("Participants reçus :", participants);
                             if (!user) return null;
                             return (
                                 <div
