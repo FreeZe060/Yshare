@@ -7,21 +7,41 @@ function hateoas(resourceType, resourceIdField = 'id') {
 
             const baseUrl = `${req.protocol}://${req.get('host')}`;
 
+            const toPlainObject = (item) => {
+                if (!item) return item;
+                // Convertit Sequelize instance en JSON si besoin
+                if (typeof item.toJSON === 'function') {
+                    return item.toJSON();
+                }
+                return item;
+            };
+
             const addLinks = (item) => {
                 if (!item || typeof item !== 'object') return item;
 
-                const id = item[resourceIdField];
-                const links = generateLinks(resourceType, id, baseUrl);
+                const plainItem = toPlainObject(item);
+                const id = plainItem[resourceIdField];
+                if (!id) return plainItem;
 
-                return { ...item, _links: links };
+                const links = generateLinks(resourceType, id, baseUrl);
+                return { ...plainItem, _links: links };
             };
 
-            if (Array.isArray(data)) {
-                data = data.map(addLinks);
-            } else if (data[resourceType]) {
-                data[resourceType] = data[resourceType].map(addLinks);
-            } else {
-                data = addLinks(data);
+            try {
+                if (Array.isArray(data)) {
+                    data = data.map(addLinks);
+                }
+                else if (data[`${resourceType}s`] && Array.isArray(data[`${resourceType}s`])) {
+                    data[`${resourceType}s`] = data[`${resourceType}s`].map(addLinks);
+                }
+                else if (data[resourceType]) {
+                    data[resourceType] = addLinks(data[resourceType]);
+                }
+                else if (data[resourceIdField]) {
+                    data = addLinks(data);
+                }
+            } catch (err) {
+                console.error("[HATEOAS middleware] Erreur lors de l'ajout des liens :", err.message);
             }
 
             return originalJson(data);
@@ -49,7 +69,21 @@ function generateLinks(resourceType, id, baseUrl) {
                 delete: { href: `${baseUrl}/users/${id}`, method: "DELETE" },
                 eventHistory: { href: `${baseUrl}/users/${id}/event-history`, method: "GET" },
                 createdEvents: { href: `${baseUrl}/users/${id}/created-events`, method: "GET" },
-                ratings: { href: `${baseUrl}/ratings/user/${id}`, method: "GET" }
+                ratings: { href: `${baseUrl}/ratings/user/${id}`, method: "GET" },
+                participationCount: { href: `${baseUrl}/users/${id}/participation-count`, method: "GET" }
+            };
+        case 'participant':
+            return {
+                self: { href: `${baseUrl}/participants/${id}`, method: "GET" },
+                update: { href: `${baseUrl}/participants/${id}`, method: "PUT" },
+                delete: { href: `${baseUrl}/participants/${id}`, method: "DELETE" }
+            };
+        case 'admin':
+            return {
+                stats: { href: `${baseUrl}/admin/stats`, method: "GET" },
+                users: { href: `${baseUrl}/users`, method: "GET" },
+                createUser: { href: `${baseUrl}/admin/users`, method: "POST" },
+                categories: { href: `${baseUrl}/categories`, method: "GET" }
             };
         default:
             return {

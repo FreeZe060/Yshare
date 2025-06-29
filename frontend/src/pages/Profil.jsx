@@ -322,7 +322,7 @@ const Profil = () => {
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.173c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.285-3.97a1 1 0 00-.364-1.118L2.63 9.397c-.783-.57-.38-1.81.588-1.81h4.173a1 1 0 00.95-.69l1.286-3.97z" />
                                                 </svg>
                                             ))}
-                                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition">
+                                            <div className="absolute min-w-[50px] -top-6 left-1/2 -translate-x-1/2 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition">
                                                 {rating.rating ? parseFloat(rating.rating).toFixed(1) : '0.0'} / 5
                                             </div>
                                         </div>

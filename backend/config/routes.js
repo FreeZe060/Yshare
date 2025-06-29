@@ -60,19 +60,19 @@ router.post('/log-suspicious', (req, res) => {
 
 //////// EVENTS ROUTES ////////
 
-router.get('/events', eventController.getAllEvents);
-router.get('/events/mine', authenticateToken, eventController.getMyEvents);
-router.get('/events/:id', extractUserFromToken, eventController.getEventById);
-router.post('/events', eventUpload.array('images'), authenticateToken, eventController.createEvent);
-router.put('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventController.updateEvent);
-router.put('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventUpload.single('image'), eventController.updateEventImages);
-router.delete('/events/:eventId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteEvent);
-router.post('/events/:eventId/images', authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
-router.put('/events/:eventId/images/:imageId/main', authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
-router.delete('/events/images/:imageId', authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
-router.patch('/events/:eventId/status', authenticateToken, UserOrAdmin, eventController.updateEventStatus);
-router.patch('/events/update-statuses', eventController.updateAllEventStatusesByDate);
-router.get('/events-count', eventController.getTotalEventCount);
+router.get('/events', hateoas('event'), eventController.getAllEvents);
+router.get('/events/mine', hateoas('event'), authenticateToken, eventController.getMyEvents);
+router.get('/events/:id', hateoas('event'), extractUserFromToken, eventController.getEventById);
+router.post('/events', hateoas('event'), eventUpload.array('images'), authenticateToken, eventController.createEvent);
+router.put('/events/:eventId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.updateEvent);
+router.put('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.single('image'), eventController.updateEventImages);
+router.delete('/events/:eventId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteEvent);
+router.post('/events/:eventId/images', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
+router.put('/events/:eventId/images/:imageId/main', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
+router.delete('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
+router.patch('/events/:eventId/status', hateoas('event'), authenticateToken, UserOrAdmin, eventController.updateEventStatus);
+router.patch('/events/update-statuses', hateoas('event'), eventController.updateAllEventStatusesByDate);
+router.get('/events-count', hateoas('event'), eventController.getTotalEventCount);
 
 //////// USER ROUTES ////////
 
