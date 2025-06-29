@@ -29,8 +29,7 @@ const Team = () => {
                             <div class="-top-[43px] right-[20px] absolute et-member-socials">
                                 <div class="bottom-[calc(100%+8px)] -z-[2] absolute flex flex-col gap-[8px] opacity-0 group-hover:opacity-100 text-[14px] transition translate-y-[100%] group-hover:translate-y-0 duration-[400ms] et-speaker__socials">
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-facebook-f"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-x-twitter"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fab fa-linkedin-in"></i></a>
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-instagram"></i></a>
                                 </div>
                                 <div class="flex justify-center items-center bg-[#C320C0] rounded-full w-[36px] aspect-square et-member-socials__icon">
@@ -39,7 +38,7 @@ const Team = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a href="team-member-details.html" class="hover:text-[#C320C0]">Tim Vannson</a></h5>
+                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a class="hover:text-[#C320C0] cursor-pointer">Tim Vannson</a></h5>
                             <span class="text-[16px] text-etGray">0</span>
                         </div>
                     </div>
@@ -53,8 +52,7 @@ const Team = () => {
                             <div class="-top-[43px] right-[20px] absolute et-member-socials">
                                 <div class="bottom-[calc(100%+8px)] -z-[2] absolute flex flex-col gap-[8px] opacity-0 group-hover:opacity-100 text-[14px] transition translate-y-[100%] group-hover:translate-y-0 duration-[400ms] et-speaker__socials">
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-facebook-f"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-x-twitter"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fab fa-linkedin-in"></i></a>
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-instagram"></i></a>
                                 </div>
                                 <div class="flex justify-center items-center bg-[#C320C0] rounded-full w-[36px] aspect-square et-member-socials__icon">
@@ -63,7 +61,7 @@ const Team = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a href="team-member-details.html" class="hover:text-[#C320C0]">Alexandre Perez</a></h5>
+                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a class="hover:text-[#C320C0] cursor-pointer">Alexandre Perez</a></h5>
                             <span class="text-[16px] text-etGray">0</span>
                         </div>
                     </div>
@@ -77,8 +75,7 @@ const Team = () => {
                             <div class="-top-[43px] right-[20px] absolute et-member-socials">
                                 <div class="bottom-[calc(100%+8px)] -z-[2] absolute flex flex-col gap-[8px] opacity-0 group-hover:opacity-100 text-[14px] transition translate-y-[100%] group-hover:translate-y-0 duration-[400ms] et-speaker__socials">
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-facebook-f"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-x-twitter"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fab fa-linkedin-in"></i></a>
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-instagram"></i></a>
                                 </div>
                                 <div class="flex justify-center items-center bg-[#C320C0] rounded-full w-[36px] aspect-square et-member-socials__icon">
@@ -87,7 +84,7 @@ const Team = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a href="team-member-details.html" class="hover:text-[#C320C0]">Jeremy Prat</a></h5>
+                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a class="hover:text-[#C320C0] cursor-pointer">Jeremy Prat</a></h5>
                             <span class="text-[16px] text-etGray">0</span>
                         </div>
                     </div>
@@ -101,8 +98,7 @@ const Team = () => {
                             <div class="-top-[43px] right-[20px] absolute et-member-socials">
                                 <div class="bottom-[calc(100%+8px)] -z-[2] absolute flex flex-col gap-[8px] opacity-0 group-hover:opacity-100 text-[14px] transition translate-y-[100%] group-hover:translate-y-0 duration-[400ms] et-speaker__socials">
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-facebook-f"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-x-twitter"></i></a>
-                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-linkedin-in"></i></a>
+                                    <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fab fa-linkedin-in"></i></a>
                                     <a href="#" class="flex justify-center items-center hover:bg-[#C320C0] border border-white hover:border-[#C320C0] rounded-full w-[36px] h-[36px] text-white"><i class="fa-brands fa-instagram"></i></a>
                                 </div>
                                 <div class="flex justify-center items-center bg-[#C320C0] rounded-full w-[36px] aspect-square et-member-socials__icon">
@@ -111,7 +107,7 @@ const Team = () => {
                                     </svg>
                                 </div>
                             </div>
-                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a href="team-member-details.html" class="hover:text-[#C320C0]">Ibrahim Sako</a></h5>
+                            <h5 class="mb-[4px] font-semibold text-[22px] text-etBlack md:text-[20px]"><a class="hover:text-[#C320C0] cursor-pointer">Ibrahim Sako</a></h5>
                             <span class="text-[16px] text-etGray">0</span>
                         </div>
                     </div>
@@ -123,8 +119,8 @@ const Team = () => {
                 <div className="-right-[319px] bottom-[300px] bg-gradient-to-b from-etPink to-etPink blur-[230px] rounded-full w-[588px] aspect-square"></div>
                 <img src={vector1} alt="vector" className="top-0 left-0 opacity-25" />
                 <img src={vector1} alt="vector" className="right-0 bottom-0 opacity-25 rotate-180" />
-                <img src={vector2} alt="vector" className="top-[33px] -right-[175px] animate-[etSpin_7s_linear_infinite]" />
-                <img src={vector2} alt="vector" className="top-[1033px] -left-[175px] animate-[etSpin_7s_linear_infinite]" />
+                <img src={vector2} alt="vector" className="top-[33px] -right-[175px] animate-[etSpin_7s_anear_infinite]" />
+                <img src={vector2} alt="vector" className="top-[1033px] -left-[175px] animate-[etSpin_7s_anear_infinite]" />
             </div>
         </section>
     );

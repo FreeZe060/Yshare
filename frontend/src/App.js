@@ -29,8 +29,6 @@ import RatingsPage from './pages/RatingsPage';
 
 import NotFound from './pages/NotFound';
 
-import NotFound from './pages/NotFound';
-
 function App() {
 
 	return (
