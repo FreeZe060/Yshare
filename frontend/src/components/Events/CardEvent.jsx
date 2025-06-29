@@ -13,7 +13,6 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
         ? mainImage.image_url
         : `${API_BASE_URL}${mainImage?.image_url || ''}`;
 
-    // ➡️ State local pour gérer le status mis à jour
     const [localStatus, setLocalStatus] = useState(event.status);
 
     const handleStatusChange = (newStatus) => {

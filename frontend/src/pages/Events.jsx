@@ -20,8 +20,6 @@ import vector2 from "../assets/img/et-3-event-vector-2.svg";
 
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
-import ParticipantAvatars from '../components/Home/ParticipantAvatars';
-
 import CardEvent from '../components/Events/CardEvent';
 
 import useCategories from '../hooks/Categorie/useCategories';

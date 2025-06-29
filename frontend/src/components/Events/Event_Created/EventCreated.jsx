@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import useSlideUpAnimation from '../../../hooks/Animations/useSlideUpAnimation';
 import '../../../assets/css/style.css';
 import useTextAnimation from '../../../hooks/Animations/useTextAnimation';
 
-import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
 import vector1 from "../../../assets/img/et-3-event-vector.svg";
 import vector2 from "../../../assets/img/et-3-event-vector-2.svg";
 import FiltreParticipant from '../../Participant/FiltreParticipant';
+import CardEvent from '../../Events/CardEvent';
 
 function Event_Created({
     filtered,
-    API_BASE_URL,
-    getFormattedDayAndMonthYear,
-    capitalizeFirstLetter,
-    formatEuro,
     statusFilter,
     setStatusFilter,
     eventFilter,
@@ -26,19 +22,21 @@ function Event_Created({
     onSuggestionsClearRequested,
     statuses,
     events,
-    inputProps
+    inputProps,
+    toggleFavoris,
+    isFavoris
 }) {
-
     useSlideUpAnimation('.rev-slide-up', filtered);
+    useTextAnimation();
 
     return (
-        <section className="z-[1] relative py-[60px] md:py-[60px] xl:py-[80px] overflow-hidden">
+        <section className="z-[1] relative py-[60px] md:py-[60px] xl:py-[80px] min-h-[60rem] overflow-hidden">
             <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
                 <div className="mb-[60px] md:mb-[40px] pb-[60px] md:pb-[40px] border-[#8E8E93]/25 border-b">
                     <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
                         Vos créations
                     </h6>
-                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements créés</h2>
+                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements Créés</h2>
                     <FiltreParticipant
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
@@ -55,66 +53,33 @@ function Event_Created({
                     />
                 </div>
 
-                {filtered.map((item, index) => {
-                    const mainImage = item.EventImages?.find(img => img.is_main) || item.EventImages?.[0];
-                    const imageUrl = mainImage?.image_url?.startsWith('http')
-                        ? mainImage.image_url
-                        : `${API_BASE_URL}${mainImage?.image_url || ''}`;
-
-                    return (
-                        <div key={index} className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-
-                            <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
-                                <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
-                                    {getFormattedDayAndMonthYear(item.start_time).day}
-                                </span>
-                                {getFormattedDayAndMonthYear(item.start_time).monthYear}
-                            </h5>
-                            <div className="shrink-0">
-                                <img
-                                    src={imageUrl}
-                                    alt="Event"
-                                    className="rounded-xl w-full max-w-[300px] object-cover aspect-[300/128]"
-                                />
-                            </div>
-                            <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
-                                <div className="min-w-0">
-                                    <Link to={`/event/${item.id}`}>
-                                        <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
-                                            {capitalizeFirstLetter(item.title)}
-                                        </h3>
-                                    </Link>
-                                    <h6 className="text-[17px] text-etBlue">
-                                        <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
-                                        {capitalizeFirstLetter(item.city)}, {item.street_number} {item.street}
-                                    </h6>
-                                    <div className={`text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2
-                                        ${item.status === 'Planifié' ? 'bg-blue-100 text-blue-700' : ''}
-                                        ${item.status === 'En Cours' ? 'bg-green-100 text-green-700' : ''}
-                                        ${item.status === 'Terminé' ? 'bg-gray-200 text-gray-700' : ''}
-                                        ${item.status === 'Annulé' ? 'bg-red-100 text-red-700' : ''}
-                                    `}>{item.status}</div>
-                                </div>
-                                <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
-                                    {formatEuro(item.price)}
-                                </h4>
-                            </div>
-                            <div className="flex flex-col justify-center items-center lg:items-end gap-3 pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0">
-                                <Link to={`/event/${item.id}`} className="min-w-[166px] et-3-btn">
-                                    Voir l'event
-                                </Link>
-
-                                {item.participants?.length > 0 && (
-                                    <Link to={`/event/${item.id}/participants`} className="et-3-btn">
-                                        Voir participants
-                                    </Link>
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
+                {filtered.length === 0 ? (
+                    <div className="mt-10 text-center animate__animated animate__fadeIn h-full flex flex-col items-center justify-center">
+                        <p className="bg-clip-text bg-gradient-to-r from-[#580FCA] to-[#F929BB] font-semibold text-[20px] text-transparent">
+                            Vous n'avez encore créé aucun événement.
+                        </p>
+                        <p className="mt-2 text-gray-500 text-sm">Partagez vos idées et créez un nouvel événement dès maintenant !</p>
+                        <Link
+                            to="/create-event"
+                            className="mt-4 inline-block px-6 py-3 rounded-lg bg-gradient-to-tr from-[#580FCA] to-[#F929BB] text-white font-semibold hover:opacity-90 transition"
+                        >
+                            Créer un Événement
+                        </Link>
+                    </div>
+                ) : (
+                    filtered.map((event, index) => (
+                        <CardEvent
+                            key={index}
+                            event={event}
+                            isAuthenticated={true}
+                            isFavoris={isFavoris}
+                            toggleFavoris={toggleFavoris}
+                        />
+                    ))
+                )}
             </div>
 
+            {/* VECTORS + BACKGROUND */}
             <div className="*:-z-[1] *:absolute">
                 <h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">
                     événements créés
