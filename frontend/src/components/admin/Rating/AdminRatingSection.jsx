@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
+import NotFound from '../../../pages/NotFound';
 
 const sortIcon = (dir) =>
     dir === 'asc' ? <i className="fas fa-sort-up" /> : <i className="fas fa-sort-down" />;
 
-const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, onDelete }) => {
+const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, onDelete, Link }) => {
     const theadRef = useRef();
 
     const columns = [
@@ -16,23 +17,23 @@ const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, 
     ];
 
     if (loading) return <RowSkeleton count={6} />;
-    if (error) return <p className="text-red-600 font-medium">Erreur : {error}</p>;
+    if (error) return <NotFound/>;
 
     return (
         <div>
-            <h1 className="text-2xl font-bold py-4 uppercase text-gray-800">Notes des utilisateurs</h1>
+            <h1 className="py-4 font-bold text-gray-800 text-2xl uppercase">Notes des utilisateurs</h1>
 
-            <div className="overflow-x-auto rounded-lg shadow bg-white">
+            <div className="bg-white shadow rounded-lg overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead ref={theadRef} className="bg-indigo-100 text-black">
                         <tr>
                             {columns.map(col => (
                                 <th
                                     key={col.field}
-                                    className="py-3 px-6 text-left cursor-pointer"
+                                    className="px-6 py-3 text-left cursor-pointer"
                                     onClick={() => sort.toggleSort(col.field)}
                                 >
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex justify-between items-center">
                                         <span className={`font-medium uppercase tracking-wide ${sort.sortField === col.field ? 'underline font-bold' : ''}`}>
                                             {col.label}
                                         </span>
@@ -40,7 +41,7 @@ const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, 
                                     </div>
                                 </th>
                             ))}
-                            <th className="py-3 px-6 text-left">Actions</th>
+                            <th className="px-6 py-3 text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,20 +53,36 @@ const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, 
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -8 }}
                                     transition={{ duration: 0.25 }}
-                                    className="border-b border-gray-200 hover:bg-gray-50"
+                                    className="hover:bg-gray-50 border-gray-200 border-b"
                                 >
-                                    <td className="py-3 px-6 text-black">
-                                        <div className="flex items-center space-x-2">
-                                            <img src={`http://localhost:8080${rating.user?.profileImage || '/default-profile.jpg'}`} alt="pp" className="w-8 h-8 rounded-full" />
+                                    <td className="px-6 py-3 text-black">
+
+                                        <Link to={`/profile/${rating.user?.id}`} className="flex items-center space-x-2 hover:underline">
+                                            <img
+                                                src={`http://localhost:8080${rating.user?.profileImage || '/default-profile.jpg'}`}
+                                                alt="pp"
+                                                className="rounded-full w-8 h-8"
+                                            />
                                             <span>{rating.user?.name} {rating.user?.lastname}</span>
-                                        </div>
+                                        </Link>
                                     </td>
-                                    <td className="py-3 px-6 text-black">{rating.event?.title || '–'}</td>
-                                    <td className="py-3 px-6 text-black">{rating.rating}</td>
-                                    <td className="py-3 px-6 text-black">{rating.message}</td>
-                                    <td className="py-3 px-6">
+                                    <td className="px-6 py-3 text-black">
+                                        {rating.event ? (
+                                            <Link
+                                                to={`/event/${rating.event.id}`}
+                                                className="text-indigo-600 hover:underline"
+                                            >
+                                                {rating.event.title}
+                                            </Link>
+                                        ) : (
+                                            '–'
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-3 text-black">{rating.rating}</td>
+                                    <td className="px-6 py-3 text-black">{rating.message}</td>
+                                    <td className="px-6 py-3">
                                         <button onClick={() => onDelete(rating)} title="Supprimer">
-                                            <i className="fas fa-trash text-red-500 hover:scale-110 transition" />
+                                            <i className="text-red-500 hover:scale-110 transition fas fa-trash" />
                                         </button>
                                     </td>
                                 </motion.tr>

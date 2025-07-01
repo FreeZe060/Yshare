@@ -76,12 +76,30 @@ exports.getReports = async (req, res) => {
         }
 
         console.log(`[getReports] Récupération pour user ID: ${req.user.id} | Role: ${req.user.role}`);
-        const reports = await reportService.getReportsByUser(req.user.id, req.user.role === "Administrateur");
+        const reports = await reportService.getAllReports(req.user.id, req.user.role === "Administrateur");
 
         console.log(`[getReports] ${reports.length} signalements trouvés`);
         res.status(200).json(reports);
     } catch (error) {
         console.error("[getReports] Erreur :", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getMyReports = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(403).json({ message: "Utilisateur non authentifié." });
+        }
+
+        const userId = req.user.id;
+        console.log(`[getMyReports] Récupération des signalements pour l'utilisateur ID ${userId}`);
+
+        const reports = await reportService.getReportsByUser(userId);
+
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error("[getMyReports] Erreur :", error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -165,6 +183,22 @@ exports.getReportMessages = async (req, res) => {
         res.status(200).json(messages);
     } catch (error) {
         console.error("[getReportMessages] Erreur :", error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.deleteReport = async (req, res) => {
+    try {
+        const { reportId } = req.params;
+        console.log(`[deleteReport] 🔵 Requête reçue pour suppression du report ID=${reportId}`);
+
+        const result = await reportService.deleteReport(reportId);
+
+        console.log(`[deleteReport] 🟢 ${result.message}`);
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.error(`[deleteReport] ❌ Erreur : ${error.message}`);
         res.status(500).json({ message: error.message });
     }
 };

@@ -8,7 +8,6 @@ import '../assets/css/style.css';
 
 import Header from "../components/Partials/Header";
 import Footer from '../components/Partials/Footer';
-import CustomSelect from '../utils/CustomSelect';
 
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
@@ -20,9 +19,8 @@ import vector2 from "../assets/img/et-3-event-vector-2.svg";
 
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
-import ParticipantAvatars from '../components/Home/ParticipantAvatars';
-
 import CardEvent from '../components/Events/CardEvent';
+import CustomSelect from '../utils/CustomSelect';
 
 import useCategories from '../hooks/Categorie/useCategories';
 import useEvents from '../hooks/Events/useEvents';
@@ -32,7 +30,7 @@ import useAddFavoris from '../hooks/Favoris/useAddFavoris';
 import useRemoveFavoris from '../hooks/Favoris/useRemoveFavoris';
 import { useAuth } from '../config/authHeader';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 function Events() {
     useSlideUpAnimation();
@@ -42,10 +40,12 @@ function Events() {
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
     const categoryOptions = ['Tous', ...allCategories.slice(0, 3).map(cat => capitalizeFirstLetter(cat.name))];
 
-    const [selectedPrice, setSelectedPrice] = useState('Tous');
-    const [selectedDate, setSelectedDate] = useState('Tous');
-    const [selectedSort, setSelectedSort] = useState('Tous');
-    const [selectedCity, setSelectedCity] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+
+    const [categoryFilter, setCategoryFilter] = useState('Tous');
+    const [priceFilter, setPriceFilter] = useState('Tous');
+    const [dateFilter, setDateFilter] = useState('Tous');
+    const [sortFilter, setSortFilter] = useState('Tous');
 
     const { user, isAuthenticated } = useAuth();
     const { favoris, loading: favLoading, error, refreshFavoris } = useFavoris();
@@ -58,35 +58,46 @@ function Events() {
     const filters = useMemo(() => {
         const query = {};
 
-        if (selectedCategoryId !== null) {
-            query.categoryId = selectedCategoryId;
+        // ✅ Gestion catégorie
+        if (categoryFilter !== 'Tous') {
+            const selectedCat = allCategories.find(cat => capitalizeFirstLetter(cat.name) === categoryFilter);
+            if (selectedCat) query.categoryId = selectedCat.id;
         }
 
-        if (selectedCity) {
-            query.city = selectedCity;
-        }
+        // ✅ Gestion ville (si tu souhaites ajouter un champ de filtre ville plus tard)
+        // if (selectedCity) {
+        //     query.city = selectedCity;
+        // }
 
         const today = new Date();
 
-        if (selectedDate === "Aujourd’hui") {
+        // ✅ Gestion date
+        if (dateFilter === "Aujourd’hui") {
             query.date = today.toISOString().split("T")[0];
-        } else if (selectedDate === "Cette semaine") {
+        } else if (dateFilter === "Cette semaine") {
             const startOfWeek = new Date(today);
             startOfWeek.setDate(today.getDate() - today.getDay());
             query.date = startOfWeek.toISOString().split("T")[0];
-        } else if (selectedDate === "Ce mois") {
+        } else if (dateFilter === "Ce mois") {
             const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             query.date = startOfMonth.toISOString().split("T")[0];
         }
 
-        if (selectedSort === "Les plus récents") {
+        // ✅ Gestion tri
+        if (sortFilter === "Les plus récents") {
             query.sort = "start_time_desc";
-        } else if (selectedSort === "Populaires") {
-            query.sort = "popularity"; // à gérer dans le backend
+        } else if (sortFilter === "Populaires") {
+            query.sort = "popularity";
+        }
+
+        if (priceFilter === "Gratuit") {
+            query.price = 0;
+        } else if (priceFilter === "Payant") {
+            query.price = "paid";
         }
 
         return query;
-    }, [selectedCategoryId, selectedCity, selectedDate, selectedSort]);
+    }, [categoryFilter, dateFilter, sortFilter, priceFilter, allCategories]);
 
 
     const { events, loading: eventsLoading } = useEvents(filters, 1, 100, true, refreshKey);
@@ -170,49 +181,48 @@ function Events() {
                             </h6>
                             <h2 className="mb-[26px] text-center anim-text et-3-section-title">À l’affiche prochainement</h2>
 
-                            <div className="flex flex-col flex-wrap justify-center gap-4 bg-white shadow px-4 py-2 rounded-xl">
+                            <div className="flex md:flex-row flex-col flex-wrap justify-center gap-4 bg-white shadow px-4 py-4 rounded-xl">
+
+                                {/* Filtre Catégorie */}
                                 <div className="w-full sm:w-[48%] md:w-[23%]">
                                     <CustomSelect
                                         label="Catégorie"
                                         options={categoryOptions}
-                                        value={selectedCategoryName}
-                                        onChange={(val) => {
-                                            if (val === 'Tous') {
-                                                setSelectedCategoryId(null);
-                                            } else {
-                                                const cat = allCategories.find((c) => capitalizeFirstLetter(c.name) === val);
-                                                if (cat) setSelectedCategoryId(cat.id);
-                                            }
-                                        }}
+                                        value={categoryFilter}
+                                        onChange={setCategoryFilter}
                                     />
                                 </div>
 
+                                {/* Filtre Prix */}
                                 <div className="w-full sm:w-[48%] md:w-[23%]">
                                     <CustomSelect
                                         label="Prix"
                                         options={['Tous', 'Gratuit', 'Payant']}
-                                        value={selectedPrice}
-                                        onChange={(val) => setSelectedPrice(val)}
+                                        value={priceFilter}
+                                        onChange={setPriceFilter}
                                     />
                                 </div>
 
+                                {/* Filtre Date */}
                                 <div className="w-full sm:w-[48%] md:w-[23%]">
                                     <CustomSelect
                                         label="Date"
                                         options={['Tous', 'Aujourd’hui', 'Cette semaine', 'Ce mois']}
-                                        value={selectedDate}
-                                        onChange={(val) => setSelectedDate(val)}
+                                        value={dateFilter}
+                                        onChange={setDateFilter}
                                     />
                                 </div>
 
+                                {/* Filtre Popularité */}
                                 <div className="w-full sm:w-[48%] md:w-[23%]">
                                     <CustomSelect
                                         label="Popularité"
                                         options={['Tous', 'Populaires', 'Les plus récents']}
-                                        value={selectedSort}
-                                        onChange={(val) => setSelectedSort(val)}
+                                        value={sortFilter}
+                                        onChange={setSortFilter}
                                     />
                                 </div>
+
                             </div>
                         </div>
 

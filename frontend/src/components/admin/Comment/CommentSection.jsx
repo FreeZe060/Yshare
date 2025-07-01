@@ -8,6 +8,8 @@ import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginate
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import CreateCommentModal from './CreateCommentModal';
 
+import NotFound from '../../../pages/NotFound';
+
 const MySwal = withReactContent(Swal);
 
 const sortIcon = (direction) =>
@@ -74,17 +76,17 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
     };
 
     if (loading) return <RowSkeleton count={6} />;
-    if (error) return <p className="text-red-600 font-medium">Erreur : {error}</p>;
+    if (error) return <NotFound/>;
 
     return (
         <div className="admin-comments">
-            <h1 className="text-2xl font-bold py-4 uppercase text-gray-800">Commentaires Récents</h1>
+            <h1 className="py-4 font-bold text-gray-800 text-2xl uppercase">Commentaires Récents</h1>
             <div className="flex justify-end mb-4">
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
+                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
                 >
-                    <i className="fas fa-comment-dots mr-2" />
+                    <i className="mr-2 fas fa-comment-dots" />
                     Ajouter un commentaire
                 </button>
                 <AnimatePresence>
@@ -98,17 +100,17 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
 
             </div>
 
-            <div className="overflow-x-auto rounded-lg shadow bg-white">
+            <div className="bg-white shadow rounded-lg overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
                         <tr>
                             {columns.map(col => (
                                 <th
                                     key={col.field}
-                                    className="py-3 px-4 cursor-pointer"
+                                    className="px-4 py-3 cursor-pointer"
                                     onClick={() => sort.toggleSort(col.field)}
                                 >
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex justify-between items-center">
                                         <span className={`font-medium uppercase tracking-wide ${sort.sortField === col.field ? 'underline font-bold' : ''}`}>
                                             {col.label}
                                         </span>
@@ -116,7 +118,7 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
                                     </div>
                                 </th>
                             ))}
-                            <th className="py-3 px-4">Actions</th>
+                            <th className="px-4 py-3">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,45 +130,45 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -8 }}
                                     transition={{ duration: 0.25 }}
-                                    className="border-b border-gray-200 hover:bg-gray-50"
+                                    className="hover:bg-gray-50 border-gray-200 border-b"
                                 >
-                                    <td className="py-2 px-4 max-w-xs truncate">
+                                    <td className="px-4 py-2 max-w-xs truncate">
                                         <Link
                                             to={`/profile/${comment.eventCreatorId}`}
-                                            className="text-indigo-600 hover:underline font-semibold text-sm"
+                                            className="font-semibold text-indigo-600 text-sm hover:underline"
                                         >{comment.author}</Link>
                                     </td>
-                                    <td className="py-2 px-4 max-w-xs truncate">
+                                    <td className="px-4 py-2 max-w-xs truncate">
                                         <Link
-                                            to={`/events/${comment.eventId}`}
-                                            className="text-indigo-600 hover:underline font-semibold text-sm"
+                                            to={`/event/${comment.eventId}`}
+                                            className="font-semibold text-indigo-600 text-sm hover:underline"
                                         >{comment.eventTitle}</Link>
                                     </td>
-                                    <td className="py-2 px-4 max-w-md">
+                                    <td className="px-4 py-2 max-w-md">
                                         <button
                                             onClick={() => handleViewThread(comment)}
-                                            className="text-gray-900 hover:text-indigo-600 text-sm break-words text-left w-full max-w-md"
+                                            className="w-full max-w-md text-gray-900 hover:text-indigo-600 text-sm text-left break-words"
                                         >{comment.message}</button>
                                     </td>
-                                    <td className="py-2 px-4 text-gray-500 text-sm">
+                                    <td className="px-4 py-2 text-gray-500 text-sm">
                                         {new Date(comment.createdAt).toLocaleDateString()}
                                     </td>
-                                    <td className="py-2 px-4">
-                                        <div className="flex space-x-3 items-center">
+                                    <td className="px-4 py-2">
+                                        <div className="flex items-center space-x-3">
                                             <button
                                                 onClick={() => handleViewThread(comment)}
                                                 title="Voir"
-                                                className="transform hover:scale-110 transition"
-                                            ><i className="fas fa-eye text-indigo-500" /></button>
+                                                className="hover:scale-110 transition transform"
+                                            ><i className="text-indigo-500 fas fa-eye" /></button>
                                             <button
                                                 onClick={() => onEdit(comment)}
                                                 title="Modifier"
-                                                className="transform hover:scale-110 transition text-yellow-500"
+                                                className="text-yellow-500 hover:scale-110 transition transform"
                                             ><i className="fas fa-pen" /></button>
                                             <button
                                                 onClick={() => onDelete(comment)}
                                                 title="Supprimer"
-                                                className="transform hover:scale-110 transition text-red-500"
+                                                className="text-red-500 hover:scale-110 transition transform"
                                             ><i className="fas fa-trash" /></button>
                                         </div>
                                     </td>

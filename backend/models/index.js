@@ -27,7 +27,7 @@ Event.hasMany(Comment, { foreignKey: 'id_event' });
 Comment.belongsTo(Event, { foreignKey: 'id_event' });
 
 User.hasMany(Comment, { foreignKey: 'id_user' });
-Comment.belongsTo(User, { foreignKey: 'id_user' });
+Comment.belongsTo(User, { foreignKey: 'id_user', as: 'author' });
 
 Comment.hasMany(Comment, { as: 'replies', foreignKey: 'id_comment' });
 Comment.belongsTo(Comment, { as: 'parent', foreignKey: 'id_comment' });

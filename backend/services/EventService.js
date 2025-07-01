@@ -3,6 +3,8 @@ const { Op, fn, col } = require('sequelize');
 
 class EventService {
     async getAllEvents(filters = {}, pagination = {}) {
+        console.log('[getAllEvents] ➤ Récupération des événements avec filtres et pagination');
+
         const {
             title,
             city,
@@ -14,6 +16,9 @@ class EventService {
 
         const { page = 1, limit = 10 } = pagination;
         const offset = (page - 1) * limit;
+
+        console.log(`[getAllEvents] ➤ Filtres :`, filters);
+        console.log(`[getAllEvents] ➤ Pagination : page=${page}, limit=${limit}`);
 
         const whereClause = {};
         if (title) whereClause.title = { [Op.like]: `%${title}%` };
@@ -57,83 +62,107 @@ class EventService {
             order.push(['start_time', 'ASC']);
         }
 
-        const events = await Event.findAll({
-            where: whereClause,
-            include,
-            attributes: {
-                include: [[fn('COUNT', col('participants.id')), 'nb_participants']],
-            },
-            group: ['Event.id', 'Categories.id', 'EventImages.id', 'organizer.id'],
-            offset,
-            limit: parseInt(limit),
-            subQuery: false,
-            order,
-        });
+        try {
+            const events = await Event.findAll({
+                where: whereClause,
+                include,
+                attributes: {
+                    include: [[fn('COUNT', col('participants.id')), 'nb_participants']],
+                },
+                group: ['Event.id', 'Categories.id', 'EventImages.id', 'organizer.id'],
+                offset,
+                limit: parseInt(limit),
+                subQuery: false,
+                order,
+            });
 
-        const total = await Event.count({
-            where: whereClause,
-            include: categoryId
-                ? [
-                    {
+            const total = await Event.count({
+                where: whereClause,
+                include: categoryId
+                    ? [{
                         model: Category,
                         through: { attributes: [] },
                         where: { id: categoryId },
                         required: true,
-                    },
-                ]
-                : [],
-        });
+                    }] : [],
+            });
 
-        return { events, total };
+            console.log(`[getAllEvents] ✅ ${events.length} événement(s) récupéré(s), total=${total}`);
+            return { events, total };
+
+        } catch (error) {
+            console.error('[getAllEvents] ❌ Erreur :', error.message);
+            throw new Error("Erreur lors de la récupération des événements : " + error.message);
+        }
     }
 
     async getEventById(eventId, userId = null) {
-        const event = await Event.findByPk(eventId, {
-            include: [
-                {
-                    model: Category,
-                    through: { attributes: [] }
-                },
-                {
-                    model: EventImage,
-                    as: 'EventImages',
-                },
-                {
-                    model: User,
-                    as: 'organizer',
-                    attributes: ['id', 'name', 'lastname', 'profileImage']
-                },
-                ...(userId ? [{
-                    model: Rating,
-                    where: { id_user: userId },
-                    required: false,
-                    attributes: ['id'],
-                }] : [])
-            ]
-        });
+        console.log(`[getEventById] ➤ Récupération de l’événement ID=${eventId} pour user=${userId ?? 'anonyme'}`);
 
-        if (!event) throw new Error("Événement introuvable.");
-
-        event.dataValues.isParticipant = false;
-        event.dataValues.hasRatedByUser = false;
-
-        if (userId) {
-            const participant = await Participant.findOne({
-                where: {
-                    id_event: eventId,
-                    id_user: userId,
-                    status: 'Inscrit'
-                }
+        try {
+            const event = await Event.findByPk(eventId, {
+                include: [
+                    {
+                        model: Category,
+                        through: { attributes: [] }
+                    },
+                    {
+                        model: EventImage,
+                        as: 'EventImages',
+                    },
+                    {
+                        model: User,
+                        as: 'organizer',
+                        attributes: ['id', 'name', 'lastname', 'profileImage']
+                    },
+                    ...(userId ? [{
+                        model: Rating,
+                        where: { id_user: userId },
+                        required: false,
+                        attributes: ['id'],
+                    }] : [])
+                ]
             });
 
-            if (participant) {
-                event.dataValues.isParticipant = true;
+            if (!event) {
+                console.warn(`[getEventById] ❌ Aucun événement trouvé avec ID ${eventId}`);
+                throw new Error("Événement introuvable.");
             }
 
-            event.dataValues.hasRatedByUser = (event.Ratings && event.Ratings.length > 0);
-        }
+            event.dataValues.isParticipant = false;
+            event.dataValues.hasRatedByUser = false;
 
-        return event;
+            if (userId) {
+                const participant = await Participant.findOne({
+                    where: {
+                        id_event: eventId,
+                        id_user: userId
+                    }
+                });
+
+                if (participant && participant.status === 'Inscrit') {
+                    event.dataValues.isParticipant = true;
+                    console.log(`[getEventById] ✅ L'utilisateur ${userId} est inscrit à l’événement`);
+                }
+
+                if (participant) {
+                    event.dataValues.participantStatus = participant.status;
+                    console.log(`[getEventById] ➤ Statut d'inscription pour user=${userId} : ${participant.status}`);
+                }
+
+                event.dataValues.hasRatedByUser = (event.Ratings && event.Ratings.length > 0);
+                if (event.dataValues.hasRatedByUser) {
+                    console.log(`[getEventById] ✅ L'utilisateur ${userId} a déjà noté cet événement`);
+                }
+            }
+
+            console.log(`[getEventById] ✅ Détails de l’événement ID ${event.id} récupérés avec succès`);
+            return event;
+
+        } catch (error) {
+            console.error('[getEventById] ❌ Erreur :', error.message);
+            throw new Error("Erreur lors de la récupération de l'événement : " + error.message);
+        }
     }
 
     async createEvent(data, images = []) {
@@ -143,34 +172,41 @@ class EventService {
             start_time, end_time, categories, max_participants
         } = data;
 
+        console.log('[createEvent] ➤ Début de la création de l’événement');
+        console.log('[createEvent] ➤ Données reçues :', {
+            title, id_org, price, city, start_time, end_time, categories
+        });
+
         const now = new Date();
         const startDate = new Date(start_time);
         const endDate = new Date(end_time);
 
         if (typeof categories === 'string') {
+            console.log('[createEvent] ➤ Parsing des catégories depuis une chaîne JSON');
             categories = JSON.parse(categories);
         }
 
-        console.log('Vérification des dates :');
+        console.log('[createEvent] ➤ Vérification des dates :');
         console.log('  - Maintenant      :', now.toISOString());
         console.log('  - Date de début   :', startDate.toISOString());
         console.log('  - Date de fin     :', endDate.toISOString());
 
         if (isNaN(startDate) || isNaN(endDate)) {
+            console.error('[createEvent] ❌ Dates invalides');
             throw new Error("Les dates de début ou de fin sont invalides.");
         }
 
         if (startDate < now) {
-            console.error("Erreur : la date de début est dans le passé.");
+            console.error('[createEvent] ❌ La date de début est dans le passé');
             throw new Error("La date de début ne peut pas être dans le passé.");
         }
 
         if (endDate <= startDate) {
-            console.error("Erreur : la date de fin est avant ou égale à la date de début.");
+            console.error('[createEvent] ❌ La date de fin est avant ou égale à la date de début');
             throw new Error("La date de fin doit être après la date de début.");
         }
 
-        console.log('Création de l\'événement avec statut "Planifié"');
+        console.log('[createEvent] ➤ Création de l’événement avec statut "Planifié"...');
 
         const event = await Event.create({
             title,
@@ -188,18 +224,25 @@ class EventService {
             status: 'Planifié'
         });
 
+        console.log(`[createEvent] ✅ Événement créé avec ID : ${event.id}`);
+
         if (categories?.length > 0) {
+            console.log(`[createEvent] ➤ Assignation de ${categories.length} catégorie(s) à l’événement`);
             await event.setCategories(categories);
+        } else {
+            console.log('[createEvent] ➤ Aucune catégorie assignée');
         }
 
         if (images?.length > 0) {
+            console.log(`[createEvent] ➤ Ajout de ${images.length} image(s) à l’événement`);
             await EventImage.bulkCreate(
                 images.map(img => ({ ...img, event_id: event.id }))
             );
+        } else {
+            console.log('[createEvent] ➤ Aucune image à ajouter');
         }
 
-        console.log('Événement créé avec ID:', event.id);
-
+        console.log('[createEvent] ✅ Création terminée. Chargement des détails de l’événement...');
         return await this.getEventById(event.id);
     }
 
@@ -295,6 +338,33 @@ class EventService {
         console.log('✅ Tous les statuts ont été mis à jour (et notifications envoyées si nécessaire).');
     }
 
+    async updateEventStatusByDate(eventId) {
+        const event = await Event.findByPk(eventId);
+        if (!event) throw new Error("Événement introuvable.");
+
+        const now = new Date();
+        const startDateTime = new Date(event.start_time);
+        const endDateTime = new Date(event.end_time);
+        let newStatus = event.status;
+
+        if (now < startDateTime) {
+            newStatus = 'Planifié';
+        } else if (now >= startDateTime && now < endDateTime) {
+            newStatus = 'En Cours';
+        } else if (now >= endDateTime) {
+            newStatus = 'Terminé';
+        }
+
+        if (event.status !== newStatus) {
+            console.log(`✅ Mise à jour : Événement ID ${event.id} : ${event.status} ➡️ ${newStatus}`);
+            await event.update({ status: newStatus });
+        } else {
+            console.log(`ℹ️ Aucun changement de statut nécessaire pour l'événement ID ${event.id} (statut actuel : ${event.status})`);
+        }
+
+        return event;
+    }
+
     async getDashboardStats() {
         console.log("[getDashboardStats] 📊 Démarrage de la récupération des statistiques...");
 
@@ -377,32 +447,66 @@ class EventService {
         return finalStats;
     }
 
-
     async updateEvent(eventId, update, userId, userRole) {
+        console.log(`[updateEvent] ➤ Début mise à jour partielle pour l'événement ID=${eventId}, par user=${userId}`);
+
         const event = await Event.findByPk(eventId);
-        if (!event) throw new Error("Événement introuvable.");
+        if (!event) {
+            console.warn("[updateEvent] ❌ Événement introuvable");
+            throw new Error("Événement introuvable.");
+        }
+
         if (event.id_org !== userId && userRole !== "Administrateur") {
+            console.warn("[updateEvent] ❌ Accès refusé. userId:", userId, "event owner:", event.id_org);
             throw new Error("Accès refusé pour la modification de cet événement.");
         }
 
-        await event.update(update);
+        const { images, categories, ...fieldsToUpdate } = update;
 
-        if (update.categories) {
-            await event.setCategories(update.categories);
+        console.log("[updateEvent] Données reçues (update) :", update);
+        console.log("[updateEvent] Champs à mettre à jour (hors images/catégories) :", fieldsToUpdate);
+
+        if (Object.keys(fieldsToUpdate).length > 0) {
+            await event.update(fieldsToUpdate);
+            console.log(`[updateEvent] ✅ Champs mis à jour : ${Object.keys(fieldsToUpdate).join(', ')}`);
+        } else {
+            console.log("[updateEvent] Aucun champ de base à mettre à jour.");
         }
 
-        if (update.images && Array.isArray(update.images)) {
-            await EventImage.destroy({ where: { event_id: eventId } });
-            await EventImage.bulkCreate(
-                update.images.map(img => ({ ...img, event_id: eventId }))
-            );
+        if (Array.isArray(categories)) {
+            console.log("[updateEvent] ➤ Mise à jour des catégories avec :", categories);
+            await event.setCategories(categories);
+            console.log(`[updateEvent] ✅ Catégories mises à jour (${categories.length})`);
+        } else {
+            console.log("[updateEvent] Pas de mise à jour des catégories.");
         }
 
+        console.log("[updateEvent] ✅ Fin de la mise à jour. Chargement de l'événement mis à jour...");
         return await this.getEventById(eventId);
     }
 
+
+    async updateImageById(imageId, filename, user) {
+        const image = await EventImage.findByPk(imageId);
+        if (!image) throw new Error("Image non trouvée.");
+
+        const event = await Event.findByPk(image.event_id);
+        if (!event) throw new Error("Événement lié introuvable.");
+
+        if (event.id_org !== user.id && user.role !== "Administrateur") {
+            throw new Error("Accès refusé à cette image.");
+        }
+
+        image.image_url = `/event-images/${filename}`;
+        await image.save();
+
+        return image;
+    }
+
     async getEventsByUser(userId) {
-        return await Event.findAll({
+        console.log(`[getEventsByUser] ➤ Récupération des événements pour l'utilisateur ID=${userId}`);
+
+        const events = await Event.findAll({
             where: { id_org: userId },
             include: [
                 {
@@ -418,54 +522,83 @@ class EventService {
             ],
             order: [['date_created', 'DESC']]
         });
+
+        console.log(`[getEventsByUser] ✅ ${events.length} événement(s) trouvé(s) pour l'utilisateur ${userId}`);
+        return events;
     }
 
     async deleteEvent(eventId, userId, userRole, status) {
+        console.log(`[deleteEvent] ➤ Requête de suppression de l’événement ID=${eventId} par user=${userId} (role=${userRole}) avec statut='${status}'`);
+
         const event = await Event.findByPk(eventId);
-        if (!event) throw new Error("Événement introuvable.");
+        if (!event) {
+            console.warn('[deleteEvent] ❌ Événement introuvable');
+            throw new Error("Événement introuvable.");
+        }
+
         if (event.id_org !== userId && userRole !== "Administrateur") {
+            console.warn('[deleteEvent] ❌ Accès refusé pour la suppression de cet événement');
             throw new Error("Accès refusé pour la suppression de cet événement.");
         }
+
         if (!['Terminé', 'Annulé'].includes(status)) {
+            console.warn('[deleteEvent] ❌ Statut invalide');
             throw new Error("Statut invalide. Utilisez 'Terminé' ou 'Annulé'.");
         }
+
         await event.update({ status });
+        console.log(`[deleteEvent] ✅ Événement ID=${eventId} marqué comme '${status}'`);
+
         return { message: `Événement marqué comme '${status}'.` };
     }
 
     async getCreatedEventsByUserId(userId) {
-        return await Event.findAll({
-            where: { id_org: userId },
-            include: [
-                {
-                    model: Category,
-                    through: { attributes: [] }
-                },
-                {
-                    model: EventImage,
-                    as: 'EventImages',
-                    order: [['is_main', 'DESC']],
-                    limit: 1
-                },
-                {
-                    model: Participant,
-                    as: 'participants',
-                    attributes: ['id', 'id_user', 'id_event', 'status', 'request_message', 'organizer_response', 'joined_at'], // ⬅️ Inclure les champs nécessaires
-                    include: [
-                        {
-                            model: User,
-                            attributes: ['id', 'name', 'lastname', 'email', 'profileImage']
-                        },
-                        {
-                            model: EventGuest,
-                            as: 'guests',
-                            attributes: ['firstname', 'lastname', 'email']
-                        }
-                    ]
-                }
-            ],
-            order: [['date_created', 'DESC']]
-        });
+        console.log(`[getCreatedEventsByUserId] ➤ Récupération des événements créés par l'utilisateur ID=${userId}`);
+
+        try {
+            const events = await Event.findAll({
+                where: { id_org: userId },
+                include: [
+                    {
+                        model: Category,
+                        through: { attributes: [] }
+                    },
+                    {
+                        model: EventImage,
+                        as: 'EventImages',
+                        order: [['is_main', 'DESC']],
+                        limit: 1
+                    },
+                    {
+                        model: Participant,
+                        as: 'participants',
+                        attributes: [
+                            'id', 'id_user', 'id_event', 'status',
+                            'request_message', 'organizer_response', 'joined_at'
+                        ],
+                        include: [
+                            {
+                                model: User,
+                                attributes: ['id', 'name', 'lastname', 'email', 'profileImage']
+                            },
+                            {
+                                model: EventGuest,
+                                as: 'guests',
+                                attributes: ['firstname', 'lastname', 'email']
+                            }
+                        ]
+                    }
+                ],
+                order: [['date_created', 'DESC']]
+            });
+
+            console.log(`[getCreatedEventsByUserId] ✅ ${events.length} événement(s) trouvé(s) pour l'utilisateur ${userId}`);
+            return events;
+
+        } catch (error) {
+            console.error(`[getCreatedEventsByUserId] ❌ Erreur : ${error.message}`);
+            throw new Error("Erreur lors de la récupération des événements créés : " + error.message);
+        }
     }
 }
 

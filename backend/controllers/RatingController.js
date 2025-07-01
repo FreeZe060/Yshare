@@ -48,6 +48,35 @@ exports.getUserAverageRating = async (req, res) => {
     }
 };
 
+exports.getEventAverageRating = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+
+        const { avgRating, ratings } = await ratingService.getEventAverageRating(eventId);
+
+        const formattedAvg = avgRating !== null ? parseFloat(avgRating).toFixed(1) : null;
+
+        return res.status(200).json({
+            averageRating: formattedAvg,
+            ratings
+        });
+    } catch (error) {
+        console.error("Erreur dans getEventAverageRating:", error);
+        return res.status(500).json({ message: "Erreur lors de la récupération de la note moyenne", error: error.message });
+    }
+};
+
+exports.getAllRatingsByOrganizer = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const ratings = await ratingService.getAllRatingsByOrganizer(userId);
+        return res.status(200).json(ratings);
+    } catch (error) {
+        console.error("Erreur dans getAllRatingsByOrganizer:", error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 exports.getAllRatingsWithDetails = async (req, res) => {
     try {
         if (!req.user || req.user.role !== 'Administrateur') {

@@ -19,7 +19,7 @@ import fallbackImage from "../../assets/img/et-3-event-1.jpg";
 
 import ReportDropdown from '../Report/EventReport';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
 function CalendarEventSection({ events }) {
     const displayedEvents = events.slice(0, 10);
@@ -50,7 +50,6 @@ function CalendarEventSection({ events }) {
                     </div>
                 </div>
 
-                {/* SLIDER */}
                 <div className="overflow-visible et-3-event-slider swiper rev-slide-up">
                     <Swiper
                         modules={[Autoplay]}

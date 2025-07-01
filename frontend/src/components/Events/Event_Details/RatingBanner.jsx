@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import usePostRate from '../../../hooks/Rating/usePostRate';
 
-function RatingBanner({ eventId, userId, eventStatus, hasRated, isParticipant }) {
+function RatingBanner({ eventId, userId, eventStatus, hasRated, isParticipant, openPopup }) {
     const [show, setShow] = useState(false);
     const { rate } = usePostRate();
 
     useEffect(() => {
         if (eventStatus === 'Terminé' && isParticipant && !hasRated) {
-            setShow(true);
+            handleRateClick(); 
         }
     }, [eventStatus, isParticipant, hasRated]);
 

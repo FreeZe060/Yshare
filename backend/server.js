@@ -65,7 +65,63 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 const routes = require('./config/routes');
-app.use('/api/', routes);
+app.use('/api/v1/', routes);
+
+app.get('/', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>API Yshare (Events Manager)</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 40px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(to top right, #580FCA, #F929BB);
+                color: white;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                text-align: center;
+            }
+            h1 {
+                font-size: 3rem;
+                margin-bottom: 10px;
+            }
+            p {
+                font-size: 1.2rem;
+                max-width: 600px;
+            }
+            a {
+                margin-top: 30px;
+                display: inline-block;
+                text-decoration: none;
+                background: white;
+                color: #C320C0;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-weight: bold;
+                transition: all 0.3s ease;
+            }
+            a:hover {
+                background: #C320C0;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>API Events Manager</h1>
+        <p>Bienvenue sur l'API RESTful de gestion d'événements.<br/>Utilisez <strong>/api/v1/</strong> pour accéder aux endpoints versionnés.</p>
+        <a href="/api/docs" target="_blank">Voir la documentation Swagger</a>
+    </body>
+    </html>
+    `);
+});
 
 // Error handler
 app.use((err, req, res, next) => {

@@ -9,9 +9,14 @@ const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink, empt
     return (
         <>
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">{title}</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-[#580FCA] to-[#F929BB] bg-clip-text text-transparent">
+                    {title}
+                </h2>
                 {!isEmpty && linkText && (
-                    <Link to={buttonLink} className="text-blue-500 hover:underline">
+                    <Link
+                        to={buttonLink}
+                        className="text-[#580FCA] hover:text-[#F929BB] font-medium transition-colors"
+                    >
                         {linkText}
                     </Link>
                 )}
@@ -27,20 +32,22 @@ const EventsSection = ({ title, linkText, events, emptyMessage, buttonLink, empt
                     </div>
                 ) : (
                     <motion.div
-                        className="flex flex-col items-center justify-center h-40 border-dashed border-2 border-gray-300 rounded-lg"
+                        className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-[#BF1FC0] rounded-2xl bg-white bg-opacity-60 backdrop-blur-md shadow-inner px-4"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="text-xl font-bold text-gray-500 text-center px-4">
+                            <p className="text-gray-500 text-base">
                             {emptyMessage}
                         </p>
-                        <Link
-                            to={buttonLink}
-                            className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                        >
-                            {emptyButtonText || "Explorer"}
-                        </Link>
+                        {buttonLink && (
+                            <Link
+                                to={buttonLink}
+                                className="mt-4 inline-block px-6 py-2 rounded-lg bg-gradient-to-tr from-[#580FCA] to-[#F929BB] text-white font-semibold hover:opacity-90 transition"
+                            >
+                                {emptyButtonText || "Explorer"}
+                            </Link>
+                        )}
                     </motion.div>
                 )
             }

@@ -166,7 +166,7 @@ const Header = () => {
                             </Link>
 
                             <Link
-                                to="/create-event"
+                                to="/create/event"
                                 className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 transition-all duration-300`}
                             >
                                 <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-calendar-days" />
@@ -248,7 +248,7 @@ const Header = () => {
                                                         </Link>
                                                         <hr className="my-2 border-gray-300" />
                                                         <Link
-                                                            to={`event-created`}
+                                                            to={`/event/created`}
                                                             className="block hover:bg-gray-100 px-4 py-2 rounded text-gray-800 transition"
                                                         >
                                                             Vos créations
@@ -269,6 +269,7 @@ const Header = () => {
                                                 >
                                                     Favoris
                                                 </Link>
+                                                <hr className="my-2 border-gray-300" />
                                                 <button
                                                     onClick={handleLogout}
                                                     className="hover:bg-red-50 px-4 py-2 rounded w-full text-red-600 text-left transition"

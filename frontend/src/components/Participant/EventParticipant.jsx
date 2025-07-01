@@ -139,13 +139,13 @@ function Event_Participated({
     };
 
     return (
-        <section className="z-[1] relative py-[60px] md:py-[60px] xl:py-[80px] overflow-hidden">
+        <section className="z-[1] relative py-[60px] md:py-[60px] xl:py-[80px] min-h-[60rem] overflow-hidden">
             <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
                 <div className="mb-[60px] md:mb-[40px] pb-[60px] md:pb-[40px] border-[#8E8E93]/25 border-b">
                     <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
                         Vos participations
                     </h6>
-                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements auxquels vous participez</h2>
+                    <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements Participés</h2>
                     <FiltreParticipant
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}
@@ -163,271 +163,286 @@ function Event_Participated({
                     />
                 </div>
 
-                {filtered.map((item, index) => {
-                    const imageUrl = item.image?.startsWith('http')
-                        ? item.image
-                        : `${API_BASE_URL}${item.image || ''}`;
+                {filtered.length === 0 ? (
+                    <div className="flex flex-col justify-center items-center mt-10 h-full text-center animate__animated animate__fadeIn">
+                        <p className="bg-clip-text bg-gradient-to-r from-[#580FCA] to-[#F929BB] font-semibold text-[20px] text-transparent">
+                            Vous n'avez participé à aucun événement pour le moment.
+                        </p>
+                        <p className="mt-2 text-gray-500 text-sm">Explorez nos événements et rejoignez l'aventure dès aujourd'hui !</p>
+                        <Link
+                            to="/events"
+                            className="inline-block bg-gradient-to-tr from-[#580FCA] to-[#F929BB] hover:opacity-90 mt-4 px-6 py-3 rounded-lg font-semibold text-white transition"
+                        >
+                            Voir les événements
+                        </Link>
+                    </div>
+                ) : (
+                    filtered.map((item, index) => {
+                        const imageUrl = item.image?.startsWith('http')
+                            ? item.image
+                            : `${API_BASE_URL}${item.image || ''}`;
+                        return (
+                            <div key={index} className="mb-[40px]">
+                                <div className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
+                                    <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
+                                        <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
+                                            {getFormattedDayAndMonthYear(item.start_time).day}
+                                        </span>
+                                        {getFormattedDayAndMonthYear(item.start_time).monthYear}
+                                    </h5>
+                                    <div className="shrink-0">
+                                        <img
+                                            src={imageUrl}
+                                            alt="Event"
+                                            className="rounded-xl w-full max-w-[300px] object-cover aspect-[300/128]"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
+                                        <div className="min-w-0">
+                                            <Link to={`/event/${item.id_event}`}>
+                                                <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
+                                                    {capitalizeFirstLetter(item.title)}
+                                                </h3>
+                                            </Link>
 
-                    return (
-                        <div key={index} className="mb-[40px]">
-                            <div className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-                                <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
-                                    <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
-                                        {getFormattedDayAndMonthYear(item.start_time).day}
-                                    </span>
-                                    {getFormattedDayAndMonthYear(item.start_time).monthYear}
-                                </h5>
-                                <div className="shrink-0">
-                                    <img
-                                        src={imageUrl}
-                                        alt="Event"
-                                        className="rounded-xl w-full max-w-[300px] object-cover aspect-[300/128]"
-                                    />
-                                </div>
-                                <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
-                                    <div className="min-w-0">
-                                        <Link to={`/event/${item.id_event}`}>
-                                            <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
-                                                {capitalizeFirstLetter(item.title)}
-                                            </h3>
+                                            <h6 className="text-[17px] text-etBlue">
+                                                <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
+                                                {capitalizeFirstLetter(item.city)}, {item.street_number} {item.street}
+                                            </h6>
+
+                                            <div className="flex flex-col gap-1 mt-3 text-[11px] leading-tight">
+                                                <div className={`px-2 text-xs py-[3px] rounded-full font-medium w-fit ${getStatusClass(item.status)}`}>
+                                                    <span className="block">Votre statut : {item.status}</span>
+                                                </div>
+                                                <div className={`px-2 py-[3px] text-xs rounded-full font-medium w-fit ${getStatusClass(item.event_status)}`}>
+                                                    <span className="block">Statut de l'événement : {item.event_status}</span>
+                                                </div>
+                                            </div>
+
+                                            {item.organizer_response ? (
+                                                <div className="mt-4">
+                                                    <p className="mb-1 font-semibold text-etBlue text-sm">Message de l'organisateur :</p>
+                                                    <div className="shadow-sm p-3 border border-blue-200 rounded-md text-gray-800 text-sm">
+                                                        {item.organizer_response}
+                                                    </div>
+                                                    <details className="group mt-2">
+                                                        <summary className="flex items-center gap-2 text-gray-700 text-sm transition-colors cursor-pointer">
+                                                            <i className="text-etBlue transition-transform duration-300 fas fa-comment-dots" />
+                                                            <span className="relative group-hover:text-etBlue transition-colors duration-300">
+                                                                <span className="underline-animation">Voir mon message</span>
+                                                            </span>
+                                                        </summary>
+                                                        <motion.p
+                                                            initial={{ opacity: 0, y: -5 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            exit={{ opacity: 0, y: -5 }}
+                                                            transition={{ duration: 0.4, ease: 'easeOut' }}
+                                                            className="mt-2 p-3 border border-gray-300 rounded-md text-gray-700 text-sm italic"
+                                                        >
+                                                            {item.request_message}
+                                                        </motion.p>
+                                                    </details>
+                                                </div>
+                                            ) : (
+                                                <div className="mt-4">
+                                                    <p className="mb-1 font-semibold text-etBlue text-sm">Votre message :</p>
+                                                    {editingMessageId === item.id_event ? (
+                                                        <div className="flex flex-col gap-2">
+                                                            <input
+                                                                type="text"
+                                                                value={messageDrafts[item.id_event] || ''}
+                                                                onChange={(e) =>
+                                                                    setMessageDrafts({ ...messageDrafts, [item.id_event]: e.target.value })
+                                                                }
+                                                                onBlur={() => handleUpdateMessage(item.id_event, item.id_user)}
+                                                                className="shadow-sm px-3 py-1 border rounded"
+                                                            />
+                                                            <div className="flex gap-2">
+                                                                <button
+                                                                    onClick={() => handleUpdateMessage(item.id_event, item.id_user)}
+                                                                    className="bg-etBlue px-3 py-1 rounded text-white"
+                                                                >
+                                                                    Enregistrer
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setMessageDrafts(prev => ({ ...prev, [item.id_event]: item.request_message }));
+                                                                        setEditingMessageId(null);
+                                                                    }}
+                                                                    className="bg-gray-400 px-3 py-1 rounded text-white"
+                                                                >
+                                                                    Annuler
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: -5 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ duration: 0.4 }}
+                                                            className="p-3 border border-gray-300 rounded-md text-gray-800 text-sm italic"
+                                                        >
+                                                            {item.request_message}
+                                                            <button
+                                                                onClick={() => {
+                                                                    setMessageDrafts(prev => ({
+                                                                        ...prev,
+                                                                        [item.id_event]: item.request_message || ''
+                                                                    }));
+                                                                    setEditingMessageId(item.id_event);
+                                                                }}
+                                                                className="ml-4 text-etBlue text-xs underline"
+                                                            >
+                                                                Modifier
+                                                            </button>
+                                                        </motion.div>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            <button
+                                                onClick={() => handleLeaveEvent(item.id_event, item.id_user)}
+                                                className="mt-3 text-red-600 text-sm underline"
+                                            >
+                                                Se retirer de l'événement
+                                            </button>
+                                        </div>
+                                        <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
+                                            {formatEuro(item.price)}
+                                        </h4>
+                                    </div>
+                                    <div className="flex flex-col justify-center items-center lg:items-end gap-3 pl-[40px] border-[#8E8E93]/25 border-l min-w-[161px] sm:min-h-[161px] text-center shrink-0">
+                                        <Link to={`/event/${item.id_event}`} className="min-w-[161px] et-3-btn">
+                                            Voir l'event
                                         </Link>
 
-                                        <h6 className="text-[17px] text-etBlue">
-                                            <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
-                                            {capitalizeFirstLetter(item.city)}, {item.street_number} {item.street}
-                                        </h6>
-
-                                        <div className="flex flex-col gap-1 mt-3 text-[11px] leading-tight">
-                                            <div className={`px-2 text-xs py-[3px] rounded-full font-medium w-fit ${getStatusClass(item.status)}`}>
-                                                <span className="block">Votre statut : {item.status}</span>
-                                            </div>
-                                            <div className={`px-2 py-[3px] text-xs rounded-full font-medium w-fit ${getStatusClass(item.event_status)}`}>
-                                                <span className="block">Statut de l'événement : {item.event_status}</span>
-                                            </div>
-                                        </div>
-
-                                        {item.organizer_response ? (
-                                            <div className="mt-4">
-                                                <p className="text-sm font-semibold text-etBlue mb-1">Message de l'organisateur :</p>
-                                                <div className="border border-blue-200 text-sm text-gray-800 p-3 rounded-md shadow-sm">
-                                                    {item.organizer_response}
-                                                </div>
-                                                <details className="mt-2 group">
-                                                    <summary className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 transition-colors">
-                                                        <i className="fas fa-comment-dots text-etBlue transition-transform duration-300" />
-                                                        <span className="relative group-hover:text-etBlue transition-colors duration-300">
-                                                            <span className="underline-animation">Voir mon message</span>
-                                                        </span>
-                                                    </summary>
-                                                    <motion.p
-                                                        initial={{ opacity: 0, y: -5 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        exit={{ opacity: 0, y: -5 }}
-                                                        transition={{ duration: 0.4, ease: 'easeOut' }}
-                                                        className="mt-2 text-sm italic text-gray-700 border border-gray-300 p-3 rounded-md"
-                                                    >
-                                                        {item.request_message}
-                                                    </motion.p>
-                                                </details>
-                                            </div>
-                                        ) : (
-                                            <div className="mt-4">
-                                                <p className="text-sm font-semibold text-etBlue mb-1">Votre message :</p>
-                                                {editingMessageId === item.id_event ? (
-                                                    <div className="flex flex-col gap-2">
-                                                        <input
-                                                            type="text"
-                                                            value={messageDrafts[item.id_event] || ''}
-                                                            onChange={(e) =>
-                                                                setMessageDrafts({ ...messageDrafts, [item.id_event]: e.target.value })
-                                                            }
-                                                            onBlur={() => handleUpdateMessage(item.id_event, item.id_user)}
-                                                            className="border px-3 py-1 rounded shadow-sm"
-                                                        />
-                                                        <div className="flex gap-2">
-                                                            <button
-                                                                onClick={() => handleUpdateMessage(item.id_event, item.id_user)}
-                                                                className="text-white bg-etBlue px-3 py-1 rounded"
-                                                            >
-                                                                Enregistrer
-                                                            </button>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setMessageDrafts(prev => ({ ...prev, [item.id_event]: item.request_message }));
-                                                                    setEditingMessageId(null);
-                                                                }}
-                                                                className="px-3 py-1 bg-gray-400 text-white rounded"
-                                                            >
-                                                                Annuler
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: -5 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        transition={{ duration: 0.4 }}
-                                                        className="border border-gray-300 text-sm text-gray-800 p-3 rounded-md italic"
-                                                    >
-                                                        {item.request_message}
-                                                        <button
-                                                            onClick={() => {
-                                                                setMessageDrafts(prev => ({
-                                                                    ...prev,
-                                                                    [item.id_event]: item.request_message || ''
-                                                                }));
-                                                                setEditingMessageId(item.id_event);
-                                                            }}
-                                                            className="ml-4 text-etBlue text-xs underline"
-                                                        >
-                                                            Modifier
-                                                        </button>
-                                                    </motion.div>
-                                                )}
-                                            </div>
+                                        {item.guests?.length > 0 && (
+                                            <button
+                                                onClick={() => toggleGuests(item.id_event)}
+                                                className="min-w-[161px] et-3-btn"
+                                            >
+                                                {visibleGuests[item.id_event] ? "Masquer invités" : "Voir invités"}
+                                            </button>
                                         )}
-
-                                        <button
-                                            onClick={() => handleLeaveEvent(item.id_event, item.id_user)}
-                                            className="mt-3 text-red-600 text-sm underline"
-                                        >
-                                            Se retirer de l'événement
-                                        </button>
                                     </div>
-                                    <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
-                                        {formatEuro(item.price)}
-                                    </h4>
                                 </div>
-                                <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0 min-w-[161px] sm:min-h-[161px]">
-                                    <Link to={`/event/${item.id_event}`} className="et-3-btn min-w-[161px]">
-                                        Voir l'event
-                                    </Link>
 
-                                    {item.guests?.length > 0 && (
-                                        <button
-                                            onClick={() => toggleGuests(item.id_event)}
-                                            className="et-3-btn min-w-[161px]"
+                                <AnimatePresence>
+                                    {visibleGuests[item.id_event] && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="bg-gray-50 mt-4 p-4 border rounded-lg w-full"
                                         >
-                                            {visibleGuests[item.id_event] ? "Masquer invités" : "Voir invités"}
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
+                                            <h5 className="mb-4 font-bold text-lg">Invités ajoutés</h5>
+                                            {item.guests.map((g, i) => {
+                                                const isEditing = editingGuestsEventId === item.id_event;
+                                                const currentDraft = guestDrafts[item.id_event]?.[i] || g;
 
-                            <AnimatePresence>
-                                {visibleGuests[item.id_event] && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: 'auto' }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="mt-4 w-full bg-gray-50 p-4 rounded-lg border"
-                                    >
-                                        <h5 className="text-lg font-bold mb-4">Invités ajoutés</h5>
-                                        {item.guests.map((g, i) => {
-                                            const isEditing = editingGuestsEventId === item.id_event;
-                                            const currentDraft = guestDrafts[item.id_event]?.[i] || g;
+                                                const updateGuestField = (field, value) => {
+                                                    const originalGuests = item.guests;
+                                                    const updated = [...(guestDrafts[item.id_event] || originalGuests)];
 
-                                            const updateGuestField = (field, value) => {
-                                                const originalGuests = item.guests;
-                                                const updated = [...(guestDrafts[item.id_event] || originalGuests)];
+                                                    updated[i] = {
+                                                        id: originalGuests[i]?.id,
+                                                        ...updated[i],
+                                                        [field]: value
+                                                    };
 
-                                                updated[i] = {
-                                                    id: originalGuests[i]?.id,
-                                                    ...updated[i],
-                                                    [field]: value
+                                                    console.log("✏️ Mise à jour draft invité :", updated[i]);
+
+                                                    setGuestDrafts((prev) => ({
+                                                        ...prev,
+                                                        [item.id_event]: updated
+                                                    }));
                                                 };
 
-                                                console.log("✏️ Mise à jour draft invité :", updated[i]);
-
-                                                setGuestDrafts((prev) => ({
-                                                    ...prev,
-                                                    [item.id_event]: updated
-                                                }));
-                                            };
-
-                                            return (
-                                                <div key={i} className="flex items-center gap-4 mb-3">
-                                                    {isEditing ? (
-                                                        <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full">
-                                                            <input
-                                                                type="text"
-                                                                value={currentDraft.firstname}
-                                                                onChange={(e) => updateGuestField("firstname", e.target.value)}
-                                                                className="border px-2 py-1 rounded w-full md:w-[150px]"
-                                                                placeholder="Prénom"
-                                                            />
-                                                            <input
-                                                                type="text"
-                                                                value={currentDraft.lastname}
-                                                                onChange={(e) => updateGuestField("lastname", e.target.value)}
-                                                                className="border px-2 py-1 rounded w-full md:w-[150px]"
-                                                                placeholder="Nom"
-                                                            />
-                                                            <input
-                                                                type="email"
-                                                                value={currentDraft.email}
-                                                                onChange={(e) => updateGuestField("email", e.target.value)}
-                                                                className="border px-2 py-1 rounded w-full md:w-[250px]"
-                                                                placeholder="Email"
-                                                            />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="text-left">
-                                                            <div className="font-semibold">{g.firstname} {g.lastname}</div>
-                                                            <div className="text-sm text-gray-500">{g.email}</div>
-                                                        </div>
-                                                    )}
-                                                    {editingGuestsEventId === item.id_event ? (
-                                                        <div className="flex gap-2 mt-2">
+                                                return (
+                                                    <div key={i} className="flex items-center gap-4 mb-3">
+                                                        {isEditing ? (
+                                                            <div className="flex md:flex-row flex-col items-start md:items-center gap-2 w-full">
+                                                                <input
+                                                                    type="text"
+                                                                    value={currentDraft.firstname}
+                                                                    onChange={(e) => updateGuestField("firstname", e.target.value)}
+                                                                    className="px-2 py-1 border rounded w-full md:w-[150px]"
+                                                                    placeholder="Prénom"
+                                                                />
+                                                                <input
+                                                                    type="text"
+                                                                    value={currentDraft.lastname}
+                                                                    onChange={(e) => updateGuestField("lastname", e.target.value)}
+                                                                    className="px-2 py-1 border rounded w-full md:w-[150px]"
+                                                                    placeholder="Nom"
+                                                                />
+                                                                <input
+                                                                    type="email"
+                                                                    value={currentDraft.email}
+                                                                    onChange={(e) => updateGuestField("email", e.target.value)}
+                                                                    className="px-2 py-1 border rounded w-full md:w-[250px]"
+                                                                    placeholder="Email"
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="text-left">
+                                                                <div className="font-semibold">{g.firstname} {g.lastname}</div>
+                                                                <div className="text-gray-500 text-sm">{g.email}</div>
+                                                            </div>
+                                                        )}
+                                                        {editingGuestsEventId === item.id_event ? (
+                                                            <div className="flex gap-2 mt-2">
+                                                                <button
+                                                                    onClick={() => {
+                                                                        if (!item?.id_user) return;
+                                                                        handleUpdateGuests(item.id_event, item.id_user);
+                                                                        setEditingGuestsEventId(null);
+                                                                    }}
+                                                                    className="bg-etBlue px-3 py-1 rounded text-white text-sm"
+                                                                >
+                                                                    Enregistrer
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setGuestDrafts((prev) => ({ ...prev, [item.id_event]: item.guests }));
+                                                                        setEditingGuestsEventId(null);
+                                                                    }}
+                                                                    className="bg-gray-300 px-3 py-1 rounded text-sm"
+                                                                >
+                                                                    Annuler
+                                                                </button>
+                                                            </div>
+                                                        ) : (
                                                             <button
                                                                 onClick={() => {
-                                                                    if (!item?.id_user) return;
-                                                                    handleUpdateGuests(item.id_event, item.id_user);
-                                                                    setEditingGuestsEventId(null);
+                                                                    setGuestDrafts((prev) => ({
+                                                                        ...prev,
+                                                                        [item.id_event]: item.guests.map(g => ({
+                                                                            id: g.id,
+                                                                            firstname: g.firstname,
+                                                                            lastname: g.lastname,
+                                                                            email: g.email
+                                                                        }))
+                                                                    }));
+                                                                    setEditingGuestsEventId(item.id_event);
                                                                 }}
-                                                                className="text-sm px-3 py-1 bg-etBlue text-white rounded"
+                                                                className="bg-etBlue mt-2 px-3 py-1 rounded text-white text-sm"
                                                             >
-                                                                Enregistrer
+                                                                Modifier
                                                             </button>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setGuestDrafts((prev) => ({ ...prev, [item.id_event]: item.guests }));
-                                                                    setEditingGuestsEventId(null);
-                                                                }}
-                                                                className="text-sm px-3 py-1 bg-gray-300 rounded"
-                                                            >
-                                                                Annuler
-                                                            </button>
-                                                        </div>
-                                                    ) : (
-                                                        <button
-                                                            onClick={() => {
-                                                                setGuestDrafts((prev) => ({
-                                                                    ...prev,
-                                                                    [item.id_event]: item.guests.map(g => ({
-                                                                        id: g.id,
-                                                                        firstname: g.firstname,
-                                                                        lastname: g.lastname,
-                                                                        email: g.email
-                                                                    }))
-                                                                }));
-                                                                setEditingGuestsEventId(item.id_event);
-                                                            }}
-                                                            className="text-sm mt-2 px-3 py-1 bg-etBlue text-white rounded"
-                                                        >
-                                                            Modifier
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    );
-                })}
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        );
+                    })
+                )}
+
             </div>
 
             <div className="*:-z-[1] *:absolute">

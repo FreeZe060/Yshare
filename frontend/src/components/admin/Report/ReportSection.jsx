@@ -4,6 +4,9 @@ import { Dialog } from '@headlessui/react';
 import { XIcon, EyeIcon, ReplyIcon } from 'lucide-react';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
+
+import NotFound from '../../../pages/NotFound';
+
 import ReportReplies from './ReportReplies';
 import ReportDetailsPopup from './ReportDetailsPopup';
 
@@ -65,14 +68,14 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    if (loading) return <p>Chargement...</p>;
-    if (error) return <p className="text-red-500">Erreur : {error}</p>;
+    // if (loading) return <p>Chargement...</p>;
+    if (error) return <NotFound/>;
 
     return (
         <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Tous les signalements</h2>
+            <h2 className="mb-4 font-bold text-gray-800 text-2xl">Tous les signalements</h2>
 
-            <div className="rounded-lg shadow-md bg-white overflow-x-auto" ref={tableRef}>
+            <div className="bg-white shadow-md rounded-lg overflow-x-auto" ref={tableRef}>
                 <table className="w-full text-sm whitespace-nowrap">
                     <thead className="bg-indigo-100 text-indigo-700">
                         <tr>
@@ -94,7 +97,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                                     <span className="flex items-center gap-1">
                                         {label}
                                         {field && sortField === field && (
-                                            <span className="absolute right-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                                            <span className="right-1 absolute">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                                         )}
                                     </span>
                                 </th>
@@ -114,18 +117,18 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
                                             transition={{ duration: 0.3 }}
-                                            className="border-b border-gray-200 hover:bg-gray-50"
+                                            className="hover:bg-gray-50 border-gray-200 border-b"
                                         >
                                             <td className="px-4 py-3">{getReportTypeIcon(report.type, () => setPopupReport(report))}</td>
                                             <td className="px-4 py-3">{report.reportingUser.name || 'Inconnu'}</td>
                                             <td className="px-4 py-3">{report.message.slice(0, 30)}...</td>
                                             <td className="px-4 py-3">
                                                 {images.length > 0 && (
-                                                    <i className="fas fa-image text-indigo-400 cursor-pointer" onClick={() => setLightbox({ open: true, index: 0, images })} />
+                                                    <i className="text-indigo-400 cursor-pointer fas fa-image" onClick={() => setLightbox({ open: true, index: 0, images })} />
                                                 )}
                                                 {pdfs.length > 0 && (
                                                     <a href={`http://localhost:8080${pdfs[0].file_path}`} target="_blank" rel="noopener noreferrer">
-                                                        <i className="fas fa-file-pdf text-red-500 ml-2" />
+                                                        <i className="ml-2 text-red-500 fas fa-file-pdf" />
                                                     </a>
                                                 )}
                                             </td>
@@ -138,7 +141,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                                                 {report.status}
                                             </td>
                                             <td className="px-4 py-3">{new Date(report.date_reported).toLocaleDateString()}</td>
-                                            <td className="px-4 py-3 flex space-x-2">
+                                            <td className="flex space-x-2 px-4 py-3">
                                                 <button onClick={() => setPopupReport(report)} className="text-indigo-500 hover:text-indigo-700">
                                                     <EyeIcon size={18} />
                                                 </button>
@@ -175,13 +178,13 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
             )}
 
             {openPopupReplies && (
-                <Dialog open={true} onClose={() => setOpenPopupReplies(null)} className="fixed inset-0 z-50 flex items-center justify-center">
+                <Dialog open={true} onClose={() => setOpenPopupReplies(null)} className="z-50 fixed inset-0 flex justify-center items-center">
                     <div className="fixed inset-0 bg-black/40" onClick={() => setOpenPopupReplies(null)} />
-                    <div className="relative z-10 bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full">
-                        <button onClick={() => setOpenPopupReplies(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+                    <div className="z-10 relative bg-white shadow-xl p-8 rounded-2xl w-full max-w-lg">
+                        <button onClick={() => setOpenPopupReplies(null)} className="top-4 right-4 absolute text-gray-400 hover:text-gray-700">
                             <XIcon size={24} />
                         </button>
-                        <h2 className="text-2xl font-bold text-indigo-600 mb-4">Réponses</h2>
+                        <h2 className="mb-4 font-bold text-indigo-600 text-2xl">Réponses</h2>
                         <ReportReplies reportId={openPopupReplies.id} limit={null} />
                     </div>
                 </Dialog>

@@ -1,5 +1,5 @@
 const eventService = require('../services/EventService');
-const eventImageService = require('../services/EventService');
+const eventImageService = require('../services/EventImageService');
 const participantService = require('../services/ParticipantService');
 const userService = require('../services/UserService');
 const notificationService = require('../services/NotificationService');
@@ -12,8 +12,8 @@ exports.getAllEvents = async (req, res) => {
             city,
             date,
             categoryId,
-            status,    
-            sort,      
+            status,
+            sort,
             page = 1,
             limit = 10
         } = req.query;
@@ -37,11 +37,11 @@ exports.getAllEvents = async (req, res) => {
 exports.getEventById = async (req, res) => {
     try {
         const eventId = req.params.id;
-        const userId = req.user?.id || null; 
+        const userId = req.user?.id || null;
 
         console.log(`[getEventById] Récupération de l'événement ID: ${eventId} pour user ${userId}`);
 
-        const event = await eventService.getEventById(eventId, userId); 
+        const event = await eventService.getEventById(eventId, userId);
 
         if (!event) {
             console.warn(`[getEventById] Événement non trouvé pour l'ID: ${eventId}`);
@@ -56,15 +56,15 @@ exports.getEventById = async (req, res) => {
 };
 
 exports.getDashboardStats = async (req, res) => {
-	try {
-		console.log("[getDashboardStats] 📊 Récupération des statistiques du tableau de bord...");
-		const stats = await eventService.getDashboardStats();
-		console.log("[getDashboardStats] ✅ Statistiques récupérées avec succès.");
-		res.status(200).json(stats);
-	} catch (error) {
-		console.error("[getDashboardStats] ❌ Erreur lors de la récupération des stats :", error);
-		res.status(500).json({ message: "Erreur lors de la récupération des statistiques", error: error.message });
-	}
+    try {
+        console.log("[getDashboardStats] 📊 Récupération des statistiques du tableau de bord...");
+        const stats = await eventService.getDashboardStats();
+        console.log("[getDashboardStats] ✅ Statistiques récupérées avec succès.");
+        res.status(200).json(stats);
+    } catch (error) {
+        console.error("[getDashboardStats] ❌ Erreur lors de la récupération des stats :", error);
+        res.status(500).json({ message: "Erreur lors de la récupération des statistiques", error: error.message });
+    }
 };
 
 exports.getTotalEventCount = async (req, res) => {
@@ -136,7 +136,6 @@ exports.createEvent = async (req, res) => {
 exports.updateEvent = async (req, res) => {
     try {
         if (!req.user) {
-            console.warn("[updateEvent] ❌ Accès refusé : utilisateur non authentifié.");
             return res.status(403).json({ message: "Utilisateur non authentifié." });
         }
 
@@ -144,47 +143,37 @@ exports.updateEvent = async (req, res) => {
         const userId = req.user.id;
         const userRole = req.user.role;
 
-        console.log(`[updateEvent] 🔄 Mise à jour de l'événement ID: ${eventId} par l'utilisateur ID: ${userId}, rôle: ${userRole}`);
-
         const oldEvent = await eventService.getEventById(eventId);
         if (!oldEvent) {
-            console.warn(`[updateEvent] ❌ Événement non trouvé pour l'ID: ${eventId}`);
             return res.status(404).json({ message: "Événement non trouvé." });
         }
 
-        const updateData = {
-            ...req.body,
-            images: req.files?.map((file, index) => ({
-                image_url: `/event-images/${file.filename}`,
-                is_main: index === 0
-            }))
-        };
+        const updateData = { ...req.body };
+
+        if (typeof updateData.categories === 'string') {
+            updateData.categories = JSON.parse(updateData.categories);
+        }
 
         const updatedEvent = await eventService.updateEvent(eventId, updateData, userId, userRole);
 
-        console.log("[updateEvent] ✅ Événement mis à jour:", updatedEvent);
-
         const participants = await participantService.getParticipantsByEventId(eventId);
         if (participants.length > 0) {
-            console.log(`[updateEvent] 🔔 Notification de ${participants.length} participant(s)`);
-
             const emailSubject = `Modification de l'événement : ${updatedEvent.title}`;
             let changes = '';
 
             if (oldEvent.title !== updatedEvent.title) changes += `- Nouveau titre : ${updatedEvent.title}\n`;
             if (oldEvent.description !== updatedEvent.description) changes += `- Nouvelle description : ${updatedEvent.description}\n`;
-            if (oldEvent.date !== updatedEvent.date) changes += `- Nouvelle date : ${updatedEvent.date}\n`;
             if (oldEvent.city !== updatedEvent.city) changes += `- Nouvelle ville : ${updatedEvent.city}\n`;
-            if (oldEvent.max_participants !== updatedEvent.max_participants) changes += `- Nombre max de participants : ${updatedEvent.max_participants}\n`;
-            if (oldEvent.price !== updatedEvent.price) changes += `- Nouveau prix : ${updatedEvent.price}\n`;
+            if (oldEvent.max_participants !== updatedEvent.max_participants) changes += `- Nombre max : ${updatedEvent.max_participants}\n`;
+            if (oldEvent.price !== updatedEvent.price) changes += `- Prix : ${updatedEvent.price}\n`;
 
-            const finalMessage = `Bonjour,\n\nL'événement "${updatedEvent.title}" a été mis à jour.\n\n${changes || "Aucune information spécifique fournie."}`;
+            const finalMessage = `Bonjour,\n\nL'événement "${updatedEvent.title}" a été mis à jour.\n\n${changes || "Aucune information spécifique."}`;
 
             for (const participant of participants) {
                 const user = await userService.findById(participant.id_user);
                 if (user) {
                     await sendEmail(user.email, emailSubject, finalMessage);
-                    await notificationService.createNotification(user.id, `Modification de l'événement : ${updatedEvent.title}`, finalMessage);
+                    await notificationService.createNotification(user.id, emailSubject, finalMessage);
                 }
             }
         }
@@ -192,8 +181,25 @@ exports.updateEvent = async (req, res) => {
         res.status(200).json({ message: "Événement mis à jour avec succès", event: updatedEvent });
 
     } catch (error) {
-        console.error("[updateEvent] ❌ Erreur serveur :", error);
-        res.status(500).json({ message: "Erreur lors de la modification de l'événement", error: error.message });
+        console.error("[updateEvent] ❌ Erreur :", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour de l'événement", error: error.message });
+    }
+};
+
+exports.updateEventImages = async (req, res) => {
+     try {
+        const { imageId } = req.params;
+
+        if (!req.file) {
+            return res.status(400).json({ message: "Aucune image fournie." });
+        }
+
+        const updatedImage = await eventService.updateImageById(imageId, req.file.filename, req.user);
+
+        res.status(200).json({ message: "Image mise à jour avec succès.", image: updatedImage });
+    } catch (error) {
+        console.error("[updateSingleImage] ❌ Erreur :", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour de l'image", error: error.message });
     }
 };
 
@@ -235,20 +241,35 @@ exports.updateEventStatus = async (req, res) => {
 };
 
 exports.updateAllEventStatusesByDate = async (req, res) => {
-	try {
-		console.log("[updateAllEventStatusesByDate] 🚀 Déclenchement de la mise à jour globale des statuts...");
+    try {
+        console.log("[updateAllEventStatusesByDate] 🚀 Déclenchement de la mise à jour globale des statuts...");
 
-		const result = await eventService.updateAllEventStatusesByDate();
+        const result = await eventService.updateAllEventStatusesByDate();
 
-		console.log("[updateAllEventStatusesByDate] ✅ Terminé.");
-		res.status(200).json({ message: "Statuts des événements mis à jour automatiquement." });
+        console.log("[updateAllEventStatusesByDate] ✅ Terminé.");
+        res.status(200).json({ message: "Statuts des événements mis à jour automatiquement." });
 
-	} catch (error) {
-		console.error("[updateAllEventStatusesByDate] ❌ Erreur :", error);
-		res.status(500).json({ message: "Erreur lors de la mise à jour automatique des statuts", error: error.message });
-	}
+    } catch (error) {
+        console.error("[updateAllEventStatusesByDate] ❌ Erreur :", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour automatique des statuts", error: error.message });
+    }
 };
 
+exports.updateEventStatusById = async (req, res) => {
+    try {
+        const { eventId } = req.params;
+
+        console.log(`[updateEventStatusById] 🔄 Mise à jour automatique du statut de l'événement ID: ${eventId}`);
+
+        const updatedEvent = await eventService.updateEventStatusByDate(eventId);
+
+        res.status(200).json({ message: "Statut mis à jour automatiquement.", event: updatedEvent });
+
+    } catch (error) {
+        console.error("[updateEventStatusById] ❌ Erreur :", error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour automatique du statut", error: error.message });
+    }
+};
 
 exports.deleteEvent = async (req, res) => {
     try {

@@ -2,19 +2,34 @@ const { User, Participant, Event, Comment, Favoris, Rating, EventCategory } = re
 
 class UserService {
     async getAllUsers() {
-        return await User.findAll({
+        console.log('[getAllUsers] ➤ Récupération de tous les utilisateurs');
+        const users = await User.findAll({
             attributes: ['id', 'name', 'lastname', 'email', 'role', 'status', 'profileImage']
         });
+        console.log(`[getAllUsers] ${users.length} utilisateurs trouvés`);
+        return users;
     }
 
     async getUserByEmail(email) {
-        return await User.findOne({
-            where: { email }
-        });
+        console.log(`[getUserByEmail] ➤ Recherche de l'utilisateur avec l'email : ${email}`);
+        const user = await User.findOne({ where: { email } });
+        if (user) {
+            console.log(`[getUserByEmail] Utilisateur trouvé : ID ${user.id}`);
+        } else {
+            console.log('[getUserByEmail] Aucun utilisateur trouvé');
+        }
+        return user;
     }
 
     async findById(id) {
-        return await User.findByPk(id);
+        console.log(`[findById] ➤ Recherche de l'utilisateur avec ID : ${id}`);
+        const user = await User.findByPk(id);
+        if (user) {
+            console.log(`[findById] Utilisateur trouvé : ${user.name} ${user.lastname}`);
+        } else {
+            console.log('[findById] Aucun utilisateur trouvé avec cet ID');
+        }
+        return user;
     }
 
     async createUser({
@@ -90,60 +105,46 @@ class UserService {
     }
 
     async deleteUser(userId) {
+        console.log(`[deleteUser] ➤ Suppression de l'utilisateur avec ID : ${userId}`);
+
         try {
             const user = await this.findById(userId);
             if (!user) {
+                console.log('[deleteUser] Utilisateur introuvable');
                 throw new Error('Utilisateur non trouvé');
             }
 
-            const userEvents = await Event.findAll({
-                where: {
-                    id_org: userId
-                }
-            });
+            console.log('[deleteUser] Utilisateur trouvé. Suppression des événements organisés...');
+
+            const userEvents = await Event.findAll({ where: { id_org: userId } });
+            console.log(`[deleteUser] ➤ ${userEvents.length} événements trouvés pour l'utilisateur`);
 
             for (const event of userEvents) {
-                await EventCategory.destroy({
-                    where: {
-                        id_event: event.id
-                    }
-                });
+                console.log(`[deleteUser] ➤ Suppression des catégories liées à l'événement ID ${event.id}`);
+                await EventCategory.destroy({ where: { id_event: event.id } });
             }
 
-            await Event.destroy({
-                where: {
-                    id_org: userId
-                }
-            });
+            const deletedEvents = await Event.destroy({ where: { id_org: userId } });
+            console.log(`[deleteUser] ✅ ${deletedEvents} événements supprimés`);
 
-            await Participant.destroy({
-                where: {
-                    id_user: userId
-                }
-            });
+            const deletedParticipants = await Participant.destroy({ where: { id_user: userId } });
+            console.log(`[deleteUser] ✅ ${deletedParticipants} participations supprimées`);
 
-            await Comment.destroy({
-                where: {
-                    id_user: userId
-                }
-            });
+            const deletedComments = await Comment.destroy({ where: { id_user: userId } });
+            console.log(`[deleteUser] ✅ ${deletedComments} commentaires supprimés`);
 
-            await Favoris.destroy({
-                where: {
-                    id_user: userId
-                }
-            });
+            const deletedFavoris = await Favoris.destroy({ where: { id_user: userId } });
+            console.log(`[deleteUser] ✅ ${deletedFavoris} favoris supprimés`);
 
-            await Rating.destroy({
-                where: {
-                    id_user: userId
-                }
-            });
+            const deletedRatings = await Rating.destroy({ where: { id_user: userId } });
+            console.log(`[deleteUser] ✅ ${deletedRatings} notes supprimées`);
 
             await user.destroy();
+            console.log('[deleteUser] ✅ Utilisateur supprimé avec succès');
+
             return true;
         } catch (error) {
-            console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+            console.error('[deleteUser] Erreur lors de la suppression de l\'utilisateur :', error.message);
             throw error;
         }
     }
