@@ -32,6 +32,7 @@ CSS INDEX
 @import url("https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Dirt&display=swap');
 
 :root {
 	--et-blue: #1260FE;
@@ -86,23 +87,23 @@ h6 {
 }
 
 .underline-animation {
-  position: relative;
-  display: inline-block;
+	position: relative;
+	display: inline-block;
 }
 
 .underline-animation::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  width: 0%;
-  height: 1px;
-  background-color: #1260FE !important;
-  transition: width 0.3s ease-in-out;
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: -1px;
+	width: 0%;
+	height: 1px;
+	background-color: #1260FE !important;
+	transition: width 0.3s ease-in-out;
 }
 
 .group:hover .underline-animation::after {
-  width: 100%;
+	width: 100%;
 }
 
 
@@ -912,11 +913,6 @@ h6 {
 	clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 100%);
 }
 
-.et-3-schedules {
-	background: url(../img/schedules-bg.jpg) no-repeat center center;
-	background-size: cover;
-}
-
 .et-3-schedules-tab-navs button {
 	position: relative;
 	z-index: 1;
@@ -1001,12 +997,6 @@ h6 {
 .et-3-schedule::before {
 	background: linear-gradient(to right, var(--et-pink), rgba(120, 5, 64, 0.6));
 	z-index: -1;
-}
-
-.et-3-schedule::after {
-	background: url(../img/schedule-bg.jpg) no-repeat center center;
-	background-size: cover;
-	z-index: -2;
 }
 
 .et-3-schedule-date-time>*:not(:last-child) {
@@ -1150,11 +1140,6 @@ h6 {
 
 .et-artists-slider .swiper-slide-visible .et-artist {
 	box-shadow: 0 4px 25px rgba(0, 0, 0, 0.06);
-}
-
-.et-upcoming-events {
-	background: url(../img/upcomng-events-bg.jpg) no-repeat center center;
-	background-size: cover;
 }
 
 .et-upcoming-events-heading .et-section-sub-title::before {
@@ -1533,6 +1518,145 @@ input[type=radio]:checked+span::after {
 	background-size: 200% 100%;
 	animation: waveBackground 2.5s linear infinite;
 	border-radius: inherit;
-	pointer-events: none; }
+	pointer-events: none;
+}
 
-/*# sourceMappingURL=style.css.map */
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700');
+@import url('https://fonts.googleapis.com/css?family=Catamaran:400,800');
+
+.error-container {
+	text-align: center;
+	font-size: 106px;
+	font-family: 'Catamaran', sans-serif;
+	font-weight: 800;
+	margin: 70px 15px;
+}
+
+.error-container>span {
+	display: inline-block;
+	position: relative;
+}
+
+.error-container>span.four {
+	width: 136px;
+	height: 43px;
+	border-radius: 999px;
+	background:
+		linear-gradient(140deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 43%, transparent 44%, transparent 100%),
+		linear-gradient(105deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.06) 41%, rgba(0, 0, 0, 0.07) 76%, transparent 77%, transparent 100%),
+		linear-gradient(to right, #d89ca4, #e27b7e);
+}
+
+.error-container>span.four:before,
+.error-container>span.four:after {
+	content: '';
+	display: block;
+	position: absolute;
+	border-radius: 999px;
+}
+
+.error-container>span.four:before {
+	width: 43px;
+	height: 156px;
+	left: 60px;
+	bottom: -43px;
+	background:
+		linear-gradient(128deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 40%, transparent 41%, transparent 100%),
+		linear-gradient(116deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 50%, transparent 51%, transparent 100%),
+		linear-gradient(to top, #99749D, #B895AB, #CC9AA6, #D7969E, #E0787F);
+}
+
+.error-container>span.four:after {
+	width: 137px;
+	height: 43px;
+	transform: rotate(-49.5deg);
+	left: -18px;
+	bottom: 36px;
+	background: linear-gradient(to right, #99749D, #B895AB, #CC9AA6, #D7969E, #E0787F);
+}
+
+.error-container>span.zero {
+	vertical-align: text-top;
+	width: 156px;
+	height: 156px;
+	border-radius: 999px;
+	background: linear-gradient(-45deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%, transparent 51%, transparent 100%),
+		linear-gradient(to top right, #99749D, #99749D, #B895AB, #CC9AA6, #D7969E, #ED8687, #ED8687);
+	overflow: hidden;
+	animation: bgshadow 5s infinite;
+}
+
+.error-container>span.zero:before {
+	content: '';
+	display: block;
+	position: absolute;
+	transform: rotate(45deg);
+	width: 90px;
+	height: 90px;
+	background-color: transparent;
+	left: 0px;
+	bottom: 0px;
+	background:
+		linear-gradient(95deg, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.07) 9%, transparent 50%, transparent 100%),
+		linear-gradient(85deg, transparent 0%, transparent 19%, rgba(0, 0, 0, 0.05) 20%, rgba(0, 0, 0, 0.07) 91%, transparent 92%, transparent 100%);
+}
+
+.error-container>span.zero:after {
+	content: '';
+	display: block;
+	position: absolute;
+	border-radius: 999px;
+	width: 70px;
+	height: 70px;
+	left: 43px;
+	bottom: 43px;
+	background: #FDFAF5;
+	box-shadow: -2px 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+.screen-reader-text {
+	position: absolute;
+	top: -9999em;
+	left: -9999em;
+}
+
+.error-container>span.four {
+	background:
+		linear-gradient(140deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 43%, transparent 44%, transparent 100%),
+		linear-gradient(105deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.06) 41%, rgba(0, 0, 0, 0.07) 76%, transparent 77%, transparent 100%),
+		linear-gradient(to right, #580FCA, #F929BB);
+}
+
+.error-container>span.four:before {
+	background:
+		linear-gradient(128deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 40%, transparent 41%, transparent 100%),
+		linear-gradient(116deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 50%, transparent 51%, transparent 100%),
+		linear-gradient(to top, #580FCA, #9155e0, #c44fd7, #e44bd0, #F929BB);
+}
+
+.error-container>span.four:after {
+	background: linear-gradient(to right, #580FCA, #9155e0, #c44fd7, #e44bd0, #F929BB);
+}
+
+.error-container>span.zero {
+	background: linear-gradient(-45deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%, transparent 51%, transparent 100%),
+		linear-gradient(to top right, #580FCA, #580FCA, #9155e0, #c44fd7, #e44bd0, #F929BB, #F929BB);
+}
+
+@keyframes bgshadow {
+	0% {
+		box-shadow: inset -160px 160px 0px 5px rgba(0, 0, 0, 0.4);
+	}
+
+	45% {
+		box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+	}
+
+	55% {
+		box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+	}
+
+	100% {
+		box-shadow: inset 160px -160px 0px 5px rgba(0, 0, 0, 0.4);
+	}
+}
