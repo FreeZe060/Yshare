@@ -5,7 +5,7 @@ import '../../assets/css/style.css';
 import useSlideUpAnimation from '../../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../../hooks/Animations/useTextAnimation';
 
-import EventStatusTag from '../../utils/EventStatusTag';
+import EventStatusTag from '../../components/Events/EventStatusTag';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { AnimatePresence, motion } from "framer-motion";
-import EventStatusTag from '../../utils/EventStatusTag';
+import EventStatusTag from '../Events/EventStatusTag';
 
 function NewsDetailsLeft({
     newsDetails,
