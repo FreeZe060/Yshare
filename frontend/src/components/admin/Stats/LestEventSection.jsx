@@ -1,5 +1,6 @@
 import React from 'react';
 import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
+import NotFound from '../../../pages/NotFound';
 
 const LastEventSection = ({ events, loading, error, Link }) => {
 
@@ -12,40 +13,40 @@ const LastEventSection = ({ events, loading, error, Link }) => {
             </div>
         );
     }
-	if (error) return <p className="text-red-500">Erreur : {error}</p>;
+	if (error) return <NotFound/>;
 
 	return (
 		<div id="last-events">
-			<h1 className="font-bold py-4 uppercase text-gray-800 text-xl sm:text-2xl">Last 4 Events</h1>
+			<h1 className="py-4 font-bold text-gray-800 text-xl sm:text-2xl uppercase">Last 4 Events</h1>
 
-			<div className="grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4">
+			<div className="gap-4 grid grid-cols-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 				{events.map(event => {
 					const image = event?.EventImages?.[0]?.image_url;
 					const date = new Date(event.start_time).toLocaleDateString();
 
 					return (
-						<div key={event.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-200 text-sm sm:text-base">
+						<div key={event.id} className="bg-white shadow-md hover:shadow-lg rounded-lg text-sm sm:text-base transition duration-200">
 							<div className="flex flex-col h-full">
 								<img
 									src={`http://localhost:8080${image || '/default-event.jpg'}`}
 									alt={event.title}
-									className="w-full h-36 sm:h-40 object-cover rounded-t-lg"
+									className="rounded-t-lg w-full h-36 sm:h-40 object-cover"
 								/>
 
-								<div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
+								<div className="flex flex-col flex-1 justify-between p-3 sm:p-4">
 									<div className="min-h-[48px] sm:min-h-[56px]">
-										<p className="text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-2">
+										<p className="font-bold text-gray-900 text-base sm:text-lg line-clamp-2 leading-snug">
 											{event.title}
 										</p>
 									</div>
-									<p className="text-gray-500 text-xs sm:text-sm mt-1">📅 {date}</p>
-									<p className="text-gray-400 text-xs sm:text-sm mt-1">👤 Organisé par {event.organizer?.name || `ID ${event.id_org}`}</p>
+									<p className="mt-1 text-gray-500 text-xs sm:text-sm">📅 {date}</p>
+									<p className="mt-1 text-gray-400 text-xs sm:text-sm">👤 Organisé par {event.organizer?.name || `ID ${event.id_org}`}</p>
 								</div>
 
-								<div className="border-t border-gray-100 p-3 sm:p-4">
+								<div className="p-3 sm:p-4 border-gray-100 border-t">
 									<Link
 										to={`/event/${event.id}`}
-										className="inline-flex space-x-2 items-center text-indigo-600 hover:text-indigo-800 transition text-sm"
+										className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 text-sm transition"
 									>
 										<i className="fas fa-info-circle"></i>
 										<span>Voir</span>

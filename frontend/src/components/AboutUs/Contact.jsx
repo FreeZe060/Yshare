@@ -14,14 +14,14 @@ const Contact = () => {
 
                         {/* Infos de contact */}
                         <div>
-                            <div className="bg-[#580FCA] p-[40px] sm:p-[30px] space-y-[24px] text-[16px] text-white">
+                            <div className="bg-gradient-to-tr from-[#580FCA] to-[#F929BB] p-[40px] sm:p-[30px] space-y-[24px] text-[16px] text-white">
                                 <div className="flex flex-wrap items-center gap-[20px] pb-[20px] border-b border-white/30">
                                     <span className="icon shrink-0 border border-dashed border-white rounded-full h-[62px] w-[62px] flex items-center justify-center">
                                         <img src={callIcon} alt="Appeler" />
                                     </span>
                                     <div className="txt">
-                                        <span className="font-light">Appelez-nous 7j/7</span>
-                                        <h4 className="font-semibold text-[24px]"><a href="tel:+33123456789">+33 1 23 45 67 89</a></h4>
+                                        <span className="font-light">Appelez-nous</span>
+                                        <h4 className="font-semibold text-[24px]"><a href="tel:+33000000000">+33 0 00 00 00 00</a></h4>
                                     </div>
                                 </div>
 
@@ -31,7 +31,7 @@ const Contact = () => {
                                     </span>
                                     <div className="txt">
                                         <span className="font-light">Envoyez-nous un mail</span>
-                                        <h4 className="font-semibold text-[24px]"><a href="mailto:eventek@gmail.com">eventek@gmail.com</a></h4>
+                                        <h4 className="font-semibold text-[24px]"><a href="mailto:tim.vannson@ynov.com">tim.vannson@ynov.com</a></h4>
                                     </div>
                                 </div>
 
@@ -49,8 +49,8 @@ const Contact = () => {
 
                         {/* Formulaire de contact */}
                         <div>
-                            <h2 className="text-[40px] md:text-[35px] sm:text-[30px] xxs:text-[28px] font-medium text-etBlack mb-[7px]">Prêt à commencer ?</h2>
-                            <p className="text-etGray font-light text-[16px] mb-[38px]">Contactez-nous pour toute question ou demande de devis. Nous vous répondrons rapidement.</p>
+                            <h2 className="text-[40px] md:text-[35px] sm:text-[30px] xxs:text-[28px] font-medium text-etBlack mb-[7px]">Besoin d'Aide ?</h2>
+                            <p className="text-etGray font-light text-[16px] mb-[38px]">Contactez-nous pour toute question. Nous vous répondrons rapidement.</p>
 
                             <form action="#" className="grid grid-cols-2 xxs:grid-cols-1 gap-[30px] xs:gap-[20px] text-[16px]">
                                 <div>
@@ -66,7 +66,7 @@ const Contact = () => {
                                     <textarea name="message" id="contact-message" placeholder="Votre Message" className="border border-[#ECECEC] h-[145px] p-[20px] rounded-[4px] w-full focus:outline-none"></textarea>
                                 </div>
                                 <div>
-                                    <button type="submit" className="bg-[#580FCA] h-[55px] px-[24px] rounded-[10px] text-[16px] font-medium text-white hover:bg-etBlack">Envoyer <span className="icon pl-[10px]"><i className="fa-solid fa-arrow-right-long"></i></span></button>
+                                    <button type="submit" className="bg-[#E54BD0] h-[55px] px-[24px] rounded-[10px] text-[16px] font-medium text-white hover:bg-[#c540b3]">Envoyer <span className="icon pl-[10px]"><i className="fa-solid fa-arrow-right-long"></i></span></button>
                                 </div>
                             </form>
                         </div>
@@ -81,9 +81,9 @@ const Contact = () => {
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="w-full h-[600px] lg:h-[500px] md:h-[400px] sm:h-[350px]"
-                title="Carte Ynov Sophia Agora"
-            />
+                className="w-full h-[600px] lg:h-[500px] md:h-[400px] sm:h-[350px] rounded-lg shadow"
+                title="Carte Ynov Sophia Campus"
+            ></iframe>
 
         </main>
     );

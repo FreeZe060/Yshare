@@ -41,21 +41,21 @@ const Footer = () => {
 				</nav>
 
 				<div className="flex justify-center space-x-6 mt-8">
-					<a href="#" className="text-gray-400 hover:text-white" aria-label="Facebook">
+					{/* <a href="#" className="text-gray-400 hover:text-white" aria-label="Facebook">
 						<i className="text-xl fab fa-facebook-f"></i>
-					</a>
-					<a href="#" className="text-gray-400 hover:text-white" aria-label="Instagram">
+					</a> */}
+					<a target="_blank" href="#" className="text-gray-400 hover:text-white" aria-label="Instagram">
 						<i className="text-xl fab fa-instagram"></i>
 					</a>
-					<a href="#" className="text-gray-400 hover:text-white" aria-label="Twitter">
+					{/* <a href="#" className="text-gray-400 hover:text-white" aria-label="Twitter">
 						<i className="text-xl fab fa-twitter"></i>
-					</a>
-					<a href="#" className="text-gray-400 hover:text-white" aria-label="GitHub">
+					</a> */}
+					<a target="_blank" href="https://github.com/FreeZe060/Yshare" className="text-gray-400 hover:text-white" aria-label="GitHub">
 						<i className="text-xl fab fa-github"></i>
 					</a>
-					<a href="#" className="text-gray-400 hover:text-white" aria-label="Dribbble">
+					{/* <a href="#" className="text-gray-400 hover:text-white" aria-label="Dribbble">
 						<i className="text-xl fab fa-dribbble"></i>
-					</a>
+					</a> */}
 				</div>
 
 				<p className="mt-8 text-gray-400 text-base text-center leading-6">
