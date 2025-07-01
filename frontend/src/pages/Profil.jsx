@@ -47,10 +47,10 @@ const Profil = () => {
             transition={{ duration: 0.6 }}
             className="mb-12"
         >
-            <h2 className="mb-4 font-bold text-3xl bg-gradient-to-r from-[#580FCA] to-[#F929BB] bg-clip-text text-transparent">
+            <h2 className="bg-clip-text bg-gradient-to-r from-[#580FCA] to-[#F929BB] mb-4 font-bold text-transparent text-3xl">
                 {title}
             </h2>
-            <div className="border-t-4 border-[#F929BB] w-16 mb-4 rounded-full"></div>
+            <div className="mb-4 border-[#F929BB] border-t-4 rounded-full w-16"></div>
             {children}
         </motion.div>
     );
@@ -220,7 +220,7 @@ const Profil = () => {
                                                     : null
                                             }
                                             {...(isOwner && participatedEvents.length === 0 && {
-                                                buttonLink: "/participation",
+                                                buttonLink: "/events",
                                                 emptyButtonText: "Voir tous les événements",
                                                 emptyButtonClass: "bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             })}
@@ -281,7 +281,7 @@ const Profil = () => {
 
             {showRatingsPopup && (
                 <div
-                    className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+                    className="z-50 fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
                     onClick={() => setShowRatingsPopup(false)}
                 >
                     <motion.div
@@ -289,11 +289,11 @@ const Profil = () => {
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0.8, opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+                        className="bg-white shadow-lg p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-semibold text-gray-800">Notes reçues</h2>
+                            <h2 className="font-semibold text-gray-800 text-xl">Notes reçues</h2>
                             <button
                                 onClick={() => setShowRatingsPopup(false)}
                                 className="text-gray-600 hover:text-gray-800 text-xl"
@@ -312,13 +312,13 @@ const Profil = () => {
                                     <img
                                         src={`http://localhost:8080${rating.user.profileImage}`}
                                         alt="PP"
-                                        className="w-12 h-12 rounded-full object-cover"
+                                        className="rounded-full w-12 h-12 object-cover"
                                     />
                                     <div>
                                         <p className="font-semibold">
                                             {rating.user.name} {rating.user.lastname.charAt(0).toUpperCase()}.
                                         </p>
-                                        <div className="flex items-center mt-1 relative group">
+                                        <div className="group relative flex items-center mt-1">
                                             {[1, 2, 3, 4, 5].map(star => (
                                                 <svg
                                                     key={star}
@@ -330,7 +330,7 @@ const Profil = () => {
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.173c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.285-3.97a1 1 0 00-.364-1.118L2.63 9.397c-.783-.57-.38-1.81.588-1.81h4.173a1 1 0 00.95-.69l1.286-3.97z" />
                                                 </svg>
                                             ))}
-                                            <div className="absolute min-w-[50px] -top-6 left-1/2 -translate-x-1/2 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition">
+                                            <div className="-top-6 left-1/2 absolute bg-white opacity-0 group-hover:opacity-100 shadow px-2 py-1 rounded min-w-[50px] text-gray-600 text-xs transition -translate-x-1/2">
                                                 {rating.rating ? parseFloat(rating.rating).toFixed(1) : '0.0'} / 5
                                             </div>
                                         </div>
@@ -338,10 +338,10 @@ const Profil = () => {
                                 </div>
 
                                 {rating.message && (
-                                    <p className="text-gray-700 mt-2 ml-16">Message : {rating.message}</p>
+                                    <p className="mt-2 ml-16 text-gray-700">Message : {rating.message}</p>
                                 )}
 
-                                <p className="text-sm text-gray-500 mt-1 ml-16">Événement : {rating.event.title}</p>
+                                <p className="mt-1 ml-16 text-gray-500 text-sm">Événement : {rating.event.title}</p>
 
                                 {index !== ratings.length - 1 && (
                                     <hr className="my-4 border-gray-300" />

@@ -10,7 +10,7 @@ function FiltreParticipant({
     setEventFilter,
     events,
     statuses,
-    suggestions,
+    suggestions = [],
     onSuggestionsFetchRequested,
     onSuggestionsClearRequested,
     searchValue,
@@ -41,9 +41,9 @@ function FiltreParticipant({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full flex flex-col items-center justify-center mb-8 px-4"
+                className="flex flex-col justify-center items-center mb-8 px-4 w-full"
             >
-                <div className="flex flex-wrap justify-center gap-6 max-w-4xl w-full">
+                <div className="flex flex-wrap justify-center gap-6 w-full max-w-4xl">
 
                     {/* Custom Select Status */}
                     <motion.div
@@ -55,7 +55,7 @@ function FiltreParticipant({
                     >
                         <div
                             onClick={() => setIsStatusOpen(!isStatusOpen)}
-                            className="cursor-pointer w-full bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 shadow-md flex justify-between items-center hover:border-[#a50fca] focus:outline-none focus:ring-2 focus:ring-[#a50fca] transition"
+                            className="flex justify-between items-center bg-white shadow-md px-4 py-2 border border-gray-300 hover:border-[#a50fca] rounded-lg focus:outline-none focus:ring-[#a50fca] focus:ring-2 w-full text-gray-700 transition cursor-pointer"
                         >
                             {statusFilter || 'Filtrer par statut'}
                             <FaChevronDown className={`text-sm transform transition-transform duration-200 ${isStatusOpen ? 'rotate-180' : ''}`} />
@@ -67,14 +67,14 @@ function FiltreParticipant({
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.2 }}
-                                    className="absolute z-10 mt-2 bg-white rounded-md shadow-lg w-full"
+                                    className="z-10 absolute bg-white shadow-lg mt-2 rounded-md w-full"
                                 >
                                     <li
                                         onClick={() => {
                                             setStatusFilter('');
                                             setIsStatusOpen(false);
                                         }}
-                                        className="px-4 py-2 hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] hover:text-white rounded-md cursor-pointer transition-all duration-200"
+                                        className="hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] px-4 py-2 rounded-md hover:text-white transition-all duration-200 cursor-pointer"
                                     >
                                         Tous les statuts
                                     </li>
@@ -85,7 +85,7 @@ function FiltreParticipant({
                                                 setStatusFilter(status);
                                                 setIsStatusOpen(false);
                                             }}
-                                            className="px-4 py-2 hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] hover:text-white cursor-pointer transition-all duration-200"
+                                            className="hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] px-4 py-2 hover:text-white transition-all duration-200 cursor-pointer"
                                         >
                                             {status}
                                         </li>
@@ -105,7 +105,7 @@ function FiltreParticipant({
                     >
                         <div
                             onClick={() => setIsEventOpen(!isEventOpen)}
-                            className="cursor-pointer w-full bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 shadow-md flex justify-between items-center hover:border-[#a50fca] focus:outline-none focus:ring-2 focus:ring-[#a50fca] transition"
+                            className="flex justify-between items-center bg-white shadow-md px-4 py-2 border border-gray-300 hover:border-[#a50fca] rounded-lg focus:outline-none focus:ring-[#a50fca] focus:ring-2 w-full text-gray-700 transition cursor-pointer"
                         >
                             {eventFilter || 'Filtrer par événement'}
                             <FaChevronDown className={`text-sm transform transition-transform duration-200 ${isEventOpen ? 'rotate-180' : ''}`} />
@@ -117,14 +117,14 @@ function FiltreParticipant({
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.2 }}
-                                    className="absolute z-10 mt-2 bg-white rounded-md shadow-lg w-full max-h-60 overflow-y-auto"
+                                    className="z-10 absolute bg-white shadow-lg mt-2 rounded-md w-full max-h-60 overflow-y-auto"
                                 >
                                     <li
                                         onClick={() => {
                                             setEventFilter('');
                                             setIsEventOpen(false);
                                         }}
-                                        className="px-4 py-2 hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] hover:text-white cursor-pointer transition"
+                                        className="hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] px-4 py-2 hover:text-white transition cursor-pointer"
                                     >
                                         Tous les événements
                                     </li>
@@ -135,7 +135,7 @@ function FiltreParticipant({
                                                 setEventFilter(event);
                                                 setIsEventOpen(false);
                                             }}
-                                            className="px-4 py-2 hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] hover:text-white cursor-pointer transition"
+                                            className="hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] px-4 py-2 hover:text-white transition cursor-pointer"
                                         >
                                             {event}
                                         </li>
@@ -158,7 +158,7 @@ function FiltreParticipant({
                             onSuggestionsClearRequested={onSuggestionsClearRequested}
                             getSuggestionValue={s => s}
                             renderSuggestion={s => (
-                                <div className="px-4 py-2 hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] hover:text-white transition-all duration-200 cursor-pointer">
+                                <div className="hover:bg-gradient-to-tr from-[#580FCA] to-[#F929BB] px-4 py-2 hover:text-white transition-all duration-200 cursor-pointer">
                                     {s}
                                 </div>
                             )}
