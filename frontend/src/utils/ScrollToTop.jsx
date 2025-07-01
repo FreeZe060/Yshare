@@ -9,10 +9,15 @@ export default function ScrollToTop() {
             window.scrollTo({ top: 0, behavior: 'instant' });
         } else {
             const id = hash.replace('#', '');
-            const el = document.getElementById(id);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            const scrollToHash = () => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    setTimeout(scrollToHash, 100);
+                }
+            };
+            scrollToHash();
         }
     }, [pathname, hash]);
 

@@ -17,6 +17,7 @@ import Footer from '../components/Partials/Footer';
 import Header from '../components/Partials/Header';
 import { deleteAccount } from '../services/authService';
 import Swal from 'sweetalert2';
+import NotFound from './NotFound';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
 
@@ -44,12 +45,16 @@ const Profil = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="mb-10"
+            className="mb-12"
         >
-            <h2 className="mb-4 font-bold text-blue-700 text-3xl">{title}</h2>
+            <h2 className="mb-4 font-bold text-3xl bg-gradient-to-r from-[#580FCA] to-[#F929BB] bg-clip-text text-transparent">
+                {title}
+            </h2>
+            <div className="border-t-4 border-[#F929BB] w-16 mb-4 rounded-full"></div>
             {children}
         </motion.div>
     );
+    
 
     useEffect(() => {
         if (!userId) return;
@@ -170,7 +175,7 @@ const Profil = () => {
         }
     };
 
-    if (error) return <div className="text-red-500 text-center">Erreur : {error}</div>;
+    if (error) return <NotFound />;
     if (!profile) return <SkeletonProfileCard />;
 
     const shouldShowGlobalNoActivityMessage = isAdmin && !isOwner && createdEvents.length === 0 && participatedEvents.length === 0;
@@ -197,7 +202,7 @@ const Profil = () => {
                     extraSections={
                         shouldShowGlobalNoActivityMessage ? (
                             <SectionWrapper title="Activité de l'utilisateur">
-                                <p className="text-gray-600 text-lg">
+                                <p className="text-[#580FCA] text-lg italic">
                                     Cet utilisateur n'a pour l'instant participé à aucun événement ni créé d'événement.
                                 </p>
                             </SectionWrapper>
@@ -216,7 +221,8 @@ const Profil = () => {
                                             }
                                             {...(isOwner && participatedEvents.length === 0 && {
                                                 buttonLink: "/participation",
-                                                emptyButtonText: "Voir tous les événements"
+                                                emptyButtonText: "Voir tous les événements",
+                                                emptyButtonClass: "bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             })}
                                             {...(participatedEvents.length > 0 && {
                                                 linkText: "Voir tout l'historique",
@@ -237,8 +243,9 @@ const Profil = () => {
                                                         : "Cet utilisateur n'a pour l'instant créé aucun événement."
                                                     : null
                                             }
-                                            buttonLink={isOwner ? "/event-created" : undefined}
+                                            buttonLink={isOwner ? "/create/event" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
+                                            emptyButtonClass="bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             {...(createdEvents.length > 0 && {
                                                 linkText: "Voir tout l'historique"
                                             })}
@@ -259,6 +266,7 @@ const Profil = () => {
                                             emptyMessage="Vous n'avez pas encore de favoris."
                                             buttonLink="/favoris"
                                             emptyButtonText="Voir tous les événements"
+                                            emptyButtonClass="bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             {...(favoris.length > 0 && {
                                                 linkText: "Voir tous les favoris"
                                             })}
