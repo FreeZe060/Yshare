@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import CommentBlock from './CommentBlock';
+import CommentBlock from '../../Comments/CommentBlock';
 import soiree from '../../../assets/img/soiree.jpg';
 
 function EventMainLeftColumn({
@@ -27,6 +27,7 @@ function EventMainLeftColumn({
     newMaxParticipants,
     setNewMaxParticipants,
     originalMaxParticipants,
+    Swal
 }) {
     const participantCountClass = participants?.length >= event?.max_participants
         ? "text-red-600"
@@ -272,14 +273,21 @@ function EventMainLeftColumn({
                                 value={newComment}
                                 onChange={(e) => setNewComment(e.target.value)}
                                 onKeyDown={(e) => {
+                                    if (!user) {
+                                        Swal.fire('Vous devez être connecté pour écrire un commentaire.');
+                                        e.preventDefault();
+                                        return;
+                                    }
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
                                         handleAddComment();
                                     }
                                 }}
                                 placeholder={user ? "Ajouter un commentaire..." : "Connectez-vous pour commenter"}
-                                className={`flex-1 h-12 px-4 rounded-md border border-gray-200 placeholder-gray-400 ${user ? "focus:outline-none focus:ring-2 focus:ring-gray-100" : "cursor-not-allowed bg-gray-100"}`}
+                                className={`flex-1 h-12 px-4 rounded-md border placeholder-gray-400 ${!user ? "cursor-not-allowed bg-gray-100 text-gray-400" : "border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
+                                    }`}
                                 disabled={!user}
+                                title={!user ? "Vous devez être connecté pour commenter" : ""}
                             />
                         </div>
 

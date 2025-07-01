@@ -161,7 +161,7 @@ function Report({
                                         onClick={() => setActiveReportId(report.id)}
                                         className="et-3-btn min-w-[235px]"
                                     >
-                                        Voir le message
+                                        Voir les messages
                                     </button>
                                     <button
                                         onClick={() => onDeleteReport(report.id)}

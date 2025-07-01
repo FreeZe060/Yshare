@@ -8,23 +8,63 @@ class EventService {
         const {
             title,
             city,
-            start_time,
             categoryId,
             status,
-            sort
+            sort,
+            price,
+            dateFilter 
         } = filters;
 
         const { page = 1, limit = 10 } = pagination;
         const offset = (page - 1) * limit;
 
-        console.log(`[getAllEvents] ➤ Filtres :`, filters);
+        console.log(`[getAllEvents] ➤ Filtres reçus :`, filters);
         console.log(`[getAllEvents] ➤ Pagination : page=${page}, limit=${limit}`);
 
         const whereClause = {};
-        if (title) whereClause.title = { [Op.like]: `%${title}%` };
-        if (city) whereClause.city = { [Op.like]: `%${city}%` };
-        if (start_time) whereClause.start_time = start_time;
-        if (status) whereClause.status = status;
+        if (title) {
+            whereClause.title = { [Op.like]: `%${title}%` };
+            console.log(`[getAllEvents] ➤ Filtre titre : ${title}`);
+        }
+        if (city) {
+            whereClause.city = { [Op.like]: `%${city}%` };
+            console.log(`[getAllEvents] ➤ Filtre ville : ${city}`);
+        }
+
+        if (dateFilter) {
+            const today = new Date();
+            if (dateFilter === "today") {
+                const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+                const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+                whereClause.start_time = { [Op.between]: [startOfDay, endOfDay] };
+                console.log(`[getAllEvents] ➤ Filtre date : aujourd’hui`);
+            } else if (dateFilter === "week") {
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(today.getDate() - today.getDay());
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 7);
+                whereClause.start_time = { [Op.between]: [startOfWeek, endOfWeek] };
+                console.log(`[getAllEvents] ➤ Filtre date : cette semaine`);
+            } else if (dateFilter === "month") {
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                whereClause.start_time = { [Op.between]: [startOfMonth, endOfMonth] };
+                console.log(`[getAllEvents] ➤ Filtre date : ce mois`);
+            }
+        }
+
+        if (status) {
+            whereClause.status = status;
+            console.log(`[getAllEvents] ➤ Filtre status : ${status}`);
+        }
+        
+        if (price === 'free') {
+            whereClause.price = 0;
+            console.log('[getAllEvents] ➤ Filtre prix : Gratuit (0€)');
+        } else if (price === 'paid') {
+            whereClause.price = { [Op.gt]: 0 };
+            console.log('[getAllEvents] ➤ Filtre prix : Payant (>0€)');
+        }
 
         const include = [
             {
@@ -56,10 +96,16 @@ class EventService {
         const order = [];
         if (sort === 'title_asc') {
             order.push(['title', 'ASC']);
+            console.log('[getAllEvents] ➤ Tri : titre croissant');
         } else if (sort === 'start_time_desc') {
             order.push(['start_time', 'DESC']);
+            console.log('[getAllEvents] ➤ Tri : date décroissante (plus récents)');
         } else if (sort === 'start_time_asc') {
             order.push(['start_time', 'ASC']);
+            console.log('[getAllEvents] ➤ Tri : date croissante');
+        } else if (sort === 'popularity') {
+            order.push([Sequelize.literal('nb_participants'), 'DESC']);
+            console.log('[getAllEvents] ➤ Tri : popularité (nb participants décroissant)');
         }
 
         try {

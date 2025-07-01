@@ -566,6 +566,7 @@ function EventDetails() {
                                     setNewMaxParticipants={setNewMaxParticipants}
                                     originalMaxParticipants={originalMaxParticipants}
                                     handleCancelTitleDescription={handleCancelTitleDescription}
+                                    Swal={Swal}
                                 />
                                 <EventMainRightColumn
                                     event={event}

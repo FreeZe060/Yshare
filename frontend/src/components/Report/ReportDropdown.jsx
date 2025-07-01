@@ -41,7 +41,6 @@ const ReportDropdown = ({ contextType, eventId, commentId, organizerId }) => {
 		<div
 			className="relative z-50"
 			ref={dropdownRef}
-			onMouseLeave={() => setOpen(false)}
 		>
 			<button
 				onClick={() => setOpen((prev) => !prev)}

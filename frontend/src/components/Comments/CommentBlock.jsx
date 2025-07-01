@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Picker from 'emoji-picker-react';
 import Swal from 'sweetalert2';
-import useReplyComment from '../../../hooks/Comments/useReplyComment';
-import { useAddReaction } from '../../../hooks/Comments/useAddReaction';
-import { useRemoveReaction } from '../../../hooks/Comments/useRemoveReaction';
-import useReplies from '../../../hooks/Comments/useReplies';
-import { useReactions } from '../../../hooks/Comments/useReactions';
-import { useAuth } from '../../../config/authHeader';
+import useReplyComment from '../../hooks/Comments/useReplyComment';
+import { useAddReaction } from '../../hooks/Comments/useAddReaction';
+import { useRemoveReaction } from '../../hooks/Comments/useRemoveReaction';
+import useReplies from '../../hooks/Comments/useReplies';
+import { useReactions } from '../../hooks/Comments/useReactions';
+import { useAuth } from '../../config/authHeader';
+import ReportDropdown from '../Report/ReportDropdown';
+import EditDeleteDropdown from './EditDeleteDropdown';
 import { Link } from 'react-router-dom';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
@@ -16,6 +18,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 	const [showReplies, setShowReplies] = useState(false);
 	const [showReplyInput, setShowReplyInput] = useState(false);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+	const [editedMessage, setEditedMessage] = useState(comment.message);
 
 	const { replies, fetchReplies, loading: loadingReplies } = useReplies(comment.id);
 	const { reply } = useReplyComment();
@@ -23,9 +26,15 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 	const { user } = useAuth();
 	const token = user?.token;
 
+	const isAuthor = user?.id === comment.author?.id;
+	const isAdmin = user?.role === 'Administrateur';
+	const canReport = user && !isAuthor;
+
 	const { reactions, refetchReactions } = useReactions(comment.id, token);
 	const { addReaction } = useAddReaction();
 	const { removeReaction } = useRemoveReaction(token);
+	const [isDeleted, setIsDeleted] = useState(false);
+	if (isDeleted) return null;
 
 	const emojiCounts = reactions.reduce((acc, r) => {
 		acc[r.emoji] = (acc[r.emoji] || 0) + 1;
@@ -42,6 +51,10 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 		await reply(eventId, comment.id, { title: 'Réponse', message: replyText });
 		setReplyText('');
 		setShowReplyInput(false);
+
+		await fetchReplies();
+
+		setShowReplies(true);
 	};
 
 	const handleReact = async (emoji) => {
@@ -114,8 +127,30 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 					</Link>
 					– {new Date(comment.date_posted).toLocaleDateString()}
 				</div>
-				<div className="bg-gray-50 shadow-sm p-4 border border-gray-200 rounded-md">
-					<p className="text-gray-700">{comment.message}</p>
+				<div className="bg-gray-50 shadow-sm p-4 border border-gray-200 rounded-md relative">
+					{user && (
+						<div className="absolute top-2 right-2">
+							{user && (
+								<div className="absolute top-2 right-2">
+									{(isAdmin || isAuthor) ? (
+										<EditDeleteDropdown
+											comment={comment}
+											onEditSuccess={(newMsg) => setEditedMessage(newMsg)}
+											onDeleteSuccess={() => setIsDeleted(true)}
+										/>
+									) : canReport && (
+										<ReportDropdown
+											contextType="comment"
+											commentId={comment.id}
+											eventId={eventId}
+											organizerId={comment.author?.id}
+										/>
+									)}
+								</div>
+							)}
+						</div>
+					)}
+					<p className="text-gray-700">{editedMessage}</p>
 					<div className="flex items-center gap-2 mt-3">
 						{displayedEmojis.map((emoji) => (
 							<button
@@ -158,7 +193,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 					)}
 				</div>
 
-				{(comment.replyCount > 0 || comment.replies?.length > 0) && (
+				{(comment.replyCount > 0 || comment.replies?.length > 0 || showReplies) && (
 					<div className={`mt-4 ${depth >= 2 ? '' : 'border-l pl-4'} space-y-2`}>
 						<button
 							onClick={async () => {

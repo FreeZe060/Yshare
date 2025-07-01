@@ -17,7 +17,7 @@ import eventBgImage from "../../assets/img/et-3-calender-event.jpg";
 import eventArrowIcon from "../../assets/img/arrow-down-right.svg";
 import fallbackImage from "../../assets/img/et-3-event-1.jpg";
 
-import ReportDropdown from '../Report/EventReport';
+import ReportDropdown from '../Report/ReportDropdown';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
