@@ -103,13 +103,13 @@ const RatingsPage = () => {
                         </h1>
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li className="opacity-80">
-                                <a href="/" className="hover:text-etBlue">Accueil</a>
+                                <a href="/" className="hover:text-[#CE22BF]">Accueil</a>
                             </li>
                             <li>
                                 <i className="fa-angle-right fa-solid"></i>
                             </li>
                             <li className="opacity-80">
-                                <a href={profileLink} className="hover:text-etBlue">Profil</a>
+                                <a href={profileLink} className="hover:text-[#CE22BF]">Profil</a>
                             </li>
                             <li>
                                 <i className="fa-angle-right fa-solid"></i>

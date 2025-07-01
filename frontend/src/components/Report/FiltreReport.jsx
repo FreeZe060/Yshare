@@ -22,9 +22,9 @@ function FiltreReport({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="w-full flex flex-col items-center justify-center mb-8 px-4"
+                className="flex flex-col justify-center items-center mb-8 px-4 w-full"
             >
-                <div className="flex flex-wrap justify-center gap-6 max-w-4xl w-full">
+                <div className="flex flex-wrap justify-center gap-6 w-full max-w-4xl">
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -35,14 +35,14 @@ function FiltreReport({
                         <select
                             onChange={e => setStatusFilter(e.target.value)}
                             value={statusFilter}
-                            className="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 shadow-md transition duration-200 hover:border-etBlue focus:outline-none focus:ring-2 focus:ring-etBlue"
+                            className="bg-white shadow-md px-4 py-2 border border-gray-300 hover:border-[#CE22BF] rounded-lg focus:outline-none focus:ring-[#CE22BF] focus:ring-2 w-full text-gray-700 transition duration-200 appearance-none"
                         >
                             <option value="">Filtrer par statut</option>
                             {statuses.map((status, i) => (
                                 <option key={i} value={status}>{status}</option>
                             ))}
                         </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                        <div className="right-3 absolute inset-y-0 flex items-center text-gray-400 pointer-events-none">
                             <FaChevronDown className="text-sm" />
                         </div>
                     </motion.div>
@@ -56,14 +56,14 @@ function FiltreReport({
                         <select
                             onChange={e => setTypeFilter(e.target.value)}
                             value={typeFilter}
-                            className="w-full appearance-none bg-white border border-gray-300 rounded-lg py-2 px-4 text-gray-700 shadow-md transition duration-200 hover:border-etBlue focus:outline-none focus:ring-2 focus:ring-etBlue"
+                            className="bg-white shadow-md px-4 py-2 border border-gray-300 hover:border-[#CE22BF] rounded-lg focus:outline-none focus:ring-[#CE22BF] focus:ring-2 w-full text-gray-700 transition duration-200 appearance-none"
                         >
                             <option value="">Filtrer par type de signalement</option>
                             {types.map((type, i) => (
                                 <option key={i} value={type}>{type}</option>
                             ))}
                         </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                        <div className="right-3 absolute inset-y-0 flex items-center text-gray-400 pointer-events-none">
                             <FaChevronDown className="text-sm" />
                         </div>
                     </motion.div>
@@ -80,7 +80,7 @@ function FiltreReport({
                             onSuggestionsClearRequested={onSuggestionsClearRequested}
                             getSuggestionValue={s => s}
                             renderSuggestion={s => (
-                                <div className="px-4 py-2 hover:bg-etBlue hover:text-white transition-all duration-200 cursor-pointer">
+                                <div className="hover:bg-[#CE22BF] px-4 py-2 hover:text-white transition-all duration-200 cursor-pointer">
                                     {s}
                                 </div>
                             )}
@@ -88,13 +88,13 @@ function FiltreReport({
                                 placeholder: 'Rechercher un signalement...',
                                 value: searchValue,
                                 onChange: (_e, { newValue }) => setSearchValue(newValue),
-                                className: 'w-full p-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-etBlue transition-all',
+                                className: 'w-full p-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-[#CE22BF] transition-all',
                             }}
                             theme={{
                                 container: 'relative',
                                 suggestionsContainer: 'absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg',
                                 suggestionsList: 'max-h-60 overflow-y-auto divide-y divide-gray-100',
-                                suggestionHighlighted: 'bg-etBlue text-white',
+                                suggestionHighlighted: 'bg-[#CE22BF] text-white',
                             }}
                         />
                     </motion.div>

@@ -71,13 +71,13 @@ function EventHeaderInfo({
                                     );
                                 })}
                             </div>
-                            <p className="text-sm text-gray-600 mt-1">{averageRating ? averageRating.toFixed(2) : "0.00"} / 5</p>
+                            <p className="mt-1 text-gray-600 text-sm">{averageRating ? averageRating.toFixed(2) : "0.00"} / 5</p>
                         </div>
                     )}
 
                     <Link
                         to="/create-news"
-                        className="hover:bg-etBlue mt-4 px-4 py-2 border-2 border-etBlue rounded-full font-semibold text-etBlue hover:text-white text-sm transition-all"
+                        className="hover:bg-[#CE22BF] mt-4 px-4 py-2 border-[#CE22BF] border-2 rounded-full font-semibold text-[#CE22BF] hover:text-white text-sm transition-all"
                     >
                         <i className="mr-2 fas fa-plus"></i>Créer une news
                     </Link>
@@ -90,7 +90,7 @@ function EventHeaderInfo({
                                     setEditing(true);
                                 }
                             }}
-                            className="text-sm text-[#C320C0] underline hover:text-[#a51899]"
+                            className="text-[#C320C0] hover:text-[#a51899] text-sm underline"
                         >
                             {editing ? "Quitter le mode édition" : "Mode édition"}
                         </button>
@@ -119,22 +119,22 @@ function EventHeaderInfo({
                     )}
                 </div>
                 <div className="text-left">
-                    <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
+                    <p className="mb-1 font-light text-etGray text-sm uppercase tracking-wide">Quand</p>
                     {editing ? (
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm text-etGray">Date de début :</label>
+                            <label className="text-etGray text-sm">Date de début :</label>
                             <input
                                 type="datetime-local"
                                 value={newStartDate}
                                 onChange={(e) => setNewStartDate(e.target.value)}
-                                className="border rounded p-2"
+                                className="p-2 border rounded"
                             />
-                            <label className="text-sm text-etGray">Date de fin :</label>
+                            <label className="text-etGray text-sm">Date de fin :</label>
                             <input
                                 type="datetime-local"
                                 value={newEndDate}
                                 onChange={(e) => setNewEndDate(e.target.value)}
-                                className="border rounded p-2"
+                                className="p-2 border rounded"
                             />
                             <div className="flex gap-3 mt-2">
                                 <button
@@ -146,8 +146,8 @@ function EventHeaderInfo({
                             </div>
                         </div>
                     ) : (
-                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
-                            <span className="text-etPurple font-bold">Du</span>{' '}
+                        <p className="font-sans font-semibold text-[17px] text-etBlack leading-relaxed">
+                            <span className="font-bold text-etPurple">Du</span>{' '}
                             {new Date(event?.start_time).toLocaleDateString("fr-FR", {
                                 weekday: "long",
                                 day: "2-digit",
@@ -159,7 +159,7 @@ function EventHeaderInfo({
                                 minute: "2-digit",
                             })}
                             <br />
-                            <span className="text-etPink font-bold">Au</span>{' '}
+                            <span className="font-bold text-etPink">Au</span>{' '}
                             {new Date(event?.end_time).toLocaleDateString("fr-FR", {
                                 weekday: "long",
                                 day: "2-digit",
