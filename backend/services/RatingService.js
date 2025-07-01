@@ -96,7 +96,16 @@ class RatingService {
                     {
                         model: Event,
                         where: { id_org: userId },
-                        attributes: ['id', 'title']
+                        attributes: ['id', 'title', 'start_time', 'status'],
+                        include: [
+                            {
+                                model: EventImage,
+                                as: 'EventImages',
+                                where: { is_main: true },
+                                required: false, // au cas où il n'y ait pas d'image principale
+                                attributes: ['image_url']
+                            }
+                        ]
                     }
                 ],
                 order: [['date_rated', 'DESC']]
@@ -117,7 +126,10 @@ class RatingService {
                 },
                 event: {
                     id: r.Event.id,
-                    title: r.Event.title
+                    title: r.Event.title,
+                    start_time: r.Event.start_time,
+                    status: r.Event.status,
+                    mainImage: r.Event.EventImages?.[0]?.image_url || null
                 }
             }));
 
