@@ -3,7 +3,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   moduleNameMapping: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/__mocks__/fileMock.js'
+    '\\.(gif|ttf|eot|svg|png|jpg|jpeg)$': '<rootDir>/__mocks__/fileMock.js'
   },
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
@@ -25,5 +25,13 @@ module.exports = {
       lines: 0,
       statements: 0
     }
+  },
+  moduleDirectories: ['node_modules', 'src'],
+  testPathIgnorePatterns: ['/node_modules/', '/build/'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-router-dom|@testing-library)/)'
+  ],
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons']
   }
 }; 
