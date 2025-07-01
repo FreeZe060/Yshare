@@ -2,13 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
 
+import NotFound from '../../../pages/NotFound';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import AssignParticipantModal from './AssignParticipantModal';
 
 const sortIcon = (direction) =>
     direction === 'asc'
-        ? <i className="fas fa-sort-up text-gray-800" />
-        : <i className="fas fa-sort-down text-gray-800" />;
+        ? <i className="text-gray-800 fas fa-sort-up" />
+        : <i className="text-gray-800 fas fa-sort-down" />;
 
 const ParticipantSection = ({
     participants,
@@ -89,12 +90,12 @@ const ParticipantSection = ({
 
     if (loading) {
         return (
-            <div className="overflow-x-auto rounded-lg shadow-md bg-white min-h-[600px]">
+            <div className="bg-white shadow-md rounded-lg min-h-[600px] overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead className="bg-indigo-100 text-indigo-700">
                         <tr>
                             {['Nom', 'Événement', 'Statut', 'Date de demande', 'Actions'].map((title, i) => (
-                                <th key={i} className="py-3 px-2 text-left">{title}</th>
+                                <th key={i} className="px-2 py-3 text-left">{title}</th>
                             ))}
                         </tr>
                     </thead>
@@ -108,7 +109,7 @@ const ParticipantSection = ({
         );
     }
 
-    if (error) return <p className="text-red-500">Erreur : {error}</p>;
+    if (error) return <NotFound/>;
 
     return (
         <div>
@@ -116,9 +117,9 @@ const ParticipantSection = ({
                 <h1 className="font-bold text-gray-800 text-xl">Demandes de participation</h1>
                 <button
                     onClick={() => setShowAssignModal(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
+                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
                 >
-                    <i className="fas fa-user-plus mr-2" />
+                    <i className="mr-2 fas fa-user-plus" />
                     Ajouter un participant
                 </button>
             </div>
@@ -133,8 +134,8 @@ const ParticipantSection = ({
                 )}
             </AnimatePresence>
 
-            <div className="overflow-x-auto rounded-lg shadow-md bg-white">
-                <table className="w-full text-sm text-gray-900">
+            <div className="bg-white shadow-md rounded-lg overflow-x-auto">
+                <table className="w-full text-gray-900 text-sm">
                     <thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
                         <tr>
                             {[
@@ -146,7 +147,7 @@ const ParticipantSection = ({
                                 <th
                                     key={key}
                                     onClick={() => toggleSort(key)}
-                                    className="py-3 px-2 cursor-pointer text-left"
+                                    className="px-2 py-3 text-left cursor-pointer"
                                 >
                                     <span className="flex items-center gap-x-1.5">
                                         {label}
@@ -154,7 +155,7 @@ const ParticipantSection = ({
                                     </span>
                                 </th>
                             ))}
-                            <th className="py-3 px-2 text-left">Actions</th>
+                            <th className="px-2 py-3 text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -166,13 +167,13 @@ const ParticipantSection = ({
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="border-b hover:bg-gray-50"
+                                    className="hover:bg-gray-50 border-b"
                                 >
-                                    <td className="py-3 px-2 flex items-center space-x-2">
+                                    <td className="flex items-center space-x-2 px-2 py-3">
                                         <img
                                             src={`http://localhost:8080${p.profileImage || '/default-avatar.png'}`}
                                             alt={p.name}
-                                            className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                                            className="rounded-full w-8 h-8 object-cover cursor-pointer"
                                             onClick={() => navigate(`/profile/${p.userId}`)}
                                         />
                                         <span
@@ -183,7 +184,7 @@ const ParticipantSection = ({
                                         </span>
                                     </td>
                                     <td
-                                        className="py-3 px-2 hover:underline cursor-pointer"
+                                        className="px-2 py-3 hover:underline cursor-pointer"
                                         onClick={() => navigate(`/event/${p.eventId}`)}
                                     >
                                         {p.eventTitle}
@@ -191,15 +192,15 @@ const ParticipantSection = ({
                                     <td className={`py-3 px-2 font-semibold ${getStatusColor(p.status)}`}>
                                         {p.status}
                                     </td>
-                                    <td className="py-3 px-2">
+                                    <td className="px-2 py-3">
                                         {new Intl.DateTimeFormat('fr-FR').format(new Date(p.joinedAt))}
                                     </td>
-                                    <td className="py-3 px-2 text-indigo-600">
+                                    <td className="px-2 py-3 text-indigo-600">
                                         {updatingId === p.id ? (
-                                            <i className="fas fa-spinner fa-spin text-gray-500" />
+                                            <i className="text-gray-500 fas fa-spinner fa-spin" />
                                         ) : (
                                             <i
-                                                className="fas fa-sync-alt hover:text-yellow-600 cursor-pointer"
+                                                className="hover:text-yellow-600 cursor-pointer fas fa-sync-alt"
                                                 title="Changer le statut"
                                                 onClick={() => onUpdateStatus(p)}
                                             ></i>

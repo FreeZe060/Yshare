@@ -21,8 +21,7 @@ const Register = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [invalidPasswordRules, setInvalidPasswordRules] = useState([]);
 	const [shakeRules, setShakeRules] = useState(false);
-	const [passwordFocused, setPasswordFocused] = useState(false);
-
+	const [profileImageError, setProfileImageError] = useState('');
 
 	const handleNameChange = (e) => {
 		const sanitized = sanitizeInput(e.target.value);
@@ -61,7 +60,20 @@ const Register = () => {
 	}, []);
 
 	const handleFileChange = (e) => {
-		setProfileImage(e.target.files[0]);
+		const file = e.target.files[0];
+		setProfileImageError('');
+
+		if (file) {
+			if (!file.type.startsWith('image/')) {
+				setProfileImageError('Seuls les fichiers image sont autorisés.');
+				return;
+			}
+			if (file.size > 5 * 1024 * 1024) {
+				setProfileImageError('Fichier trop volumineux (max 5 Mo).');
+				return;
+			}
+			setProfileImage(file);
+		}
 	};
 
 	useEffect(() => {
@@ -240,27 +252,6 @@ const Register = () => {
 						<h1 className="mb-3 font-bold text-gray-800 text-3xl text-center anim-text">Créer un compte!</h1>
 						<p className="mb-6 font-normal text-gray-600 text-base text-center anim-text">Rejoignez-nous</p>
 
-						{/* {[
-							{ value: name, onChange: setName, placeholder: 'Prénom', type: 'text', name: 'name' },
-							{ value: lastname, onChange: setLastname, placeholder: 'Nom', type: 'text', name: 'lastname' },
-							{ value: email, onChange: setEmail, placeholder: 'Adresse e-mail', type: 'email', name: 'email' },
-						].map((input, index) => (
-							<div key={index} className="flex items-center mb-4 px-4 py-3 border-2 rounded-2xl w-full">
-								<svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12l-4 4-4-4" />
-								</svg>
-								<input
-									className="bg-transparent pl-3 border-none outline-none w-full w-full text-sm"
-									type={input.type}
-									name={input.name}
-									placeholder={input.placeholder}
-									value={input.value}
-									onChange={(e) => input.onChange(e.target.value)}
-									required
-								/>
-							</div>
-						))} */}
-
 						<div className="flex flex-col items-center mb-5">
 							<label htmlFor="profileImage" className="group relative hover:opacity-90 border-[#C421C0] border-4 rounded-full w-24 h-24 overflow-hidden transition duration-300 cursor-pointer">
 								{profileImage ? (
@@ -283,6 +274,10 @@ const Register = () => {
 									onChange={handleFileChange}
 								/>
 							</label>
+							{profileImageError && (
+								<p className="mt-2 text-red-500 text-xs text-center">{profileImageError}</p>
+							)}
+
 							<p className="mt-2 text-gray-500 text-xs">Cliquez pour choisir une photo</p>
 						</div>
 
@@ -361,8 +356,6 @@ const Register = () => {
 								type={showPassword ? 'text' : 'password'}
 								name="password"
 								value={password}
-								onFocus={() => setPasswordFocused(true)}
-								onBlur={() => setPasswordFocused(password.length > 0)}
 								onChange={handlePasswordChange}
 								placeholder="Mot de passe"
 							/>
@@ -382,34 +375,32 @@ const Register = () => {
 						</div>
 						{password && (
 							<p className={`text-xs mt-1 mb-2 text-center transition-all duration-300 ${passwordLevel === 'strong' ? 'text-green-600' :
-									passwordLevel === 'medium' ? 'text-yellow-600' :
-										'text-red-600'
+								passwordLevel === 'medium' ? 'text-yellow-600' :
+									'text-red-600'
 								}`}>
 								{passwordLevel === 'strong' ? 'Mot de passe sécurisé' :
 									passwordLevel === 'medium' ? 'Mot de passe moyen' :
 										'Mot de passe faible'}
 							</p>
 						)}
-						{passwordFocused && (
-							<div className="flex flex-col mt-2 mb-4 text-xs">
-								{checkPasswordRules(password).map((rule, idx) => {
-									const shouldShake = shakeRules && !rule.isValid;
-									return (
-										<div
-											key={idx}
-											className={`
+						<div className="flex flex-col mt-2 mb-4 text-xs">
+							{checkPasswordRules(password).map((rule, idx) => {
+								const shouldShake = shakeRules && !rule.isValid;
+								return (
+									<div
+										key={idx}
+										className={`
 												flex items-center gap-2 px-3 rounded-xl transition-all duration-300 text-sm
 												${rule.isValid ? 'text-green-700 animate__fadeIn animate__animated' : 'text-red-600'}
 												${shouldShake ? 'animate__animated animate__headShake' : ''}
 											`}
-										>
-											<span className={`w-2 h-2 rounded-full ${rule.isValid ? 'bg-green-500' : 'bg-red-500'}`} />
-											{rule.label}
-										</div>
-									);
-								})}
-							</div>
-						)}
+									>
+										<span className={`w-2 h-2 rounded-full ${rule.isValid ? 'bg-green-500' : 'bg-red-500'}`} />
+										{rule.label}
+									</div>
+								);
+							})}
+						</div>
 
 						{error && (
 							<p className="mt-3 text-red-500 text-sm text-center">{error}</p>

@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import useClickOutside from '../../../hooks/Utils/useClickOutside';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
+import NotFound from '../../../pages/NotFound';
 
 const sortIcon = (dir) =>
     dir === 'asc' ? <i className="fas fa-sort-up" /> : <i className="fas fa-sort-down" />;
@@ -117,33 +118,33 @@ const CategorySection = ({ categories, loading, error, onCreate, onEdit, onDelet
     ];
 
     if (loading) return <RowSkeleton count={6} />;
-    if (error) return <p className="text-red-600 font-medium">Erreur : {error}</p>;
+    if (error) return <NotFound/>;
 
     return (
         <div>
-            <h1 className="text-2xl font-bold py-4 uppercase text-gray-800">Catégories</h1>
+            <h1 className="py-4 font-bold text-gray-800 text-2xl uppercase">Catégories</h1>
 
             <div className="flex justify-between mb-4">
                 <button
                     onClick={onCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
+                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
                 >
-                    <i className="fas fa-folder-plus mr-2" />
+                    <i className="mr-2 fas fa-folder-plus" />
                     Ajouter une catégorie
                 </button>
             </div>
 
-            <div className="overflow-x-auto rounded-lg shadow bg-white">
+            <div className="bg-white shadow rounded-lg overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead ref={theadRef} className="bg-indigo-100 text-black">
                         <tr>
                             {columns.map(col => (
                                 <th
                                     key={col.field}
-                                    className="py-3 px-6 text-left cursor-pointer"
+                                    className="px-6 py-3 text-left cursor-pointer"
                                     onClick={() => sort.toggleSort(col.field)}
                                 >
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex justify-between items-center">
                                         <span className={`font-medium uppercase tracking-wide ${sort.sortField === col.field ? 'underline font-bold' : ''}`}>
                                             {col.label}
                                         </span>
@@ -151,7 +152,7 @@ const CategorySection = ({ categories, loading, error, onCreate, onEdit, onDelet
                                     </div>
                                 </th>
                             ))}
-                            <th className="py-3 px-6 text-left">Actions</th>
+                            <th className="px-6 py-3 text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -163,19 +164,19 @@ const CategorySection = ({ categories, loading, error, onCreate, onEdit, onDelet
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -8 }}
                                     transition={{ duration: 0.25 }}
-                                    className="border-b border-gray-200 hover:bg-gray-50"
+                                    className="hover:bg-gray-50 border-gray-200 border-b"
                                 >
-                                    <td className="py-3 px-6 text-gray-900 font-medium w-full">{cat.name}</td>
-                                    <td className="py-3 px-6 text-gray-700 w-full">
+                                    <td className="px-6 py-3 w-full font-medium text-gray-900">{cat.name}</td>
+                                    <td className="px-6 py-3 w-full text-gray-700">
                                         {categories.find(p => p.id === cat.parent_id)?.name || '–'}
                                     </td>
-                                    <td className="py-3 px-6">
-                                        <div className="flex space-x-3 items-center">
+                                    <td className="px-6 py-3">
+                                        <div className="flex items-center space-x-3">
                                             <button onClick={() => onEdit(cat)} title="Modifier">
-                                                <i className="fas fa-pen text-yellow-500 hover:scale-110 transition" />
+                                                <i className="text-yellow-500 hover:scale-110 transition fas fa-pen" />
                                             </button>
                                             <button onClick={() => onDelete(cat)} title="Supprimer">
-                                                <i className="fas fa-trash text-red-500 hover:scale-110 transition" />
+                                                <i className="text-red-500 hover:scale-110 transition fas fa-trash" />
                                             </button>
                                         </div>
                                     </td>

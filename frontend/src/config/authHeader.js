@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { checkAuthStatus, logout } from '../services/authService'; // tes fonctions déjà existantes
+import { checkAuthStatus, logout } from '../services/authService';
 
 const AuthContext = createContext();
 

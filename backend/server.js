@@ -11,7 +11,6 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
 
-
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('./config/passport-google');
 
@@ -75,7 +74,7 @@ app.get('/', (req, res) => {
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>API Events Manager</title>
+        <title>API Yshare (Events Manager)</title>
         <style>
             body {
                 margin: 0;
@@ -124,30 +123,37 @@ app.get('/', (req, res) => {
     `);
 });
 
-startStatusScheduler(5);
 // Error handler
 app.use((err, req, res, next) => {
     console.error("[Express] Stack error:", err.stack);
     res.status(500).json({ message: "Erreur interne du serveur" });
 });
 
-sequelize.authenticate()
-    .then(() => {
-        console.log("✅ Connexion à la base de données établie.");
-        app.listen(port, () => {
-            console.log(`🚀 Serveur lancé sur http://localhost:${port}`);
+// Démarrage du serveur uniquement si ce fichier est exécuté directement
+if (require.main === module) {
+    startStatusScheduler(5);
+    
+    sequelize.authenticate()
+        .then(() => {
+            console.log("✅ Connexion à la base de données établie.");
+            app.listen(port, () => {
+                console.log(`🚀 Serveur lancé sur http://localhost:${port}`);
+            });
+        })
+        .catch((err) => {
+            console.error("❌ Erreur de connexion à la base de données :", err.message);
+            process.exit(1); 
         });
-    })
-    .catch((err) => {
-        console.error("❌ Erreur de connexion à la base de données :", err.message);
-        process.exit(1); 
-    });
 
-process.on('uncaughtException', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.error(`❌ Le port ${port} est déjà utilisé. Veuillez en choisir un autre.`);
-    } else {
-        console.error("❌ Erreur non capturée :", err);
-    }
-    process.exit(1);
-});
+    process.on('uncaughtException', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.error(`❌ Le port ${port} est déjà utilisé. Veuillez en choisir un autre.`);
+        } else {
+            console.error("❌ Erreur non capturée :", err);
+        }
+        process.exit(1);
+    });
+}
+
+// Export de l'app Express pour les tests
+module.exports = app;

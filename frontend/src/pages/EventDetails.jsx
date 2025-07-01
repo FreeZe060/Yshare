@@ -8,6 +8,7 @@ import Footer from '../components/Partials/Footer';
 
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
+import NotFound from './NotFound';
 
 import useEventDetails from '../hooks/Events/useEventDetails';
 import useComments from '../hooks/Comments/useComments';
@@ -68,6 +69,13 @@ function EventDetails() {
     const [guestCount, setGuestCount] = useState(0);
     const maxGuests = 3;
     const [guests, setGuests] = useState([]);
+    /***********
+   * ACCESS CONTROL:
+   ************/
+    const isCreator = user && event && user.id === event.organizer?.id;
+    const isAdmin = user && user.role === 'Administrateur';
+    const isParticipantRegistered = participants?.some(p => p.user.id === user?.id && p.status === "Inscrit");
+    const eventTermine = event?.status === "Terminé";
     /***********
     * IMAGES EVENT EDITING:
     ************/
@@ -477,7 +485,7 @@ function EventDetails() {
     const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
     // if (loading) return <p className="mt-10 text-center">Chargement...</p>;
-    if (error) return <p className="mt-10 text-red-600 text-center">Erreur: {error}</p>;
+    if (error) return <NotFound />;
 
     console.log(event);
     const mainImage = event?.EventImages?.find(img => img.is_main) || event?.EventImages?.[0];
@@ -520,6 +528,7 @@ function EventDetails() {
                             eventStatus={event?.status}
                             hasRated={hasRated}
                             isParticipant={isParticipant}
+                            openPopup={() => setShowRatingsPopup(true)}
                         />
                     )}
                     <div className="py-[130px] md:py-[60px] lg:py-[80px] et-event-details-content">
@@ -567,6 +576,12 @@ function EventDetails() {
                                     originalMaxParticipants={originalMaxParticipants}
                                     handleCancelTitleDescription={handleCancelTitleDescription}
                                     Swal={Swal}
+                                    isCreator={isCreator}
+                                    isAdmin={isAdmin}
+                                    isParticipantRegistered={isParticipantRegistered}
+                                    eventTermine={eventTermine}
+                                    onRateClick={() => setShowRatingsPopup(true)}
+                                    hasRated={hasRated}
                                 />
                                 <EventMainRightColumn
                                     event={event}
@@ -619,7 +634,7 @@ function EventDetails() {
 
                 {showRatingsPopup && (
                     <div
-                        className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+                        className="z-50 fixed inset-0 flex justify-center items-center bg-black bg-opacity-50"
                         onClick={() => setShowRatingsPopup(false)}
                     >
                         <motion.div
@@ -627,11 +642,11 @@ function EventDetails() {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.8, opacity: 0 }}
                             transition={{ duration: 0.3 }}
-                            className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full max-h-[80vh] overflow-y-auto"
+                            className="bg-white shadow-lg p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-semibold text-gray-800">Notes reçues</h2>
+                                <h2 className="font-semibold text-gray-800 text-xl">Notes reçues</h2>
                                 <button
                                     onClick={() => setShowRatingsPopup(false)}
                                     className="text-gray-600 hover:text-gray-800 text-xl"
@@ -650,13 +665,13 @@ function EventDetails() {
                                         <img
                                             src={`http://localhost:8080${rating.user.profileImage}`}
                                             alt="PP"
-                                            className="w-12 h-12 rounded-full object-cover"
+                                            className="rounded-full w-12 h-12 object-cover"
                                         />
                                         <div>
                                             <p className="font-semibold">
                                                 {rating.user.name} {rating.user.lastname.charAt(0).toUpperCase()}.
                                             </p>
-                                            <div className="flex items-center mt-1 relative group">
+                                            <div className="group relative flex items-center mt-1">
                                                 {[1, 2, 3, 4, 5].map(star => (
                                                     <svg
                                                         key={star}
@@ -668,7 +683,7 @@ function EventDetails() {
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.173c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.285-3.97a1 1 0 00-.364-1.118L2.63 9.397c-.783-.57-.38-1.81.588-1.81h4.173a1 1 0 00.95-.69l1.286-3.97z" />
                                                     </svg>
                                                 ))}
-                                                <div className="absolute min-w-[50px] -top-6 left-1/2 -translate-x-1/2 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition">
+                                                <div className="-top-6 left-1/2 absolute bg-white opacity-0 group-hover:opacity-100 shadow px-2 py-1 rounded min-w-[50px] text-gray-600 text-xs transition -translate-x-1/2">
                                                     {rating.rating ? parseFloat(rating.rating).toFixed(1) : '0.0'} / 5
                                                 </div>
                                             </div>
@@ -676,7 +691,7 @@ function EventDetails() {
                                     </div>
 
                                     {rating.message && (
-                                        <p className="text-gray-700 mt-2 ml-16">Message : {rating.message}</p>
+                                        <p className="mt-2 ml-16 text-gray-700">Message : {rating.message}</p>
                                     )}
 
 

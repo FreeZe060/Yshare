@@ -2,12 +2,13 @@ import React, { useMemo, useEffect, useState } from 'react';
 import 'animate.css';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { time } from 'framer-motion';
+
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
 
 const STATUS_STYLES = {
     'Planifié': 'bg-gradient-to-r from-[#550ECA] to-[#7A2AE1] text-white animate__fadeIn shadow-md',
     'En Cours': 'bg-gradient-to-r from-[#F929BB] to-[#C421C0] text-white animate__pulse animate__infinite shadow-lg',
-    'Terminé': 'bg-gray-100 text-gray-700 animate__fadeIn shadow-sm',
+    'Terminé': 'bg-gray-300 text-gray-700 animate__fadeIn shadow-sm grayscale',
     'Annulé': 'bg-gradient-to-r from-[#F929BB] to-red-500 text-white animate__shakeX shadow-md',
 };
 
@@ -15,14 +16,20 @@ dayjs.extend(duration);
 
 const formatTimeLeft = (milliseconds) => {
     const time = dayjs.duration(milliseconds);
-    const hours = String(time.hours()).padStart(2, '0');
-    const minutes = String(time.minutes()).padStart(2, '0');
-    const seconds = String(time.seconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
+    const hours = time.hours();
+    const minutes = time.minutes();
+    const seconds = time.seconds();
+
+    let result = '';
+    if (hours > 0) result += `${hours}h `;
+    if (minutes > 0 || hours > 0) result += `${minutes}m `;
+    result += `${seconds}s`;
+
+    return result.trim();
 };
 
 
-const EventStatusTag = ({ date, status }) => {
+const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
     const [timeLeft, setTimeLeft] = useState(null);
     const computedStatus = useMemo(() => {
         if (status) return status;
@@ -52,6 +59,20 @@ const EventStatusTag = ({ date, status }) => {
                     if (remaining <= 0) {
                         clearInterval(interval);
                         setTimeLeft(null);
+
+                        fetch(`${API_BASE_URL}/events/${eventId}/status/auto`, {
+                            method: 'PATCH',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log("Status auto-updated:", data);
+                                if (typeof onStatusChange === 'function') {
+                                    onStatusChange();
+                                }
+                            })
+                            .catch(err => console.error("Error auto-updating event status", err));
                     } else {
                         setTimeLeft(remaining);
                     }
@@ -60,27 +81,43 @@ const EventStatusTag = ({ date, status }) => {
                 return () => clearInterval(interval);
             }
         }
-    }, [computedStatus, date]);
+    }, [computedStatus, date, eventId, onStatusChange]);
 
     return (
-        <div className="relative inline-block animate__animated animate__fadeInUp">
+        <div className="relative inline-block">
             {computedStatus === 'Planifié' && timeLeft !== null && (
-                <>
-                    <div className="absolute z-10 -top-4 -right-2 text-[13px] px-2 py-[1px] rounded-full bg-[#F929BB] text-white font-semibold shadow">
-                        {formatTimeLeft(timeLeft)}
-                    </div>
-                </>
+                <div className="absolute z-10 -top-4 -right-2 text-[13px] px-2 py-[1px] rounded-full bg-[#F929BB] text-white font-semibold shadow">
+                    {formatTimeLeft(timeLeft)}
+                </div>
             )}
+
             <span
                 className={`inline-block text-[13px] font-medium px-3 py-1 rounded-full w-fit animate__animated ${timeLeft !== null ? 'border-2 border-[#F929BB]' : ''}
                     backdrop-blur-sm ring-1 ring-white/20 ${STATUS_STYLES[computedStatus] || 'bg-gray-100 text-gray-700'}
                 `}
             >
-                {/* Wave effect */}
                 {computedStatus === 'Planifié' && timeLeft !== null && (
                     <div className="wave-overlay" />
                 )}
-                {computedStatus}
+
+                {computedStatus === 'Terminé' ? (
+                    <span className="flex items-center gap-1">
+                        <svg
+                            className="w-4 h-4 text-green-600 animate__animated animate__bounceIn"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                        Terminé
+                    </span>
+                ) : (
+                    computedStatus
+                )}
             </span>
 
             {computedStatus === 'En Cours' && (

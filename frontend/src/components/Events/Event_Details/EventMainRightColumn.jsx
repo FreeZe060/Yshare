@@ -36,7 +36,7 @@ function EventMainRightColumn({
                     <h5 className="font-medium text-[20px] text-white text-center">Sélectionnez la date et l’heure</h5>
                 </div>
 
-                <div className="p-[22px] lg:p-[16px]">
+                <div className="bg-white p-[22px] lg:p-[16px]">
                     <div className="flex justify-between items-center mt-[6px] mb-[16px]">
                         <h6 className="font-medium text-[#232323] text-[16px]">Plage horaire</h6>
 
@@ -69,14 +69,14 @@ function EventMainRightColumn({
                                                     type="number"
                                                     value={newPrice}
                                                     onChange={(e) => setNewPrice(parseFloat(e.target.value))}
-                                                    className="border rounded px-2 py-1 w-20"
+                                                    className="px-2 py-1 border rounded w-20"
                                                     min="0"
                                                     step="0.01"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setNewPrice(originalPrice)}
-                                                    className="ml-2 text-sm text-gray-500 underline"
+                                                    className="ml-2 text-gray-500 text-sm underline"
                                                 >
                                                     Annuler
                                                 </button>
@@ -102,7 +102,7 @@ function EventMainRightColumn({
                         </div>
                     </div>
                     {errors && (
-                        <p key={errorCount} className="text-red-500 text-[12px] text-center mt-2">
+                        <p key={errorCount} className="mt-2 text-[12px] text-red-500 text-center">
                             {errors}
                         </p>
                     )}
@@ -124,28 +124,28 @@ function EventMainRightColumn({
                                     value={newStreetNumber}
                                     onChange={(e) => setNewStreetNumber(e.target.value)}
                                     placeholder="N°"
-                                    className="w-full px-2 py-1 rounded text-sm"
+                                    className="px-2 py-1 rounded w-full text-sm"
                                 />
                                 <input
                                     type="text"
                                     value={newStreet}
                                     onChange={(e) => setNewStreet(e.target.value)}
                                     placeholder="Rue"
-                                    className="w-full px-2 py-1 rounded text-sm"
+                                    className="px-2 py-1 rounded w-full text-sm"
                                 />
                                 <input
                                     type="text"
                                     value={newPostalCode}
                                     onChange={(e) => setNewPostalCode(e.target.value)}
                                     placeholder="Code postal"
-                                    className="w-full px-2 py-1 rounded text-sm"
+                                    className="px-2 py-1 rounded w-full text-sm"
                                 />
                                 <input
                                     type="text"
                                     value={newCity}
                                     onChange={(e) => setNewCity(e.target.value)}
                                     placeholder="Ville"
-                                    className="w-full px-2 py-1 rounded text-sm"
+                                    className="px-2 py-1 rounded w-full text-sm"
                                 />
                                 <button
                                     type="button"
@@ -155,7 +155,7 @@ function EventMainRightColumn({
                                         setNewPostalCode(originalPostalCode);
                                         setNewCity(originalCity);
                                     }}
-                                    className="text-sm text-gray-200 underline"
+                                    className="text-gray-200 text-sm underline"
                                 >
                                     Annuler
                                 </button>
