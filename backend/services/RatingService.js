@@ -1,4 +1,4 @@
-const { Event, Rating, User, sequelize } = require('../models');
+const { Event, Rating, User, sequelize, EventImage } = require('../models');
 
 class RatingService {
     async createRating(id_event, id_user, rating, message) {
@@ -102,7 +102,7 @@ class RatingService {
                                 model: EventImage,
                                 as: 'EventImages',
                                 where: { is_main: true },
-                                required: false, // au cas où il n'y ait pas d'image principale
+                                required: false,
                                 attributes: ['image_url']
                             }
                         ]
@@ -208,6 +208,42 @@ class RatingService {
             console.error('[getAllRatingsWithDetails] ❌ Erreur :', error.message);
             throw new Error("Erreur lors de la récupération des notes complètes : " + error.message);
         }
+    }
+
+    async getAllRatingsByUser(userId) {
+        console.log(`[getAllRatingsByUser] ➤ Récupération de toutes les notes données par user=${userId}`);
+
+        const ratings = await Rating.findAll({
+            where: { id_user: userId },
+            include: [
+                {
+                    model: Event,
+                    attributes: ['id', 'title'],
+                    include: [
+                        {
+                            model: EventImage,
+                            as: 'EventImages',
+                            where: { is_main: true },
+                            required: false,
+                            attributes: ['image_url']
+                        }
+                    ]
+                }
+            ],
+            order: [['date_rated', 'DESC']]
+        });
+
+        return ratings.map(r => ({
+            id: r.id,
+            rating: r.rating,
+            message: r.message,
+            date: r.date_rated,
+            event: {
+                id: r.Event.id,
+                title: r.Event.title,
+                mainImage: r.Event.EventImages?.[0]?.image_url || null
+            }
+        }));
     }
 
     async deleteRating(id) {

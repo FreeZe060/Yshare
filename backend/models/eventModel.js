@@ -61,6 +61,14 @@ const Event = sequelize.define('Event', {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  latitude: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
+  longitude: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+  },
 }, {
   tableName: 'events',
   timestamps: false,

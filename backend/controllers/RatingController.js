@@ -66,6 +66,17 @@ exports.getEventAverageRating = async (req, res) => {
     }
 };
 
+exports.getAllRatingsByUser = async (req, res) => {
+    try {
+        const userId = req.user.id; 
+        const ratings = await ratingService.getAllRatingsByUser(userId);
+        return res.status(200).json(ratings);
+    } catch (error) {
+        console.error("Erreur dans getAllRatingsByUser:", error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 exports.getAllRatingsByOrganizer = async (req, res) => {
     try {
         const { userId } = req.params;

@@ -81,6 +81,25 @@ export async function getEventAverageRating(eventId) {
 	};
 }
 
+export async function getAllRatingsByUser(token) {
+    const response = await fetch(`${API_BASE_URL}/ratings/mine`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || "Erreur lors de la récupération de vos notes");
+    }
+
+    return result;
+}
+
 /**
  * Récupérer toutes les notes des événements créés par un organisateur spécifique
  * (GET /ratings/organizer/:userId)

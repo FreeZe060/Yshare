@@ -1,5 +1,6 @@
 const { Event, Category, EventImage, Participant, User, EventGuest, Rating } = require('../models');
-const { Op, fn, col } = require('sequelize');
+const { Op, fn, col, Sequelize } = require('sequelize');
+const { getCoordinatesFromCity } = require('../utils/geocoding');
 
 class EventService {
     async getAllEvents(filters = {}, pagination = {}) {
@@ -12,58 +13,88 @@ class EventService {
             status,
             sort,
             price,
-            dateFilter 
+            dateFilter,
+            lat,
+            lng,
+            latitude,
+            longitude,
+            radius
         } = filters;
 
         const { page = 1, limit = 10 } = pagination;
         const offset = (page - 1) * limit;
 
-        console.log(`[getAllEvents] ➤ Filtres reçus :`, filters);
-        console.log(`[getAllEvents] ➤ Pagination : page=${page}, limit=${limit}`);
+        const whereClauses = [];
 
-        const whereClause = {};
+        // 🔧 Filtre title
         if (title) {
-            whereClause.title = { [Op.like]: `%${title}%` };
-            console.log(`[getAllEvents] ➤ Filtre titre : ${title}`);
-        }
-        if (city) {
-            whereClause.city = { [Op.like]: `%${city}%` };
-            console.log(`[getAllEvents] ➤ Filtre ville : ${city}`);
+            whereClauses.push({ title: { [Op.like]: `%${title}%` } });
         }
 
+        // 🔧 Filtre city
+        if (city) {
+            whereClauses.push({ city: { [Op.like]: `%${city}%` } });
+        }
+
+        // 🔧 Filtre date
         if (dateFilter) {
             const today = new Date();
+            let startDate, endDate;
+
             if (dateFilter === "today") {
-                const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-                const endOfDay = new Date(today.setHours(23, 59, 59, 999));
-                whereClause.start_time = { [Op.between]: [startOfDay, endOfDay] };
-                console.log(`[getAllEvents] ➤ Filtre date : aujourd’hui`);
+                startDate = new Date(today.setHours(0, 0, 0, 0));
+                endDate = new Date(today.setHours(23, 59, 59, 999));
             } else if (dateFilter === "week") {
-                const startOfWeek = new Date(today);
-                startOfWeek.setDate(today.getDate() - today.getDay());
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 7);
-                whereClause.start_time = { [Op.between]: [startOfWeek, endOfWeek] };
-                console.log(`[getAllEvents] ➤ Filtre date : cette semaine`);
+                const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - dayOfWeek);
+                startDate.setHours(0, 0, 0, 0);
+
+                endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 6);
+                endDate.setHours(23, 59, 59, 999);
             } else if (dateFilter === "month") {
-                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                whereClause.start_time = { [Op.between]: [startOfMonth, endOfMonth] };
-                console.log(`[getAllEvents] ➤ Filtre date : ce mois`);
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0);
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59);
             }
+
+            whereClauses.push({ start_time: { [Op.between]: [startDate, endDate] } });
         }
 
+        // 🔧 Filtre status
         if (status) {
-            whereClause.status = status;
-            console.log(`[getAllEvents] ➤ Filtre status : ${status}`);
+            whereClauses.push({ status });
         }
-        
+
+        // 🔧 Filtre price (corrigé)
         if (price === 'free') {
-            whereClause.price = 0;
-            console.log('[getAllEvents] ➤ Filtre prix : Gratuit (0€)');
+            whereClauses.push({
+                [Op.or]: [
+                    { price: 0 },
+                    { price: null }
+                ]
+            });
         } else if (price === 'paid') {
-            whereClause.price = { [Op.gt]: 0 };
-            console.log('[getAllEvents] ➤ Filtre prix : Payant (>0€)');
+            whereClauses.push({ price: { [Op.gt]: 0 } });
+        }
+
+        // 🔧 Géolocalisation Haversine
+        const effectiveLat = latitude || lat;
+        const effectiveLng = longitude || lng;
+        let distanceCondition = null;
+
+        if (effectiveLat && effectiveLng && radius) {
+            const radiusKm = radius;
+            const distanceSql = `
+            6371 * acos(
+                cos(radians(${effectiveLat}))
+                * cos(radians(latitude))
+                * cos(radians(longitude) - radians(${effectiveLng}))
+                + sin(radians(${effectiveLat})) * sin(radians(latitude))
+            )
+        `;
+
+            distanceCondition = Sequelize.literal(`${distanceSql} < ${radiusKm}`);
         }
 
         const include = [
@@ -96,26 +127,31 @@ class EventService {
         const order = [];
         if (sort === 'title_asc') {
             order.push(['title', 'ASC']);
-            console.log('[getAllEvents] ➤ Tri : titre croissant');
         } else if (sort === 'start_time_desc') {
             order.push(['start_time', 'DESC']);
-            console.log('[getAllEvents] ➤ Tri : date décroissante (plus récents)');
         } else if (sort === 'start_time_asc') {
             order.push(['start_time', 'ASC']);
-            console.log('[getAllEvents] ➤ Tri : date croissante');
         } else if (sort === 'popularity') {
             order.push([Sequelize.literal('nb_participants'), 'DESC']);
-            console.log('[getAllEvents] ➤ Tri : popularité (nb participants décroissant)');
         }
 
         try {
             const events = await Event.findAll({
-                where: whereClause,
+                where: {
+                    [Op.and]: whereClauses,
+                    ...(distanceCondition && { [Op.and]: Sequelize.where(distanceCondition, true) }),
+                },
                 include,
                 attributes: {
                     include: [[fn('COUNT', col('participants.id')), 'nb_participants']],
                 },
-                group: ['Event.id', 'Categories.id', 'EventImages.id', 'organizer.id'],
+                group: [
+                    'Event.id',
+                    'Categories.id',
+                    'EventImages.id',
+                    'organizer.id',
+                    'participants.id'
+                ],
                 offset,
                 limit: parseInt(limit),
                 subQuery: false,
@@ -123,7 +159,9 @@ class EventService {
             });
 
             const total = await Event.count({
-                where: whereClause,
+                where: {
+                    [Op.and]: whereClauses
+                },
                 include: categoryId
                     ? [{
                         model: Category,
@@ -252,6 +290,15 @@ class EventService {
             throw new Error("La date de fin doit être après la date de début.");
         }
 
+        console.log('[createEvent] ➤ Récupération des coordonnées GPS de la ville...');
+        let coordinates = null;
+        if (city) {
+            coordinates = await getCoordinatesFromCity(city);
+            if (!coordinates) {
+                console.warn('[createEvent] ⚠️ Coordonnées non trouvées pour la ville:', city);
+            }
+        }
+
         console.log('[createEvent] ➤ Création de l’événement avec statut "Planifié"...');
 
         const event = await Event.create({
@@ -267,6 +314,8 @@ class EventService {
             postal_code,
             start_time: startDate,
             end_time: endDate,
+            latitude: coordinates ? coordinates.latitude : null,
+            longitude: coordinates ? coordinates.longitude : null,
             status: 'Planifié'
         });
 

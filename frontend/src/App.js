@@ -47,7 +47,7 @@ function App() {
 				<Route path="/create/event" element={<PrivateRoute><CreateEventPage /></PrivateRoute>} />
 				<Route path="/event/created" element={<PrivateRoute><EventCreated /></PrivateRoute>} />
 				<Route path="/favoris" element={<PrivateRoute><FavorisPage /></PrivateRoute>} />
-				<Route path="/users/:userId/ratings" element={<RatingsPage />} />
+				<Route path="/ratings" element={<PrivateRoute><RatingsPage /></PrivateRoute>} />
 
 				<Route path="/report" element={<PrivateRoute><ReportPage /></PrivateRoute>} />
 				

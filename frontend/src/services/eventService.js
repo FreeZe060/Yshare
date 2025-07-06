@@ -8,10 +8,11 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 
 	if (filters.title) queryParams.append('title', filters.title);
 	if (filters.city) queryParams.append('city', filters.city);
-	if (filters.date) queryParams.append('date', filters.date);
+	if (filters.dateFilter) queryParams.append('dateFilter', filters.dateFilter);
 	if (filters.categoryId) queryParams.append('categoryId', filters.categoryId);
 	if (filters.status) queryParams.append('status', filters.status);
 	if (filters.sort) queryParams.append('sort', filters.sort);
+	if (filters.price) queryParams.append('price', filters.price);
 
 	queryParams.append('page', page);
 	queryParams.append('limit', limit);

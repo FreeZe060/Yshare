@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS `comments` (
   CONSTRAINT `FK_comments_events` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_comments_parent` FOREIGN KEY (`id_comment`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_comments_users` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.comments : ~12 rows (environ)
+-- Listage des données de la table yshare.comments : ~31 rows (environ)
 DELETE FROM `comments`;
 INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_comment`, `date_posted`) VALUES
 	(1, 2, 13, NULL, 'Ceci est le contenu du commen.', NULL, '2025-03-13 14:32:12'),
@@ -70,7 +70,25 @@ INSERT INTO `comments` (`id`, `id_event`, `id_user`, `title`, `message`, `id_com
 	(13, 18, 28, 'Réponse', 'sazsazsazsazssa', 12, '2025-05-07 12:31:05'),
 	(14, 18, 28, 'Réponse', 'sazsazsazsazs', 13, '2025-05-07 12:31:24'),
 	(15, 18, 30, 'Nouveau commentaire', 'dzdazdzadazdazdaz', NULL, '2025-05-07 14:38:50'),
-	(16, 18, 30, 'Réponse', 'dzadada', 15, '2025-05-07 14:38:55');
+	(16, 18, 30, 'Réponse', 'dzadada', 15, '2025-05-07 14:38:55'),
+	(18, 3, 30, 'Nouveau commentaire', 'oui', NULL, '2025-06-23 10:44:32'),
+	(19, 11, 30, 'Nouveau commentaire', 'tu veux jte ntm ????', NULL, '2025-06-27 09:59:41'),
+	(20, 11, 30, 'Nouveau commentaire', 'nonnn pls', NULL, '2025-06-27 09:59:52'),
+	(21, 11, 30, 'Nouveau commentaire', 'dzdaada', NULL, '2025-06-27 12:37:33'),
+	(22, 11, 30, 'Réponse', 'dadazdd', 20, '2025-06-27 12:38:10'),
+	(23, 2, 28, 'Réponse', 'oeoe', 8, '2025-06-27 13:19:35'),
+	(24, 2, 36, 'Nouveau commentaire', 'dzedzdzd', NULL, '2025-06-28 09:19:07'),
+	(25, 2, 36, 'Réponse', 'dazdaada', 24, '2025-06-28 09:19:12'),
+	(26, 11, 28, 'Nouveau commentaire', 'uyiiuyiuy', NULL, '2025-06-30 10:08:06'),
+	(27, 11, 28, 'Réponse', 'uygugugy', 26, '2025-06-30 10:08:12'),
+	(28, 2, 28, 'Réponse', 'dzadaadadza', 25, '2025-07-01 07:40:32'),
+	(29, 2, 28, 'Nouveau commentaire', 'dadaadadada', NULL, '2025-07-01 07:40:37'),
+	(30, 2, 28, 'Réponse', 'dadazdadazd', 25, '2025-07-01 07:40:51'),
+	(31, 2, 28, 'Réponse', 'dadadadad', 30, '2025-07-01 07:40:57'),
+	(32, 2, 28, 'Réponse', 'dazadadazdad', 28, '2025-07-01 07:42:27'),
+	(33, 2, 28, 'Réponse', 'dazdada', 29, '2025-07-01 07:43:36'),
+	(34, 2, 28, 'Réponse', 'dazdzaddaz', 33, '2025-07-01 07:43:39'),
+	(35, 2, 28, 'Réponse', 'ojiojioii', 31, '2025-07-01 08:04:14');
 
 -- Listage de la structure de table yshare. comment_reactions
 CREATE TABLE IF NOT EXISTS `comment_reactions` (
@@ -84,14 +102,21 @@ CREATE TABLE IF NOT EXISTS `comment_reactions` (
   KEY `FK_reaction_user` (`id_user`),
   CONSTRAINT `FK_reaction_comment` FOREIGN KEY (`id_comment`) REFERENCES `comments` (`id`) ON DELETE CASCADE,
   CONSTRAINT `FK_reaction_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.comment_reactions : ~3 rows (environ)
+-- Listage des données de la table yshare.comment_reactions : ~8 rows (environ)
 DELETE FROM `comment_reactions`;
 INSERT INTO `comment_reactions` (`id`, `id_comment`, `id_user`, `emoji`, `date_reacted`) VALUES
 	(1, 12, 30, '🔥', '2025-05-07 13:56:06'),
 	(4, 15, 28, '😋', '2025-05-07 14:50:42'),
-	(7, 15, 28, '👎🏿', '2025-05-14 07:36:18');
+	(9, 18, 30, '👎🏿', '2025-06-23 10:44:38'),
+	(10, 20, 30, '👎🏿', '2025-06-27 12:20:52'),
+	(11, 1, 28, '👎🏿', '2025-06-27 13:19:26'),
+	(14, 12, 28, '🔥', '2025-06-28 09:22:54'),
+	(15, 21, 28, '👎🏿', '2025-06-30 10:08:02'),
+	(16, 24, 28, '👎🏿', '2025-07-01 07:40:26'),
+	(17, 33, 28, '👎🏿', '2025-07-01 07:43:41'),
+	(18, 28, 28, '👎🏿', '2025-07-01 08:03:19');
 
 -- Listage de la structure de table yshare. conversations
 CREATE TABLE IF NOT EXISTS `conversations` (
@@ -134,37 +159,40 @@ CREATE TABLE IF NOT EXISTS `events` (
   `postal_code` varchar(20) DEFAULT NULL,
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
+  `latitude` double DEFAULT NULL,
+  `longitude` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_user` (`id_org`) USING BTREE,
   CONSTRAINT `FK_event_user` FOREIGN KEY (`id_org`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.events : ~23 rows (environ)
+-- Listage des données de la table yshare.events : ~24 rows (environ)
 DELETE FROM `events`;
-INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date_created`, `max_participants`, `status`, `street`, `street_number`, `city`, `postal_code`, `start_time`, `end_time`) VALUES
-	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', 0, '2025-03-23 00:00:00', 30, 'Terminé', 'place du marche', '3', 'Argenteuil', '95100', '2025-05-09 13:00:00', '2025-05-11 15:00:00'),
-	(3, 30, 'vinculum sub nobis', 'Super capitulus corpus suscipio. Ambitus commodo volva.', 10, '2025-02-10 00:00:00', 10, 'Terminé', 'avenue de la paix', '15', 'Paris', '75000', '2025-06-15 10:00:00', '2025-06-20 15:00:00'),
-	(4, 15, 'spectaculum autus pauper', 'Dolore pecus tyrannus accusantium argentum torqueo coruscus provident. Cresco verus tempora adopto.', 15, '2024-12-09 00:00:00', 80, 'Terminé', 'place du marche', '8', 'Argenteuil', '95100', '2025-05-18 10:00:00', '2025-05-19 10:00:00'),
-	(5, 13, 'sustineo culpa laboriosam', 'Pecus amissio alter tredecim vinculum. Supplanto crastinus bellum.', 0, '2024-12-21 00:00:00', 5, 'Terminé', 'avenue de la paix', '3', 'Paris', '75000', '2025-05-10 14:00:00', '2025-05-20 14:00:00'),
-	(6, 14, 'amplexus adulatio amaritudo', 'Baiulus clibanus curtus socius victoria thymbra consequatur bis aspernatur adiuvo. Abscido umbra quod deleniti titulus defungo accusator.', 0, '2025-01-24 00:00:00', 50, 'Terminé', 'rue du velodrome', '1', 'Marseille', '13000', '2025-05-30 12:00:00', '2025-05-30 14:00:00'),
-	(7, 16, 'cubicularis ciminatio depromo', 'Cubo tres praesentium comprehendo color adhaero aestivus comes. Vicissitudo celebrer carmen tonsor ex.', 5, '2025-01-12 00:00:00', 100, 'Terminé', 'rue de la plage', '8', 'Antibes', '06650', '2025-06-22 09:00:00', '2025-06-22 12:00:00'),
-	(8, 29, 'argumentum carbo blanditiis', 'Defaeco reiciendis creta tyrannus. Antea spectaculum admoneo terga despecto desino bibo laboriosam solio utrum.', 0, '2025-03-29 00:00:00', 20, 'Terminé', 'avenue de la paix', '9', 'Paris', '75000', '2025-05-06 10:00:00', '2025-05-06 20:00:00'),
-	(9, 29, 'sponte veritatis consectetur', 'Cui templum talis teres causa clementia iusto. Theca conor velit temperantia.', 0, '2025-07-24 00:00:00', 50, 'Terminé', 'place sophie-laffite', '5', 'Sophia-Antipolis', '06560', '2025-06-02 15:00:00', '2025-06-03 15:00:00'),
-	(10, 28, 'tener tardus candidus', 'Porro repellat accusantium arceo tibi pectus addo atrox. Ocer clarus sophismata vulnero subseco contabesco clarus ulciscor volubilis.', 35, '2025-06-26 00:00:00', 30, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-05-20 14:00:00', '2025-05-20 18:00:00'),
-	(11, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31 00:00:00', 15, 'Planifié', 'place du marche', '10', 'Argenteuil', '95100', '2025-07-14 18:00:00', '2025-07-15 05:00:00'),
-	(12, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31 00:00:00', 50, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-06-08 15:00:00', '2025-06-09 15:00:00'),
-	(13, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31 00:00:00', 10, 'Terminé', 'avenue de la paix', '9', 'Paris', '75000', '2025-05-13 10:00:00', '2025-05-14 10:04:09'),
-	(14, 15, 'Conférence Tech 2025 - Mise à Jour', 'Un événement sur les nouvelles technologies', 50, '2025-06-15 00:00:00', 200, 'Terminé', 'rue de la plage', '6', 'Antibes', '06650', '2025-05-14 12:00:00', '2025-05-14 16:00:00'),
-	(15, 15, 'Conférence Tech 2025', 'Un événement sur les nouvelles technologies', 50, '2025-06-15 00:00:00', 100, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-05-12 11:00:00', '2025-05-14 11:00:00'),
-	(16, 28, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'Terminé', 'velodrome', '1', 'Marseille', '13000', '2025-05-07 09:00:00', '2025-05-07 23:00:00'),
-	(17, 17, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'Terminé', 'place sophie-laffite', '1', 'Sophia-Antipolis', '06560', '2025-05-06 20:00:00', '2025-05-07 03:00:00'),
-	(18, 15, 'Concert Open Air', 'Un concert en plein air exceptionnel.', 25, '2025-07-20 00:00:00', 10, 'Planifié', 'Avenue de la Musique', '19', 'Lyon', '69000', '2025-07-20 19:00:00', '2025-07-20 23:00:00'),
-	(27, 28, 'dzdadadada', NULL, 0, '2025-04-12 00:00:00', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-04-12 13:25:00', '2025-04-13 13:25:00'),
-	(28, 31, 'effefz', NULL, 0, '2025-04-21 00:00:00', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-04-20 10:00:00', '2025-04-22 13:18:00'),
-	(29, 28, 'fezffzfzf', NULL, 0, '2025-05-15 13:37:28', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:32:00', '2025-05-16 13:32:00'),
-	(30, 28, 'ddzdadad', NULL, 0, '2025-05-15 13:38:15', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:37:00', '2025-05-16 13:38:00'),
-	(31, 28, 'dzadada', NULL, 0, '2025-05-15 13:40:54', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:40:00', '2025-05-16 14:40:00'),
-	(32, 28, 'dzdadada', NULL, 0, '2025-05-15 13:43:21', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:43:00', '2025-05-16 13:43:00');
+INSERT INTO `events` (`id`, `id_org`, `title`, `desc`, `price`, `date_created`, `max_participants`, `status`, `street`, `street_number`, `city`, `postal_code`, `start_time`, `end_time`, `latitude`, `longitude`) VALUES
+	(2, 13, 'tergum deficio utrum', 'Tero temporibus autus asper autem curo summa avarus aestus. Utilis vulnero sollicito tumultus civitas succurro.', 0, '2025-03-23 00:00:00', 30, 'Terminé', 'place du marche', '3', 'Argenteuil', '95100', '2025-05-09 13:00:00', '2025-05-11 15:00:00', 48.9472, 2.2467),
+	(3, 30, 'vinculum sub nobis', 'Super capitulus corpus suscipio. Ambitus commodo volva.', 10, '2025-02-10 00:00:00', 10, 'Terminé', 'avenue de la paix', '15', 'Paris', '75000', '2025-06-15 10:00:00', '2025-06-20 15:00:00', 48.8566, 2.3522),
+	(4, 15, 'spectaculum autus pauper', 'Dolore pecus tyrannus accusantium argentum torqueo coruscus provident. Cresco verus tempora adopto.', 15, '2024-12-09 00:00:00', 80, 'Terminé', 'place du marche', '8', 'Argenteuil', '95100', '2025-05-18 10:00:00', '2025-05-19 10:00:00', 48.9472, 2.2467),
+	(5, 13, 'sustineo culpa laboriosam', 'Pecus amissio alter tredecim vinculum. Supplanto crastinus bellum.', 0, '2024-12-21 00:00:00', 5, 'Terminé', 'avenue de la paix', '3', 'Paris', '75000', '2025-05-10 14:00:00', '2025-05-20 14:00:00', 48.8566, 2.3522),
+	(6, 14, 'amplexus adulatio amaritudo', 'Baiulus clibanus curtus socius victoria thymbra consequatur bis aspernatur adiuvo. Abscido umbra quod deleniti titulus defungo accusator.', 0, '2025-01-24 00:00:00', 50, 'Terminé', 'rue du velodrome', '1', 'Marseille', '13000', '2025-05-30 12:00:00', '2025-05-30 14:00:00', 43.2965, 5.3698),
+	(7, 16, 'cubicularis ciminatio depromo', 'Cubo tres praesentium comprehendo color adhaero aestivus comes. Vicissitudo celebrer carmen tonsor ex.', 5, '2025-01-12 00:00:00', 100, 'Terminé', 'rue de la plage', '8', 'Antibes', '06650', '2025-06-22 09:00:00', '2025-06-22 12:00:00', 43.5804, 7.1251),
+	(8, 29, 'argumentum carbo blanditiis', 'Defaeco reiciendis creta tyrannus. Antea spectaculum admoneo terga despecto desino bibo laboriosam solio utrum.', 0, '2025-03-29 00:00:00', 20, 'Terminé', 'avenue de la paix', '9', 'Paris', '75000', '2025-05-06 10:00:00', '2025-05-06 20:00:00', 48.8566, 2.3522),
+	(9, 29, 'sponte veritatis consectetur', 'Cui templum talis teres causa clementia iusto. Theca conor velit temperantia.', 0, '2025-07-24 00:00:00', 50, 'Terminé', 'place sophie-laffite', '5', 'Sophia-Antipolis', '06560', '2025-06-02 15:00:00', '2025-06-03 15:00:00', 43.6167, 7.05),
+	(10, 28, 'tener tardus candidus', 'Porro repellat accusantium arceo tibi pectus addo atrox. Ocer clarus sophismata vulnero subseco contabesco clarus ulciscor volubilis.', 35, '2025-06-26 00:00:00', 30, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-05-20 16:00:00', '2025-05-20 18:00:00', 43.7102, 7.262),
+	(11, 13, 'Mon Événement Testss', 'Ceci est une description détaillée de l\'événement.ssss', 10, '2025-12-31 00:00:00', 30, 'Planifié', 'avenue maria', '6', 'Argenteuil', '95100', '2025-07-14 20:00:00', '2025-07-15 05:00:00', 43.7102, 2.2467),
+	(12, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31 00:00:00', 50, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-06-08 15:00:00', '2025-06-09 15:00:00', 43.7102, 7.262),
+	(13, 13, 'Mon Événement Test', 'Ceci est une description détaillée de l\'événement.', 100, '2025-12-31 00:00:00', 10, 'Terminé', 'avenue de la paix', '9', 'Paris', '75000', '2025-05-13 10:00:00', '2025-05-14 10:04:09', 48.8566, 2.3522),
+	(14, 15, 'Conférence Tech 2025 - Mise à Jour', 'Un événement sur les nouvelles technologies', 50, '2025-06-15 00:00:00', 200, 'Terminé', 'rue de la plage', '6', 'Antibes', '06650', '2025-05-14 12:00:00', '2025-05-14 16:00:00', 43.5804, 7.1251),
+	(15, 15, 'Conférence Tech 2025', 'Un événement sur les nouvelles technologies', 50, '2025-06-15 00:00:00', 100, 'Terminé', 'place massena', '5', 'Nice', NULL, '2025-05-12 11:00:00', '2025-05-14 11:00:00', 43.7102, 7.262),
+	(16, 28, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'Terminé', 'velodrome', '1', 'Marseille', '13000', '2025-05-07 09:00:00', '2025-05-07 23:00:00', 43.2965, 5.3698),
+	(17, 17, 'My event de fou', 'encore un evenement incroyable a mon actif', 50, '2025-06-15 00:00:00', 10, 'Terminé', 'place sophie-laffite', '1', 'Sophia-Antipolis', '06560', '2025-05-06 20:00:00', '2025-05-07 03:00:00', 43.6167, 7.05),
+	(18, 15, 'Nouveau titre', 'Nouvelle description', 25, '2025-07-20 00:00:00', 10, 'Planifié', 'Avenue de la Musique', '19', 'Lyon', '69000', '2025-07-20 19:00:00', '2025-07-26 00:00:00', 43.7102, 4.8357),
+	(27, 28, 'dzdadadada', NULL, 0, '2025-04-12 00:00:00', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-04-12 13:25:00', '2025-04-13 13:25:00', 48.9472, 2.2467),
+	(28, 31, 'effefz', NULL, 0, '2025-04-21 00:00:00', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-04-20 10:00:00', '2025-04-22 13:18:00', 48.9472, 2.2467),
+	(29, 28, 'fezffzfzf', NULL, 0, '2025-05-15 13:37:28', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:32:00', '2025-05-16 13:32:00', 48.9472, 2.2467),
+	(30, 28, 'ddzdadad', NULL, 0, '2025-05-15 13:38:15', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:37:00', '2025-05-16 13:38:00', 48.9472, 2.2467),
+	(31, 28, 'dzadada', NULL, 0, '2025-05-15 13:40:54', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:40:00', '2025-05-16 14:40:00', 48.9472, 2.2467),
+	(32, 28, 'dzdadada', NULL, 0, '2025-05-15 13:43:21', 0, 'Terminé', 'Avenue Maria', '6', 'ARGENTEUIL', '95100', '2025-05-15 14:43:00', '2025-05-16 13:43:00', 48.9472, 2.2467),
+	(33, 30, 'Concert Open Air', NULL, 25, '2025-06-29 12:31:26', 0, 'Planifié', 'Avenue de la Musique', '19', 'Lyon', '69000', '2025-07-19 17:00:00', '2025-07-20 21:00:00', 43.7102, 4.8357);
 
 -- Listage de la structure de table yshare. event_categories
 CREATE TABLE IF NOT EXISTS `event_categories` (
@@ -233,9 +261,9 @@ CREATE TABLE IF NOT EXISTS `event_images` (
   PRIMARY KEY (`id`),
   KEY `event_id` (`event_id`),
   CONSTRAINT `event_images_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.event_images : ~24 rows (environ)
+-- Listage des données de la table yshare.event_images : ~23 rows (environ)
 DELETE FROM `event_images`;
 INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(1, 3, '/event-images/1743067245365-575734556.png', 1),
@@ -246,23 +274,23 @@ INSERT INTO `event_images` (`id`, `event_id`, `image_url`, `is_main`) VALUES
 	(6, 15, '/event-images/1744018474927-631654287.jpg', 1),
 	(7, 16, '/event-images/1743067245365-575734556.png', 1),
 	(8, 17, '/event-images/1743067245365-575734556.png', 1),
-	(9, 18, '/event-images/1744018849512-657157196.jpg', 1),
-	(10, 18, '/event-images/1744018849514-268068843.jpg', 0),
-	(11, 18, '/event-images/1744018849516-824274093.png', 0),
 	(18, 6, '/event-images/1744018853425-34622827.jpg', 1),
 	(19, 4, '/event-images/1744018853425-34622827.jpg', 1),
 	(20, 2, '/event-images/1744018849512-657157196.jpg', 1),
 	(21, 5, '/event-images/1744018849512-657157196.jpg', 1),
 	(22, 8, '/event-images/1744018849512-657157196.jpg', 1),
-	(23, 9, '/event-images/1744018849512-657157196.jpg', 1),
-	(24, 10, '/event-images/1744018849512-657157196.jpg', 1),
 	(25, 7, '/event-images/1744018849512-657157196.jpg', 1),
 	(32, 27, '/event-images/1744291551391-920419951.png', 1),
 	(33, 27, '/event-images/1744291551426-844961258.png', 0),
 	(34, 28, '/event-images/1745328003898-971490902.png', 1),
 	(35, 30, '/event-images/1747316295337-955905149.png', 1),
 	(36, 31, '/event-images/1747316454476-977788553.png', 1),
-	(37, 32, '/event-images/1747316601970-455069361.png', 1);
+	(37, 32, '/event-images/1747316601970-455069361.png', 1),
+	(42, 18, '/event-images/1750942382029-681693168.jpeg', 1),
+	(43, 18, '/event-images/1750943070717-982372070.jpg', 0),
+	(46, 33, '/event-images/1751200286403-56946588.jpg', 1),
+	(47, 33, '/event-images/1751200286404-60603958.jpg', 0),
+	(48, 33, '/event-images/1751200286407-612919881.png', 0);
 
 -- Listage de la structure de table yshare. favoris
 CREATE TABLE IF NOT EXISTS `favoris` (
@@ -381,19 +409,19 @@ INSERT INTO `notifications` (`id`, `id_user`, `title`, `message`, `date_sent`, `
 	(20, 17, 'Ajout à un événement', 'Vous avez été ajouté à l\'événement "spectaculum autus pauper".', '2025-05-02 13:38:47', 0),
 	(21, 28, 'Demande envoyée : "Concert Open Air"', 'Votre demande est en attente de validation.', '2025-05-09 14:04:57', 1),
 	(22, 28, 'Demande envoyée : "argumentum carbo blanditiis"', 'Votre demande est en attente de validation.', '2025-05-21 12:13:43', 1),
-	(23, 28, 'Demande envoyée : "argumentum carbo blanditiis"', 'Votre demande est en attente de validation.', '2025-05-21 12:33:39', 0),
+	(23, 28, 'Demande envoyée : "argumentum carbo blanditiis"', 'Votre demande est en attente de validation.', '2025-05-21 12:33:39', 1),
 	(24, 29, 'Nouvelle demande pour "argumentum carbo blanditiis"', 'Alexandre souhaite rejoindre votre événement.', '2025-05-21 12:33:40', 0),
-	(25, 28, 'dzdzedez', 'test new notif', '2025-06-17 09:18:25', 0),
-	(26, 28, 'Retrait de l\'événement - Concert Open Air', 'Vous avez été retiré de l\'événement "Concert Open Air".', '2025-06-17 12:09:33', 0),
+	(25, 28, 'dzdzedez', 'test new notif', '2025-06-17 09:18:25', 1),
+	(26, 28, 'Retrait de l\'événement - Concert Open Air', 'Vous avez été retiré de l\'événement "Concert Open Air".', '2025-06-17 12:09:33', 1),
 	(27, 36, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : Inscrit.', '2025-06-18 12:29:00', 0),
 	(28, 29, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : En Attente.', '2025-06-20 07:30:38', 0),
 	(29, 29, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : Inscrit.', '2025-06-20 07:30:46', 0),
 	(30, 29, 'Statut mis à jour - tener tardus candidus', 'Votre statut pour l\'événement "tener tardus candidus" est maintenant : Refusé.', '2025-06-20 07:30:51', 0),
 	(31, 29, 'Ajout à un événement', 'Vous avez été ajouté à l\'événement "tergum deficio utrum".', '2025-06-20 07:31:02', 0),
 	(32, 29, 'Statut mis à jour - tergum deficio utrum', 'Votre statut pour l\'événement "tergum deficio utrum" est maintenant : Inscrit.', '2025-06-20 07:31:07', 0),
-	(33, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : En attente', '2025-06-20 08:05:00', 0),
-	(34, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : Validé', '2025-06-20 08:05:08', 0),
-	(35, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : Rejeté', '2025-06-20 08:05:14', 0);
+	(33, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : En attente', '2025-06-20 08:05:00', 1),
+	(34, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : Validé', '2025-06-20 08:05:08', 1),
+	(35, 28, 'Statut mis à jour - Signalement', 'Votre signalement a été mis à jour : Rejeté', '2025-06-20 08:05:14', 1);
 
 -- Listage de la structure de table yshare. participants
 CREATE TABLE IF NOT EXISTS `participants` (
@@ -481,16 +509,15 @@ CREATE TABLE IF NOT EXISTS `reports` (
   CONSTRAINT `reports_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reports_ibfk_2` FOREIGN KEY (`id_event`) REFERENCES `events` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reports_ibfk_3` FOREIGN KEY (`id_reported_user`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null)) or ((`id_event` is null) and (`id_reported_user` is not null))))
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `chk_one_target` CHECK ((((`id_event` is not null) and (`id_reported_user` is null) and (`id_comment` is null)) or ((`id_event` is null) and (`id_reported_user` is not null) and (`id_comment` is null)) or ((`id_event` is null) and (`id_reported_user` is null) and (`id_comment` is not null))))
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.reports : ~4 rows (environ)
+-- Listage des données de la table yshare.reports : ~2 rows (environ)
 DELETE FROM `reports`;
 INSERT INTO `reports` (`id`, `id_user`, `id_event`, `id_reported_user`, `id_comment`, `message`, `status`, `date_reported`) VALUES
 	(1, 13, 10, NULL, NULL, 'Cet événement contient du contenu inapproprié.', 'Validé', '2025-03-17 16:38:10'),
 	(3, 28, 5, NULL, NULL, '[Titre offensant] Le titre m\'offense entant que char de combat ', 'Rejeté', '2025-04-11 11:56:22'),
-	(4, 28, NULL, 31, NULL, 'cet utilisateur ma insulter ce fou', 'En Attente', '2025-06-23 09:11:28'),
-	(5, 28, NULL, 17, 10, 'ce message est pas sympa pour levent', 'En Attente', '2025-06-23 09:20:03');
+	(6, 28, NULL, NULL, 8, '[il parle mal lui ] tres mal tres tres mal ', 'En Attente', '2025-07-01 08:21:58');
 
 -- Listage de la structure de table yshare. report_files
 CREATE TABLE IF NOT EXISTS `report_files` (
@@ -520,9 +547,9 @@ CREATE TABLE IF NOT EXISTS `report_messages` (
   KEY `sender_id` (`sender_id`),
   CONSTRAINT `report_messages_ibfk_1` FOREIGN KEY (`report_id`) REFERENCES `reports` (`id`) ON DELETE CASCADE,
   CONSTRAINT `report_messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table yshare.report_messages : ~8 rows (environ)
+-- Listage des données de la table yshare.report_messages : ~6 rows (environ)
 DELETE FROM `report_messages`;
 INSERT INTO `report_messages` (`id`, `report_id`, `sender_id`, `message`, `date_sent`) VALUES
 	(1, 3, 30, 'report verifier votre report a bien ete pris en compte et le necessaire a ete effectuer ', '2025-04-24 10:11:17'),
@@ -531,8 +558,8 @@ INSERT INTO `report_messages` (`id`, `report_id`, `sender_id`, `message`, `date_
 	(4, 3, 30, 'dzrererer', '2025-04-25 08:31:13'),
 	(24, 3, 30, 'dadadadzaz', '2025-06-20 08:41:30'),
 	(25, 3, 30, 'dzadadda', '2025-06-20 08:46:17'),
-	(26, 3, 30, 'dazddadada', '2025-06-20 08:46:28'),
-	(27, 3, 30, 'dzadada', '2025-06-20 08:46:32');
+	(29, 3, 28, 'dzadazdazdza', '2025-06-24 07:56:43'),
+	(30, 3, 28, 'dazdadzad', '2025-07-01 08:37:13');
 
 -- Listage de la structure de table yshare. users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -570,13 +597,13 @@ INSERT INTO `users` (`id`, `name`, `email`, `lastname`, `password`, `role`, `pro
 	(15, 'Johnny', 'user@example.com', 'Doe', '$2a$10$.uBsQluiOs8o58tj5K.m8exfzfu9ilpnoMm7tsIcJQfR/Zs35UZZu', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(16, 'User', 'user@exampdddle.com', 'Test', '$2a$10$fpMIJMeb7ZZdI1TpyQDQYO6WPAGYaCzwE/NUdxDst6eCkZZ/7vS9G', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(17, 'alex', 'a@gmail.com', 'alex', '$2a$10$5OUB40.XvQOMIjdEqSfB5OdxZDvHW9beT6Bfd/m0TCdOtAW0iv3mK', 'Utilisateur', NULL, '/profile-images/1742984852871-722505095.jpg', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
-	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1746777390451-588978481.png', '👋 Salut, moi c’est Alexandre Perez, j’ai 21 ans et je suis actuellement en 3ᵉ année de formation en développement web. Passionné par la tech, je suis ici pour mettre mes compétences au service de vos projets tout en continuant à monter en puissance dans ce domaine.\n\n💻 Je maîtrise un large éventail de technologies back-end et front-end, parmi lesquelles : JavaScript, Python (Django, Flask), PHP (Laravel, Symfony), Node.js, HTML/CSS, Bootstrap, Tailwind, React, Angular, Vue.js, mais aussi des outils orientés jeux et apps interactives comme Unreal Engine (C++), Unity (C#), ainsi que WordPress et Shopify.\n\n🚀 Mon objectif ? Allier apprentissage constant et valeur ajoutée pour vos idées. Si vous cherchez un profil jeune, motivé, et polyvalent, parlons de votre projet !\n', 'Argenteuil', 'avenue marie', '6', '/banner-images/1746777411791-984099653.jpg', 'Approved', NULL, 1, 0, 1, '2004-08-11', 'Homme', 'dazdzdaazdadaz', NULL, NULL),
+	(28, 'Alexandre', 'alex.perezab470@gmail.com', 'Perez', '$2a$10$IlcXn/mzK9Xvk6Of8N8OR.FPsgST7JP1yLPn5ZdJVv6Xjas6ELzcO', 'Utilisateur', NULL, '/profile-images/1751271101550-617700361.avif', '👋 Salut, moi c’est Alexandre Perez, j’ai 21 ans et je suis actuellement en 3ᵉ année de formation en développement web. Passionné par la tech, je suis ici pour mettre mes compétences au service de vos projets tout en continuant à monter en puissance dans ce domaine.\n\n💻 Je maîtrise un large éventail de technologies back-end et front-end, parmi lesquelles : JavaScript, Python (Django, Flask), PHP (Laravel, Symfony), Node.js, HTML/CSS, Bootstrap, Tailwind, React, Angular, Vue.js, mais aussi des outils orientés jeux et apps interactives comme Unreal Engine (C++), Unity (C#), ainsi que WordPress et Shopify.\n\n🚀 Mon objectif ? Allier apprentissage constant et valeur ajoutée pour vos idées. Si vous cherchez un profil jeune, motivé, et polyvalent, parlons de votre projet !\n', 'Argenteuil', 'avenue marie', '6', '/banner-images/1746777411791-984099653.jpg', 'Approved', NULL, 1, 0, 1, '2004-08-11', 'Homme', 'dazdzdaazdadaz', NULL, NULL),
 	(29, 'l\'ancien d\'argenteuil', 'alex11@gmail.com', 'perezzz', '$2a$10$DS7nPlAz4dsvohBNxuMdCe3erxuSXuE5HIDjxD9VSxu/fnWI9M1ay', 'Utilisateur', NULL, '/profile-images/1744123074825-631065849.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
-	(30, 'Alexandre', 'admin@gmail.com', 'Perez', '$2a$10$CC8h2k8x.P9UUweDZTjhzur7f6pTcXE6UoHcxAH9hvQPiS3ajVedu', 'Administrateur', NULL, '/profile-images/1750251000770-443416497.png', NULL, NULL, NULL, NULL, '/banner-images/1750251282268-729051762.jpeg', 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
+	(30, 'Alexandre', 'admin@gmail.com', 'Perez', '$2a$10$CC8h2k8x.P9UUweDZTjhzur7f6pTcXE6UoHcxAH9hvQPiS3ajVedu', 'Administrateur', NULL, '/profile-images/1751278191544-186866640.jpg', NULL, NULL, NULL, NULL, '/banner-images/1750251282268-729051762.jpeg', 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(31, 'Corentin', 'alex@gmail.com', 'pinder-white', '$2a$10$f8hsvpLsoXZXEVkvBLx7nu4NDqfEQBNRqbCRJyHvnqS2KBLPmEnzi', 'Administrateur', NULL, '/profile-images/1745327857504-741394160.png', NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 1, NULL, NULL, NULL, NULL, NULL),
 	(33, 'Alexandre', 'alex.pere70@gmail.com', 'Perez', '$2a$10$dhqJqW/qfmscjYnhLUeaPOuitPnJsGJXbOuR.ooWLyJY6Uh484fBG', 'Utilisateur', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, 'Autre', NULL, NULL, NULL),
 	(34, 'Alexandre', 'alex.pere@gmail.com', 'Perez', '$2a$10$D6J8bnO5ZymgXdE6EUwvk.FzoM.KOwiyO28GFD.P3yYTjKNPO4qT.', 'Utilisateur', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, 'Préféré ne pas dire', NULL, NULL, NULL),
-	(36, 'Witeez', 'alex.perez.ap460@gmail.com', 'Gaming live', NULL, 'Utilisateur', 'google', '/profile-images/221ae01c-8d93-4c9d-9041-e1fdac1028ce.jpg', 'Je suis un mec qui aime le foot, surtout au City d\'Argenteuil, et qui aime Marseille, mais qui déteste Paris vraiment, eux je peux pas les blairer. Nice sah cest pas mal cest vraiment bien on a de super trucs a faire il fait il fait cheau ces le moment pourrr miel pops nana trop bon crumch crumch ', NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL);
+	(36, 'Witeez', 'alex.perez.ap460@gmail.com', 'Gaming live', NULL, 'Utilisateur', 'google', '/profile-images/221ae01c-8d93-4c9d-9041-e1fdac1028ce.jpg', 'Je suis un mec qui aime le foot, surtout au City d\'Argenteuil, et qui aime Marseille, mais qui déteste Paris vraiment, eux je peux pas les blairer. Nice sah cest pas mal cest vraiment bien on a de super trucs a faire il fait chaud cest le moment pourrr miel pops nana trop bon crumch crumch ', NULL, NULL, NULL, NULL, 'Approved', NULL, 1, 1, 0, NULL, NULL, NULL, NULL, NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

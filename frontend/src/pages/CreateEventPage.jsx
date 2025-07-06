@@ -33,6 +33,8 @@ const CreateEventPage = () => {
     const { handleCreateEvent, loading, error } = useCreateEvent();
     const navigate = useNavigate();
 
+    const [citySelected, setCitySelected] = useState(false);
+
     useEffect(() => {
         const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (saved) setFormData(JSON.parse(saved));
@@ -53,7 +55,7 @@ const CreateEventPage = () => {
         const requiredFields = ['title', 'start_time', 'end_time', 'city', 'postal_code', 'street', 'street_number', 'categories'];
         const isComplete = requiredFields.every((field) => formData[field] && (Array.isArray(formData[field]) ? formData[field].length > 0 : true));
 
-        if (!isComplete) return false;
+        if (!isComplete || !citySelected) return false; 
 
         const start = new Date(`${formData.date}T${formData.start_time}`);
         const end = new Date(`${formData.end_date}T${formData.end_time}`);
@@ -146,7 +148,7 @@ const CreateEventPage = () => {
                 <Stepper currentStep={step} />
 
                 <div className="max-w-4xl mx-auto mt-12 bg-white p-8 rounded-2xl shadow-lg">
-                    {step === 1 && <EventStepOne formData={formData} onChange={handleChange} />}
+                    {step === 1 && <EventStepOne formData={formData} onChange={handleChange} setCitySelected={setCitySelected} />}
                     {step === 2 && <EventStepTwo formData={formData} onChange={handleChange} />}
                     {step === 3 && (<EventStepThree data={formData} images={formData.images} onFieldClick={onFieldClick} onRemoveImage={onRemoveImage} />)}
 

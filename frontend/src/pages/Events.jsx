@@ -32,6 +32,16 @@ import { useAuth } from '../config/authHeader';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
+async function reverseGeocode(lat, lng) {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
+        headers: {
+            'User-Agent': 'YourAppName (your@email.com)'
+        }
+    });
+    const data = await response.json();
+    return data.address.city || data.address.town || data.address.village || '';
+}
+
 function Events() {
     useSlideUpAnimation();
     useTextAnimation();
@@ -53,37 +63,65 @@ function Events() {
     const { add } = useAddFavoris();
     const { remove } = useRemoveFavoris();
 
+    const [villeRecherchee, setVilleRecherchee] = useState('');
+    const [useGeolocalisation, setUseGeolocalisation] = useState(false);
+    const [userLocation, setUserLocation] = useState(null);
+    const [statusFilter, setStatusFilter] = useState('Tous');
+
+    const [radiusFilter, setRadiusFilter] = useState(50);
+
+
     const selectedCategoryName = categoryOptions.find((_, idx) => idx === (selectedCategoryId === null ? 0 : allCategories.findIndex(cat => cat.id === selectedCategoryId) + 1));
+
+    const handleGeolocalisation = () => {
+        if (!navigator.geolocation) {
+            alert("La géolocalisation n'est pas supportée par ce navigateur.");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                setUserLocation({ lat, lng });
+                setUseGeolocalisation(true);
+
+                const city = await reverseGeocode(lat, lng);
+                setVilleRecherchee(city);
+            },
+            (error) => {
+                console.error(error);
+                alert("Impossible de récupérer votre position.");
+            }
+        );
+    };
 
     const filters = useMemo(() => {
         const query = {};
 
-        // ✅ Gestion catégorie
         if (categoryFilter !== 'Tous') {
             const selectedCat = allCategories.find(cat => capitalizeFirstLetter(cat.name) === categoryFilter);
             if (selectedCat) query.categoryId = selectedCat.id;
         }
 
-        // ✅ Gestion ville (si tu souhaites ajouter un champ de filtre ville plus tard)
-        // if (selectedCity) {
-        //     query.city = selectedCity;
-        // }
-
-        const today = new Date();
-
-        // ✅ Gestion date
-        if (dateFilter === "Aujourd’hui") {
-            query.date = today.toISOString().split("T")[0];
-        } else if (dateFilter === "Cette semaine") {
-            const startOfWeek = new Date(today);
-            startOfWeek.setDate(today.getDate() - today.getDay());
-            query.date = startOfWeek.toISOString().split("T")[0];
-        } else if (dateFilter === "Ce mois") {
-            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            query.date = startOfMonth.toISOString().split("T")[0];
+        if (villeRecherchee) {
+            query.city = villeRecherchee;
         }
 
-        // ✅ Gestion tri
+        if (useGeolocalisation && userLocation) {
+            query.lat = userLocation.lat;
+            query.lng = userLocation.lng;
+            query.radius = radiusFilter;
+        }
+
+        if (dateFilter === "Aujourd’hui") {
+            query.dateFilter = "today";
+        } else if (dateFilter === "Cette semaine") {
+            query.dateFilter = "week";
+        } else if (dateFilter === "Ce mois") {
+            query.dateFilter = "month";
+        }
+
         if (sortFilter === "Les plus récents") {
             query.sort = "start_time_desc";
         } else if (sortFilter === "Populaires") {
@@ -91,14 +129,20 @@ function Events() {
         }
 
         if (priceFilter === "Gratuit") {
-            query.price = 0;
+            query.price = "free";
         } else if (priceFilter === "Payant") {
             query.price = "paid";
         }
 
-        return query;
-    }, [categoryFilter, dateFilter, sortFilter, priceFilter, allCategories]);
+        // ✅ Nouveau : filtre status planifié / en cours
+        if (statusFilter === "Planifié") {
+            query.status = "Planifié";
+        } else if (statusFilter === "En cours") {
+            query.status = "En Cours";
+        }
 
+        return query;
+    }, [categoryFilter, dateFilter, sortFilter, priceFilter, allCategories, villeRecherchee, useGeolocalisation, userLocation, statusFilter]);
 
     const { events, loading: eventsLoading } = useEvents(filters, 1, 100, true, refreshKey);
 
@@ -181,10 +225,9 @@ function Events() {
                             </h6>
                             <h2 className="mb-[26px] text-center anim-text et-3-section-title">À l’affiche prochainement</h2>
 
-                            <div className="flex md:flex-row flex-col flex-wrap justify-center gap-4 bg-white shadow px-4 py-4 rounded-xl">
+                            <div className="flex flex-row md:flex-col flex-wrap justify-center gap-4 bg-white shadow px-4 py-4 rounded-xl">
 
-                                {/* Filtre Catégorie */}
-                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                <div className="sm:w-full md:w-[48%] w-[23%]">
                                     <CustomSelect
                                         label="Catégorie"
                                         options={categoryOptions}
@@ -193,8 +236,7 @@ function Events() {
                                     />
                                 </div>
 
-                                {/* Filtre Prix */}
-                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                <div className="sm:w-full md:w-[48%] w-[23%]">
                                     <CustomSelect
                                         label="Prix"
                                         options={['Tous', 'Gratuit', 'Payant']}
@@ -203,8 +245,7 @@ function Events() {
                                     />
                                 </div>
 
-                                {/* Filtre Date */}
-                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                <div className="sm:w-full md:w-[48%] w-[23%]">
                                     <CustomSelect
                                         label="Date"
                                         options={['Tous', 'Aujourd’hui', 'Cette semaine', 'Ce mois']}
@@ -213,8 +254,7 @@ function Events() {
                                     />
                                 </div>
 
-                                {/* Filtre Popularité */}
-                                <div className="w-full sm:w-[48%] md:w-[23%]">
+                                <div className="sm:w-full md:w-[48%] w-[23%]">
                                     <CustomSelect
                                         label="Popularité"
                                         options={['Tous', 'Populaires', 'Les plus récents']}
@@ -222,6 +262,39 @@ function Events() {
                                         onChange={setSortFilter}
                                     />
                                 </div>
+
+                                <div className="sm:w-full md:w-[48%] w-[23%]">
+                                    <CustomSelect
+                                        label="Statut"
+                                        options={['Tous', 'Planifié', 'En cours']}
+                                        value={statusFilter}
+                                        onChange={setStatusFilter}
+                                    />
+                                </div>
+
+                                <input
+                                    type="text"
+                                    placeholder="Rechercher une ville"
+                                    value={villeRecherchee}
+                                    onChange={(e) => setVilleRecherchee(e.target.value)}
+                                    className="border px-2 py-1 rounded"
+                                />
+
+                                <div className="sm:w-full md:w-[48%] w-[23%]">
+                                    <CustomSelect
+                                        label="Rayon"
+                                        options={['10 km', '25 km', '50 km', '100 km']}
+                                        value={`${radiusFilter} km`}
+                                        onChange={(value) => setRadiusFilter(parseInt(value))}
+                                    />
+                                </div>
+
+                                <button
+                                    onClick={handleGeolocalisation}
+                                    className="bg-purple-600 text-white px-4 py-2 rounded ml-2"
+                                >
+                                    Utiliser ma localisation
+                                </button>
 
                             </div>
                         </div>

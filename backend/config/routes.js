@@ -204,6 +204,7 @@ router.get('/ratings/organizer/:userId', authenticateToken, ratingController.get
 router.post('/ratings', authenticateToken, ratingController.rateEvent);
 router.get('/ratings/admin/all', authenticateToken, isAdmin, ratingController.getAllRatingsWithDetails);
 router.delete('/ratings/:id', authenticateToken, isAdmin, ratingController.deleteRating);
+router.get('/ratings/mine', authenticateToken, ratingController.getAllRatingsByUser);
 
 //////// HISTORIQUE ROUTES ////////
 

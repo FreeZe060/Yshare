@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../config/authHeader';
-import useUserEventHistory from '../hooks/Participant/useUserEventHistory';
-import EventParticipant from '../components/Participant/EventParticipant';
+import useUserRatings from '../hooks/Rating/useUserRatings';
+import EventRating from '../components/Rating/EventRating';
 import Header from '../components/Partials/Header';
 import Footer from '../components/Partials/Footer';
 import vector1 from '../assets/img/et-3-event-vector.svg';
-import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
-import useUpdateMessage from '../hooks/Participant/useUpdateMessage';
-import useUpdateGuests from '../hooks/Participant/useUpdateGuests';
-import useRemoveParticipant from '../hooks/Participant/useRemoveParticipant';
+import { formatEuro, capitalizeFirstLetter } from '../utils/format';
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
 
@@ -21,10 +18,7 @@ const RatingsPage = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [expanded, setExpanded] = useState(null);
 
-    const { history, loading, error } = useUserEventHistory(user?.id);
-    const { updateMessage, loading: messageLoading } = useUpdateMessage();
-    const { updateGuests, loading: guestsLoading } = useUpdateGuests();
-    const { remove, loading: removeLoading } = useRemoveParticipant();
+    const { ratings: userRatings, loading: ratingsLoading, error: ratingsError } = useUserRatings();
 
     const profileLink = `/profile/${user?.id}`;
 
@@ -49,15 +43,17 @@ const RatingsPage = () => {
     };
 
     useEffect(() => {
-        let data = [...history];
-        if (statusFilter) data = data.filter(p => p.status === statusFilter);
-        if (eventFilter) data = data.filter(p => p.title === eventFilter);
-        if (searchValue) data = data.filter(p => p.title.toLowerCase().includes(searchValue.toLowerCase()));
-        setFiltered(data);
-    }, [statusFilter, eventFilter, searchValue, history]);
+        if (!userRatings) return;
 
-    const statuses = [...new Set(history.map(p => p.status))];
-    const events = [...new Set(history.map(p => p.title))];
+        let data = [...userRatings];
+        if (statusFilter) data = data.filter(r => r.event.status === statusFilter);
+        if (eventFilter) data = data.filter(r => r.event.title === eventFilter);
+        if (searchValue) data = data.filter(r => r.event.title.toLowerCase().includes(searchValue.toLowerCase()));
+        setFiltered(data);
+    }, [statusFilter, eventFilter, searchValue, userRatings]);
+
+    const statuses = [...new Set(userRatings?.map(r => r.event.status).filter(Boolean))];
+    const events = [...new Set(userRatings?.map(r => r.event.title).filter(Boolean))]
 
     const getSuggestions = value => {
         const inputValue = value.trim().toLowerCase();
@@ -118,11 +114,10 @@ const RatingsPage = () => {
                         </ul>
                     </div>
                 </section>
-                
-                {!loading && !error && (
-                    <EventParticipant
+
+                {!ratingsLoading && !ratingsError && (
+                    <EventRating
                         formatEuro={formatEuro}
-                        getFormattedDayAndMonthYear={getFormattedDayAndMonthYear}
                         capitalizeFirstLetter={capitalizeFirstLetter}
                         filtered={filtered}
                         getStatusClass={getStatusClass}
@@ -141,12 +136,9 @@ const RatingsPage = () => {
                         events={events}
                         inputProps={inputProps}
                         API_BASE_URL={API_BASE_URL}
-                        updateMessage={updateMessage}
-                        updateGuests={updateGuests}
-                        removeParticipant={remove}
-                        messageLoading={messageLoading}
-                        guestsLoading={guestsLoading}
-                        removeLoading={removeLoading}
+                        userRatings={userRatings}
+                        ratingsLoading={ratingsLoading}
+                        ratingsError={ratingsError}
                         userId={user?.id}
                         token={token}
                         updateLocalParticipant={updateLocalParticipant}
