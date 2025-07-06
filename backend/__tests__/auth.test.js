@@ -42,7 +42,7 @@ describe('🔐 Tests d\'Authentification', () => {
             bcrypt.hash.mockResolvedValue('hashedPassword');
 
             const response = await request(app)
-                .post('/api/register')
+                .post('/api/v1/register')
                 .send(userData)
                 .expect(201);
 
@@ -73,7 +73,7 @@ describe('🔐 Tests d\'Authentification', () => {
             userService.getUserByEmail.mockResolvedValue({ id: 1, email: 'existing@example.com' });
 
             const response = await request(app)
-                .post('/api/register')
+                .post('/api/v1/register')
                 .send(userData)
                 .expect(400);
 
@@ -91,7 +91,7 @@ describe('🔐 Tests d\'Authentification', () => {
             };
 
             const response = await request(app)
-                .post('/api/register')
+                .post('/api/v1/register')
                 .send(userData)
                 .expect(400);
 
@@ -119,7 +119,7 @@ describe('🔐 Tests d\'Authentification', () => {
             bcrypt.compare.mockResolvedValue(true);
 
             const response = await request(app)
-                .post('/api/login')
+                .post('/api/v1/login')
                 .send(loginData)
                 .expect(200);
 
@@ -148,7 +148,7 @@ describe('🔐 Tests d\'Authentification', () => {
             bcrypt.compare.mockResolvedValue(false);
 
             const response = await request(app)
-                .post('/api/login')
+                .post('/api/v1/login')
                 .send(loginData)
                 .expect(401);
 
@@ -164,7 +164,7 @@ describe('🔐 Tests d\'Authentification', () => {
             userService.getUserByEmail.mockResolvedValue(null);
 
             const response = await request(app)
-                .post('/api/login')
+                .post('/api/v1/login')
                 .send(loginData)
                 .expect(401);
 
@@ -183,7 +183,7 @@ describe('🔐 Tests d\'Authentification', () => {
             userService.deleteUser.mockResolvedValue(mockResult);
 
             const response = await request(app)
-                .delete(`/api/users/${userId}`)
+                .delete(`/api/v1/users/${userId}`)
                 .expect(200);
 
             expect(response.body).toHaveProperty('message', 'Utilisateur supprimé avec succès');
@@ -198,7 +198,7 @@ describe('🔐 Tests d\'Authentification', () => {
             userService.deleteUser.mockRejectedValue(new Error(errorMessage));
 
             const response = await request(app)
-                .delete(`/api/users/${userId}`)
+                .delete(`/api/v1/users/${userId}`)
                 .expect(500);
 
             expect(response.body).toHaveProperty('message', errorMessage);
