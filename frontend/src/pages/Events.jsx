@@ -42,6 +42,36 @@ async function reverseGeocode(lat, lng) {
     return data.address.city || data.address.town || data.address.village || '';
 }
 
+async function geocodeCity(cityName) {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&format=json`, {
+        headers: {
+            'User-Agent': 'YourAppName (your@email.com)'
+        }
+    });
+    const data = await response.json();
+    if (data && data.length > 0) {
+        return {
+            lat: parseFloat(data[0].lat),
+            lng: parseFloat(data[0].lon)
+        };
+    }
+    return null;
+}
+
+async function autocompleteCity(query) {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(query)}&format=json&limit=5`, {
+        headers: {
+            'User-Agent': 'YourAppName (your@email.com)'
+        }
+    });
+    const data = await response.json();
+    return data.map(place => ({
+        display_name: place.display_name,
+        lat: parseFloat(place.lat),
+        lng: parseFloat(place.lon)
+    }));
+}
+
 function Events() {
     useSlideUpAnimation();
     useTextAnimation();
@@ -56,6 +86,9 @@ function Events() {
     const [priceFilter, setPriceFilter] = useState('Tous');
     const [dateFilter, setDateFilter] = useState('Tous');
     const [sortFilter, setSortFilter] = useState('Tous');
+
+    const [citySuggestions, setCitySuggestions] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(null);
 
     const { user, isAuthenticated } = useAuth();
     const { favoris, loading: favLoading, error, refreshFavoris } = useFavoris();
@@ -96,6 +129,18 @@ function Events() {
         );
     };
 
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            if (villeRecherchee.length > 2) {
+                autocompleteCity(villeRecherchee).then(setCitySuggestions);
+            } else {
+                setCitySuggestions([]);
+            }
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [villeRecherchee]);
+
     const filters = useMemo(() => {
         const query = {};
 
@@ -104,14 +149,10 @@ function Events() {
             if (selectedCat) query.categoryId = selectedCat.id;
         }
 
-        if (villeRecherchee) {
-            query.city = villeRecherchee;
-        }
-
         if (useGeolocalisation && userLocation) {
             query.lat = userLocation.lat;
             query.lng = userLocation.lng;
-            query.radius = radiusFilter;
+            query.radius = parseInt(radiusFilter);
         }
 
         if (dateFilter === "Aujourd’hui") {
@@ -134,7 +175,6 @@ function Events() {
             query.price = "paid";
         }
 
-        // ✅ Nouveau : filtre status planifié / en cours
         if (statusFilter === "Planifié") {
             query.status = "Planifié";
         } else if (statusFilter === "En cours") {
@@ -142,7 +182,7 @@ function Events() {
         }
 
         return query;
-    }, [categoryFilter, dateFilter, sortFilter, priceFilter, allCategories, villeRecherchee, useGeolocalisation, userLocation, statusFilter]);
+    }, [categoryFilter, dateFilter, sortFilter, priceFilter, allCategories, villeRecherchee, useGeolocalisation, userLocation, radiusFilter, statusFilter]);
 
     const { events, loading: eventsLoading } = useEvents(filters, 1, 100, true, refreshKey);
 
@@ -272,13 +312,34 @@ function Events() {
                                     />
                                 </div>
 
-                                <input
-                                    type="text"
-                                    placeholder="Rechercher une ville"
-                                    value={villeRecherchee}
-                                    onChange={(e) => setVilleRecherchee(e.target.value)}
-                                    className="border px-2 py-1 rounded"
-                                />
+                                <div className="relative sm:w-full md:w-[48%] w-[23%]">
+                                    <input
+                                        placeholder="Rechercher une ville"
+                                        value={villeRecherchee}
+                                        onChange={(e) => setVilleRecherchee(e.target.value)}
+                                        className="border px-2 py-1 rounded w-full h-10"
+                                    />
+
+                                    {citySuggestions.length > 0 && (
+                                        <ul className="absolute z-10 bg-white border rounded shadow mt-1 w-full max-h-40 overflow-auto">
+                                            {citySuggestions.map((city, index) => (
+                                                <li
+                                                    key={index}
+                                                    onClick={() => {
+                                                        setSelectedCity(city);
+                                                        setVilleRecherchee(city.display_name);
+                                                        setCitySuggestions([]);
+                                                        setUserLocation({ lat: city.lat, lng: city.lng });
+                                                        setUseGeolocalisation(true);
+                                                    }}
+                                                    className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                                                >
+                                                    {city.display_name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
 
                                 <div className="sm:w-full md:w-[48%] w-[23%]">
                                     <CustomSelect

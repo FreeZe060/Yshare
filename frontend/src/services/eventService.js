@@ -14,6 +14,10 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 	if (filters.sort) queryParams.append('sort', filters.sort);
 	if (filters.price) queryParams.append('price', filters.price);
 
+	if (filters.lat) queryParams.append('lat', filters.lat);
+	if (filters.lng) queryParams.append('lng', filters.lng);
+	if (filters.radius) queryParams.append('radius', filters.radius);
+
 	queryParams.append('page', page);
 	queryParams.append('limit', limit);
 

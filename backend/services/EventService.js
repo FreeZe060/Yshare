@@ -8,7 +8,6 @@ class EventService {
 
         const {
             title,
-            city,
             categoryId,
             status,
             sort,
@@ -16,8 +15,6 @@ class EventService {
             dateFilter,
             lat,
             lng,
-            latitude,
-            longitude,
             radius
         } = filters;
 
@@ -26,24 +23,19 @@ class EventService {
 
         const whereClauses = [];
 
-        // 🔧 Filtre title
         if (title) {
             whereClauses.push({ title: { [Op.like]: `%${title}%` } });
         }
 
-        // 🔧 Filtre city
-        if (city) {
-            whereClauses.push({ city: { [Op.like]: `%${city}%` } });
-        }
-
-        // 🔧 Filtre date
         if (dateFilter) {
             const today = new Date();
             let startDate, endDate;
 
             if (dateFilter === "today") {
-                startDate = new Date(today.setHours(0, 0, 0, 0));
-                endDate = new Date(today.setHours(23, 59, 59, 999));
+                startDate = new Date(today);
+                startDate.setHours(0, 0, 0, 0);
+                endDate = new Date(today);
+                endDate.setHours(23, 59, 59, 999);
             } else if (dateFilter === "week") {
                 const dayOfWeek = today.getDay() === 0 ? 6 : today.getDay() - 1;
                 startDate = new Date(today);
@@ -53,20 +45,25 @@ class EventService {
                 endDate = new Date(startDate);
                 endDate.setDate(startDate.getDate() + 6);
                 endDate.setHours(23, 59, 59, 999);
+
+                if (today.getDay() === 0) {
+                    endDate.setDate(endDate.getDate() + 7);
+                    endDate.setHours(23, 59, 59, 999);
+                }
             } else if (dateFilter === "month") {
                 startDate = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0);
                 endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59);
             }
 
+            console.log("Filtre dates:", { startDate, endDate });
+
             whereClauses.push({ start_time: { [Op.between]: [startDate, endDate] } });
         }
 
-        // 🔧 Filtre status
         if (status) {
             whereClauses.push({ status });
         }
 
-        // 🔧 Filtre price (corrigé)
         if (price === 'free') {
             whereClauses.push({
                 [Op.or]: [
@@ -78,9 +75,8 @@ class EventService {
             whereClauses.push({ price: { [Op.gt]: 0 } });
         }
 
-        // 🔧 Géolocalisation Haversine
-        const effectiveLat = latitude || lat;
-        const effectiveLng = longitude || lng;
+        const effectiveLat = lat;
+        const effectiveLng = lng;
         let distanceCondition = null;
 
         if (effectiveLat && effectiveLng && radius) {
@@ -93,8 +89,15 @@ class EventService {
                 + sin(radians(${effectiveLat})) * sin(radians(latitude))
             )
         `;
-
             distanceCondition = Sequelize.literal(`${distanceSql} < ${radiusKm}`);
+        }
+
+        const where = {
+            [Op.and]: whereClauses,
+        };
+
+        if (distanceCondition) {
+            where[Op.and].push(distanceCondition);
         }
 
         const include = [
@@ -137,10 +140,7 @@ class EventService {
 
         try {
             const events = await Event.findAll({
-                where: {
-                    [Op.and]: whereClauses,
-                    ...(distanceCondition && { [Op.and]: Sequelize.where(distanceCondition, true) }),
-                },
+                where,
                 include,
                 attributes: {
                     include: [[fn('COUNT', col('participants.id')), 'nb_participants']],
@@ -159,9 +159,7 @@ class EventService {
             });
 
             const total = await Event.count({
-                where: {
-                    [Op.and]: whereClauses
-                },
+                where,
                 include: categoryId
                     ? [{
                         model: Category,

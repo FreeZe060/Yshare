@@ -10,26 +10,30 @@ exports.getAllEvents = async (req, res) => {
         const {
             title,
             city,
-            date,
+            dateFilter,
             categoryId,
             status,
             sort,
+            price,
+            lat,
+            lng,
+            radius,
             page = 1,
             limit = 10
         } = req.query;
 
-        console.log(`[getAllEvents] Requête reçue avec filtres:`, {
-            title, city, date, categoryId, status, sort, page, limit
+        console.log(`[getAllEvents] ➤ Requête reçue avec filtres :`, {
+            title, city, dateFilter, categoryId, status, sort, price, lat, lng, radius, page, limit
         });
 
         const result = await eventService.getAllEvents(
-            { title, city, date, categoryId, status, sort },
+            { title, city, dateFilter, categoryId, status, sort, price, lat, lng, radius },
             { page, limit }
         );
 
         res.status(200).json(result);
     } catch (error) {
-        console.error("[getAllEvents] Erreur lors de la récupération des événements:", error);
+        console.error("[getAllEvents] ❌ Erreur lors de la récupération des événements :", error);
         res.status(500).json({ message: "Erreur de récupération", error: error.message });
     }
 };
@@ -187,7 +191,7 @@ exports.updateEvent = async (req, res) => {
 };
 
 exports.updateEventImages = async (req, res) => {
-     try {
+    try {
         const { imageId } = req.params;
 
         if (!req.file) {
