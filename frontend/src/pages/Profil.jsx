@@ -243,7 +243,7 @@ const Profil = () => {
                                                         : "Cet utilisateur n'a pour l'instant créé aucun événement."
                                                     : null
                                             }
-                                            buttonLink={isOwner ? "/create/event" : undefined}
+                                            buttonLink={isOwner ? "/event/created" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
                                             emptyButtonClass="bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             {...(createdEvents.length > 0 && {

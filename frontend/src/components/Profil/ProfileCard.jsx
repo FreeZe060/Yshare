@@ -222,15 +222,25 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										onChange={handleImageChange}
 									/>
 									{user.hasReported && (
-										<div className="right-0 absolute mt-8 mr-4">
+										<div className="right-0 absolute mt-8 mr-4 flex flex-col space-y-2">
 											<a
 												href="/report"
-												className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded-lg text-white text-sm transition-all"
+												className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded-lg text-white text-sm transition-all text-center"
 											>
 												Voir vos reports
 											</a>
+
+											{user.ratingsCount > 1 && ( 
+												<a
+													href="/ratings"
+													className="bg-purple-600 hover:bg-purple-700 shadow px-4 py-2 rounded-lg text-white text-sm transition-all text-center"
+												>
+													Vos notes créées
+												</a>
+											)}
 										</div>
 									)}
+
 								</div>
 
 								<div className="relative flex justify-center items-center gap-3 mt-8 w-full">
@@ -301,7 +311,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 									<StarRating rating={user.rating || 0} />
 								</div>
 
-								{/* Bio Section */}
 								<div className="mt-10 pb-10 border-[#C320C0] border-t text-center">
 									<div className="flex flex-wrap justify-center">
 										<div className="px-4 w-full lg:w-9/12">
@@ -447,10 +456,8 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 									</div>
 								</div>
 
-								{/* Profile Champs */}
 								<div className="space-y-4 mx-auto mt-12 w-full max-w-md text-[#333] text-xl">
 
-									{/* GENDER */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-solid fa-venus-mars"></i>
@@ -480,7 +487,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										)}
 									</div>
 
-									{/* EMAIL */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-solid fa-envelope"></i>
@@ -512,7 +518,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										)}
 									</div>
 
-									{/* PHONE */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-solid fa-phone"></i>
@@ -544,7 +549,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										)}
 									</div>
 
-									{/* BIRTHDAY */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-solid fa-cake-candles"></i>
@@ -571,7 +575,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										)}
 									</div>
 
-									{/* LINKEDIN */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-brands fa-linkedin"></i>
@@ -599,7 +602,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										)}
 									</div>
 
-									{/* INSTAGRAM */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-brands fa-instagram"></i>
@@ -627,7 +629,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										)}
 									</div>
 
-									{/* WEBSITE */}
 									<div className="flex items-center shadow-md border-[#C320C0] border-2 rounded-md overflow-hidden">
 										<div className="flex justify-center items-center bg-gradient-to-tr from-[#580FCA] to-[#F929BB] w-12 h-12">
 											<i className="text-white text-xl fa-solid fa-globe"></i>
@@ -657,7 +658,6 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 
 								</div>
 
-								{/* Profile Completion Bar */}
 								{editable && (
 									<>
 										<motion.div

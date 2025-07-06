@@ -23,8 +23,7 @@ function Event_Created({
     statuses,
     events,
     inputProps,
-    toggleFavoris,
-    isFavoris
+    toggleFavoris
 }) {
     useSlideUpAnimation('.rev-slide-up', filtered);
     useTextAnimation();
@@ -72,14 +71,12 @@ function Event_Created({
                             key={index}
                             event={event}
                             isAuthenticated={true}
-                            isFavoris={isFavoris}
                             toggleFavoris={toggleFavoris}
                         />
                     ))
                 )}
             </div>
 
-            {/* VECTORS + BACKGROUND */}
             <div className="*:-z-[1] *:absolute">
                 <h3 className="xl:hidden bottom-[120px] left-[68px] xxl:left-[8px] et-outlined-text h-max font-bold text-[65px] uppercase tracking-widest -scale-[1] anim-text et-vertical-txt">
                     événements créés

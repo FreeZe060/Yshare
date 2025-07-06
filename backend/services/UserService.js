@@ -104,6 +104,12 @@ class UserService {
         }));
     }
 
+    async getRatingsCountByUserId(userId) {
+        const count = await Rating.count({ where: { id_user: userId } });
+        console.log(`[getRatingsCountByUserId] ➤ L'utilisateur ID ${userId} a créé ${count} note(s)`);
+        return count;
+    }
+
     async deleteUser(userId) {
         console.log(`[deleteUser] ➤ Suppression de l'utilisateur avec ID : ${userId}`);
 

@@ -6,13 +6,16 @@ import ParticipantAvatars from '../Home/ParticipantAvatars';
 import EventStatusTag from './EventStatusTag';
 import EventCategoryTag from './EventCategoryTag';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
 
 const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
-    const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];
-    const imageUrl = mainImage?.image_url?.startsWith('http')
-        ? mainImage.image_url
-        : `${API_BASE_URL}${mainImage?.image_url || ''}`;
+    const mainImageUrl = event.image
+        ? (event.image.startsWith('http')
+            ? event.image
+            : `${API_BASE_URL}${event.image}`)
+        : event.EventImages?.find(img => img.is_main)?.image_url
+            ? `${API_BASE_URL}${event.EventImages.find(img => img.is_main).image_url}`
+            : '/default.jpg'; 
 
     const [localStatus, setLocalStatus] = useState(event.status);
 
@@ -24,7 +27,7 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
 
     return (
         <div className="relative flex flex-row md:flex-col items-center gap-[40px] md:gap-4 py-[30px] md:py-6 border-[#8E8E93]/25 border-b rev-slide-up">
-            {isAuthenticated && (
+            {isAuthenticated && typeof isFavoris === 'function' && (
                 <div
                     className={`absolute top-3 right-3 cursor-pointer text-xl transition-transform duration-300 
                     ${isFavoris(event.id) ? 'text-red-600 hover:scale-110' : 'text-gray-400 hover:scale-110'}`}
@@ -38,7 +41,6 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
                 </div>
             )}
 
-            {/* Date & EventStatusTag */}
             <div className="relative gap-2 w-[120px] md:w-20 text-center shrink-0">
                 <h5 className="mb-3 text-[#BF1FC0] text-[24px] md:text-[20px]">
                     <span className="block font-semibold text-[48px] text-etBlack md:text-[36px] leading-[0.7]">
@@ -56,10 +58,9 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
                 />
             </div>
 
-            {/* Image */}
             <div className="w-auto md:w-full shrink-0">
                 <img
-                    src={imageUrl}
+                    src={mainImageUrl}
                     alt="Image de l'événement"
                     className="rounded-xl w-full max-w-[300px] md:max-w-full object-cover aspect-[300/128]"
                 />
@@ -76,7 +77,7 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
                         <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
                         {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}
                     </h6>
-                    {event.Categories.length > 0 && (
+                    {event.Categories?.length > 0 && (
                         event.Categories.map((category, index) => (
                             <EventCategoryTag
                                 key={index}
@@ -91,7 +92,6 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
                 </h4>
             </div>
 
-            {/* Participants + Button */}
             <div className="flex flex-col justify-center items-center pt-0 md:pt-4 pl-[40px] md:pl-0 border-[#8E8E93]/25 border-t-0 md:border-t border-l md:border-l-0 text-center shrink-0">
                 <ParticipantAvatars eventId={event.id} />
                 <Link to={`/event/${event.id}`} className="mt-4 md:mt-2 w-auto md:w-full et-3-btn">

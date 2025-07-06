@@ -163,6 +163,10 @@ exports.getProfile = async (req, res) => {
             ? await reportService.hasUserReported(requesterId)
             : false;
 
+        const ratingsCount = isPrivate && requesterId
+            ? await userService.getRatingsCountByUserId(requesterId)
+            : 0;
+
         console.log(`[getProfile] 👤 Accès ${isPrivate ? 'privé' : 'public'} (admin: ${isAdmin}, owner: ${isOwner})`);
 
         const {
@@ -193,7 +197,8 @@ exports.getProfile = async (req, res) => {
             showEmail,
             showPhone,
             showAddress,
-            hasReported
+            hasReported,
+            ratingsCount
         };
 
         console.log(`[getProfile] ✅ Données renvoyées :`, {

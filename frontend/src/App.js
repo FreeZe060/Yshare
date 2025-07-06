@@ -65,7 +65,6 @@ function App() {
 				<Route path="/conditions-utilisation" element={<TermsOfUse />} />
 				<Route path="/conditions-vente" element={<TermsOfSale />} />
 
-				{/* 💥 Catch-all 404 route */}
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</>
