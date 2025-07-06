@@ -11,7 +11,7 @@ import Footer from '../components/Partials/Footer';
 
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
-import EventStatusTag from '../utils/EventStatusTag';
+import EventStatusTag from '../components/Events/EventStatusTag';
 
 import SkeletonEventCard from '../components/SkeletonLoading/SkeletonEventCard';
 import vector1 from "../assets/img/et-3-event-vector.svg";

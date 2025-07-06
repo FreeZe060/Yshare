@@ -184,7 +184,7 @@ function Event_Participated({
                         return (
                             <div key={index} className="mb-[40px]">
                                 <div className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-                                    <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
+                                    <h5 className="w-[120px] text-[#CE22BF] text-[24px] text-center shrink-0">
                                         <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
                                             {getFormattedDayAndMonthYear(item.start_time).day}
                                         </span>
@@ -200,12 +200,12 @@ function Event_Participated({
                                     <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
                                         <div className="min-w-0">
                                             <Link to={`/event/${item.id_event}`}>
-                                                <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
+                                                <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-[#CE22BF] truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
                                                     {capitalizeFirstLetter(item.title)}
                                                 </h3>
                                             </Link>
 
-                                            <h6 className="text-[17px] text-etBlue">
+                                            <h6 className="text-[#CE22BF] text-[17px]">
                                                 <span><i className="mr-2 fas fa-map-marker-alt"></i></span>
                                                 {capitalizeFirstLetter(item.city)}, {item.street_number} {item.street}
                                             </h6>
@@ -221,14 +221,14 @@ function Event_Participated({
 
                                             {item.organizer_response ? (
                                                 <div className="mt-4">
-                                                    <p className="mb-1 font-semibold text-etBlue text-sm">Message de l'organisateur :</p>
+                                                    <p className="mb-1 font-semibold text-[#CE22BF] text-sm">Message de l'organisateur :</p>
                                                     <div className="shadow-sm p-3 border border-blue-200 rounded-md text-gray-800 text-sm">
                                                         {item.organizer_response}
                                                     </div>
                                                     <details className="group mt-2">
                                                         <summary className="flex items-center gap-2 text-gray-700 text-sm transition-colors cursor-pointer">
-                                                            <i className="text-etBlue transition-transform duration-300 fas fa-comment-dots" />
-                                                            <span className="relative group-hover:text-etBlue transition-colors duration-300">
+                                                            <i className="text-[#CE22BF] transition-transform duration-300 fas fa-comment-dots" />
+                                                            <span className="relative group-hover:text-[#CE22BF] transition-colors duration-300">
                                                                 <span className="underline-animation">Voir mon message</span>
                                                             </span>
                                                         </summary>
@@ -245,7 +245,7 @@ function Event_Participated({
                                                 </div>
                                             ) : (
                                                 <div className="mt-4">
-                                                    <p className="mb-1 font-semibold text-etBlue text-sm">Votre message :</p>
+                                                    <p className="mb-1 font-semibold text-[#CE22BF] text-sm">Votre message :</p>
                                                     {editingMessageId === item.id_event ? (
                                                         <div className="flex flex-col gap-2">
                                                             <input
@@ -260,7 +260,7 @@ function Event_Participated({
                                                             <div className="flex gap-2">
                                                                 <button
                                                                     onClick={() => handleUpdateMessage(item.id_event, item.id_user)}
-                                                                    className="bg-etBlue px-3 py-1 rounded text-white"
+                                                                    className="bg-[#CE22BF] px-3 py-1 rounded text-white"
                                                                 >
                                                                     Enregistrer
                                                                 </button>
@@ -291,7 +291,7 @@ function Event_Participated({
                                                                     }));
                                                                     setEditingMessageId(item.id_event);
                                                                 }}
-                                                                className="ml-4 text-etBlue text-xs underline"
+                                                                className="ml-4 text-[#CE22BF] text-xs underline"
                                                             >
                                                                 Modifier
                                                             </button>
@@ -307,7 +307,7 @@ function Event_Participated({
                                                 Se retirer de l'événement
                                             </button>
                                         </div>
-                                        <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
+                                        <h4 className="ml-auto font-semibold text-[#CE22BF] text-[30px] whitespace-nowrap">
                                             {formatEuro(item.price)}
                                         </h4>
                                     </div>
@@ -399,7 +399,7 @@ function Event_Participated({
                                                                         handleUpdateGuests(item.id_event, item.id_user);
                                                                         setEditingGuestsEventId(null);
                                                                     }}
-                                                                    className="bg-etBlue px-3 py-1 rounded text-white text-sm"
+                                                                    className="bg-[#CE22BF] px-3 py-1 rounded text-white text-sm"
                                                                 >
                                                                     Enregistrer
                                                                 </button>
@@ -427,7 +427,7 @@ function Event_Participated({
                                                                     }));
                                                                     setEditingGuestsEventId(item.id_event);
                                                                 }}
-                                                                className="bg-etBlue mt-2 px-3 py-1 rounded text-white text-sm"
+                                                                className="bg-[#CE22BF] mt-2 px-3 py-1 rounded text-white text-sm"
                                                             >
                                                                 Modifier
                                                             </button>

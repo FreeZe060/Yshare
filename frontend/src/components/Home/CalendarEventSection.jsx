@@ -5,7 +5,7 @@ import '../../assets/css/style.css';
 import useSlideUpAnimation from '../../hooks/Animations/useSlideUpAnimation';
 import useTextAnimation from '../../hooks/Animations/useTextAnimation';
 
-import EventStatusTag from '../../utils/EventStatusTag';
+import EventStatusTag from '../../components/Events/EventStatusTag';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
@@ -94,12 +94,12 @@ function CalendarEventSection({ events }) {
                                                     </h3>
                                                     <EventStatusTag date={event.start_time} status={event.status} />
 
-                                                    <h6 className="mb-[10px] font-normal text-[17px] text-etBlue">{formatDate(event.start_time, "long")}</h6>
-                                                    <h3 className="mb-[10px] font-semibold text-[30px] text-etBlue">{formatEuro(event.price)}</h3>
+                                                    <h6 className="mb-[10px] font-normal text-[#CE22BF] text-[17px]">{formatDate(event.start_time, "long")}</h6>
+                                                    <h3 className="mb-[10px] font-semibold text-[#CE22BF] text-[30px]">{formatEuro(event.price)}</h3>
                                                     <p className="mb-[19px] text-[17px] text-etGray line-clamp-2">
                                                         {event.description}
                                                     </p>
-                                                    <div className="flex items-start text-[17px] text-etBlue">
+                                                    <div className="flex items-start text-[#CE22BF] text-[17px]">
                                                         <span><i class="mr-2 fa-solid fa-location-dot"></i></span>
                                                         <h6 className="text-[17px] text-gray-600">
                                                             {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}

@@ -48,7 +48,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                     >
                         <div className="relative mb-[20px] rounded-[6px] overflow-hidden img">
                             <img src={imageUrl} alt="news-cover" className="w-full max-h-[200px] object-cover" />
-                            <div className="top-[12px] left-[12px] absolute bg-etBlue px-[12px] py-[6px] rounded-[4px] text-white text-center">
+                            <div className="top-[12px] left-[12px] absolute bg-[#CE22BF] px-[12px] py-[6px] rounded-[4px] text-white text-center">
                                 <span className="block mb-[3px] font-medium text-[18px] leading-[0.7]">{day}</span>
                                 <span className="block font-medium text-[10px] leading-[0.7]">{month}</span>
                             </div>
@@ -57,7 +57,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                         <div className="mb-[30px]">
                             <div className="flex items-center gap-[20px] mb-[5px] text-xs">
                                 <div className="flex items-center gap-[6px]">
-                                    <span><i className="text-etBlue fas fa-user" /></span>
+                                    <span><i className="text-[#CE22BF] fas fa-user" /></span>
                                     <Link
                                         to={`/profile/${item.User?.id}`}
                                         className="text-etGray hover:underline"
@@ -67,7 +67,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                                 </div>
 
                                 <div className="flex items-center gap-[6px]">
-                                    <span><i className="text-etBlue fas fa-folder" /></span>
+                                    <span><i className="text-[#CE22BF] fas fa-folder" /></span>
                                     <span className="text-etGray">
                                         {item.categories?.[0]?.name || 'Sans catégorie'}
                                     </span>
@@ -82,7 +82,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                             </p>
                             <a
                                 href={`/news/${item.id}`}
-                                className="text-[14px] text-etBlue hover:underline"
+                                className="text-[#CE22BF] text-[14px] hover:underline"
                             >
                                 Lire la suite <i className="fa-arrow-right-long ml-1 fa-solid"></i>
                             </a>
@@ -91,7 +91,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                         <div className="right-[12px] bottom-[12px] absolute">
                             <Link
                                 to={`/news/edit/${item.id}`}
-                                className="bg-etBlue hover:bg-etPink shadow px-3 py-1 rounded-full text-white text-xs hover:scale-105 transition-all duration-300"
+                                className="bg-[#CE22BF] hover:bg-etPink shadow px-3 py-1 rounded-full text-white text-xs hover:scale-105 transition-all duration-300"
                             >
                                 <i className="mr-1 fas fa-pen"></i> Modifier
                             </Link>
@@ -113,8 +113,8 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                         key={i + 1}
                         onClick={() => goToPage(i + 1)}
                         className={`w-8 h-8 text-xs rounded-full border transition-all duration-300 ${page === i + 1
-                            ? 'bg-etBlue text-white scale-110 shadow-md'
-                            : 'border-etBlue text-etBlue hover:bg-etBlue hover:text-white hover:scale-105'
+                            ? 'bg-[#CE22BF] text-white scale-110 shadow-md'
+                            : 'border-[#CE22BF] text-[#CE22BF] hover:bg-[#CE22BF] hover:text-white hover:scale-105'
                             }`}
                     >
                         {i + 1}

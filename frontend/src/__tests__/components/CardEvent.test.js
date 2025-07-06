@@ -19,7 +19,7 @@ jest.mock('../../components/Home/ParticipantAvatars', () => {
   };
 });
 
-jest.mock('../../utils/EventStatusTag', () => {
+jest.mock('../../components/Events/EventStatusTag', () => {
   return function MockEventStatusTag({ status }) {
     return <div data-testid="event-status-tag">{status}</div>;
   };

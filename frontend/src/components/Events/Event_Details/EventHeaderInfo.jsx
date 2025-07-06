@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../../utils/format';
 
-import EventStatusTag from '../../../utils/EventStatusTag';
+import EventStatusTag from '../EventStatusTag';
+import EventCategoryTag from '../EventCategoryTag';
 
 function EventHeaderInfo({
     event,
@@ -34,17 +35,32 @@ function EventHeaderInfo({
 
     return (
         <div className="flex md:flex-row flex-col justify-between items-start md:items-end gap-4 mb-12 pb-8 border-[#e5e5e5] border-b">
-            <div className="flex flex-row justify-between items-center gap-2 w-full">
-                <h1 className="font-bold text-[42px] text-etBlack xs:text-[32px] leading-tight">
-                    {capitalizeFirstLetter(event?.title)}
-                </h1>
-                <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col gap-2 w-full">
+                <div className="flex justify-between items-center gap-2">
+                    <h1 className="font-bold text-[42px] text-etBlack xs:text-[32px] leading-tight">
+                        {capitalizeFirstLetter(event?.title)}
+                    </h1>
                     <EventStatusTag
                         date={event.start_time}
                         status={localStatus}
                         eventId={event.id}
                         onStatusChange={(newStatus) => handleStatusChange(newStatus)}
                     />
+                </div>
+
+                <div>
+                    {event.Categories.length > 0 && (
+                        event.Categories.map((category, index) => (
+                            <EventCategoryTag
+                                key={index}
+                                category={category.name}
+                                className="mt-2 mr-2"
+                            />
+                        ))
+                    )}
+                </div>
+                <div className="flex flex-col items-end gap-2">
+
                     {event.status === 'Terminé' && averageRating !== null && (
                         <div className="flex flex-col items-center mt-2" onClick={onClickRating} style={{ cursor: 'pointer' }}>
                             <div className="flex">
@@ -71,13 +87,13 @@ function EventHeaderInfo({
                                     );
                                 })}
                             </div>
-                            <p className="text-sm text-gray-600 mt-1">{averageRating ? averageRating.toFixed(2) : "0.00"} / 5</p>
+                            <p className="mt-1 text-gray-600 text-sm">{averageRating ? averageRating.toFixed(2) : "0.00"} / 5</p>
                         </div>
                     )}
 
                     <Link
                         to="/create-news"
-                        className="hover:bg-etBlue mt-4 px-4 py-2 border-2 border-etBlue rounded-full font-semibold text-etBlue hover:text-white text-sm transition-all"
+                        className="hover:bg-[#CE22BF] mt-4 px-4 py-2 border-[#CE22BF] border-2 rounded-full font-semibold text-[#CE22BF] hover:text-white text-sm transition-all"
                     >
                         <i className="mr-2 fas fa-plus"></i>Créer une news
                     </Link>
@@ -90,7 +106,7 @@ function EventHeaderInfo({
                                     setEditing(true);
                                 }
                             }}
-                            className="text-sm text-[#C320C0] underline hover:text-[#a51899]"
+                            className="text-[#C320C0] hover:text-[#a51899] text-sm underline"
                         >
                             {editing ? "Quitter le mode édition" : "Mode édition"}
                         </button>
@@ -98,43 +114,42 @@ function EventHeaderInfo({
                 </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-                <div className="mt-2 font-light text-[16px] text-etGray">
-                    <span>Créé par</span>
+            <div className="flex md:flex-row flex-col gap-6 mt-4">
+                <div className="flex flex-col items-start">
+                    <p className="mb-1 font-light text-etGray text-sm uppercase tracking-wide">Créé par</p>
                     {event?.organizer ? (
-                        <div>
-                            <Link to={`/profile/${event.organizer.id}`}>
-                                <img
-                                    src={`http://localhost:8080${event.organizer.profileImage}`}
-                                    alt="Organizer"
-                                    className="inline-block mr-2 rounded-full w-8 h-8"
-                                />
-                                <span className="font-medium text-[#C320C0]">
-                                    {event.organizer.name} {event.organizer.lastname}
-                                </span>
-                            </Link>
-                        </div>
+                        <Link to={`/profile/${event.organizer.id}`} className="group flex items-center gap-3">
+                            <img
+                                src={event.organizer.profileImage ? `http://localhost:8080${event.organizer.profileImage}` : '/default-avatar.png'}
+                                alt={`${event.organizer.name} ${event.organizer.lastname}`}
+                                className="shadow-md border-2 border-etPink rounded-full w-10 h-10 group-hover:scale-105 transition-transform duration-200"
+                            />
+                            <span className="font-medium text-[#C320C0] group-hover:underline">
+                                {event.organizer.name} {event.organizer.lastname}
+                            </span>
+                        </Link>
                     ) : (
                         <div className="text-etGray text-sm">Organisateur inconnu</div>
                     )}
                 </div>
+
                 <div className="text-left">
-                    <p className="text-sm text-etGray mb-1 font-light tracking-wide uppercase">Quand</p>
+                    <p className="mb-1 font-light text-etGray text-sm uppercase tracking-wide">Quand</p>
                     {editing ? (
                         <div className="flex flex-col gap-2">
-                            <label className="text-sm text-etGray">Date de début :</label>
+                            <label className="text-etGray text-sm">Date de début :</label>
                             <input
                                 type="datetime-local"
                                 value={newStartDate}
                                 onChange={(e) => setNewStartDate(e.target.value)}
-                                className="border rounded p-2"
+                                className="p-2 border rounded"
                             />
-                            <label className="text-sm text-etGray">Date de fin :</label>
+                            <label className="text-etGray text-sm">Date de fin :</label>
                             <input
                                 type="datetime-local"
                                 value={newEndDate}
                                 onChange={(e) => setNewEndDate(e.target.value)}
-                                className="border rounded p-2"
+                                className="p-2 border rounded"
                             />
                             <div className="flex gap-3 mt-2">
                                 <button
@@ -146,34 +161,42 @@ function EventHeaderInfo({
                             </div>
                         </div>
                     ) : (
-                        <p className="text-[17px] leading-relaxed text-etBlack font-semibold font-sans">
-                            <span className="text-etPurple font-bold">Du</span>{' '}
-                            {new Date(event?.start_time).toLocaleDateString("fr-FR", {
-                                weekday: "long",
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                            })}{' '}
-                            à {new Date(event?.start_time).toLocaleTimeString("fr-FR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })}
-                            <br />
-                            <span className="text-etPink font-bold">Au</span>{' '}
-                            {new Date(event?.end_time).toLocaleDateString("fr-FR", {
-                                weekday: "long",
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                            })}{' '}
-                            à {new Date(event?.end_time).toLocaleTimeString("fr-FR", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })}
-                        </p>
+                        <div className="flex items-center gap-4">
+                            <div className="text-center">
+                                <h5 className="mb-1 text-[#BF1FC0] text-[20px] md:text-[18px]">
+                                    <span className="block font-semibold text-[42px] text-etBlack md:text-[32px] leading-[0.7]">
+                                        {new Date(event?.start_time).toLocaleDateString("fr-FR", { day: "2-digit" })}
+                                    </span>
+                                    <span className="block text-[16px] md:text-[14px]">
+                                        {new Date(event?.start_time).toLocaleDateString("fr-FR", { month: "short", year: "numeric" })}
+                                    </span>
+                                </h5>
+                                <p className="font-medium text-[15px] text-etGray">
+                                    {new Date(event?.start_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                                </p>
+                            </div>
+
+                            <span className="text-[28px] text-etPurple md:text-[24px]">→</span>
+
+                            <div className="text-center">
+                                <h5 className="mb-1 text-[#BF1FC0] text-[20px] md:text-[18px]">
+                                    <span className="block font-semibold text-[42px] text-etBlack md:text-[32px] leading-[0.7]">
+                                        {new Date(event?.end_time).toLocaleDateString("fr-FR", { day: "2-digit" })}
+                                    </span>
+                                    <span className="block text-[16px] md:text-[14px]">
+                                        {new Date(event?.end_time).toLocaleDateString("fr-FR", { month: "short", year: "numeric" })}
+                                    </span>
+                                </h5>
+                                <p className="font-medium text-[15px] text-etGray">
+                                    {new Date(event?.end_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                                </p>
+                            </div>
+                        </div>
+
                     )}
                 </div>
             </div>
+
         </div>
     );
 }

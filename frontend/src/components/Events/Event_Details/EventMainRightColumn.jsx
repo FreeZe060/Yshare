@@ -49,7 +49,7 @@ function EventMainRightColumn({
                     <div className="mb-[24px] overflow-visible et-event-details-ticket-time-slider swiper">
                         <div className="swiper-wrapper">
                             <div className="group w-max swiper-slide">
-                                <span className="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-etBlue rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">
+                                <span className="inline-flex justify-center items-center group-[.swiper-slide-active]:bg-[#C320C0] px-[15px] border border-[#e5e5e5] group-[.swiper-slide-active]:border-[#CE22BF] rounded-[4px] h-[30px] font-inter font-normal text-[#232323] text-[14px] group-[.swiper-slide-active]:text-white cursor-pointer">
                                     {`${new Date(event?.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - ${new Date(event?.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`}
                                 </span>
                             </div>
@@ -62,7 +62,7 @@ function EventMainRightColumn({
                                 <span>{`Place pour l'événement "${event?.title}"`}</span>
                                 <span className="flex items-center">
                                     <input type="radio" name="options" checked readOnly className="appearance-none" />
-                                    <span className="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-etBlue before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] before:-translate-y-[50%] after:-translate-y-[50%]">
+                                    <span className="before:top-[50%] after:top-[50%] before:right-0 after:right-0 before:-z-[1] before:absolute after:absolute before:content-normal after:content-normal before:bg-white after:bg-[#C320C0] after:opacity-0 mr-[28px] after:mr-[4px] before:border before:border-[#CE22BF] before:rounded-full after:rounded-full before:w-[16px] after:w-[8px] before:h-[16px] after:h-[8px] before:-translate-y-[50%] after:-translate-y-[50%]">
                                         {editing ? (
                                             <>
                                                 <input
