@@ -2,10 +2,17 @@ const request = require('supertest');
 const app = require('../server');
 const eventService = require('../services/EventService');
 const participantService = require('../services/ParticipantService');
+const userService = require('../services/UserService');
+const notificationService = require('../services/NotificationService');
 
 // Mock des services
 jest.mock('../services/EventService');
 jest.mock('../services/ParticipantService');
+jest.mock('../services/UserService');
+jest.mock('../services/NotificationService');
+jest.mock('../utils/email', () => ({
+    sendEmail: jest.fn().mockResolvedValue(true)
+}));
 
 // Mock du middleware d'authentification
 jest.mock('../middlewares/authMiddleware', () => {
@@ -91,7 +98,7 @@ describe('🎯 Tests des Événements', () => {
             eventService.createEvent.mockResolvedValue(mockEvent);
 
             const response = await request(app)
-                .post('/api/events')
+                .post('/api/v1/events')
                 .set('Authorization', `Bearer valid-token`)
                 .send(eventData)
                 .expect(201);
@@ -119,7 +126,7 @@ describe('🎯 Tests des Événements', () => {
             };
 
             const response = await request(app)
-                .post('/api/events')
+                .post('/api/v1/events')
                 .send(eventData)
                 .expect(401);
 
@@ -135,7 +142,7 @@ describe('🎯 Tests des Événements', () => {
             };
 
             const response = await request(app)
-                .post('/api/events')
+                .post('/api/v1/events')
                 .set('Authorization', `Bearer valid-token`)
                 .send(eventData)
                 .expect(400);
@@ -159,7 +166,7 @@ describe('🎯 Tests des Événements', () => {
             eventService.getEventById.mockResolvedValue(mockEvent);
 
             const response = await request(app)
-                .get(`/api/events/${eventId}`)
+                .get(`/api/v1/events/${eventId}`)
                 .expect(200);
 
             expect(response.body).toHaveProperty('id', eventId);
@@ -174,7 +181,7 @@ describe('🎯 Tests des Événements', () => {
             eventService.getEventById.mockResolvedValue(null);
 
             const response = await request(app)
-                .get(`/api/events/${eventId}`)
+                .get(`/api/v1/events/${eventId}`)
                 .expect(404);
 
             expect(response.body).toHaveProperty('message', 'Événement non trouvé');
@@ -197,9 +204,12 @@ describe('🎯 Tests des Événements', () => {
             // Mock les services
             eventService.getEventById.mockResolvedValue(mockEvent);
             eventService.deleteEvent.mockResolvedValue(mockResult);
+            participantService.getParticipantsByEventId.mockResolvedValue([]);
+            userService.findById.mockResolvedValue({ id: 1, email: 'test@example.com' });
+            notificationService.createNotification.mockResolvedValue(true);
 
             const response = await request(app)
-                .delete(`/api/events/${eventId}`)
+                .delete(`/api/v1/events/${eventId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .send({ status: 'supprimé' })
                 .expect(200);
@@ -217,7 +227,7 @@ describe('🎯 Tests des Événements', () => {
             eventService.getEventById.mockResolvedValue(null);
 
             const response = await request(app)
-                .delete(`/api/events/${eventId}`)
+                .delete(`/api/v1/events/${eventId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .send({ status: 'supprimé' })
                 .expect(404);
@@ -251,7 +261,7 @@ describe('🎯 Tests des Événements', () => {
             eventService.getAllEvents.mockResolvedValue(mockEvents);
 
             const response = await request(app)
-                .get('/api/events')
+                .get('/api/v1/events')
                 .expect(200);
 
             expect(response.body).toHaveProperty('events');
@@ -282,7 +292,7 @@ describe('🎯 Tests des Événements', () => {
             eventService.getAllEvents.mockResolvedValue(mockEvents);
 
             const response = await request(app)
-                .get('/api/events?city=Paris')
+                .get('/api/v1/events?city=Paris')
                 .expect(200);
 
             expect(response.body.events).toHaveLength(1);

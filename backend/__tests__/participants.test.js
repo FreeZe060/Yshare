@@ -62,7 +62,7 @@ describe('👥 Tests des Participants', () => {
         jest.clearAllMocks();
     });
 
-    describe('POST /api/events/:eventId/participants', () => {
+    describe('POST /api/v1/events/:eventId/participants', () => {
         it('devrait ajouter un participant avec succès', async () => {
             const eventId = 1;
             const userId = 2;
@@ -89,7 +89,7 @@ describe('👥 Tests des Participants', () => {
             participantService.addParticipant.mockResolvedValue(mockParticipant);
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/participants`)
+                .post(`/api/v1/events/${eventId}/participants`)
                 .set('Authorization', `Bearer valid-token`)
                 .send(participantData)
                 .expect(201);
@@ -123,7 +123,7 @@ describe('👥 Tests des Participants', () => {
             eventService.getEventById.mockResolvedValue(mockEvent);
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/participants`)
+                .post(`/api/v1/events/${eventId}/participants`)
                 .set('Authorization', `Bearer valid-token`)
                 .send(participantData)
                 .expect(400);
@@ -142,7 +142,7 @@ describe('👥 Tests des Participants', () => {
             eventService.getEventById.mockResolvedValue(null);
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/participants`)
+                .post(`/api/v1/events/${eventId}/participants`)
                 .set('Authorization', `Bearer valid-token`)
                 .send(participantData)
                 .expect(404);
@@ -152,7 +152,7 @@ describe('👥 Tests des Participants', () => {
         });
     });
 
-    describe('DELETE /api/events/:eventId/participants/:userId', () => {
+    describe('DELETE /api/v1/events/:eventId/participants/:userId', () => {
         it('devrait supprimer un participant avec succès (par l\'utilisateur lui-même)', async () => {
             const eventId = 1;
             const userId = 2;
@@ -174,7 +174,7 @@ describe('👥 Tests des Participants', () => {
             participantService.removeParticipant.mockResolvedValue(mockResult);
 
             const response = await request(app)
-                .delete(`/api/events/${eventId}/participants/${userId}`)
+                .delete(`/api/v1/events/${eventId}/participants/${userId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(200);
 
@@ -205,7 +205,7 @@ describe('👥 Tests des Participants', () => {
             participantService.removeParticipant.mockResolvedValue(mockResult);
 
             const response = await request(app)
-                .delete(`/api/events/${eventId}/participants/${userId}`)
+                .delete(`/api/v1/events/${eventId}/participants/${userId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(200);
 
@@ -227,7 +227,7 @@ describe('👥 Tests des Participants', () => {
             eventService.getEventById.mockResolvedValue(mockEvent);
 
             const response = await request(app)
-                .delete(`/api/events/${eventId}/participants/${userId}`)
+                .delete(`/api/v1/events/${eventId}/participants/${userId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(403);
 
@@ -242,7 +242,7 @@ describe('👥 Tests des Participants', () => {
             eventService.getEventById.mockResolvedValue(null);
 
             const response = await request(app)
-                .delete(`/api/events/${eventId}/participants/${userId}`)
+                .delete(`/api/v1/events/${eventId}/participants/${userId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(404);
 
@@ -251,7 +251,7 @@ describe('👥 Tests des Participants', () => {
         });
     });
 
-    describe('GET /api/events/:eventId/participants/all', () => {
+    describe('GET /api/v1/events/:eventId/participants/all', () => {
         it('devrait récupérer les participants d\'un événement avec succès', async () => {
             const eventId = 1;
             const mockParticipants = [
@@ -274,7 +274,7 @@ describe('👥 Tests des Participants', () => {
             participantService.getParticipantsByEventId.mockResolvedValue(mockParticipants);
 
             const response = await request(app)
-                .get(`/api/events/${eventId}/participants/all`)
+                .get(`/api/v1/events/${eventId}/participants/all`)
                 .expect(200);
 
             expect(response.body).toHaveLength(2);
@@ -288,7 +288,7 @@ describe('👥 Tests des Participants', () => {
             participantService.getParticipantsByEventId.mockResolvedValue([]);
 
             const response = await request(app)
-                .get(`/api/events/${eventId}/participants/all`)
+                .get(`/api/v1/events/${eventId}/participants/all`)
                 .expect(200);
 
             expect(response.body).toHaveLength(0);

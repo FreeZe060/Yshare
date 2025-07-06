@@ -54,7 +54,7 @@ describe('💬 Tests des Commentaires', () => {
         jest.clearAllMocks();
     });
 
-    describe('POST /api/events/:eventId/comments', () => {
+    describe('POST /api/v1/events/:eventId/comments', () => {
         it('devrait ajouter un commentaire avec succès', async () => {
             const eventId = 1;
             const userId = 1;
@@ -75,7 +75,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.addComment.mockResolvedValue(mockComment);
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/comments`)
+                .post(`/api/v1/events/${eventId}/comments`)
                 .set('Authorization', `Bearer valid-token`)
                 .send(commentData)
                 .expect(201);
@@ -101,7 +101,7 @@ describe('💬 Tests des Commentaires', () => {
             };
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/comments`)
+                .post(`/api/v1/events/${eventId}/comments`)
                 .send(commentData)
                 .expect(401);
 
@@ -117,7 +117,7 @@ describe('💬 Tests des Commentaires', () => {
             };
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/comments`)
+                .post(`/api/v1/events/${eventId}/comments`)
                 .set('Authorization', `Bearer valid-token`)
                 .send(commentData)
                 .expect(400);
@@ -137,7 +137,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.addComment.mockRejectedValue(new Error(errorMessage));
 
             const response = await request(app)
-                .post(`/api/events/${eventId}/comments`)
+                .post(`/api/v1/events/${eventId}/comments`)
                 .set('Authorization', `Bearer valid-token`)
                 .send(commentData)
                 .expect(500);
@@ -169,7 +169,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.deleteComment.mockResolvedValue(mockResult);
 
             const response = await request(app)
-                .delete(`/api/comments/${commentId}`)
+                .delete(`/api/v1/comments/${commentId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(200);
 
@@ -201,7 +201,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.deleteComment.mockResolvedValue(mockResult);
 
             const response = await request(app)
-                .delete(`/api/comments/${commentId}`)
+                .delete(`/api/v1/comments/${commentId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(200);
 
@@ -224,7 +224,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.getCommentById.mockResolvedValue(mockComment);
 
             const response = await request(app)
-                .delete(`/api/comments/${commentId}`)
+                .delete(`/api/v1/comments/${commentId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(403);
 
@@ -238,7 +238,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.getCommentById.mockResolvedValue(null);
 
             const response = await request(app)
-                .delete(`/api/comments/${commentId}`)
+                .delete(`/api/v1/comments/${commentId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(404);
 
@@ -264,7 +264,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.deleteComment.mockRejectedValue(new Error(errorMessage));
 
             const response = await request(app)
-                .delete(`/api/comments/${commentId}`)
+                .delete(`/api/v1/comments/${commentId}`)
                 .set('Authorization', `Bearer valid-token`)
                 .expect(500);
 
@@ -311,7 +311,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.getReplies.mockResolvedValue([]);
 
             const response = await request(app)
-                .get(`/api/events/${eventId}/comments`)
+                .get(`/api/v1/events/${eventId}/comments`)
                 .expect(200);
 
             expect(response.body).toHaveLength(2);
@@ -325,7 +325,7 @@ describe('💬 Tests des Commentaires', () => {
             commentService.getTopLevelComments.mockResolvedValue([]);
 
             const response = await request(app)
-                .get(`/api/events/${eventId}/comments`)
+                .get(`/api/v1/events/${eventId}/comments`)
                 .expect(200);
 
             expect(response.body).toHaveLength(0);
@@ -334,7 +334,7 @@ describe('💬 Tests des Commentaires', () => {
 
         it('devrait retourner 400 sans ID d\'événement', async () => {
             const response = await request(app)
-                .get('/api/events//comments')
+                .get('/api/v1/events//comments')
                 .expect(404); // Route non trouvée
 
             expect(commentService.getTopLevelComments).not.toHaveBeenCalled();
