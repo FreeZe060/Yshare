@@ -2,12 +2,14 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import useClickOutside from '../../../hooks/Utils/useClickOutside';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
+
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
+import NotFound from '../../../pages/NotFound';
 
 const sortIcon = (direction) =>
     direction === 'asc'
-        ? <i className="fas fa-sort-up text-gray-500" />
-        : <i className="fas fa-sort-down text-gray-500" />;
+        ? <i className="text-gray-500 fas fa-sort-up" />
+        : <i className="text-gray-500 fas fa-sort-down" />;
 
 const LastUsersSection = ({
     users,
@@ -32,8 +34,8 @@ const LastUsersSection = ({
 
     if (loading) {
         return (
-            <div className="overflow-x-auto rounded-lg shadow-md bg-white flex flex-col justify-between min-h-[600px]">
-                <table className="w-full whitespace-nowrap text-sm sm:text-xs">
+            <div className="flex flex-col justify-between bg-white shadow-md rounded-lg min-h-[600px] overflow-x-auto">
+                <table className="w-full sm:text-xs text-sm whitespace-nowrap">
                     <thead className="bg-indigo-100 text-indigo-700">
                         <tr>
                             {['Nom', 'Email', 'Rôle', 'Statut', 'Actions'].map((field, i) => (
@@ -48,24 +50,24 @@ const LastUsersSection = ({
             </div>
         );
     }
-    if (error) return <p className="text-red-500">Erreur : {error}</p>;
+    if (error) return <NotFound/>;
 
     return (
         <div id="last-users">
-            {!showAll && <h1 className="font-bold py-4 uppercase text-gray-800">Derniers utilisateurs</h1>}
+            {!showAll && <h1 className="py-4 font-bold text-gray-800 uppercase">Derniers utilisateurs</h1>}
 
             <div className="flex justify-end mb-4">
                 <button
                     onClick={onCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition"
+                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
                 >
-                    <i className="fas fa-user-plus mr-2" />
+                    <i className="mr-2 fas fa-user-plus" />
                     Ajouter un utilisateur
                 </button>
             </div>
 
-            <div className="overflow-x-auto rounded-lg shadow-md bg-white flex flex-col justify-between min-h-[600px]">
-                <table className="w-full whitespace-nowrap text-sm sm:text-xs">
+            <div className="flex flex-col justify-between bg-white shadow-md rounded-lg min-h-[600px] overflow-x-auto">
+                <table className="w-full sm:text-xs text-sm whitespace-nowrap">
                     <thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
                         <tr>
                             {['name', 'email', 'role', 'status'].map((field, index) => (
@@ -80,7 +82,7 @@ const LastUsersSection = ({
                                     </span>
                                 </th>
                             ))}
-                            <th className="text-left py-3 px-2 rounded-r-lg">Actions</th>
+                            <th className="px-2 py-3 rounded-r-lg text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,10 +94,10 @@ const LastUsersSection = ({
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="border-b border-gray-200 hover:bg-gray-50 transition"
+                                    className="hover:bg-gray-50 border-gray-200 border-b transition"
                                 >
-                                    <td className="py-3 px-2 font-bold text-gray-800">
-                                        <div className="inline-flex space-x-3 items-center">
+                                    <td className="px-2 py-3 font-bold text-gray-800">
+                                        <div className="inline-flex items-center space-x-3">
                                             <Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`} className="flex items-center space-x-2 hover:text-indigo-600 transition">
                                                 <img
                                                     className="rounded-full w-8 h-8 object-cover hover:scale-105 transition duration-200"
@@ -106,12 +108,12 @@ const LastUsersSection = ({
                                             </Link>
                                         </div>
                                     </td>
-                                    <td className="py-3 px-2 text-gray-600">{user.email}</td>
-                                    <td className="py-3 px-2 text-gray-600">{capitalizeFirstLetter(user.role)}</td>
+                                    <td className="px-2 py-3 text-gray-600">{user.email}</td>
+                                    <td className="px-2 py-3 text-gray-600">{capitalizeFirstLetter(user.role)}</td>
                                     <td className={`py-3 px-2 font-medium ${user.status === 'Approved' ? 'text-green-600' : 'text-red-500'}`}>
                                         {capitalizeFirstLetter(user.status)}
                                     </td>
-                                    <td className="py-3 px-2">
+                                    <td className="px-2 py-3">
                                         <div className="inline-flex items-center space-x-3 text-indigo-500 text-lg">
                                             <Link to={`/profile/${user.id}`} title="Voir profil" className="hover:text-indigo-700 transition">
                                                 <i className="fas fa-pen" />

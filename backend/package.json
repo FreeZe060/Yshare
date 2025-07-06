@@ -41,15 +41,5 @@
     "jest": "^29.7.0",
     "supertest": "^6.3.3",
     "eslint": "^8.55.0"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": ["**/__tests__/**/*.js", "**/?(*.)+(spec|test).js"],
-    "collectCoverageFrom": [
-      "**/*.js",
-      "!**/node_modules/**",
-      "!**/coverage/**",
-      "!server.js"
-    ]
   }
 }
