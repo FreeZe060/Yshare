@@ -304,20 +304,6 @@ const Header = () => {
 
                     <div className="hidden xs:flex justify-center items-center gap-4 w-full">
                         <Link
-                            to="/artists"
-                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/artists" ? "text-gray-300  scale-[1.4]" : "scale-100"
-                                } transition-all duration-300`}
-                        >
-                            <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
-                        </Link>
-                        <Link
-                            to="/artists"
-                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/artists" ? "text-gray-300  scale-[1.4]" : "scale-100"
-                                } transition-all duration-300`}
-                        >
-                            <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
-                        </Link>
-                        <Link
                             to="/"
                             className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/" ? "text-gray-300 scale-[1.4]" : "scale-100"
                                 } transition-all duration-300`}
@@ -325,19 +311,53 @@ const Header = () => {
                             <i className="flex justify-center items-center bg-gray-800 p-2 rounded-full w-8 fas fa-home" />
                         </Link>
                         <Link
-                            to="/artists"
-                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/artists" ? "text-gray-300  scale-[1.4]" : "scale-100"
+                            to="/events"
+                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/events" ? "text-gray-300 scale-[1.4]" : "scale-100"
                                 } transition-all duration-300`}
                         >
-                            <i className="bg-gray-800 p-2 rounded-full w-8 fas fa-th" />
+                            <i className="flex justify-center items-center bg-gray-800 p-2 rounded-full w-8 fa-solid fa-champagne-glasses" />
                         </Link>
                         <Link
-                            to="/login"
-                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/login" || location.pathname === "/register" ? "text-gray-300  scale-[1.4]" : "scale-100"
+                            to="/news"
+                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/news" ? "text-gray-300 scale-[1.4]" : "scale-100"
                                 } transition-all duration-300`}
                         >
-                            <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-user" />
+                            <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-newspaper" />
                         </Link>
+                        <Link
+                            to="/create/event"
+                            className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/create/event" ? "text-gray-300 scale-[1.4]" : "scale-100"
+                                } transition-all duration-300`}
+                        >
+                            <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-calendar-days" />
+                        </Link>
+                        {isAuthenticated && user ? (
+                            <div className="relative">
+                                <span
+                                    ref={notifButtonRef}
+                                    onClick={() => setShowNotif(!showNotif)}
+                                    className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
+                                >
+                                    <i className="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
+                                    {!notifLoading && notifications?.filter(n => !n.read_status).length > 0 && (
+                                        <span className="-top-2 -left-0 absolute size-3.5">
+                                            <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                            <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
+                                                {notifications.filter(n => !n.read_status).length}
+                                            </span>
+                                        </span>
+                                    )}
+                                </span>
+                            </div>
+                        ) : (
+                            <Link
+                                to="/login"
+                                className={`relative flex items-center gap-2 px-3 py-1 text-base hover:text-gray-300 ${location.pathname === "/login" || location.pathname === "/register" ? "text-gray-300 scale-[1.4]" : "scale-100"
+                                    } transition-all duration-300`}
+                            >
+                                <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-user" />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
