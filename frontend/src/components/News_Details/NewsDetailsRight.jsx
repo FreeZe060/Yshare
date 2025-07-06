@@ -4,11 +4,11 @@ function NewsDetailsRight({
     latestNews
 }) {
     return (
-        <div class="right max-w-full w-[370px] lg:w-[360px] shrink-0 space-y-[30px] md:space-y-[25px]">
-            <div className="border border-[#e5e5e5] rounded-[10px] px-[30px] xxs:px-[20px] pt-[30px] xxs:pt-[20px] pb-[40px] xxs:pb-[30px]">
-                <h4 className="font-medium text-[24px] xxs:text-[20px] text-etBlack relative mb-[5px] before:content-normal before:absolute before:left-0 before:-bottom-[5px] before:w-[50px] before:h-[2px] before:bg-etBlue"> Actualités récents</h4>
+        <div class="right space-y-[30px] md:space-y-[25px] w-[370px] lg:w-[360px] max-w-full shrink-0">
+            <div className="px-[30px] xxs:px-[20px] pt-[30px] xxs:pt-[20px] pb-[40px] xxs:pb-[30px] border border-[#e5e5e5] rounded-[10px]">
+                <h4 className="before:-bottom-[5px] before:left-0 before:absolute relative before:content-normal before:bg-[#CE22BF] mb-[5px] before:w-[50px] before:h-[2px] font-medium text-[24px] text-etBlack xxs:text-[20px]"> Actualités récents</h4>
 
-                <div className="posts mt-[30px] space-y-[24px]">
+                <div className="space-y-[24px] mt-[30px] posts">
                     {latestNews.map((post) => {
                         const postDate = new Date(post.date_posted);
                         const formattedDate = postDate.toLocaleDateString("fr-FR", {
@@ -28,15 +28,15 @@ function NewsDetailsRight({
                                 </div>
 
                                 <div>
-                                    <span className="date text-[14px] text-etGray flex items-center gap-[12px] mb-[3px]">
+                                    <span className="flex items-center gap-[12px] mb-[3px] text-[14px] text-etGray date">
                                         <span className="icon">
-                                            <i className="fa-solid fa-calendar-days text-etBlue"></i>
+                                            <i className="text-[#CE22BF] fa-solid fa-calendar-days"></i>
                                         </span>
                                         <span>{formattedDate}</span>
                                     </span>
 
                                     <h6 className="font-medium text-[15px] text-etBlack">
-                                        <a href={`/news/${post.id}`} className="hover:text-etBlue">
+                                        <a href={`/news/${post.id}`} className="hover:text-[#CE22BF]">
                                             {post.title.length > 55 ? post.title.slice(0, 55) + "..." : post.title}
                                         </a>
                                     </h6>

@@ -114,7 +114,7 @@ function Report({
 
                         return (
                             <div key={index} className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">
-                                <h5 className="w-[120px] text-[24px] text-etBlue text-center shrink-0">
+                                <h5 className="w-[120px] text-[#CE22BF] text-[24px] text-center shrink-0">
                                     {!isNaN(dateObj) ? (
                                         <>
                                             <span className="block font-semibold text-[48px] text-etBlack leading-[0.7]">
@@ -138,34 +138,34 @@ function Report({
                                 <div className="flex items-center gap-[78px] lg:gap-[38px] min-w-0 grow">
                                     <div className="min-w-0">
                                         <Link to={`/report/${report.id}`}>
-                                            <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-etBlue truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
+                                            <h3 className="mb-[11px] font-semibold text-[30px] text-etBlack hover:text-[#CE22BF] truncate tracking-[-1px] transition-all duration-300 cursor-pointer anim-text">
                                                 {title}
                                             </h3>
                                         </Link>
                                         {subtitle && (
-                                            <h6 className="text-[17px] text-etBlue">{subtitle}</h6>
+                                            <h6 className="text-[#CE22BF] text-[17px]">{subtitle}</h6>
                                         )}
                                         {statusInfo && (
-                                            <div className="text-xs font-semibold px-3 py-1 rounded-full w-fit mt-2 bg-gray-100 text-gray-600">
+                                            <div className="bg-gray-100 mt-2 px-3 py-1 rounded-full w-fit font-semibold text-gray-600 text-xs">
                                                 {statusInfo}
                                             </div>
                                         )}
                                     </div>
-                                    <h4 className="ml-auto font-semibold text-[30px] text-etBlue whitespace-nowrap">
+                                    <h4 className="ml-auto font-semibold text-[#CE22BF] text-[30px] whitespace-nowrap">
                                         {report.status}
                                     </h4>
                                 </div>
 
-                                <div className="flex flex-col gap-3 justify-center items-center lg:items-end pl-[40px] border-[#8E8E93]/25 border-l text-center shrink-0 min-w-[161px] sm:min-h-[161px]">
+                                <div className="flex flex-col justify-center items-center lg:items-end gap-3 pl-[40px] border-[#8E8E93]/25 border-l min-w-[161px] sm:min-h-[161px] text-center shrink-0">
                                     <button
                                         onClick={() => setActiveReportId(report.id)}
-                                        className="et-3-btn min-w-[235px]"
+                                        className="min-w-[235px] et-3-btn"
                                     >
                                         Voir le message
                                     </button>
                                     <button
                                         onClick={() => onDeleteReport(report.id)}
-                                        className="et-3-btn text-sm text-red-600 hover:text-red-800 transition min-w-[235px]"
+                                        className="min-w-[235px] text-red-600 hover:text-red-800 text-sm transition et-3-btn"
                                     >
                                         Supprimer le signalement
                                     </button>
@@ -177,18 +177,18 @@ function Report({
             </div>
             {activeReportId && (
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50"
+                    className="z-[9999] fixed inset-0 flex justify-center items-center bg-black/50"
                     onClick={() => setActiveReportId(null)}
                 >
                     <div
-                        className="bg-white rounded-xl p-6 max-w-[600px] w-full max-h-[80vh] overflow-y-auto shadow-xl"
+                        className="bg-white shadow-xl p-6 rounded-xl w-full max-w-[600px] max-h-[80vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ReportReplies reportId={activeReportId} />
-                        <div className="text-right mt-4">
+                        <div className="mt-4 text-right">
                             <button
                                 onClick={() => setActiveReportId(null)}
-                                className="text-sm text-red-600 hover:underline"
+                                className="text-red-600 text-sm hover:underline"
                             >
                                 Fermer
                             </button>

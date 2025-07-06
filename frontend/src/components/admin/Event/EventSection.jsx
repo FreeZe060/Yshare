@@ -104,7 +104,7 @@ const EventSection = ({
 										</div>
 									</div>
 
-									<h3 className="mt-1 mb-1 font-medium text-[18px] text-etBlack sm:text-[16px] hover:text-etBlue leading-tight transition duration-300 et-schedule-title anim-text">
+									<h3 className="mt-1 mb-1 font-medium text-[18px] text-etBlack sm:text-[16px] hover:text-[#CE22BF] leading-tight transition duration-300 et-schedule-title anim-text">
 										<a href={`/event/${event.id}`}>{event.title}</a>
 									</h3>
 
@@ -136,7 +136,7 @@ const EventSection = ({
 									<div className="flex items-center shrink-0">
 										<Link
 											to={`/event/${event.id}`}
-											className="inline-flex justify-center items-center gap-x-2 hover:bg-etBlue px-4 border border-etBlue rounded-full min-w-[170px] h-[36px] text-etBlue hover:text-white text-sm transition et-btn"
+											className="inline-flex justify-center items-center gap-x-2 hover:bg-[#CE22BF] px-4 border border-[#CE22BF] rounded-full min-w-[170px] h-[36px] text-[#CE22BF] hover:text-white text-sm transition et-btn"
 										>
 											Modifier l’événement
 										</Link>
@@ -145,7 +145,7 @@ const EventSection = ({
 									<div className="flex items-center shrink-0">
 										<a
 											onClick={() => onUpdateStatus(event.id)}
-											className="inline-flex justify-center items-center gap-x-[10px] hover:bg-etBlue px-[12px] border border-etBlue rounded-full min-w-[170px] h-[36px] text-etBlue hover:text-white text-sm hover:scale-105 transition-all duration-300 cursor-pointer et-btn"
+											className="inline-flex justify-center items-center gap-x-[10px] hover:bg-[#CE22BF] px-[12px] border border-[#CE22BF] rounded-full min-w-[170px] h-[36px] text-[#CE22BF] hover:text-white text-sm hover:scale-105 transition-all duration-300 cursor-pointer et-btn"
 										>
 											Modifier le statut
 										</a>
@@ -154,7 +154,7 @@ const EventSection = ({
 									<div className="flex items-center shrink-0">
 										<a
 											onClick={() => onDelete(event)}
-											className="inline-flex justify-center items-center gap-x-[10px] hover:bg-etBlue px-[12px] border border-etBlue rounded-full h-[36px] text-etBlue hover:text-white text-sm hover:scale-105 transition-all duration-300 cursor-pointer et-btn"
+											className="inline-flex justify-center items-center gap-x-[10px] hover:bg-[#CE22BF] px-[12px] border border-[#CE22BF] rounded-full h-[36px] text-[#CE22BF] hover:text-white text-sm hover:scale-105 transition-all duration-300 cursor-pointer et-btn"
 										>
 											Supprimer l’événement
 										</a>
@@ -170,8 +170,8 @@ const EventSection = ({
 								key={i + 1}
 								onClick={() => setCurrentPage(i + 1)}
 								className={`w-10 h-10 text-sm rounded-full border transition-all duration-300 ${currentPage === i + 1
-									? 'bg-etBlue text-white scale-110 shadow-lg'
-									: 'border-etBlue text-etBlue hover:bg-etBlue hover:text-white hover:scale-105'
+									? 'bg-[#CE22BF] text-white scale-110 shadow-lg'
+									: 'border-[#CE22BF] text-[#CE22BF] hover:bg-[#CE22BF] hover:text-white hover:scale-105'
 									}`}
 							>
 								{i + 1}

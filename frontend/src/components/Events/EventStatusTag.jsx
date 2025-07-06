@@ -8,7 +8,7 @@ const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
 const STATUS_STYLES = {
     'Planifié': 'bg-gradient-to-r from-[#550ECA] to-[#7A2AE1] text-white animate__fadeIn shadow-md',
     'En Cours': 'bg-gradient-to-r from-[#F929BB] to-[#C421C0] text-white animate__pulse animate__infinite shadow-lg',
-    'Terminé': 'bg-gray-300 text-gray-700 animate__fadeIn shadow-sm grayscale',
+    'Terminé': 'bg-gradient-to-r from-green-400 to-green-600 text-white animate__bounceIn shadow-lg',
     'Annulé': 'bg-gradient-to-r from-[#F929BB] to-red-500 text-white animate__shakeX shadow-md',
 };
 
@@ -28,9 +28,9 @@ const formatTimeLeft = (milliseconds) => {
     return result.trim();
 };
 
-
 const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
     const [timeLeft, setTimeLeft] = useState(null);
+
     const computedStatus = useMemo(() => {
         if (status) return status;
 
@@ -84,24 +84,24 @@ const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
     }, [computedStatus, date, eventId, onStatusChange]);
 
     return (
-        <div className="relative inline-block">
+        <div className="inline-block relative">
             {computedStatus === 'Planifié' && timeLeft !== null && (
-                <div className="absolute z-10 -top-4 -right-2 text-[13px] px-2 py-[1px] rounded-full bg-[#F929BB] text-white font-semibold shadow">
+                <div className="-top-4 -right-2 z-10 absolute bg-[#F929BB] shadow px-2 py-[1px] rounded-full font-semibold text-[13px] text-white">
                     {formatTimeLeft(timeLeft)}
                 </div>
             )}
 
             <span
                 className={`inline-block text-[13px] font-medium px-3 py-1 rounded-full w-fit animate__animated ${timeLeft !== null ? 'border-2 border-[#F929BB]' : ''}
-                    backdrop-blur-sm ring-1 ring-white/20 ${STATUS_STYLES[computedStatus] || 'bg-gray-100 text-gray-700'}
-                `}
+          backdrop-blur-sm ring-1 ring-white/20 ${STATUS_STYLES[computedStatus] || 'bg-gray-100 text-gray-700'}
+        `}
             >
                 {computedStatus === 'Planifié' && timeLeft !== null && (
                     <div className="wave-overlay" />
                 )}
 
                 {computedStatus === 'Terminé' ? (
-                    <span className="flex items-center gap-1">
+                    <span className="relative flex items-center gap-1">
                         <svg
                             className="w-4 h-4 text-green-600 animate__animated animate__bounceIn"
                             fill="currentColor"
@@ -114,6 +114,21 @@ const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
                             />
                         </svg>
                         Terminé
+
+                        {/* 🎉 Confetti effect */}
+                        {[...Array(8)].map((_, i) => (
+                            <span
+                                key={i}
+                                className={`absolute w-2 h-2 rounded-full opacity-80 animate-ping
+                  ${i % 2 === 0 ? 'bg-pink-400' : 'bg-yellow-400'}
+                  ${i < 4 ? `top-${i * 2} left-${i * 2}` : `bottom-${i * 2} right-${i * 2}`}
+                `}
+                                style={{
+                                    animationDuration: `${1 + i * 0.2}s`,
+                                    transform: `translate(${(i % 2 === 0 ? '-' : '') + i * 2}px, ${(i % 3 === 0 ? '-' : '') + i * 3}px)`,
+                                }}
+                            />
+                        ))}
                     </span>
                 ) : (
                     computedStatus
@@ -122,13 +137,13 @@ const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
 
             {computedStatus === 'En Cours' && (
                 <>
-                    <span className="absolute -top-2 -left-2 w-[6px] h-[6px] bg-yellow-400 rounded-full animate-bounce rotate-[15deg]" />
-                    <span className="absolute -top-3 left-2 w-[5px] h-[5px] bg-pink-400 rounded-full animate-ping" />
-                    <span className="absolute -top-1 -left-3 w-[4px] h-[4px] bg-purple-400 rounded-full animate-spin" />
+                    <span className="-top-2 -left-2 absolute bg-yellow-400 rounded-full w-[6px] h-[6px] rotate-[15deg] animate-bounce" />
+                    <span className="-top-3 left-2 absolute bg-pink-400 rounded-full w-[5px] h-[5px] animate-ping" />
+                    <span className="-top-1 -left-3 absolute bg-purple-400 rounded-full w-[4px] h-[4px] animate-spin" />
 
-                    <span className="absolute -bottom-2 -right-2 w-[6px] h-[6px] bg-green-400 rounded-full animate-bounce delay-200 rotate-[15deg]" />
-                    <span className="absolute -bottom-3 right-2 w-[5px] h-[5px] bg-blue-400 rounded-full animate-ping delay-300" />
-                    <span className="absolute -bottom-1 -right-3 w-[4px] h-[4px] bg-fuchsia-400 rounded-full animate-spin" />
+                    <span className="-right-2 -bottom-2 absolute bg-green-400 rounded-full w-[6px] h-[6px] rotate-[15deg] animate-bounce delay-200" />
+                    <span className="right-2 -bottom-3 absolute bg-blue-400 rounded-full w-[5px] h-[5px] animate-ping delay-300" />
+                    <span className="-right-3 -bottom-1 absolute bg-fuchsia-400 rounded-full w-[4px] h-[4px] animate-spin" />
                 </>
             )}
         </div>

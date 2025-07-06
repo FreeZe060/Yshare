@@ -145,10 +145,10 @@ const ParticipantPage = () => {
                             <div className="mx-auto px-[12px] max-w-[1300px] container">
                                 <div className="justify-center gap-[30px] lg:gap-[20px] grid grid-cols-3 xxs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                                     {loading ? (
-                                        <p className="text-center col-span-3">Chargement...</p>
+                                        <p className="col-span-3 text-center">Chargement...</p>
                                     ) : currentParticipants.map((participant, index) => (
                                         <div key={participant.participantId} className="group et-member">
-                                            <div className="rounded-[16px] overflow-hidden et-member__img h-[280px]">
+                                            <div className="rounded-[16px] h-[280px] overflow-hidden et-member__img">
                                                 <img
                                                     src={`http://localhost:8080${participant.user.profileImage}`}
                                                     alt="Participant"
@@ -156,13 +156,13 @@ const ParticipantPage = () => {
                                                 />
                                             </div>
 
-                                            <div className="bg-white shadow-[0_4px_60px_rgba(18,96,254,0.12)] mx-[25px] -mt-[44px] px-[25px] pb-[30px] rounded-[16px] relative">
+                                            <div className="relative bg-white shadow-[0_4px_60px_rgba(18,96,254,0.12)] mx-[25px] -mt-[44px] px-[25px] pb-[30px] rounded-[16px]">
                                                 <p className={`absolute pt-6 right-2 text-sm ${statusStyles[participant.status] || 'text-etGray'}`}>
                                                     {participant.status}
                                                 </p>
 
                                                 <Link to={`/profile/${participant.user.id}`}>
-                                                    <h5 className="text-[20px] font-semibold text-etBlack pt-4 flex gap-2 justify-center max-w-[80%] mx-auto text-center cursor-pointer hover:text-blue-600 no-underline transition-colors duration-200">
+                                                    <h5 className="flex justify-center gap-2 mx-auto pt-4 max-w-[80%] font-semibold text-[20px] text-etBlack hover:text-blue-600 text-center no-underline transition-colors duration-200 cursor-pointer">
                                                         <span>
                                                             {participant.user.name.length > 10
                                                                 ? participant.user.name.slice(0, 10) + '…'
@@ -176,7 +176,7 @@ const ParticipantPage = () => {
                                                     </h5>
                                                 </Link>
 
-                                                <div className="mt-4 text-left mx-auto w-[90%] flex flex-col items-start justify-center gap-2 text-etGray text-sm">
+                                                <div className="flex flex-col justify-center items-start gap-2 mx-auto mt-4 w-[90%] text-etGray text-sm text-left">
                                                     <p><strong>Email :</strong> {participant.user.email}</p>
 
                                                     <p>
@@ -199,7 +199,7 @@ const ParticipantPage = () => {
 
                                                 <div className="mt-6 text-center">
                                                     <p
-                                                        className="text-etGray text-sm leading-relaxed transition-all duration-500 overflow-hidden mx-auto"
+                                                        className="mx-auto overflow-hidden text-etGray text-sm leading-relaxed transition-all duration-500"
                                                         style={{ maxHeight: expandedBioIndex === index ? '1000px' : '65px', maxWidth: '90%' }}
                                                     >
                                                         {participant.user.bio || 'Aucune bio'}
@@ -207,13 +207,13 @@ const ParticipantPage = () => {
                                                     {participant.user.bio && (
                                                         <button
                                                             onClick={() => handleToggleBio(index)}
-                                                            className="text-etBlue hover:underline mt-4 text-sm"
+                                                            className="mt-4 text-[#CE22BF] text-sm hover:underline"
                                                         >
                                                             {expandedBioIndex === index ? 'Masquer la bio' : 'En savoir plus'}
                                                         </button>
                                                     )}
                                                     {user && (user.id === participant.organizer.id || user.role === 'administrateur') && (
-                                                        <button onClick={() => handleStatusChange(participant)} className="w-full mt-4 py-2 bg-etBlue text-white rounded-md hover:bg-blue-700">
+                                                        <button onClick={() => handleStatusChange(participant)} className="bg-[#CE22BF] hover:bg-blue-700 mt-4 py-2 rounded-md w-full text-white">
                                                             Mettre à jour le statut
                                                         </button>
                                                     )}
@@ -222,7 +222,7 @@ const ParticipantPage = () => {
                                                 <div className="mt-4 text-center">
                                                     <button
                                                         onClick={() => handleToggleGuests(index)}
-                                                        className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-all"
+                                                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-white text-sm transition-all"
                                                     >
                                                         {expandedGuestsIndex === index ? 'Masquer les invités' : 'Voir les invités'}
                                                     </button>
@@ -233,7 +233,7 @@ const ParticipantPage = () => {
                                                                 <p className="text-etGray text-sm">Aucun invité.</p>
                                                             ) : (
                                                                 participant.guests.map((guest) => (
-                                                                    <div key={guest.id} className="text-etGray text-sm py-2 border-b border-gray-200">
+                                                                    <div key={guest.id} className="py-2 border-gray-200 border-b text-etGray text-sm">
                                                                         <p><strong>{guest.firstname} {guest.lastname}</strong></p>
                                                                         <p>{guest.email}</p>
                                                                     </div>
@@ -247,7 +247,7 @@ const ParticipantPage = () => {
                                     ))}
                                 </div>
                                 {totalPages > 1 && (
-                                    <div className="flex justify-center mt-10 space-x-3 min-h-[60px]">
+                                    <div className="flex justify-center space-x-3 mt-10 min-h-[60px]">
                                         {Array.from({ length: totalPages }, (_, i) => (
                                             <button
                                                 key={i + 1}
