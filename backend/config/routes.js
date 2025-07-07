@@ -232,8 +232,6 @@ router.get('/auth/check', authenticateToken, async (req, res) => {
 			return res.status(404).json({ authenticated: false });
 		}
 
-		const token = await userController.generateToken(userFromDb.id, userFromDb.email, userFromDb.role);
-
 		res.status(200).json({
 			authenticated: true,
 			user: {
@@ -243,7 +241,6 @@ router.get('/auth/check', authenticateToken, async (req, res) => {
 				email: userFromDb.email,
 				profileImage: userFromDb.profileImage,
 				role: userFromDb.role,
-				token: token,
 			},
 		});
 	} catch (err) {
