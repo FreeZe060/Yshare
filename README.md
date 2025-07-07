@@ -108,7 +108,6 @@ YShare est une plateforme moderne de gestion d'événements qui permet aux utili
 - Node.js (v16 ou supérieur)
 - MySQL (v8.0 ou supérieur)
 - Docker et Docker Compose (optionnel)
-- Compte Google Cloud Platform (pour l'authentification Google)
 
 ## 🚀 Installation
 
@@ -155,20 +154,6 @@ npm install
 cd ../frontend
 npm install
 ```
-
-### 4. Configuration de la base de données
-```bash
-# Dans le dossier backend
-mysql -u root -p < yshare.sql
-```
-
-### 5. Configuration Google OAuth
-1. Créez un projet dans la [Console Google Cloud](https://console.cloud.google.com)
-2. Activez l'API Google+ API
-3. Créez des identifiants OAuth 2.0
-4. Configurez les URIs de redirection autorisés :
-   - `http://localhost:8080/auth/google/callback`
-   - `http://localhost:3000`
 
 ## 🚀 Lancement du Projet
 
@@ -248,18 +233,7 @@ npm run test:coverage
 - **Tests de composants** : Composants React
 - **Tests de services** : Services métier
 
-## 📚 Documentation API
-
-L'API est documentée avec Swagger. Accédez à la documentation :
-- **Développement** : `http://localhost:8080/api-docs`
-- **Production** : `https://votre-domaine.com/api-docs`
-
 ## 🔐 Authentification
-
-### Google OAuth
-1. Accédez à `http://localhost:8080/auth/google`
-2. Connectez-vous avec votre compte Google
-3. Vous serez redirigé vers l'application après l'authentification
 
 ### JWT Tokens
 - Les tokens JWT sont utilisés pour l'authentification API
@@ -302,16 +276,6 @@ docker-compose -f docker-compose.prod.yml build
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### Variables d'environnement de production
-```env
-NODE_ENV=production
-PORT=8080
-DB_HOST=production_db_host
-DB_USER=production_user
-DB_PASSWORD=production_password
-DB_NAME=yshare_prod
-```
-
 ## 🔧 Développement
 
 ### Commandes Utiles
@@ -332,46 +296,19 @@ npm run build
 npm start
 ```
 
-### Standards de Code
-- **ESLint** pour le linting JavaScript
-- **Prettier** pour le formatage
-- **Conventional Commits** pour les messages de commit
-- **JSDoc** pour la documentation des fonctions
-
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créez votre branche (`git checkout -b feature/AmazingFeature`)
-3. Committez vos changements (`git commit -m 'feat: add amazing feature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
-
-### Guidelines de contribution
-- Suivez les conventions de nommage
-- Ajoutez des tests pour les nouvelles fonctionnalités
-- Mettez à jour la documentation
-- Vérifiez que tous les tests passent
 
 ## 📄 Licence
 Ce projet est sous licence ISC. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 👥 Auteurs
-- **Ibrahim SAKO** - Développeur Full Stack
-- **Tim VANSSON** - Développeur Backend
-- **Alexandre PEREZ** - Développeur Frontend
-- **Jeremy PRATT** - DevOps & Architecture
+- **Ibrahim SAKO** - 
+- **Tim VANSSON** - 
+- **Alexandre PEREZ** -
+- **Jeremy PRATT** -
 
 ## 🙏 Remerciements
-- Google pour l'API OAuth
 - La communauté open source pour les bibliothèques utilisées
 - Nos mentors et enseignants pour leur accompagnement
 
-## 📞 Support
-Pour toute question ou problème :
-- Ouvrez une issue sur GitHub
-- Contactez l'équipe de développement
-- Consultez la documentation API
-
----
 
 **YShare** - Partagez vos événements, connectez-vous avec le monde ! 🎉
