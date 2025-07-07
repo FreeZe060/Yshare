@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
                 if (authenticated) {
                     const token = sessionStorage.getItem('token') || localStorage.getItem('token');
                     console.log("Token récupéré depuis sessionStorage:", token);
-                    setUser(...user, token);
+                    setUser({...user, token});
                 } else {
                     setUser({});
                 }
