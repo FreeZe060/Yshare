@@ -15,7 +15,7 @@ const reportController = require('../controllers/ReportController');
 const favorisController = require('../controllers/FavorisController');
 const ratingController = require('../controllers/RatingController');
 const newsController = require('../controllers/NewsController');
-const conversationController = require('../controllers/conversationController');
+const conversationController = require('../controllers/ConversationController');
 
 //////// MIDDLEWARE ////////
 
