@@ -35,30 +35,30 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
     }, []);
 
-    useEffect(() => {
-        if (!user?.id) return;
+    // useEffect(() => {
+    //     if (!user?.id) return;
 
-        let timeout;
-        const INACTIVITY_LIMIT = 15 * 60 * 1000;
+    //     let timeout;
+    //     const INACTIVITY_LIMIT = 15 * 60 * 1000;
 
-        const resetTimer = () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                logoutUser();
-            }, INACTIVITY_LIMIT);
-        };
+    //     const resetTimer = () => {
+    //         clearTimeout(timeout);
+    //         timeout = setTimeout(() => {
+    //             logoutUser();
+    //         }, INACTIVITY_LIMIT);
+    //     };
 
-        resetTimer();
+    //     resetTimer();
 
-        window.addEventListener("mousemove", resetTimer);
-        window.addEventListener("keydown", resetTimer);
+    //     window.addEventListener("mousemove", resetTimer);
+    //     window.addEventListener("keydown", resetTimer);
 
-        return () => {
-            window.removeEventListener("mousemove", resetTimer);
-            window.removeEventListener("keydown", resetTimer);
-            clearTimeout(timeout);
-        };
-    }, [user]);
+    //     return () => {
+    //         window.removeEventListener("mousemove", resetTimer);
+    //         window.removeEventListener("keydown", resetTimer);
+    //         clearTimeout(timeout);
+    //     };
+    // }, [user]);
 
     const login = async () => {
         try {
