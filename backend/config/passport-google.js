@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 passport.use(new GoogleStrategy({
 	clientID: process.env.GOOGLE_CLIENT_ID,
 	clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-	callbackURL: "api/v1/auth/google/callback"
+	callbackURL: `${process.env.API_BASE_URL}auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
 	try {
 		const email = profile.emails[0].value;
@@ -63,16 +63,16 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+	done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await userModel.findById(id);
-        done(null, user);
-    } catch (error) {
-        done(error, null);
-    }
+	try {
+		const user = await userModel.findById(id);
+		done(null, user);
+	} catch (error) {
+		done(error, null);
+	}
 });
 
 module.exports = passport;

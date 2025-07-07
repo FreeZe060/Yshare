@@ -54,7 +54,7 @@ export async function getCreatedEventsStats(userId) {
 }
 
 export async function getTotalEventCount() {
-	const response = await fetch(`${REACT_APP_API_BASE_URL}/events-count`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}events-count`, {
 		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
 	});
