@@ -105,7 +105,7 @@ exports.createEvent = async (req, res) => {
         }
 
         const images = req.files?.map((file, index) => ({
-            image_url: `/event-images/${file.filename}`,
+            image_url: `event-images/${file.filename}`,
             is_main: index === 0
         })) || [];
 
@@ -346,7 +346,7 @@ exports.addImagesToEvent = async (req, res) => {
 
         const images = req.files.map((file, index) => ({
             event_id: eventId,
-            image_url: `/event-images/${file.filename}`,
+            image_url: `event-images/${file.filename}`,
             is_main: false
         }));
 

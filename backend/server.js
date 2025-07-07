@@ -57,7 +57,11 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/api/v1/banner-images', express.static(path.join(__dirname, 'media/banner-images')));
 app.use('/api/v1/event-images', express.static(path.join(__dirname, 'media/event-images')));
+app.use('/api/v1/news-images', express.static(path.join(__dirname, 'media/news-images')));
+app.use('/api/v1/profile-images', express.static(path.join(__dirname, 'media/profile-images')));
+app.use('/api/v1/report-files', express.static(path.join(__dirname, 'media/report-files')));
 
 // EJS
 app.set('view engine', 'ejs');

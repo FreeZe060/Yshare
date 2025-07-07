@@ -51,7 +51,7 @@ exports.register = async (req, res) => {
         const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
         console.log(`[register] Mot de passe hashé : ${hashedPassword ? '✔️' : 'Aucun mot de passe fourni'}`);
 
-        let profileImage = req.file ? `/profile-images/${req.file.filename}` : null;
+        let profileImage = req.file ? `profile-images/${req.file.filename}` : null;
         console.log(`[register] Image de profil : ${profileImage}`);
 
         const newUser = await userService.createUser({
@@ -80,7 +80,9 @@ exports.register = async (req, res) => {
                 token = generateToken(newUser);
                 res.cookie('auth_token', token, {
                     httpOnly: true,
-                    maxAge: 10 * 60 * 60 * 1000 // 10 heures
+                    secure: true,
+                    sameSite: 'None',
+                    maxAge: 10 * 60 * 60 * 1000
                 });
             } catch (jwtError) {
                 console.error("[register] Erreur JWT :", jwtError);
@@ -116,7 +118,12 @@ exports.login = async (req, res) => {
             let token;
             try {
                 token = generateToken(user);
-                res.cookie('auth_token', token, { httpOnly: true, maxAge: 10 * 60 * 60 * 1000 });
+                res.cookie('auth_token', token, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'None',
+                    maxAge: 10 * 60 * 60 * 1000
+                });
             } catch (jwtError) {
                 console.error("[login] Erreur lors de la génération du token JWT :", jwtError);
                 return res.status(500).json({ message: "Erreur lors de la création du token." });
@@ -265,7 +272,7 @@ exports.updateProfile = async (req, res) => {
                 }
             }
 
-            updates[fileField] = `/${uploadPath}/${req.file.filename}`;
+            updates[fileField] = `${uploadPath}/${req.file.filename}`;
             console.log(`[updateProfile] Nouvelle image enregistrée : ${updates[fileField]}`);
         }
 

@@ -12,15 +12,18 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null); 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const checkAuth = async () => {
             try {
                 const { authenticated, user } = await checkAuthStatus();
-                const token = localStorage.getItem('token');
-                setUser(authenticated ? { ...user, token } : {});
+                if (authenticated) {
+                    setUser(user);
+                } else {
+                    setUser({});
+                }
             } catch (err) {
                 console.error("Auth check failed:", err);
                 setUser({});
@@ -31,7 +34,6 @@ export const AuthProvider = ({ children }) => {
 
         checkAuth();
     }, []);
-
 
     useEffect(() => {
         if (!user?.id) return;
@@ -58,25 +60,19 @@ export const AuthProvider = ({ children }) => {
         };
     }, [user]);
 
-
-    const login = async (userData) => {
+    const login = async () => {
         try {
-            if (userData?.token) {
-                localStorage.setItem('token', userData.token);
-                const { authenticated, user } = await checkAuthStatus();
-                if (authenticated) {
-                    setUser(user);
-                    return;
-                }
+            const { authenticated, user } = await checkAuthStatus();
+            if (authenticated) {
+                setUser(user);
+            } else {
+                setUser({});
             }
-
-            setUser(userData);
         } catch (err) {
             console.error("Erreur lors de la récupération de l'utilisateur OAuth :", err.message);
             setUser({});
         }
     };
-
 
     const logoutUser = async () => {
         await logout();
@@ -84,7 +80,15 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user?.id, login, logout: logoutUser, loading }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated: !!user?.id, 
+                login,
+                logout: logoutUser,
+                loading
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
