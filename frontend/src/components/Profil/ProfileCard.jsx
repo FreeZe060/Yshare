@@ -12,6 +12,8 @@ import useTextAnimation from '../../hooks/Animations/useTextAnimation';
 import vector1 from "../../assets/img/et-3-event-vector.svg";
 import vector2 from "../../assets/img/et-3-event-vector-2.svg";
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const calculateProfileCompletion = (user) => {
 	let score = 0;
 	if (user.profileImage) score += 10;
@@ -123,7 +125,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 					className="-top-[112px] absolute bg-cover bg-center pt-[112px] w-full h-full"
 					style={{
 						backgroundImage: `url('${user.bannerImage
-							? `http://localhost:8080${user.bannerImage}`
+							? `${API_BASE_URL}${user.bannerImage}`
 							: 'https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&auto=format&fit=crop&w=2710&q=80'
 							}')`,
 					}}
@@ -186,7 +188,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										<div className="flex justify-center items-center order-2 px-4 w-4/12">
 											<div className="relative">
 												<img
-													src={`http://localhost:8080${user.profileImage}`}
+													src={`${API_BASE_URL}${user.profileImage}`}
 													alt="Profile"
 													className="shadow-xl border-4 border-white rounded-full w-40 h-40 object-cover"
 													onClick={() => editable && document.getElementById('profileImageInput').click()}
@@ -225,7 +227,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										<div className="right-0 absolute mt-8 mr-4 flex flex-col space-y-2">
 											<a
 												href="/report"
-												className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded-lg text-white text-sm transition-all text-center"
+												className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded-lg text-white text-sm transition-all text-center"
 											>
 												Voir vos reports
 											</a>

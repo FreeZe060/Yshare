@@ -4,6 +4,8 @@ import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import { motion } from 'framer-motion';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 Chart.register(ArcElement, Tooltip, Legend);
 
 const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, statsError, usersLoading, statsLoading, onSuspend,
@@ -40,7 +42,7 @@ const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, stats
 							<div className="flex items-center space-x-3">
 								<Link to={`/profile/${user.id}`}>
 									<img
-										src={`http://localhost:8080${user.profileImage || '/default-avatar.png'}`}
+										src={`${API_BASE_URL}${user.profileImage || '/default-avatar.png'}`}
 										alt={`${user.name}`}
 										className="w-10 h-10 rounded-full object-cover"
 									/>
@@ -52,7 +54,7 @@ const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, stats
 									</p>
 								</div>
 							</div>
-							<div className="flex items-center gap-3 text-indigo-600 text-lg">
+							<div className="flex items-center gap-3 text-[#C72EBF] text-lg">
 								<motion.button whileHover={{ scale: 1.1 }} onClick={() => onSuspend(user)}>
 									<i className={`fas ${user.status === 'Suspended' ? 'fa-lock-open' : 'fa-ban'}`} />
 								</motion.button>
@@ -65,7 +67,7 @@ const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, stats
 					<div className="text-right pt-3">
 						<button
 							onClick={() => setActiveSection('users')}
-							className="text-indigo-600 hover:underline font-medium"
+							className="text-[#C72EBF] hover:underline font-medium"
 						>
 							👤 Voir tous les utilisateurs
 						</button>

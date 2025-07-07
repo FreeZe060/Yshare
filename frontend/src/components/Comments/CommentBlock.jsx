@@ -181,7 +181,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 								}
 								setShowReplyInput(prev => !prev);
 							}}
-							className="ml-auto text-blue-500 hover:underline"
+							className="ml-auto text-[#D232BE] hover:underline"
 						>
 							↪ Répondre
 						</button>

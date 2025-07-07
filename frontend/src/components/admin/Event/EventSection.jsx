@@ -3,6 +3,8 @@ import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
 
 import NotFound from '../../../pages/NotFound';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const EventSection = ({
 	events,
 	loading,
@@ -68,7 +70,7 @@ const EventSection = ({
 
 				<Link
 					to="/create-event"
-					className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
+					className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded text-white transition"
 				>
 					<i className="mr-2 fas fa-plus" />
 					Ajouter un Événement
@@ -84,7 +86,7 @@ const EventSection = ({
 						>
 							<div className="shadow-md rounded-[15px] w-[220px] h-[182px] overflow-hidden">
 								<img
-									src={`http://localhost:8080${event.EventImages?.[0]?.image_url || '/default-event.jpg'}`}
+									src={`${API_BASE_URL}${event.EventImages?.[0]?.image_url || '/default-event.jpg'}`}
 									alt="event cover"
 									className="w-full h-full object-cover"
 								/>
@@ -112,7 +114,7 @@ const EventSection = ({
 										Organisé par :{" "}
 										<Link
 											to={`/profile/${event.organizer?.id}`}
-											className="text-indigo-600 hover:underline"
+											className="text-[#C72EBF] hover:underline"
 										>
 											{event.organizer?.name}
 										</Link>

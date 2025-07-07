@@ -10,6 +10,8 @@ import NotFound from '../../../pages/NotFound';
 import ReportReplies from './ReportReplies';
 import ReportDetailsPopup from './ReportDetailsPopup';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const isImage = (file) => /\.(jpg|jpeg|png|gif)$/i.test(file.file_path);
 const isPdf = (file) => /\.pdf$/i.test(file.file_path);
 
@@ -34,7 +36,7 @@ const getReportTypeIcon = (type, onClick) => {
         user: 'fas fa-user',
     };
     return types[type] ? (
-        <i className={`${types[type]} text-indigo-500 cursor-pointer`} title={type} onClick={onClick} />
+        <i className={`${types[type]} text-[#B926C1] cursor-pointer`} title={type} onClick={onClick} />
     ) : null;
 };
 
@@ -77,7 +79,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
 
             <div className="bg-white shadow-md rounded-lg overflow-x-auto" ref={tableRef}>
                 <table className="w-full text-sm whitespace-nowrap">
-                    <thead className="bg-indigo-100 text-indigo-700">
+                    <thead className="bg-[#F6E2F2] text-[#BA28C0]">
                         <tr>
                             {[
                                 { label: 'Type', field: 'type' },
@@ -107,7 +109,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                     <tbody>
                         <AnimatePresence>
                             {sortedReports.map((report) => {
-                                const images = report.files?.filter(isImage).map(f => `http://localhost:8080${f.file_path}`) || [];
+                                const images = report.files?.filter(isImage).map(f => `${API_BASE_URL}${f.file_path}`) || [];
                                 const pdfs = report.files?.filter(isPdf) || [];
 
                                 return (
@@ -124,16 +126,16 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                                             <td className="px-4 py-3">{report.message.slice(0, 30)}...</td>
                                             <td className="px-4 py-3">
                                                 {images.length > 0 && (
-                                                    <i className="text-indigo-400 cursor-pointer fas fa-image" onClick={() => setLightbox({ open: true, index: 0, images })} />
+                                                    <i className="text-[#EE7AB5] cursor-pointer fas fa-image" onClick={() => setLightbox({ open: true, index: 0, images })} />
                                                 )}
                                                 {pdfs.length > 0 && (
-                                                    <a href={`http://localhost:8080${pdfs[0].file_path}`} target="_blank" rel="noopener noreferrer">
+                                                    <a href={`${API_BASE_URL}${pdfs[0].file_path}`} target="_blank" rel="noopener noreferrer">
                                                         <i className="ml-2 text-red-500 fas fa-file-pdf" />
                                                     </a>
                                                 )}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <button onClick={() => setOpenPopupReplies(report)} className="text-blue-600 hover:underline">
+                                                <button onClick={() => setOpenPopupReplies(report)} className="text-[#D232BE] hover:underline">
                                                     {report.messageCount || 0} réponse{report.messageCount > 1 ? 's' : ''}
                                                 </button>
                                             </td>
@@ -142,7 +144,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                                             </td>
                                             <td className="px-4 py-3">{new Date(report.date_reported).toLocaleDateString()}</td>
                                             <td className="flex space-x-2 px-4 py-3">
-                                                <button onClick={() => setPopupReport(report)} className="text-indigo-500 hover:text-indigo-700">
+                                                <button onClick={() => setPopupReport(report)} className="text-[#B926C1] hover:text-[#BA28C0]">
                                                     <EyeIcon size={18} />
                                                 </button>
                                                 <button onClick={() => onUpdateStatus(report)} className="text-yellow-500 hover:text-yellow-600">
@@ -184,7 +186,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                         <button onClick={() => setOpenPopupReplies(null)} className="top-4 right-4 absolute text-gray-400 hover:text-gray-700">
                             <XIcon size={24} />
                         </button>
-                        <h2 className="mb-4 font-bold text-indigo-600 text-2xl">Réponses</h2>
+                        <h2 className="mb-4 font-bold text-[#C72EBF] text-2xl">Réponses</h2>
                         <ReportReplies reportId={openPopupReplies.id} limit={null} />
                     </div>
                 </Dialog>

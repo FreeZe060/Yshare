@@ -112,7 +112,7 @@ const CreateNewsPage = () => {
                     <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                         <li className="opacity-80"><a href="/" className="hover:text-[#C320C0] anim-text">Home</a></li>
                         <li><i className="fa-angle-right fa-solid"></i><i className="fa-angle-right fa-solid"></i></li>
-                        <li className="opacity-80 hover:text-blue-400 cursor-pointer">
+                        <li className="opacity-80 hover:text-[#DE35BC] cursor-pointer">
                             <a href="/event-created">Création d'actualité</a>
                         </li>
                     </ul>
@@ -146,7 +146,7 @@ const CreateNewsPage = () => {
                                 <button
                                     onClick={nextStep}
                                     disabled={!isStepOneValid()}
-                                    className={`px-6 py-2 rounded text-white transition duration-300 ${!isStepOneValid() ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                                    className={`px-6 py-2 rounded text-white transition duration-300 ${!isStepOneValid() ? 'bg-[#E8B9E0] cursor-not-allowed' : 'bg-[#D232BE] hover:bg-blue-700'
                                         }`}
                                 >
                                     Suivant

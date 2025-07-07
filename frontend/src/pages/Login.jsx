@@ -8,6 +8,8 @@ import { useAuth } from '../config/authHeader';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const Login = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -151,7 +153,7 @@ const Login = () => {
 
 						<div className="flex justify-center items-center mt-4 mb-2">
 							<a
-								href="http://localhost:8080/api/v1/auth/google"
+								href={`${API_BASE_URL}api/v1/auth/google`}
 								className="flex items-center hover:bg-gray-100 px-4 py-2 border border-gray-300 rounded-lg transition"
 							>
 								<img src="/google-icon.svg" alt="Google" className="mr-2 w-5 h-5" />
@@ -159,13 +161,13 @@ const Login = () => {
 							</a>
 						</div>
 
-						<span className="block mb-3 hover:text-blue-500 text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
+						<span className="block mb-3 hover:text-[#D232BE] text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
 							Mot de passe oublié?
 						</span>
 
-						<span className="block hover:text-blue-500 text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
+						<span className="block hover:text-[#D232BE] text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
 							Pas de compte ?{' '}
-							<a href="/register" className="text-blue-500">
+							<a href="/register" className="text-[#D232BE]">
 								S'inscrire ici
 							</a>
 						</span>

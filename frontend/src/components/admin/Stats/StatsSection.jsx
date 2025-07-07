@@ -22,9 +22,9 @@ const StatsSection = ({ setActiveSection, stats, loading, error, reports }) => {
 					whileHover={hoverAnimation}
 				>
 					<div className="flex flex-row space-x-4 items-center">
-						<i className="fa-regular fa-user text-indigo-500 text-3xl xxs:text-xl" />
+						<i className="fa-regular fa-user text-[#B926C1] text-3xl xxs:text-xl" />
 						<div>
-							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Active Users</p>
+							<p className="text-[#C72EBF] text-sm font-medium uppercase leading-4">Active Users</p>
 							<p className="text-gray-900 font-bold text-2xl">
 								{loading ? '...' : stats?.activeUsers ?? 0}
 							</p>
@@ -38,9 +38,9 @@ const StatsSection = ({ setActiveSection, stats, loading, error, reports }) => {
 					whileHover={hoverAnimation}
 				>
 					<div className="flex flex-row space-x-4 items-center">
-						<i className="fa-regular fa-calendar text-indigo-500 text-3xl xxs:text-xl" />
+						<i className="fa-regular fa-calendar text-[#B926C1] text-3xl xxs:text-xl" />
 						<div>
-							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Total Participants</p>
+							<p className="text-[#C72EBF] text-sm font-medium uppercase leading-4">Total Participants</p>
 							<p className="text-gray-900 font-bold text-2xl">
 								{loading ? '...' : stats?.totalParticipants ?? 0}
 							</p>
@@ -54,9 +54,9 @@ const StatsSection = ({ setActiveSection, stats, loading, error, reports }) => {
 					whileHover={hoverAnimation}
 				>
 					<div className="flex flex-row space-x-4 items-center">
-						<i className="fa-regular fa-file-alt text-indigo-500 text-3xl xxs:text-xl" />
+						<i className="fa-regular fa-file-alt text-[#B926C1] text-3xl xxs:text-xl" />
 						<div>
-							<p className="text-indigo-600 text-sm font-medium uppercase leading-4">Reports</p>
+							<p className="text-[#C72EBF] text-sm font-medium uppercase leading-4">Reports</p>
 							<p className="text-gray-900 font-bold text-2xl">{reports?.length || 0}</p>
 						</div>
 					</div>

@@ -157,7 +157,7 @@ const AssignParticipantModal = ({ token, onClose, onSubmit }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={addingParticipant}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
+                        className="px-4 py-2 bg-[#C72EBF] text-white rounded hover:bg-[#BA28C0] text-sm"
                     >
                         {addingParticipant ? 'Ajout en cours...' : 'Assigner'}
                     </button>

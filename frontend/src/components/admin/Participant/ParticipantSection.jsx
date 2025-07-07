@@ -6,6 +6,8 @@ import NotFound from '../../../pages/NotFound';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import AssignParticipantModal from './AssignParticipantModal';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const sortIcon = (direction) =>
     direction === 'asc'
         ? <i className="text-gray-800 fas fa-sort-up" />
@@ -92,7 +94,7 @@ const ParticipantSection = ({
         return (
             <div className="bg-white shadow-md rounded-lg min-h-[600px] overflow-x-auto">
                 <table className="w-full text-sm">
-                    <thead className="bg-indigo-100 text-indigo-700">
+                    <thead className="bg-[#F6E2F2] text-[#BA28C0]">
                         <tr>
                             {['Nom', 'Événement', 'Statut', 'Date de demande', 'Actions'].map((title, i) => (
                                 <th key={i} className="px-2 py-3 text-left">{title}</th>
@@ -117,7 +119,7 @@ const ParticipantSection = ({
                 <h1 className="font-bold text-gray-800 text-xl">Demandes de participation</h1>
                 <button
                     onClick={() => setShowAssignModal(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
+                    className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded text-white transition"
                 >
                     <i className="mr-2 fas fa-user-plus" />
                     Ajouter un participant
@@ -136,7 +138,7 @@ const ParticipantSection = ({
 
             <div className="bg-white shadow-md rounded-lg overflow-x-auto">
                 <table className="w-full text-gray-900 text-sm">
-                    <thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
+                    <thead ref={theadRef} className="bg-[#F6E2F2] text-[#BA28C0]">
                         <tr>
                             {[
                                 { label: 'Nom', key: 'name' },
@@ -171,7 +173,7 @@ const ParticipantSection = ({
                                 >
                                     <td className="flex items-center space-x-2 px-2 py-3">
                                         <img
-                                            src={`http://localhost:8080${p.profileImage || '/default-avatar.png'}`}
+                                            src={`${API_BASE_URL}${p.profileImage || '/default-avatar.png'}`}
                                             alt={p.name}
                                             className="rounded-full w-8 h-8 object-cover cursor-pointer"
                                             onClick={() => navigate(`/profile/${p.userId}`)}
@@ -195,7 +197,7 @@ const ParticipantSection = ({
                                     <td className="px-2 py-3">
                                         {new Intl.DateTimeFormat('fr-FR').format(new Date(p.joinedAt))}
                                     </td>
-                                    <td className="px-2 py-3 text-indigo-600">
+                                    <td className="px-2 py-3 text-[#C72EBF]">
                                         {updatingId === p.id ? (
                                             <i className="text-gray-500 fas fa-spinner fa-spin" />
                                         ) : (
@@ -222,8 +224,8 @@ const ParticipantSection = ({
                             whileTap={{ scale: 0.95 }}
                             onClick={() => goToPage(i + 1)}
                             className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition ${page === i + 1
-                                ? 'bg-blue-500 text-white border-blue-500'
-                                : 'border-blue-500 text-blue-500 hover:bg-blue-100'
+                                ? 'bg-[#D232BE] text-white border-[#D232BE]'
+                                : 'border-[#D232BE] text-[#D232BE] hover:bg-blue-100'
                                 }`}
                         >
                             {i + 1}

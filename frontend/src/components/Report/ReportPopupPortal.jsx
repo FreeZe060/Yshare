@@ -128,7 +128,7 @@ const ReportPopupPortal = ({ type, eventId, commentId, reportedUserId, onClose }
                 <button
                     onClick={handleSubmit}
                     disabled={loading || !title.trim() || !message.trim()}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition"
+                    className="bg-[#D232BE] hover:bg-blue-700 text-white px-6 py-2 rounded-full transition"
                 >
                     {loading ? 'Envoi...' : 'Envoyer le signalement'}
                 </button>

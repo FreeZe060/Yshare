@@ -2,6 +2,8 @@ import React from 'react';
 import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
 import NotFound from '../../../pages/NotFound';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const LastEventSection = ({ events, loading, error, Link }) => {
 
 	if (loading) {
@@ -28,7 +30,7 @@ const LastEventSection = ({ events, loading, error, Link }) => {
 						<div key={event.id} className="bg-white shadow-md hover:shadow-lg rounded-lg text-sm sm:text-base transition duration-200">
 							<div className="flex flex-col h-full">
 								<img
-									src={`http://localhost:8080${image || '/default-event.jpg'}`}
+									src={`${API_BASE_URL}${image || '/default-event.jpg'}`}
 									alt={event.title}
 									className="rounded-t-lg w-full h-36 sm:h-40 object-cover"
 								/>
@@ -46,7 +48,7 @@ const LastEventSection = ({ events, loading, error, Link }) => {
 								<div className="p-3 sm:p-4 border-gray-100 border-t">
 									<Link
 										to={`/event/${event.id}`}
-										className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-800 text-sm transition"
+										className="inline-flex items-center space-x-2 text-[#C72EBF] hover:text-[#8318C7] text-sm transition"
 									>
 										<i className="fas fa-info-circle"></i>
 										<span>Voir</span>

@@ -166,8 +166,8 @@ const CreateEventPage = () => {
                                     onClick={nextStep}
                                     disabled={step === 1 ? !isStepOneValid() : step === 2 ? !isStepTwoValid() : false}
                                     className={`px-6 py-2 rounded text-white transition duration-300 ${!isStepOneValid()
-                                        ? 'bg-blue-300 cursor-not-allowed'
-                                        : 'bg-blue-600 hover:bg-blue-700'
+                                        ? 'bg-[#E8B9E0] cursor-not-allowed'
+                                        : 'bg-[#D232BE] hover:bg-blue-700'
                                         }`}
                                 >
                                     Suivant

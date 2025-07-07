@@ -423,9 +423,9 @@ const Register = () => {
 							<a href="/conditions-utilisation" className="hover:text-[#C421C0] underline transition">Conditions d'utilisation</a>.
 						</span>
 
-						<span className="block mt-2 hover:text-blue-500 text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
+						<span className="block mt-2 hover:text-[#D232BE] text-sm text-center transition-all duration-300 ease-in-out cursor-pointer">
 							Déjà un compte ?{' '}
-							<a href="/login" className="text-blue-500">
+							<a href="/login" className="text-[#D232BE]">
 								Se connecter ici
 							</a>
 						</span>

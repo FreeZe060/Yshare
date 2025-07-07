@@ -127,7 +127,7 @@ const CategorySection = ({ categories, loading, error, onCreate, onEdit, onDelet
             <div className="flex justify-between mb-4">
                 <button
                     onClick={onCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
+                    className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded text-white transition"
                 >
                     <i className="mr-2 fas fa-folder-plus" />
                     Ajouter une catégorie
@@ -136,7 +136,7 @@ const CategorySection = ({ categories, loading, error, onCreate, onEdit, onDelet
 
             <div className="bg-white shadow rounded-lg overflow-x-auto">
                 <table className="w-full text-sm">
-                    <thead ref={theadRef} className="bg-indigo-100 text-black">
+                    <thead ref={theadRef} className="bg-[#F6E2F2] text-black">
                         <tr>
                             {columns.map(col => (
                                 <th
@@ -194,8 +194,8 @@ const CategorySection = ({ categories, loading, error, onCreate, onEdit, onDelet
                                 onClick={() => pagination.goToPage(i + 1)}
                                 className={`mx-1 px-3 py-1 rounded-full text-sm font-medium transition border
                                     ${pagination.page === i + 1
-                                        ? 'bg-indigo-600 text-white border-indigo-600'
-                                        : 'text-indigo-600 border-indigo-300 hover:bg-indigo-100'}`}
+                                        ? 'bg-[#C72EBF] text-white border-[#C72EBF]'
+                                        : 'text-[#C72EBF] border-[#DD9ED5] hover:bg-[#F6E2F2]'}`}
                             >
                                 {i + 1}
                             </button>

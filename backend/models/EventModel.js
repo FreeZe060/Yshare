@@ -18,7 +18,7 @@ const Event = sequelize.define('Event', {
   description: {
     type: DataTypes.TEXT,
     allowNull: true,
-    field: 'description',
+    field: 'desc',
   },
   price: {
     type: DataTypes.INTEGER,

@@ -15,7 +15,7 @@ const SelectCategories = ({ selected, onChange }) => {
             <select
                 value={selected}
                 onChange={(e) => onChange(e.target.value)}
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DE35BC] w-full"
             >
                 <option value="">Sélectionnez une catégorie</option>
                 {categories.map((cat) => (

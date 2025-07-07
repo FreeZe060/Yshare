@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import MessageSkeleton from '../../SkeletonLoading/MessageSkeleton';
 import useReportDetails from '../../../hooks/Report/useReportDetails';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
     const { user } = useAuth();
     const { messages, loading, refetch } = useReportMessages(reportId);
@@ -16,12 +18,12 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
 
     const roleColors = {
         Administrateur: {
-            bg: 'bg-gradient-to-r from-indigo-700 to-purple-800',
+            bg: 'bg-gradient-to-r from-[#BA28C0] to-purple-800',
             text: 'text-white',
-            triangle: 'border-l-indigo-700'
+            triangle: 'border-l-[#BA28C0]'
         },
         Utilisateur: {
-            bg: 'bg-gradient-to-r from-pink-500 to-blue-500',
+            bg: 'bg-gradient-to-r from-pink-500 to-[#D232BE]',
             text: 'text-white',
             triangle: 'border-r-pink-500'
         },
@@ -58,7 +60,7 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                 ) : report ? (
                     <div className="flex items-start">
                         <img
-                            src={report.reportingUser?.profileImage ? `http://localhost:8080${report.reportingUser.profileImage}` : '/default-avatar.png'}
+                            src={report.reportingUser?.profileImage ? `${API_BASE_URL}${report.reportingUser.profileImage}` : '/default-avatar.png'}
                             alt="avatar"
                             className="w-10 h-10 rounded-full mr-3"
                         />
@@ -98,7 +100,7 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                             >
                                 {side === 'left' && (
                                     <img
-                                        src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
+                                        src={msg.sender.profileImage ? `${API_BASE_URL}${msg.sender.profileImage}` : '/default-avatar.png'}
                                         alt="avatar"
                                         className="w-8 h-8 rounded-full mr-2"
                                     />
@@ -122,7 +124,7 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                                 </div>
                                 {side === 'right' && (
                                     <img
-                                        src={msg.sender.profileImage ? `http://localhost:8080${msg.sender.profileImage}` : '/default-avatar.png'}
+                                        src={msg.sender.profileImage ? `${API_BASE_URL}${msg.sender.profileImage}` : '/default-avatar.png'}
                                         alt="avatar"
                                         className="w-8 h-8 rounded-full ml-2"
                                     />

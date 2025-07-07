@@ -6,7 +6,7 @@ const Section = ({ title, children }) => (
     <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow mx-auto my-10 px-6 py-[120px] w-full max-w-4xl">
-            <h2 className="mb-6 pb-2 border-b-2 border-blue-500 font-sans font-bold text-black text-3xl text-center">
+            <h2 className="mb-6 pb-2 border-b-2 border-[#D232BE] font-sans font-bold text-black text-3xl text-center">
                 {title}
             </h2>
             <div className="space-y-4 font-light text-gray-800 text-left leading-relaxed">

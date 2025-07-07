@@ -181,7 +181,7 @@ function EventDetails() {
         }
 
         const mainImage = event?.EventImages?.find(img => img.is_main) || event?.EventImages?.[0];
-        const imageUrl = mainImage?.image_url?.startsWith('http') ? mainImage.image_url : `http://localhost:8080${mainImage?.image_url || ''}`;
+        const imageUrl = mainImage?.image_url?.startsWith('http') ? mainImage.image_url : `${API_BASE_URL}${mainImage?.image_url || ''}`;
 
         const { value: formValues } = await Swal.fire({
             customClass: {
@@ -663,7 +663,7 @@ function EventDetails() {
                                 <div key={rating.id} className="mb-4">
                                     <div className="flex items-center gap-4">
                                         <img
-                                            src={`http://localhost:8080${rating.user.profileImage}`}
+                                            src={`${API_BASE_URL}${rating.user.profileImage}`}
                                             alt="PP"
                                             className="rounded-full w-12 h-12 object-cover"
                                         />

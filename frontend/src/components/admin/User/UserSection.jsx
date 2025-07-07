@@ -6,6 +6,9 @@ import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginate
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import NotFound from '../../../pages/NotFound';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
+
 const sortIcon = (direction) =>
     direction === 'asc'
         ? <i className="text-gray-500 fas fa-sort-up" />
@@ -36,7 +39,7 @@ const LastUsersSection = ({
         return (
             <div className="flex flex-col justify-between bg-white shadow-md rounded-lg min-h-[600px] overflow-x-auto">
                 <table className="w-full sm:text-xs text-sm whitespace-nowrap">
-                    <thead className="bg-indigo-100 text-indigo-700">
+                    <thead className="bg-[#F6E2F2] text-[#BA28C0]">
                         <tr>
                             {['Nom', 'Email', 'Rôle', 'Statut', 'Actions'].map((field, i) => (
                                 <th key={i} className={`text-left py-3 px-2 ${i === 0 ? 'rounded-l-lg' : ''}`}>{field}</th>
@@ -59,7 +62,7 @@ const LastUsersSection = ({
             <div className="flex justify-end mb-4">
                 <button
                     onClick={onCreate}
-                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
+                    className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded text-white transition"
                 >
                     <i className="mr-2 fas fa-user-plus" />
                     Ajouter un utilisateur
@@ -68,7 +71,7 @@ const LastUsersSection = ({
 
             <div className="flex flex-col justify-between bg-white shadow-md rounded-lg min-h-[600px] overflow-x-auto">
                 <table className="w-full sm:text-xs text-sm whitespace-nowrap">
-                    <thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
+                    <thead ref={theadRef} className="bg-[#F6E2F2] text-[#BA28C0]">
                         <tr>
                             {['name', 'email', 'role', 'status'].map((field, index) => (
                                 <th
@@ -98,10 +101,10 @@ const LastUsersSection = ({
                                 >
                                     <td className="px-2 py-3 font-bold text-gray-800">
                                         <div className="inline-flex items-center space-x-3">
-                                            <Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`} className="flex items-center space-x-2 hover:text-indigo-600 transition">
+                                            <Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`} className="flex items-center space-x-2 hover:text-[#C72EBF] transition">
                                                 <img
                                                     className="rounded-full w-8 h-8 object-cover hover:scale-105 transition duration-200"
-                                                    src={`http://localhost:8080${user.profileImage || '/default-avatar.png'}`}
+                                                    src={`${API_BASE_URL}${user.profileImage || '/default-avatar.png'}`}
                                                     alt={`${user.name}`}
                                                 />
                                                 <span>{user.name} {user.lastname}</span>
@@ -114,8 +117,8 @@ const LastUsersSection = ({
                                         {capitalizeFirstLetter(user.status)}
                                     </td>
                                     <td className="px-2 py-3">
-                                        <div className="inline-flex items-center space-x-3 text-indigo-500 text-lg">
-                                            <Link to={`/profile/${user.id}`} title="Voir profil" className="hover:text-indigo-700 transition">
+                                        <div className="inline-flex items-center space-x-3 text-[#B926C1] text-lg">
+                                            <Link to={`/profile/${user.id}`} title="Voir profil" className="hover:text-[#BA28C0] transition">
                                                 <i className="fas fa-pen" />
                                             </Link>
                                             <button
@@ -150,8 +153,8 @@ const LastUsersSection = ({
                                 onClick={() => pagination.goToPage(i + 1)}
                                 className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition
                                     ${pagination.page === i + 1
-                                        ? 'bg-blue-500 text-white border-blue-500'
-                                        : 'border-blue-500 text-blue-500 hover:bg-blue-100'}`}
+                                        ? 'bg-[#D232BE] text-white border-[#D232BE]'
+                                        : 'border-[#D232BE] text-[#D232BE] hover:bg-blue-100'}`}
                             >
                                 {i + 1}
                             </motion.button>

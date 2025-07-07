@@ -13,7 +13,7 @@ const Input = ({ label, name, value, onChange, required, type = "text", error })
             required={required}
             value={value}
             onChange={onChange}
-            className={`w-full border rounded-lg p-3 focus:outline-none ${error ? 'border-red-500' : 'border-gray-300'} focus:ring-2 ${error ? 'focus:ring-red-400' : 'focus:ring-blue-400'}`}
+            className={`w-full border rounded-lg p-3 focus:outline-none ${error ? 'border-red-500' : 'border-gray-300'} focus:ring-2 ${error ? 'focus:ring-red-400' : 'focus:ring-[#DE35BC]'}`}
         />
         {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </div>
@@ -30,7 +30,7 @@ const Textarea = ({ label, name, value, onChange, required }) => (
             required={required}
             value={value}
             onChange={onChange}
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#DE35BC]"
             rows={5}
         ></textarea>
     </div>

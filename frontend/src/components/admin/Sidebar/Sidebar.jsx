@@ -1,5 +1,7 @@
 import React from 'react';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const Sidebar = ({
 	user,
 	active,
@@ -36,8 +38,8 @@ const Sidebar = ({
 		<div ref={sidebarRef} className="bg-white shadow-xl col-span-3 md:col-span-9 lg:mt-4 md:flex flex-col md:justify-between md:items-center rounded-lg p-4">
 			<div className="md:flex md:justify-between md:w-full">
 				<div className="flex flex-col">
-					<h1 className="font-bold md:text-lg text-3xl bg-gradient-to-br from-indigo-600 via-indigo-400 to-indigo-300 bg-clip-text text-transparent">
-						Dashboard<span className="text-indigo-500">.</span>
+					<h1 className="font-bold md:text-lg text-3xl bg-gradient-to-br from-[#C72EBF] via-[#EE7AB5] to-[#DD9ED5] bg-clip-text text-transparent">
+						Dashboard<span className="text-[#B926C1]">.</span>
 					</h1>
 					<p className="text-gray-500 text-sm mb-2 md:mb-0">Welcome back,</p>
 				</div>
@@ -47,11 +49,11 @@ const Sidebar = ({
 				>
 					<img
 						className="rounded-full w-16 h-16 object-cover"
-						src={user.profileImage ? `http://localhost:8080${user.profileImage}` : "https://via.placeholder.com/40"}
+						src={user.profileImage ? `${API_BASE_URL}${user.profileImage}` : "https://via.placeholder.com/40"}
 						alt={user?.name}
 					/>
 					<div className="text-center">
-						<p className="font-medium text-gray-800 group-hover:text-indigo-500 leading-4">
+						<p className="font-medium text-gray-800 group-hover:text-[#B926C1] leading-4">
 							{user?.name} {user?.lastname}
 						</p>
 						<span className="text-xs text-gray-400">{user?.role}</span>
@@ -79,7 +81,7 @@ const Sidebar = ({
 											viewBox="0 0 24 24"
 											strokeWidth={1.5}
 											stroke="currentColor"
-											className={`w-6 h-6 ${isActive ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-400`}
+											className={`w-6 h-6 ${isActive ? 'text-[#B926C1]' : 'text-black'} group-hover:text-[#EE7AB5]`}
 										>
 											<path
 												strokeLinecap="round"
@@ -88,12 +90,12 @@ const Sidebar = ({
 											/>
 										</svg>
 									) : (
-										<i className={`fa-regular ${icon} text-2xl md:text-xl ${isActive || (key === 'events' && isEventsSubItem) ? 'text-indigo-500' : 'text-black'} group-hover:text-indigo-500`} />
+										<i className={`fa-regular ${icon} text-2xl md:text-xl ${isActive || (key === 'events' && isEventsSubItem) ? 'text-[#B926C1]' : 'text-black'} group-hover:text-[#B926C1]`} />
 									)}
 									<div className="text-left md:text-center">
-										<p className={`font-bold text-lg md:text-base ${key === 'events' && isEventsSubItem ? 'text-indigo-500' :
-											active === key ? 'text-indigo-500' : 'text-gray-800'
-											} group-hover:text-indigo-500`}>
+										<p className={`font-bold text-lg md:text-base ${key === 'events' && isEventsSubItem ? 'text-[#B926C1]' :
+											active === key ? 'text-[#B926C1]' : 'text-gray-800'
+											} group-hover:text-[#B926C1]`}>
 											{label}
 										</p>
 										<p className="text-gray-400 text-sm block md:hidden">{desc}</p>
@@ -108,7 +110,7 @@ const Sidebar = ({
 										<button
 											key={sub.key}
 											onClick={() => setActive(sub.key)}
-											className={`block text-sm text-left w-full px-4 py-2 rounded hover:bg-indigo-100 ${active === sub.key ? 'text-indigo-600 font-semibold' : 'text-gray-600'}`}
+											className={`block text-sm text-left w-full px-4 py-2 rounded hover:bg-[#F6E2F2] ${active === sub.key ? 'text-[#C72EBF] font-semibold' : 'text-gray-600'}`}
 										>
 											{sub.label}
 										</button>

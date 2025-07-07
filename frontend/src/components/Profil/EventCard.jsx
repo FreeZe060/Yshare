@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const EventCard = ({ event }) => {
     const isTermineEtInscrit = event.event_status === 'Terminé' && event.status === 'Inscrit';
 
@@ -16,7 +18,7 @@ const EventCard = ({ event }) => {
                     {event.image ? (
                         <>
                             <img
-                                src={`http://localhost:8080${event.image}`}
+                                src={`${API_BASE_URL}${event.image}`}
                                 alt={event.title}
                                 className="w-full h-full object-cover"
                             />

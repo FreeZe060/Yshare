@@ -19,7 +19,7 @@ export default function CookieConsent() {
         <div className="right-4 md:right-8 bottom-4 left-4 md:left-8 z-50 fixed bg-white shadow-md p-4 border border-gray-200 rounded-lg">
             <p className="text-gray-700 text-sm">
                 Ce site utilise des cookies pour vous garantir la meilleure expérience.{" "}
-                <a href="/conditions-utilisation" className="text-blue-600 underline">En savoir plus</a>.
+                <a href="/conditions-utilisation" className="text-[#D232BE] underline">En savoir plus</a>.
             </p>
             <button
                 onClick={acceptCookies}

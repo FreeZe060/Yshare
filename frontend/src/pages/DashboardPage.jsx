@@ -823,7 +823,7 @@ export default function DashboardPage() {
 	return (
 		<>
 			<Header />
-			<div className="antialiased bg-gradient-to-br from-white via-indigo-100 to-indigo-300 w-full min-h-screen text-slate-300 relative py-20">
+			<div className="antialiased bg-gradient-to-br from-white via-[#F6E2F2] to-[#DD9ED5] w-full min-h-screen text-slate-300 relative py-20">
 				<div className="grid md:grid-cols-1 grid-cols-12 mx-auto gap-2 md:gap-4 sm:gap-6 max-w-7xl my-10 px-2">
 					<Sidebar
 						user={authUser}

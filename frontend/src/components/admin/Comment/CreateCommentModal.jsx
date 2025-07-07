@@ -167,7 +167,7 @@ const CreateCommentModal = ({ onClose, onSubmit }) => {
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                        className="px-4 py-2 bg-[#C72EBF] text-white rounded hover:bg-[#BA28C0]"
                     >
                         {loading ? 'Création...' : 'Créer'}
                     </button>

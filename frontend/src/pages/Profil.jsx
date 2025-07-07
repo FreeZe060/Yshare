@@ -310,7 +310,7 @@ const Profil = () => {
                             <div key={rating.id} className="mb-4">
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={`http://localhost:8080${rating.user.profileImage}`}
+                                        src={`${API_BASE_URL}${rating.user.profileImage}`}
                                         alt="PP"
                                         className="rounded-full w-12 h-12 object-cover"
                                     />

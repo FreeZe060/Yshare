@@ -116,7 +116,7 @@ export default function FavorisPage() {
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li className="opacity-80"><a href="/" className="hover:text-[#C320C0] anim-text">Home</a></li>
                             <li><i className="fa-angle-right fa-solid"></i><i className="fa-angle-right fa-solid"></i></li>
-                            <li className="opacity-80 hover:text-blue-400 cursor-pointer">
+                            <li className="opacity-80 hover:text-[#DE35BC] cursor-pointer">
                                 <a href={`/profile/${user?.id}`}>Profil</a>
                             </li>
                             <li><i className="fa-angle-right fa-solid"></i><i className="fa-angle-right fa-solid"></i></li>

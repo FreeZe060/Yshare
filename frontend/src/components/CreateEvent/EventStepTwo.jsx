@@ -35,7 +35,7 @@ const SortableImage = ({ image, index, onRemove }) => {
 					style={style}
 					{...attributes}
 					{...listeners}
-					className="relative w-full border-2 border-dashed border-gray-300 h-48 rounded-lg flex items-center justify-center hover:border-blue-400 transition overflow-hidden group"
+					className="relative w-full border-2 border-dashed border-gray-300 h-48 rounded-lg flex items-center justify-center hover:border-[#DE35BC] transition overflow-hidden group"
 				>
 					<img
 						src={image.preview}
@@ -122,7 +122,7 @@ const EventStepTwo = ({ formData, onChange }) => {
 								onClick={() => inputRef.current.click()}
 								onDrop={handleDrop}
 								onDragOver={(e) => e.preventDefault()}
-								className="border-2 border-dashed border-gray-300 h-48 rounded-lg flex items-center justify-center cursor-pointer hover:border-blue-400 transition text-gray-400 text-center"
+								className="border-2 border-dashed border-gray-300 h-48 rounded-lg flex items-center justify-center cursor-pointer hover:border-[#DE35BC] transition text-gray-400 text-center"
 							>
 								Image {images.length + i === 0 ? "principale" : `#${images.length + i + 1}`} <br />
 								{images.length + i !== 0 && (

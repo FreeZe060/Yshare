@@ -2,6 +2,8 @@ import React from 'react';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
 import NotFound from '../../../pages/NotFound';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+
 const ITEMS_PER_PAGE = 2;
 
 const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
@@ -19,7 +21,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
     };
 
     // if (loading) return <p>Chargement des actualités...</p>;
-    if (error) return <NotFound/>;
+    if (error) return <NotFound />;
 
     return (
         <div className="left space-y-[30px] md:space-y-[20px] grow">
@@ -28,7 +30,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
             <div className="flex justify-end mb-4">
                 <Link
                     to="/create-news"
-                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
+                    className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded text-white transition"
                 >
                     <i className="mr-2 fas fa-plus" />
                     Ajouter une News
@@ -39,7 +41,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                 const { day, month } = getDayMonth(item.date_posted);
                 const imageUrl = item.image_url?.startsWith('http')
                     ? item.image_url
-                    : `http://localhost:8080${item.image_url}`;
+                    : `${API_BASE_URL}${item.image_url}`;
 
                 return (
                     <div

@@ -5,6 +5,8 @@ import { capitalizeFirstLetter } from '../../../utils/format';
 import EventStatusTag from '../EventStatusTag';
 import EventCategoryTag from '../EventCategoryTag';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+
 function EventHeaderInfo({
     event,
     canEditDate,
@@ -92,7 +94,7 @@ function EventHeaderInfo({
                     )}
 
                     <Link
-                        to="/create-news"
+                        to="/news/create"
                         className="hover:bg-[#CE22BF] mt-4 px-4 py-2 border-[#CE22BF] border-2 rounded-full font-semibold text-[#CE22BF] hover:text-white text-sm transition-all"
                     >
                         <i className="mr-2 fas fa-plus"></i>Créer une news
@@ -120,7 +122,7 @@ function EventHeaderInfo({
                     {event?.organizer ? (
                         <Link to={`/profile/${event.organizer.id}`} className="group flex items-center gap-3">
                             <img
-                                src={event.organizer.profileImage ? `http://localhost:8080${event.organizer.profileImage}` : '/default-avatar.png'}
+                                src={event.organizer.profileImage ? `${API_BASE_URL}${event.organizer.profileImage}` : '/default-avatar.png'}
                                 alt={`${event.organizer.name} ${event.organizer.lastname}`}
                                 className="shadow-md border-2 border-etPink rounded-full w-10 h-10 group-hover:scale-105 transition-transform duration-200"
                             />

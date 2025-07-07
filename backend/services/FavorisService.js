@@ -5,7 +5,7 @@ class FavorisService {
         console.log(`[FavorisService] Ajouter favori: userId=${userId}, eventId=${eventId}`);
         const event = await Event.findByPk(eventId);
         if (!event) throw new Error("Événement introuvable.");
-        if (event.id_org === userId) throw new Error("Vous ne pouvez pas ajouter votre propre événement en favori.");
+        // if (event.id_org === userId) throw new Error("Vous ne pouvez pas ajouter votre propre événement en favori.");
 
         const existing = await Favoris.findOne({
             where: { id_user: userId, id_event: eventId }

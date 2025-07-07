@@ -141,7 +141,7 @@ const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
                     <span className="-top-1 -left-3 absolute bg-purple-400 rounded-full w-[4px] h-[4px] animate-spin" />
 
                     <span className="-right-2 -bottom-2 absolute bg-green-400 rounded-full w-[6px] h-[6px] rotate-[15deg] animate-bounce delay-200" />
-                    <span className="right-2 -bottom-3 absolute bg-blue-400 rounded-full w-[5px] h-[5px] animate-ping delay-300" />
+                    <span className="right-2 -bottom-3 absolute bg-[#DE35BC] rounded-full w-[5px] h-[5px] animate-ping delay-300" />
                     <span className="-right-3 -bottom-1 absolute bg-fuchsia-400 rounded-full w-[4px] h-[4px] animate-spin" />
                 </>
             )}

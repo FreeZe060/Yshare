@@ -12,6 +12,7 @@ import useUpdateParticipantStatus from '../hooks/Participant/useUpdateParticipan
 import Swal from 'sweetalert2';
 import { useAuth } from '../config/authHeader';
 
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
 
 const ParticipantPage = () => {
     const { eventId } = useParams();
@@ -122,7 +123,7 @@ const ParticipantPage = () => {
                         <ul className="inline-flex items-center gap-[10px] font-medium text-[16px]">
                             <li className="opacity-80"><a href="/" className="hover:text-[#C320C0] anim-text">Home</a></li>
                             <li><i className="fa-angle-right fa-solid"></i><i className="fa-angle-right fa-solid"></i></li>
-                            <li className="opacity-80 hover:text-blue-400 cursor-pointer">
+                            <li className="opacity-80 hover:text-[#DE35BC] cursor-pointer">
                                 <a href="/event-created">Toutes vos créations</a>
                             </li>
                             <li><i className="fa-angle-right fa-solid"></i><i className="fa-angle-right fa-solid"></i></li>
@@ -150,7 +151,7 @@ const ParticipantPage = () => {
                                         <div key={participant.participantId} className="group et-member">
                                             <div className="rounded-[16px] h-[280px] overflow-hidden et-member__img">
                                                 <img
-                                                    src={`http://localhost:8080${participant.user.profileImage}`}
+                                                    src={`${API_BASE_URL}${participant.user.profileImage}`}
                                                     alt="Participant"
                                                     className="w-full h-full object-cover group-hover:scale-110 duration-[400ms]"
                                                 />
@@ -162,7 +163,7 @@ const ParticipantPage = () => {
                                                 </p>
 
                                                 <Link to={`/profile/${participant.user.id}`}>
-                                                    <h5 className="flex justify-center gap-2 mx-auto pt-4 max-w-[80%] font-semibold text-[20px] text-etBlack hover:text-blue-600 text-center no-underline transition-colors duration-200 cursor-pointer">
+                                                    <h5 className="flex justify-center gap-2 mx-auto pt-4 max-w-[80%] font-semibold text-[20px] text-etBlack hover:text-[#D232BE] text-center no-underline transition-colors duration-200 cursor-pointer">
                                                         <span>
                                                             {participant.user.name.length > 10
                                                                 ? participant.user.name.slice(0, 10) + '…'
@@ -222,7 +223,7 @@ const ParticipantPage = () => {
                                                 <div className="mt-4 text-center">
                                                     <button
                                                         onClick={() => handleToggleGuests(index)}
-                                                        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md text-white text-sm transition-all"
+                                                        className="bg-[#D232BE] hover:bg-blue-700 px-4 py-2 rounded-md text-white text-sm transition-all"
                                                     >
                                                         {expandedGuestsIndex === index ? 'Masquer les invités' : 'Voir les invités'}
                                                     </button>
@@ -254,8 +255,8 @@ const ParticipantPage = () => {
                                                 onClick={() => handlePageChange(i + 1)}
                                                 className={`w-10 h-10 rounded-full border-2 transition-all duration-300 
                                                 ${currentPage === i + 1
-                                                        ? 'bg-blue-600 text-white border-blue-600'
-                                                        : 'bg-white text-blue-600 border-blue-600 hover:bg-blue-100'}`}
+                                                        ? 'bg-[#D232BE] text-white border-[#D232BE]'
+                                                        : 'bg-white text-[#D232BE] border-[#D232BE] hover:bg-blue-100'}`}
                                             >
                                                 {i + 1}
                                             </button>

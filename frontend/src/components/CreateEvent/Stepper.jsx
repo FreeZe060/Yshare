@@ -5,7 +5,7 @@ const StepCircle = ({ step, current }) => {
 	const isActive = step === current;
 	const isComplete = step < current;
 
-	const bgColor = isActive ? "bg-blue-600" : isComplete ? "bg-blue-400" : "bg-gray-300";
+	const bgColor = isActive ? "bg-[#D232BE]" : isComplete ? "bg-[#DE35BC]" : "bg-gray-300";
 
 	return (
 		<motion.div
@@ -23,7 +23,7 @@ const Connector = ({ fill }) => {
 	return (
 		<div className="flex-1 relative h-1 bg-gray-300">
 			<motion.div
-				className="absolute left-0 top-0 h-1 bg-blue-500 rounded-full"
+				className="absolute left-0 top-0 h-1 bg-[#D232BE] rounded-full"
 				initial={{ width: 0 }}
 				animate={{ width: fill === "full" ? "100%" : fill === "half" ? "50%" : "0%" }}
 				transition={{ duration: 0.6 }}

@@ -84,7 +84,7 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
             <div className="flex justify-end mb-4">
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 shadow px-4 py-2 rounded text-white transition"
+                    className="bg-[#C72EBF] hover:bg-[#BA28C0] shadow px-4 py-2 rounded text-white transition"
                 >
                     <i className="mr-2 fas fa-comment-dots" />
                     Ajouter un commentaire
@@ -102,7 +102,7 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
 
             <div className="bg-white shadow rounded-lg overflow-x-auto">
                 <table className="w-full text-sm">
-                    <thead ref={theadRef} className="bg-indigo-100 text-indigo-700">
+                    <thead ref={theadRef} className="bg-[#F6E2F2] text-[#BA28C0]">
                         <tr>
                             {columns.map(col => (
                                 <th
@@ -135,19 +135,19 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
                                     <td className="px-4 py-2 max-w-xs truncate">
                                         <Link
                                             to={`/profile/${comment.eventCreatorId}`}
-                                            className="font-semibold text-indigo-600 text-sm hover:underline"
+                                            className="font-semibold text-[#C72EBF] text-sm hover:underline"
                                         >{comment.author}</Link>
                                     </td>
                                     <td className="px-4 py-2 max-w-xs truncate">
                                         <Link
                                             to={`/event/${comment.eventId}`}
-                                            className="font-semibold text-indigo-600 text-sm hover:underline"
+                                            className="font-semibold text-[#C72EBF] text-sm hover:underline"
                                         >{comment.eventTitle}</Link>
                                     </td>
                                     <td className="px-4 py-2 max-w-md">
                                         <button
                                             onClick={() => handleViewThread(comment)}
-                                            className="w-full max-w-md text-gray-900 hover:text-indigo-600 text-sm text-left break-words"
+                                            className="w-full max-w-md text-gray-900 hover:text-[#C72EBF] text-sm text-left break-words"
                                         >{comment.message}</button>
                                     </td>
                                     <td className="px-4 py-2 text-gray-500 text-sm">
@@ -159,7 +159,7 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
                                                 onClick={() => handleViewThread(comment)}
                                                 title="Voir"
                                                 className="hover:scale-110 transition transform"
-                                            ><i className="text-indigo-500 fas fa-eye" /></button>
+                                            ><i className="text-[#B926C1] fas fa-eye" /></button>
                                             <button
                                                 onClick={() => onEdit(comment)}
                                                 title="Modifier"
@@ -186,8 +186,8 @@ const CommentSection = ({ comments, loading, error, onDelete, onEdit, refetch })
                                 onClick={() => pagination.goToPage(i + 1)}
                                 className={`mx-1 px-3 py-1 rounded-full text-sm font-medium transition border
                                 ${pagination.page === i + 1
-                                        ? 'bg-indigo-600 text-white border-indigo-600'
-                                        : 'text-indigo-600 border-indigo-300 hover:bg-indigo-100'}`}
+                                        ? 'bg-[#C72EBF] text-white border-[#C72EBF]'
+                                        : 'text-[#C72EBF] border-[#DD9ED5] hover:bg-[#F6E2F2]'}`}
                             >{i + 1}</button>
                         ))}
                     </div>

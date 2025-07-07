@@ -54,7 +54,7 @@ function EventMainLeftColumn({
 
                 {editing && (
                     <>
-                        <label className="bottom-2 left-2 absolute bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white text-sm cursor-pointer">
+                        <label className="bottom-2 left-2 absolute bg-[#D232BE] hover:bg-[#D232BE] px-3 py-1 rounded text-white text-sm cursor-pointer">
                             Modifier
                             <input
                                 type="file"
@@ -132,7 +132,7 @@ function EventMainLeftColumn({
                                 )}
 
                                 {editing && (
-                                    <label className="bottom-2 left-2 absolute bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white text-sm cursor-pointer">
+                                    <label className="bottom-2 left-2 absolute bg-[#D232BE] hover:bg-[#D232BE] px-3 py-1 rounded text-white text-sm cursor-pointer">
                                         Modifier
                                         <input
                                             type="file"
@@ -402,7 +402,7 @@ function EventMainLeftColumn({
                                     <div className="rounded-[6px] overflow-hidden shrink-0">
                                         <Link to={`/profile/${user.id}`}>
                                             <img
-                                                src={`http://localhost:8080${user.profileImage || '/default-profile.jpg'}`}
+                                                src={`${API_BASE_URL}${user.profileImage || '/default-profile.jpg'}`}
                                                 alt="Participant"
                                                 className="w-[168px] object-cover aspect-square"
                                             />
@@ -448,7 +448,7 @@ function EventMainLeftColumn({
                 <div className="space-y-[20px] bg-white shadow-lg p-[30px] border border-[#f0f0f0] rounded-[16px]">
                     <div className="space-y-8">
                         <div className="flex gap-4">
-                            <img src={user?.profileImage ? `http://localhost:8080${user.profileImage}` : "https://assets.codepen.io/285131/hat-man.png"} className="rounded-full w-10 h-10 object-cover" alt="avatar" />
+                            <img src={user?.profileImage ? `${API_BASE_URL}${user.profileImage}` : "https://assets.codepen.io/285131/hat-man.png"} className="rounded-full w-10 h-10 object-cover" alt="avatar" />
                             <input
                                 type="text"
                                 value={newComment}
