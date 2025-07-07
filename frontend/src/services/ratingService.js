@@ -1,11 +1,11 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * Noter un événement (POST /ratings)
  * Attendu dans le body : { id_event, rating, message }
  */
 export async function rateEvent(ratingData, token) {
-	const response = await fetch(`${API_BASE_URL}/ratings`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -22,7 +22,7 @@ export async function rateEvent(ratingData, token) {
 }
 
 export async function getUserAverageRating(userId) {
-	const response = await fetch(`${API_BASE_URL}/ratings/user/${userId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings/user/${userId}`, {
 		method: "GET",
 		credentials: "include", 
 		headers: {
@@ -40,7 +40,7 @@ export async function getUserAverageRating(userId) {
 }
 
 export async function getAllRatings(token) {
-	const response = await fetch(`${API_BASE_URL}/ratings/admin/all`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings/admin/all`, {
 		method: "GET",
 		credentials: "include",
 		headers: {
@@ -61,7 +61,7 @@ export async function getAllRatings(token) {
  * Récupérer la note moyenne d'un événement (GET /ratings/event/:eventId)
  */
 export async function getEventAverageRating(eventId) {
-	const response = await fetch(`${API_BASE_URL}/ratings/event/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings/event/${eventId}`, {
 		method: "GET",
 		credentials: "include",
 		headers: {
@@ -82,7 +82,7 @@ export async function getEventAverageRating(eventId) {
 }
 
 export async function getAllRatingsByUser(token) {
-    const response = await fetch(`${API_BASE_URL}/ratings/mine`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings/mine`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -105,7 +105,7 @@ export async function getAllRatingsByUser(token) {
  * (GET /ratings/organizer/:userId)
  */
 export async function getAllRatingsByOrganizer(userId, token) {
-    const response = await fetch(`${API_BASE_URL}/ratings/organizer/${userId}`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings/organizer/${userId}`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -127,7 +127,7 @@ export async function getAllRatingsByOrganizer(userId, token) {
  * Supprimer une note (admin uniquement)
  */
 export async function deleteRating(id, token) {
-	const response = await fetch(`${API_BASE_URL}/ratings/${id}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/ratings/${id}`, {
 		method: "DELETE",
 		credentials: "include",
 		headers: {

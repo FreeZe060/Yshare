@@ -30,7 +30,7 @@ import useAddFavoris from '../hooks/Favoris/useAddFavoris';
 import useRemoveFavoris from '../hooks/Favoris/useRemoveFavoris';
 import { useAuth } from '../config/authHeader';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 async function reverseGeocode(lat, lng) {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
@@ -385,7 +385,7 @@ function Events() {
                                         const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];
                                         const imageUrl = mainImage?.image_url?.startsWith('http')
                                             ? mainImage.image_url
-                                            : `${API_BASE_URL}${mainImage?.image_url || ''}`;
+                                            : `${REACT_APP_API_BASE_URL}${mainImage?.image_url || ''}`;
 
                                         return (
                                             <CardEvent

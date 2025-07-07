@@ -6,7 +6,7 @@ import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginate
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import NotFound from '../../../pages/NotFound';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 
 const sortIcon = (direction) =>
@@ -104,7 +104,7 @@ const LastUsersSection = ({
                                             <Link to={`/profile/${user.id}`} title={`Voir le profil de ${user.name}`} className="flex items-center space-x-2 hover:text-[#C72EBF] transition">
                                                 <img
                                                     className="rounded-full w-8 h-8 object-cover hover:scale-105 transition duration-200"
-                                                    src={`${API_BASE_URL}${user.profileImage || '/default-avatar.png'}`}
+                                                    src={`${REACT_APP_API_BASE_URL}${user.profileImage || '/default-avatar.png'}`}
                                                     alt={`${user.name}`}
                                                 />
                                                 <span>{user.name} {user.lastname}</span>

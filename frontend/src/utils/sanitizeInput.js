@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 const sanitizeInput = (value) => {
     if (typeof value !== 'string') return value;
@@ -11,7 +11,7 @@ const sanitizeInput = (value) => {
     let suspicious = scriptTagPattern.test(value);
 
     if (suspicious) {
-        fetch(`${API_BASE_URL}/log-suspicious`, {
+        fetch(`${REACT_APP_API_BASE_URL}/log-suspicious`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

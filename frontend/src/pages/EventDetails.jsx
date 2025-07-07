@@ -181,7 +181,7 @@ function EventDetails() {
         }
 
         const mainImage = event?.EventImages?.find(img => img.is_main) || event?.EventImages?.[0];
-        const imageUrl = mainImage?.image_url?.startsWith('http') ? mainImage.image_url : `${API_BASE_URL}${mainImage?.image_url || ''}`;
+        const imageUrl = mainImage?.image_url?.startsWith('http') ? mainImage.image_url : `${REACT_APP_API_BASE_URL}${mainImage?.image_url || ''}`;
 
         const { value: formValues } = await Swal.fire({
             customClass: {
@@ -482,7 +482,7 @@ function EventDetails() {
     const isParticipant = event?.isParticipant;
     const hasRated = event?.hasRatedByUser;
 
-    const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+    const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
     // if (loading) return <p className="mt-10 text-center">Chargement...</p>;
     if (error) return <NotFound />;
@@ -491,7 +491,7 @@ function EventDetails() {
     const mainImage = event?.EventImages?.find(img => img.is_main) || event?.EventImages?.[0];
     const mainImageUrl = mainImage?.image_url?.startsWith('http')
         ? mainImage.image_url
-        : `${API_BASE_URL}${mainImage?.image_url || ''}`;
+        : `${REACT_APP_API_BASE_URL}${mainImage?.image_url || ''}`;
 
     const address = event?.street && event?.city
         ? `${event.street_number || ''} ${event.street}, ${event.postal_code || ''} ${event.city}`
@@ -561,7 +561,7 @@ function EventDetails() {
                                     setNewComment={setNewComment}
                                     handleAddComment={handleAddComment}
                                     handleApplyToEvent={handleApplyToEvent}
-                                    API_BASE_URL={API_BASE_URL}
+                                    REACT_APP_API_BASE_URL={REACT_APP_API_BASE_URL}
                                     canEdit={canEditDate}
                                     handleUpload={handleUpload}
                                     handleDelete={handleDelete}
@@ -663,7 +663,7 @@ function EventDetails() {
                                 <div key={rating.id} className="mb-4">
                                     <div className="flex items-center gap-4">
                                         <img
-                                            src={`${API_BASE_URL}${rating.user.profileImage}`}
+                                            src={`${REACT_APP_API_BASE_URL}${rating.user.profileImage}`}
                                             alt="PP"
                                             className="rounded-full w-12 h-12 object-cover"
                                         />

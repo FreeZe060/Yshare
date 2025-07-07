@@ -3,7 +3,7 @@ import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
 
 import NotFound from '../../../pages/NotFound';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const EventSection = ({
 	events,
@@ -86,7 +86,7 @@ const EventSection = ({
 						>
 							<div className="shadow-md rounded-[15px] w-[220px] h-[182px] overflow-hidden">
 								<img
-									src={`${API_BASE_URL}${event.EventImages?.[0]?.image_url || '/default-event.jpg'}`}
+									src={`${REACT_APP_API_BASE_URL}${event.EventImages?.[0]?.image_url || '/default-event.jpg'}`}
 									alt="event cover"
 									className="w-full h-full object-cover"
 								/>

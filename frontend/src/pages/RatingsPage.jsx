@@ -7,7 +7,7 @@ import Footer from '../components/Partials/Footer';
 import vector1 from '../assets/img/et-3-event-vector.svg';
 import { formatEuro, capitalizeFirstLetter } from '../utils/format';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const RatingsPage = () => {
     const { user, token } = useAuth();
@@ -135,7 +135,7 @@ const RatingsPage = () => {
                         statuses={statuses}
                         events={events}
                         inputProps={inputProps}
-                        API_BASE_URL={API_BASE_URL}
+                        REACT_APP_API_BASE_URL={REACT_APP_API_BASE_URL}
                         userRatings={userRatings}
                         ratingsLoading={ratingsLoading}
                         ratingsError={ratingsError}

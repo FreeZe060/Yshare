@@ -10,7 +10,7 @@ import NotFound from '../../../pages/NotFound';
 import ReportReplies from './ReportReplies';
 import ReportDetailsPopup from './ReportDetailsPopup';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const isImage = (file) => /\.(jpg|jpeg|png|gif)$/i.test(file.file_path);
 const isPdf = (file) => /\.pdf$/i.test(file.file_path);
@@ -109,7 +109,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                     <tbody>
                         <AnimatePresence>
                             {sortedReports.map((report) => {
-                                const images = report.files?.filter(isImage).map(f => `${API_BASE_URL}${f.file_path}`) || [];
+                                const images = report.files?.filter(isImage).map(f => `${REACT_APP_API_BASE_URL}${f.file_path}`) || [];
                                 const pdfs = report.files?.filter(isPdf) || [];
 
                                 return (
@@ -129,7 +129,7 @@ const ReportSection = ({ reports, loading, error, onUpdateStatus }) => {
                                                     <i className="text-[#EE7AB5] cursor-pointer fas fa-image" onClick={() => setLightbox({ open: true, index: 0, images })} />
                                                 )}
                                                 {pdfs.length > 0 && (
-                                                    <a href={`${API_BASE_URL}${pdfs[0].file_path}`} target="_blank" rel="noopener noreferrer">
+                                                    <a href={`${REACT_APP_API_BASE_URL}${pdfs[0].file_path}`} target="_blank" rel="noopener noreferrer">
                                                         <i className="ml-2 text-red-500 fas fa-file-pdf" />
                                                     </a>
                                                 )}

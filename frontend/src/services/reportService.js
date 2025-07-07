@@ -1,11 +1,11 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * Créer un signalement (POST /reports)
  * Attendu dans le body : { id_event, id_reported_user, id_comment, message }
  */
 export async function createReport(reportData) {
-	const response = await fetch(`${API_BASE_URL}/reports`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -23,7 +23,7 @@ export async function createReport(reportData) {
 
 export async function getReports(token) {
 	if (!token) return [];
-	const response = await fetch(`${API_BASE_URL}/reports`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -41,7 +41,7 @@ export async function getReports(token) {
  * Récupérer les détails complets d’un signalement (GET /reports/:reportId)
  */
 export async function getReportDetails(reportId, token) {
-	const response = await fetch(`${API_BASE_URL}/reports/${reportId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports/${reportId}`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -57,7 +57,7 @@ export async function getReportDetails(reportId, token) {
 
 export async function getMyReports(token) {
 	if (!token) return [];
-	const response = await fetch(`${API_BASE_URL}/reports/mine`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports/mine`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -75,7 +75,7 @@ export async function getMyReports(token) {
  * Récupérer tous les messages liés à un signalement (GET /reports/:reportId/messages)
  */
 export async function getReportMessages(reportId, token) {
-	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/messages`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports/${reportId}/messages`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -94,7 +94,7 @@ export async function getReportMessages(reportId, token) {
  * Body attendu : { message }
  */
 export async function replyToReport(reportId, message, token) {
-	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/reply`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports/${reportId}/reply`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -114,7 +114,7 @@ export async function replyToReport(reportId, message, token) {
  * Mettre à jour le statut d’un signalement (PUT /reports/:reportId/status)
  */
 export async function updateReportStatus(reportId, status, token) {
-	const response = await fetch(`${API_BASE_URL}/reports/${reportId}/status`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports/${reportId}/status`, {
 		method: "PUT",
 		credentials: "include",
 		headers: {
@@ -131,7 +131,7 @@ export async function updateReportStatus(reportId, status, token) {
 }
 
 export async function deleteReport(reportId, token) {
-	const response = await fetch(`${API_BASE_URL}/reports/${reportId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/reports/${reportId}`, {
 		method: "DELETE",
 		credentials: "include",
 		headers: {

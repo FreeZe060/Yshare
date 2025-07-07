@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * GET /events (public)
@@ -21,7 +21,7 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 	queryParams.append('page', page);
 	queryParams.append('limit', limit);
 
-	const response = await fetch(`${API_BASE_URL}/events?${queryParams}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events?${queryParams}`, {
 		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
 	});
@@ -37,7 +37,7 @@ export async function fetchEvents(filters = {}, page = 1, limit = 10) {
 export async function getCreatedEventsStats(userId) {
 	if (!userId) throw new Error("Aucun utilisateur spécifié");
 
-	const response = await fetch(`${API_BASE_URL}/users/${userId}/created-events`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}/created-events`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -54,7 +54,7 @@ export async function getCreatedEventsStats(userId) {
 }
 
 export async function getTotalEventCount() {
-	const response = await fetch(`${API_BASE_URL}/events-count`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events-count`, {
 		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
 	});
@@ -73,7 +73,7 @@ export async function getEventById(eventId, token) {
 		...(token && { Authorization: `Bearer ${token}` }),
 	};
 
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}`, {
 		credentials: 'include',
 		headers,
 	});
@@ -86,7 +86,7 @@ export async function getEventById(eventId, token) {
 export async function updateEventStatus(eventId, newStatus, token) {
 	console.log(`[updateEventStatus] 📤 Envoi de la mise à jour du statut :`, { eventId, newStatus });
 
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/status`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/status`, {
 		method: 'PATCH',
 		credentials: 'include',
 		headers: {
@@ -130,7 +130,7 @@ export async function createEvent(eventData, token) {
 		console.log(`${key}:`, value);
 	}
 
-	const response = await fetch(`${API_BASE_URL}/events`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events`, {
 		method: 'POST',
 		credentials: 'include',
 		headers: {
@@ -165,7 +165,7 @@ export async function updateEvent(eventId, eventData, token) {
 		}
 	}
 
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
@@ -184,7 +184,7 @@ export async function updateEvent(eventId, eventData, token) {
  * DELETE /events/:eventId (requires auth)
  */
 export async function deleteEvent(eventId, status = 'Annulé', token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}`, {
 		method: 'DELETE',
 		credentials: 'include',
 		headers: {
@@ -205,7 +205,7 @@ export async function deleteEvent(eventId, status = 'Annulé', token) {
  */
 
 export async function fetchMyEvents(token) {
-	const response = await fetch(`${API_BASE_URL}/events/mine`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/mine`, {
 		credentials: 'include',
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -219,7 +219,7 @@ export async function fetchMyEvents(token) {
 }
 
 export async function getDashboardStats(token) {
-	const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/admin/stats`, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
@@ -238,7 +238,7 @@ export async function updateEventImage(imageId, file, token) {
 	const formData = new FormData();
 	formData.append('image', file);
 
-	const response = await fetch(`${API_BASE_URL}/events/images/${imageId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/images/${imageId}`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
@@ -257,7 +257,7 @@ export async function addImagesToEvent(eventId, files, token) {
 	const formData = new FormData();
 	files.forEach(file => formData.append('images', file));
 
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/images`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/images`, {
 		method: 'POST',
 		credentials: 'include',
 		headers: {
@@ -273,7 +273,7 @@ export async function addImagesToEvent(eventId, files, token) {
 }
 
 export async function setMainEventImage(eventId, imageId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/images/${imageId}/main`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/images/${imageId}/main`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
@@ -288,7 +288,7 @@ export async function setMainEventImage(eventId, imageId, token) {
 }
 
 export async function deleteEventImage(imageId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/images/${imageId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/images/${imageId}`, {
 		method: 'DELETE',
 		credentials: 'include',
 		headers: {

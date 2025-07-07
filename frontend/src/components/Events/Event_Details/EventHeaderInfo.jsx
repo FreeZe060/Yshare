@@ -5,7 +5,7 @@ import { capitalizeFirstLetter } from '../../../utils/format';
 import EventStatusTag from '../EventStatusTag';
 import EventCategoryTag from '../EventCategoryTag';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function EventHeaderInfo({
     event,
@@ -122,7 +122,7 @@ function EventHeaderInfo({
                     {event?.organizer ? (
                         <Link to={`/profile/${event.organizer.id}`} className="group flex items-center gap-3">
                             <img
-                                src={event.organizer.profileImage ? `${API_BASE_URL}${event.organizer.profileImage}` : '/default-avatar.png'}
+                                src={event.organizer.profileImage ? `${REACT_APP_API_BASE_URL}${event.organizer.profileImage}` : '/default-avatar.png'}
                                 alt={`${event.organizer.name} ${event.organizer.lastname}`}
                                 className="shadow-md border-2 border-etPink rounded-full w-10 h-10 group-hover:scale-105 transition-transform duration-200"
                             />

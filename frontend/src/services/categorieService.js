@@ -1,10 +1,10 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * GET /categories
  */
 export async function getAllCategories() {
-	const response = await fetch(`${API_BASE_URL}/categories`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/categories`, {
 		headers: {
 			"Content-Type": "application/json"
 		},
@@ -24,7 +24,7 @@ export async function getAllCategories() {
  * POST /categories
  */
 export async function createCategorie(data, token) {
-	const response = await fetch(`${API_BASE_URL}/categories`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/categories`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -44,7 +44,7 @@ export async function createCategorie(data, token) {
  * PUT /categories/:id
  */
 export async function updateCategorie(id, data, token) {
-	const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/categories/${id}`, {
 		method: "PUT",
 		credentials: "include",
 		headers: {
@@ -64,7 +64,7 @@ export async function updateCategorie(id, data, token) {
  * DELETE /categories/:id
  */
 export async function deleteCategorie(id, token) {
-	const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/categories/${id}`, {
 		method: "DELETE",
 		credentials: "include",
 		headers: {

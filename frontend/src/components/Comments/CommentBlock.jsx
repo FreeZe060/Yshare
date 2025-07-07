@@ -11,7 +11,7 @@ import ReportDropdown from '../Report/ReportDropdown';
 import EditDeleteDropdown from './EditDeleteDropdown';
 import { Link } from 'react-router-dom';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function CommentBlock({ comment, eventId, depth = 0 }) {
 	const [replyText, setReplyText] = useState('');
@@ -109,7 +109,7 @@ function CommentBlock({ comment, eventId, depth = 0 }) {
 				<img
 					src={
 						comment.author?.profileImage
-							? `${API_BASE_URL}${comment.author.profileImage}`
+							? `${REACT_APP_API_BASE_URL}${comment.author.profileImage}`
 							: 'https://assets.codepen.io/285131/hat-man.png'
 					}
 					className="rounded-full w-10 h-10 object-cover"

@@ -1,10 +1,10 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * GET /notifications
  */
 export async function getAllNotifications(token) {
-	const response = await fetch(`${API_BASE_URL}/notifications`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/notifications`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -20,7 +20,7 @@ export async function getAllNotifications(token) {
  * GET /notifications/:notificationId
  */
 export async function getNotificationById(notificationId, token) {
-	const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/notifications/${notificationId}`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -33,7 +33,7 @@ export async function getNotificationById(notificationId, token) {
 }
 
 export const markNotificationAsUnread = async (notificationId, token) => {
-	const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/unread`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/notifications/${notificationId}/unread`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export const markNotificationAsUnread = async (notificationId, token) => {
  * PUT /notifications/:notificationId/read
  */
 export async function markNotificationAsRead(notificationId, token) {
-	const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/notifications/${notificationId}/read`, {
 		method: "PUT",
 		credentials: "include",
 		headers: {
@@ -68,7 +68,7 @@ export async function markNotificationAsRead(notificationId, token) {
  * PUT /notifications/read-all
  */
 export async function markAllNotificationsAsRead(token) {
-	const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/notifications/read-all`, {
 		method: "PUT",
 		credentials: "include",
 		headers: {
@@ -85,7 +85,7 @@ export async function markAllNotificationsAsRead(token) {
  * DELETE /notifications/:notificationId
  */
 export async function deleteNotification(notificationId, token) {
-	const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/notifications/${notificationId}`, {
 		method: "DELETE",
 		credentials: "include",
 		headers: {

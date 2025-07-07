@@ -8,7 +8,7 @@ import { useAuth } from '../config/authHeader';
 import useTextAnimation from '../hooks/Animations/useTextAnimation';
 import useSlideUpAnimation from '../hooks/Animations/useSlideUpAnimation';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const Login = () => {
 	const [email, setEmail] = useState('');
@@ -153,7 +153,7 @@ const Login = () => {
 
 						<div className="flex justify-center items-center mt-4 mb-2">
 							<a
-								href={`${API_BASE_URL}api/v1/auth/google`}
+								href={`${REACT_APP_API_BASE_URL}api/v1/auth/google`}
 								className="flex items-center hover:bg-gray-100 px-4 py-2 border border-gray-300 rounded-lg transition"
 							>
 								<img src="/google-icon.svg" alt="Google" className="mr-2 w-5 h-5" />

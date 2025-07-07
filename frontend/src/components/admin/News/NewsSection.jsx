@@ -2,7 +2,7 @@ import React from 'react';
 import useSortedAndPaginatedData from '../../../hooks/Utils/useSortedAndPaginatedData';
 import NotFound from '../../../pages/NotFound';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const ITEMS_PER_PAGE = 2;
 
@@ -41,7 +41,7 @@ const NewsSection = ({ news, loading, error, onDelete, Link, refetch }) => {
                 const { day, month } = getDayMonth(item.date_posted);
                 const imageUrl = item.image_url?.startsWith('http')
                     ? item.image_url
-                    : `${API_BASE_URL}${item.image_url}`;
+                    : `${REACT_APP_API_BASE_URL}${item.image_url}`;
 
                 return (
                     <div

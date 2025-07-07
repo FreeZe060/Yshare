@@ -1,7 +1,7 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 export async function getCommentsWithReplies(eventId, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/comments`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/comments`, {
 		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
@@ -14,7 +14,7 @@ export async function getCommentsWithReplies(eventId, token) {
 }
 
 export async function addComment(eventId, data, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/comments`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/comments`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -29,7 +29,7 @@ export async function addComment(eventId, data, token) {
 }
 
 export async function getAllCommentsWithDetails(token) {
-	const response = await fetch(`${API_BASE_URL}/comments/all`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/comments/all`, {
 		method: "GET",
 		credentials: "include",
 		headers: {
@@ -43,7 +43,7 @@ export async function getAllCommentsWithDetails(token) {
 }
 
 export async function replyComment(eventId, commentId, data, token) {
-	const response = await fetch(`${API_BASE_URL}/events/${eventId}/comments/${commentId}/reply`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/comments/${commentId}/reply`, {
 		method: "POST",
 		credentials: "include",
 		headers: {
@@ -63,7 +63,7 @@ export async function getUserComments(userId, token) {
 		...(token ? { Authorization: `Bearer ${token}` } : {})
 	};
 
-	const response = await fetch(`${API_BASE_URL}/users/${userId}/comments`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}/comments`, {
 		credentials: "include",
 		headers,
 	});
@@ -74,7 +74,7 @@ export async function getUserComments(userId, token) {
 }
 
 export async function updateComment(commentId, data, token) {
-	const response = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}`, {
 		method: "PUT",
 		credentials: "include",
 		headers: {
@@ -89,7 +89,7 @@ export async function updateComment(commentId, data, token) {
 }
 
 export async function deleteComment(commentId, token) {
-	const response = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}`, {
 		method: "DELETE",
 		credentials: "include",
 		headers: {
@@ -111,7 +111,7 @@ export async function deleteComment(commentId, token) {
 
 export async function getCommentById(commentId, token) {
 	console.log(`[commentService] getCommentById: fetch /comments/${commentId}`);
-	const res = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}`, {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ export async function getCommentById(commentId, token) {
 
 export async function getReplies(commentId, token) {
 	console.log(`[commentService] getReplies: GET /comments/${commentId}/replies`);
-	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/replies`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}/replies`, {
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
@@ -146,7 +146,7 @@ export async function getReplies(commentId, token) {
 
 export async function addReaction(commentId, emoji, token) {
 	console.log(`[commentService] addReaction: POST /comments/${commentId}/reactions`, emoji);
-	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}/reactions`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export async function addReaction(commentId, emoji, token) {
 
 export async function removeReaction(commentId, emoji, token) {
 	console.log(`[commentService] removeReaction: DELETE /comments/${commentId}/reactions?emoji=${emoji}`);
-	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions?emoji=${encodeURIComponent(emoji)}`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}/reactions?emoji=${encodeURIComponent(emoji)}`, {
 		method: 'DELETE',
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ export async function removeReaction(commentId, emoji, token) {
 
 export async function getReactions(commentId, token) {
 	console.log(`[commentService] getReactions: GET /comments/${commentId}/reactions`);
-	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}/reactions`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
@@ -198,7 +198,7 @@ export async function getReactions(commentId, token) {
 
 export async function getReactionStats(commentId, token) {
 	console.log(`[commentService] getReactionStats: GET /comments/${commentId}/reactions/stats`);
-	const res = await fetch(`${API_BASE_URL}/comments/${commentId}/reactions/stats`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/comments/${commentId}/reactions/stats`, {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
