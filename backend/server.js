@@ -19,7 +19,7 @@ const port = process.env.PORT || 8080;
 
 // Middleware CORS
 app.use(cors({
-    origin: "https://yshare-3jbg.onrender.com",
+    origin:  process.env.REACT_BASE_URL,
     credentials: true,
     methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS",
     allowedHeaders: "Content-Type, Authorization"
