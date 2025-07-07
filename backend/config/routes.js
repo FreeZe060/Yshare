@@ -98,12 +98,12 @@ router.get('/auth/google/callback', passport.authenticate('google', { session: f
 		httpOnly: true,
 		maxAge: 10 * 60 * 60 * 1000 
 	});
-	res.redirect('http://localhost:3000/'); 
+	res.redirect('https://yshare-3jbg.onrender.com/'); 
 });
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { session: false }), (req, res) => {
-	res.redirect(`http://localhost:3000/login?token=${req.user.token}`);
+	res.redirect(`https://yshare-3jbg.onrender.com/login?token=${req.user.token}`);
 });
 
 //////// ADMIN ROUTES ////////
