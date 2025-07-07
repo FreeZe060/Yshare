@@ -96,6 +96,8 @@ const Profil = () => {
 
             const userIdToUpdate = isOwner ? currentUser.id : userId;
 
+            console.log(`Mise à jour de l'image pour l'utilisateur ID:`, userIdToUpdate, "token:", currentUser?.token);
+
             const endpoint =
                 type === 'bannerImage'
                     ? `/profile/banner/${userIdToUpdate}`
