@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
             try {
                 const { authenticated, user } = await checkAuthStatus();
                 if (authenticated) {
-                    const token = sessionStorage.getItem('token');
+                    const token = sessionStorage.getItem('token') || localStorage.getItem('token');
                     console.log("Token récupéré depuis sessionStorage:", token);
                     setUser(...user, token);
                 } else {
