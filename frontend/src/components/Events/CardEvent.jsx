@@ -6,15 +6,15 @@ import ParticipantAvatars from '../Home/ParticipantAvatars';
 import EventStatusTag from './EventStatusTag';
 import EventCategoryTag from './EventCategoryTag';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
     const mainImageUrl = event.image
         ? (event.image.startsWith('http')
             ? event.image
-            : `${API_BASE_URL}${event.image}`)
+            : `${REACT_APP_API_BASE_URL}${event.image}`)
         : event.EventImages?.find(img => img.is_main)?.image_url
-            ? `${API_BASE_URL}${event.EventImages.find(img => img.is_main).image_url}`
+            ? `${REACT_APP_API_BASE_URL}${event.EventImages.find(img => img.is_main).image_url}`
             : '/default.jpg'; 
 
     const [localStatus, setLocalStatus] = useState(event.status);

@@ -72,6 +72,6 @@ export function formatAvatars(participants, max = 3) {
 	const valid = participants
 		.filter(p => p.status === 'Inscrit' && p.user?.profileImage)
 		.slice(0, max)
-		.map(p => `${process.env.API_BASE_URL || 'http://localhost:8080'}${p.user.profileImage}`);
+		.map(p => `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080'}${p.user.profileImage}`);
 	return valid;
 }

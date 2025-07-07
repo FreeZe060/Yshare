@@ -7,7 +7,7 @@ function hateoas(resourceType, resourceIdField = 'id') {
         res.json = (data) => {
             if (!data) return originalJson(data);
 
-            const baseUrl = process.env.API_BASE_URL || `${req.protocol}://${req.get('host')}/api/v1`;
+            const baseUrl = process.env.REACT_APP_API_BASE_URL || `${req.protocol}://${req.get('host')}/api/v1`;
 
             const toPlainObject = (item) => {
                 if (!item) return item;

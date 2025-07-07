@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import { AnimatePresence, motion } from "framer-motion";
 import EventStatusTag from '../Events/EventStatusTag';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function NewsDetailsLeft({
     newsDetails,
@@ -51,7 +51,7 @@ function NewsDetailsLeft({
         <div class="left space-y-[40px] md:space-y-[30px] grow">
             <div>
                 <div className="relative mb-[30px] rounded-[8px] overflow-hidden img">
-                    <img src={`${API_BASE_URL}${newsDetails.image_url}`} alt="news-cover" className="mx-auto w-full max-h-[400px] object-cover" />
+                    <img src={`${REACT_APP_API_BASE_URL}${newsDetails.image_url}`} alt="news-cover" className="mx-auto w-full max-h-[400px] object-cover" />
                     {(isOwner || isAdmin) && (
                         <div className="top-[20px] right-[20px] absolute">
                             <label htmlFor="imageUpload" className="bg-white hover:bg-[#CE22BF] shadow px-3 py-1 rounded text-[#CE22BF] hover:text-white text-sm transition cursor-pointer">
@@ -78,7 +78,7 @@ function NewsDetailsLeft({
                             <span>Par</span>
                             <a href={`/profile/${newsDetails.User?.id}`} className="flex items-center gap-[6px] hover:text-[#CE22BF] transition">
                                 <img
-                                    src={`${API_BASE_URL}${newsDetails.User?.profile_image}`}
+                                    src={`${REACT_APP_API_BASE_URL}${newsDetails.User?.profile_image}`}
                                     alt="user"
                                     className="border border-gray-300 rounded-full w-[28px] h-[28px] object-cover"
                                 />
@@ -321,7 +321,7 @@ function NewsDetailsLeft({
                         >
                             <div className="shadow-md rounded-[15px] w-[220px] h-[182px] overflow-hidden">
                                 <img
-                                    src={`${API_BASE_URL}${newsDetails.Event.EventImages?.[0]?.image_url || '/default-event.jpg'}`}
+                                    src={`${REACT_APP_API_BASE_URL}${newsDetails.Event.EventImages?.[0]?.image_url || '/default-event.jpg'}`}
                                     alt="event cover"
                                     className="w-full h-full object-cover"
                                 />
@@ -349,7 +349,7 @@ function NewsDetailsLeft({
                                             className="flex items-center gap-[6px] hover:text-[#CE22BF] transition"
                                         >
                                             <img
-                                                src={`${API_BASE_URL}${newsDetails.User?.profile_image}`}
+                                                src={`${REACT_APP_API_BASE_URL}${newsDetails.User?.profile_image}`}
                                                 alt="user"
                                                 className="border border-gray-300 rounded-full w-[28px] h-[28px] object-cover"
                                             />

@@ -1,10 +1,10 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * GET /news (public)
  */
 export async function fetchAllNews() {
-    const response = await fetch(`${API_BASE_URL}/news`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news`, {
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function fetchAllNews() {
  * GET /news/event/:eventId (public)
  */
 export async function fetchNewsByEvent(eventId) {
-    const response = await fetch(`${API_BASE_URL}/news/event/${eventId}`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/event/${eventId}`, {
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export async function fetchNewsByEvent(eventId) {
 }
 
 export async function fetchNewsWithDetails(newsId) {
-    const response = await fetch(`${API_BASE_URL}/news/${newsId}/details`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/${newsId}/details`, {
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export async function fetchNewsWithDetails(newsId) {
  * GET /news/my (requires auth)
  */
 export async function fetchMyNews(token) {
-    const response = await fetch(`${API_BASE_URL}/news/my`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/my`, {
         credentials: 'include',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ export async function fetchMyNews(token) {
  * POST /news (requires auth + multipart/form-data)
  */
 export async function createNews(formData, token) {
-    const response = await fetch(`${API_BASE_URL}/news`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -83,7 +83,7 @@ export async function createNews(formData, token) {
  * PUT /news/:newsId (requires auth + multipart/form-data)
  */
 export async function updateNews(newsId, formData, token) {
-    const response = await fetch(`${API_BASE_URL}/news/${newsId}`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/${newsId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -98,7 +98,7 @@ export async function updateNews(newsId, formData, token) {
 }
 
 export async function linkEventToNews(newsId, eventId, token) {
-    const response = await fetch(`${API_BASE_URL}/news/${newsId}/link-event`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/${newsId}/link-event`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -117,7 +117,7 @@ export async function linkEventToNews(newsId, eventId, token) {
  * DELETE /news/:newsId (requires auth)
  */
 export async function deleteNews(newsId, token) {
-    const response = await fetch(`${API_BASE_URL}/news/${newsId}`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/${newsId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -131,7 +131,7 @@ export async function deleteNews(newsId, token) {
 }
 
 export async function addCategoryToNews(newsId, categoryId, token) {
-    const response = await fetch(`${API_BASE_URL}/news/${newsId}/category`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/${newsId}/category`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -147,7 +147,7 @@ export async function addCategoryToNews(newsId, categoryId, token) {
 }
 
 export async function removeCategoryFromNews(newsId, categoryId, token) {
-    const response = await fetch(`${API_BASE_URL}/news/${newsId}/category/${categoryId}`, {
+    const response = await fetch(`${REACT_APP_API_BASE_URL}/news/${newsId}/category/${categoryId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {

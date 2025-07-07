@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * POST /register
@@ -14,7 +14,7 @@ export async function registerUser(userData) {
 		formData.append("profileImage", userData.profileImage);
 	}
 
-	const response = await fetch(`${API_BASE_URL}/register`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/register`, {
 		method: 'POST',
 		credentials: 'include',
 		body: formData,
@@ -28,7 +28,7 @@ export async function registerUser(userData) {
  * POST /login
  */
 export async function loginUser(credentials) {
-	const response = await fetch(`${API_BASE_URL}/login`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/login`, {
 		method: 'POST',
 		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
@@ -43,7 +43,7 @@ export async function loginUser(credentials) {
  * GET /profile
  */
 export async function getProfile(token) {
-	const response = await fetch(`${API_BASE_URL}/profile`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/profile`, {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export async function getProfile(token) {
 }
 
 export async function getPublicProfile(userId) {
-	const response = await fetch(`${API_BASE_URL}/users/${userId}/public`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}/public`, {
 		credentials: 'include',
 	});
 	const result = await response.json();
@@ -70,7 +70,7 @@ export async function getPublicProfile(userId) {
 export async function getProfileById(userId, token = null) {
 	if (!userId) throw new Error("Un ID utilisateur est requis.");
 
-	const response = await fetch(`${API_BASE_URL}/profile/${userId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/profile/${userId}`, {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export async function getProfileById(userId, token = null) {
 export async function updateProfile(userData, token, userId) {
 	if (!userId) throw new Error("L'ID utilisateur est requis pour mettre à jour le profil");
 
-	const url = `${API_BASE_URL}/profile/${userId}`;
+	const url = `${REACT_APP_API_BASE_URL}/profile/${userId}`;
 	const isFormData = userData instanceof FormData;
 
 	const response = await fetch(url, {
@@ -116,7 +116,7 @@ export async function updateProfile(userData, token, userId) {
  * DELETE /users/:userId
  */
 export async function deleteUser(userId, token) {
-	const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}`, {
 		method: 'DELETE',
 		credentials: 'include',
 		headers: {
@@ -133,7 +133,7 @@ export async function deleteUser(userId, token) {
  * GET /event-history
  */
 export async function getEventHistory(token, userId) {
-	const response = await fetch(`${API_BASE_URL}/users/${userId}/event-history`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}/event-history`, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
@@ -152,7 +152,7 @@ export async function getEventHistory(token, userId) {
 export async function getAllUsers(token) {
 	console.log("🔐 token reçu dans getAllUsers :", token);
 
-	const response = await fetch(`${API_BASE_URL}/users`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users`, {
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export async function getAllUsers(token) {
 }
 
 export async function updateUserStatus(userId, status, token) {
-	const res = await fetch(`${API_BASE_URL}/status/${userId}`, {
+	const res = await fetch(`${REACT_APP_API_BASE_URL}/status/${userId}`, {
 		method: 'PATCH',
 		credentials: 'include',
 		headers: {
@@ -183,7 +183,7 @@ export async function updateUserStatus(userId, status, token) {
  * POST /admin/users
  */
 export async function adminCreateUser(userData, token) {
-	const response = await fetch(`${API_BASE_URL}/admin/users`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/admin/users`, {
 		method: 'POST',
 		credentials: 'include',
 		headers: {
@@ -198,7 +198,7 @@ export async function adminCreateUser(userData, token) {
 }
 
 export async function getParticipationCount(userId) {
-	const response = await fetch(`${API_BASE_URL}/users/${userId}/participation-count`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}/participation-count`, {
 		credentials: 'include',
 		headers: { 'Content-Type': 'application/json' },
 	});

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 function NewsLeftColumn({
     paginatedNews,
@@ -27,7 +27,7 @@ function NewsLeftColumn({
                     return (
                         <div key={item.id} className="p-[24px] xxs:p-[18px] border border-[#D9D9D9] rounded-[8px]">
                             <div className="relative mb-[30px] rounded-[8px] overflow-hidden img">
-                                <img src={`${API_BASE_URL}${item.image_url}`} alt="news-cover" className="mx-auto w-full max-h-[300px] object-cover" />
+                                <img src={`${REACT_APP_API_BASE_URL}${item.image_url}`} alt="news-cover" className="mx-auto w-full max-h-[300px] object-cover" />
                                 <div className="top-[20px] left-[20px] absolute bg-[#CE22BF] px-[20px] py-[13px] rounded-[6px] text-white">
                                     <span className="block mb-[6px] font-medium text-[24px] leading-[0.7]">{day}</span>
                                     <span className="block font-medium text-[12px] leading-[0.7]">{month}</span>
@@ -39,7 +39,7 @@ function NewsLeftColumn({
                                     <div className="flex items-center gap-[10px]">
                                         <a href={`/profile/${item.User?.id}`} className="flex items-center gap-[6px] hover:text-[#CE22BF] transition">
                                             <img
-                                                src={`${API_BASE_URL}${item.User?.profile_image}`}
+                                                src={`${REACT_APP_API_BASE_URL}${item.User?.profile_image}`}
                                                 alt="user"
                                                 className="border border-gray-300 rounded-full w-[28px] h-[28px] object-cover"
                                             />

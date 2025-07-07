@@ -17,7 +17,7 @@ function Report({
     formatEuro,
     getFormattedDayAndMonthYear,
     capitalizeFirstLetter,
-    API_BASE_URL,
+    REACT_APP_API_BASE_URL,
     user,
     reports,
     loading,
@@ -88,7 +88,7 @@ function Report({
                         if (report.type === 'event' && report.event) {
                             imageUrl = report.event.image?.startsWith('http')
                                 ? report.event.image
-                                : `${API_BASE_URL}${report.event.image}`;
+                                : `${REACT_APP_API_BASE_URL}${report.event.image}`;
                             title = capitalizeFirstLetter(report.event.title || "Événement supprimé");
                             subtitle = `Créateur de l'évènement ${report.event.organizer?.name || 'inconnu'}`;
                             statusInfo = `Status de l'évènement : ${report.event.status}`;
@@ -97,7 +97,7 @@ function Report({
                         if (report.type === 'user' && report.reportedUser) {
                             imageUrl = report.reportedUser.profileImage?.startsWith('http')
                                 ? report.reportedUser.profileImage
-                                : `${API_BASE_URL}${report.reportedUser.profileImage}`;
+                                : `${REACT_APP_API_BASE_URL}${report.reportedUser.profileImage}`;
                             title = `Utilisateur : ${report.reportedUser.name}`;
                             subtitle = `Statut du compte : ${report.reportedUser.status}`;
                             statusInfo = "";
@@ -106,7 +106,7 @@ function Report({
                         if (report.type === 'comment' && report.comment) {
                             imageUrl = report.comment.author?.profileImage?.startsWith('http')
                                 ? report.comment.author.profileImage
-                                : `${API_BASE_URL}${report.comment.author?.profileImage || ''}`;
+                                : `${REACT_APP_API_BASE_URL}${report.comment.author?.profileImage || ''}`;
                             title = `Commentaire : "${report.comment.content.slice(0, 50)}..."`;
                             subtitle = `Auteur : ${report.comment.author?.name}`;
                             statusInfo = "";

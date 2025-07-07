@@ -9,7 +9,7 @@ import { useAuth } from '../config/authHeader';
 import Swal from 'sweetalert2';
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 export default function ReportsPage() {
     const { user } = useAuth();
@@ -131,7 +131,7 @@ export default function ReportsPage() {
                     capitalizeFirstLetter={capitalizeFirstLetter}
                     user={user}
                     reports={filtered}
-                    API_BASE_URL={API_BASE_URL}
+                    REACT_APP_API_BASE_URL={REACT_APP_API_BASE_URL}
                     loading={loading}
                     statusFilter={statusFilter}
                     setStatusFilter={setStatusFilter}

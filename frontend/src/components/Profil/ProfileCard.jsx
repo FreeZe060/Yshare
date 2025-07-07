@@ -12,7 +12,7 @@ import useTextAnimation from '../../hooks/Animations/useTextAnimation';
 import vector1 from "../../assets/img/et-3-event-vector.svg";
 import vector2 from "../../assets/img/et-3-event-vector-2.svg";
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const calculateProfileCompletion = (user) => {
 	let score = 0;
@@ -125,7 +125,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 					className="-top-[112px] absolute bg-cover bg-center pt-[112px] w-full h-full"
 					style={{
 						backgroundImage: `url('${user.bannerImage
-							? `${API_BASE_URL}${user.bannerImage}`
+							? `${REACT_APP_API_BASE_URL}${user.bannerImage}`
 							: 'https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&auto=format&fit=crop&w=2710&q=80'
 							}')`,
 					}}
@@ -188,7 +188,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 										<div className="flex justify-center items-center order-2 px-4 w-4/12">
 											<div className="relative">
 												<img
-													src={`${API_BASE_URL}${user.profileImage}`}
+													src={`${REACT_APP_API_BASE_URL}${user.profileImage}`}
 													alt="Profile"
 													className="shadow-xl border-4 border-white rounded-full w-40 h-40 object-cover"
 													onClick={() => editable && document.getElementById('profileImageInput').click()}

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * ✅ [ADMIN] Récupérer tous les participants
@@ -6,7 +6,7 @@ const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
 export async function getAllParticipantsForAdmin(token) {
 	console.log("🔒 [GET] /participants (admin only)");
 	try {
-		const res = await fetch(`${API_BASE_URL}/participants/all`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/participants/all`, {
 			method: 'GET',
 			headers: { Authorization: `Bearer ${token}` },
 			credentials: 'include',
@@ -34,7 +34,7 @@ export async function getParticipantsByEvent(eventId, token = null) {
 			? { Authorization: `Bearer ${token}` }
 			: {};
 
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/all`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/participants/all`, {
 			headers,
 			credentials: 'include',
 		});
@@ -61,7 +61,7 @@ export async function addParticipant(eventId, token, message, guests = []) {
 	console.log(`📝 [POST] /events/${eventId}/participants`);
 	console.log("📨 Données envoyées au backend :", { message, guests });
 	try {
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/participants`, {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ export async function addParticipant(eventId, token, message, guests = []) {
 }
 
 export async function addParticipantAdmin(eventId, userId, token) {
-	const response = await fetch(`${API_BASE_URL}/admin/events/${eventId}/participants/${userId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/admin/events/${eventId}/participants/${userId}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export async function updateParticipantStatus(eventId, participantId, status, or
 	console.log(`🔁 [PUT] /events/${eventId}/participants/${participantId} → "${status}", message: "${organizerResponse}"`);
 
 	try {
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${participantId}`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/participants/${participantId}`, {
 			method: 'PUT',
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ export async function updateParticipantStatus(eventId, participantId, status, or
 export async function getUserEventHistory(userId, token) {
 	console.log(`📜 [GET] /participants/history/${userId}`);
 	try {
-		const res = await fetch(`${API_BASE_URL}/participants/history/${userId}`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/participants/history/${userId}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ export async function getUserEventHistory(userId, token) {
 export async function updateParticipantMessage(eventId, userId, message) {
 	console.log(`✏️ [PUT] /events/${eventId}/participants/${userId}/message`);
 	try {
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${userId}/message`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/participants/${userId}/message`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ export async function updateParticipantMessage(eventId, userId, message) {
 export async function removeParticipant(eventId, userId, token) {
 	console.log(`🗑️ [DELETE] /events/${eventId}/participants/${userId}`);
 	try {
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${userId}`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/participants/${userId}`, {
 			method: 'DELETE',
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -225,7 +225,7 @@ export async function removeParticipant(eventId, userId, token) {
 export async function getUserEventsAdmin(userId, token) {
 	console.log(`📜 [GET] /users/${userId}/events`);
 	try {
-		const res = await fetch(`${API_BASE_URL}/users/${userId}/events`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/users/${userId}/events`, {
 			headers: { Authorization: `Bearer ${token}` },
 			credentials: 'include',
 		});
@@ -247,7 +247,7 @@ export async function updateParticipantGuests(eventId, userId, guests = []) {
 	console.log("📨 Nouveaux invités :", guests);
 
 	try {
-		const res = await fetch(`${API_BASE_URL}/events/${eventId}/participants/${userId}/guests`, {
+		const res = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}/participants/${userId}/guests`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',

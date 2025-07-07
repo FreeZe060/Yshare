@@ -10,7 +10,7 @@ import useUpdateMessage from '../hooks/Participant/useUpdateMessage';
 import useUpdateGuests from '../hooks/Participant/useUpdateGuests';
 import useRemoveParticipant from '../hooks/Participant/useRemoveParticipant';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const UserParticipationPage = () => {
     const { user, token } = useAuth();
@@ -140,7 +140,7 @@ const UserParticipationPage = () => {
                         statuses={statuses}
                         events={events}
                         inputProps={inputProps}
-                        API_BASE_URL={API_BASE_URL}
+                        REACT_APP_API_BASE_URL={REACT_APP_API_BASE_URL}
                         updateMessage={updateMessage}
                         updateGuests={updateGuests}
                         removeParticipant={remove}

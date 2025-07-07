@@ -1,10 +1,10 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 /**
  * Ajouter un événement aux favoris
  */
 export async function addFavoris(eventId, token) {
-	const response = await fetch(`${API_BASE_URL}/favoris/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/favoris/${eventId}`, {
 		method: "POST",
 		credentials: "include", 
 	});
@@ -17,7 +17,7 @@ export async function addFavoris(eventId, token) {
  * Retirer un événement des favoris
  */
 export async function removeFavoris(eventId, token) {
-	const response = await fetch(`${API_BASE_URL}/favoris/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/favoris/${eventId}`, {
 		method: "DELETE",
 		credentials: "include",
 	});
@@ -30,7 +30,7 @@ export async function removeFavoris(eventId, token) {
  * Récupérer tous les favoris
  */
 export async function getAllFavoris(token) {
-	const response = await fetch(`${API_BASE_URL}/favoris`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/favoris`, {
 		method: "GET",
 		credentials: "include", 
 	});
@@ -43,7 +43,7 @@ export async function getAllFavoris(token) {
  * Récupérer un favori précis
  */
 export async function getFavorisById(eventId, token) {
-	const response = await fetch(`${API_BASE_URL}/favoris/${eventId}`, {
+	const response = await fetch(`${REACT_APP_API_BASE_URL}/favoris/${eventId}`, {
 		method: "GET",
 		credentials: "include", 
 	});

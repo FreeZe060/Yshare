@@ -14,7 +14,7 @@ function EventMainLeftColumn({
     setNewComment,
     handleAddComment,
     handleApplyToEvent,
-    API_BASE_URL,
+    REACT_APP_API_BASE_URL,
     handleUpload,
     handleDelete,
     handleSetMain,
@@ -117,7 +117,7 @@ function EventMainLeftColumn({
                                 )}
 
                                 <img
-                                    src={`${API_BASE_URL}${img.image_url}`}
+                                    src={`${REACT_APP_API_BASE_URL}${img.image_url}`}
                                     alt="event-img"
                                     className="rounded-[8px] w-full h-[306px] object-cover"
                                 />
@@ -402,7 +402,7 @@ function EventMainLeftColumn({
                                     <div className="rounded-[6px] overflow-hidden shrink-0">
                                         <Link to={`/profile/${user.id}`}>
                                             <img
-                                                src={`${API_BASE_URL}${user.profileImage || '/default-profile.jpg'}`}
+                                                src={`${REACT_APP_API_BASE_URL}${user.profileImage || '/default-profile.jpg'}`}
                                                 alt="Participant"
                                                 className="w-[168px] object-cover aspect-square"
                                             />
@@ -448,7 +448,7 @@ function EventMainLeftColumn({
                 <div className="space-y-[20px] bg-white shadow-lg p-[30px] border border-[#f0f0f0] rounded-[16px]">
                     <div className="space-y-8">
                         <div className="flex gap-4">
-                            <img src={user?.profileImage ? `${API_BASE_URL}${user.profileImage}` : "https://assets.codepen.io/285131/hat-man.png"} className="rounded-full w-10 h-10 object-cover" alt="avatar" />
+                            <img src={user?.profileImage ? `${REACT_APP_API_BASE_URL}${user.profileImage}` : "https://assets.codepen.io/285131/hat-man.png"} className="rounded-full w-10 h-10 object-cover" alt="avatar" />
                             <input
                                 type="text"
                                 value={newComment}

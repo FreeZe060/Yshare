@@ -1,8 +1,8 @@
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 export async function checkAuthStatus() {
 	try {
-		const response = await fetch(`${API_BASE_URL}/auth/check`, {
+		const response = await fetch(`${REACT_APP_API_BASE_URL}/auth/check`, {
 			method: 'GET',
 			credentials: 'include',
 		});
@@ -19,7 +19,7 @@ export async function checkAuthStatus() {
 
 export async function logout() {
 	try {
-		await fetch(`${API_BASE_URL}/logout`, {
+		await fetch(`${REACT_APP_API_BASE_URL}/logout`, {
 			method: 'POST',
 			credentials: 'include',
 		});
@@ -30,7 +30,7 @@ export async function logout() {
 
 export async function deleteAccount() {
 	try {
-		const response = await fetch(`${API_BASE_URL}/auth/delete-account`, {
+		const response = await fetch(`${REACT_APP_API_BASE_URL}/auth/delete-account`, {
 			method: 'DELETE',
 			credentials: 'include',
 		});

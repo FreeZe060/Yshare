@@ -19,7 +19,7 @@ import { deleteAccount } from '../services/authService';
 import Swal from 'sweetalert2';
 import NotFound from './NotFound';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/api/v1';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1';
 
 const Profil = () => {
     const { userId } = useParams();
@@ -101,7 +101,7 @@ const Profil = () => {
                     ? `/profile/banner/${userIdToUpdate}`
                     : `/profile/${userIdToUpdate}`;
 
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            const response = await fetch(`${REACT_APP_API_BASE_URL}${endpoint}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${currentUser.token}`
@@ -310,7 +310,7 @@ const Profil = () => {
                             <div key={rating.id} className="mb-4">
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={`${API_BASE_URL}${rating.user.profileImage}`}
+                                        src={`${REACT_APP_API_BASE_URL}${rating.user.profileImage}`}
                                         alt="PP"
                                         className="rounded-full w-12 h-12 object-cover"
                                     />

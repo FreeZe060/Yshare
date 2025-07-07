@@ -9,7 +9,7 @@ import useMarkAllNotificationsAsRead from "../../hooks/Notification/useMarkAllNo
 import useMarkNotificationAsUnread from "../../hooks/Notification/useMarkNotificationAsUnread";
 import useDeleteNotification from "../../hooks/Notification/useDeleteNotification";
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080/';
+const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
 
 const Header = () => {
     const { user, isAuthenticated, logout } = useAuth() || {};
@@ -208,7 +208,7 @@ const Header = () => {
                                         >
                                             {user.profileImage ? (
                                                 <img
-                                                    src={`${API_BASE_URL}${user.profileImage}`}
+                                                    src={`${REACT_APP_API_BASE_URL}${user.profileImage}`}
                                                     alt="Profil"
                                                     className="border border-gray-700 rounded-full w-10 h-10 object-cover"
                                                 />
