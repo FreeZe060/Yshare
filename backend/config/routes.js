@@ -81,8 +81,8 @@ router.get('/admin/stats', hateoas('event'), authenticateToken, isAdmin, eventCo
 router.post('/register', profileUpload.single('profileImage'), userController.register);
 router.post('/login', userController.login);
 router.get('/profile/:userId', extractUserFromToken, userController.getProfile);
-router.put('/profile/:userId', UserOrAdmin, authenticateToken, profileUpload.single('profileImage'), userController.updateProfile);
-router.put('/profile/banner/:userId', UserOrAdmin, authenticateToken, bannerUpload.single('bannerImage'), userController.updateProfile);
+router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
+router.put('/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile);
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
 router.patch('/status/:userId', authenticateToken, isAdmin, userController.updateUserStatus);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);

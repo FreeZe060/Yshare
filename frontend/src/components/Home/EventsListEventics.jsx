@@ -35,8 +35,8 @@ const EventsListEventics = () => {
     const displayedCategories = [{ id: null, name: 'Tous' }, ...allCategories.slice(0, 3)];
 
     const { user, isAuthenticated } = useAuth();
-    const { favoris, loading: favLoading, refreshFavoris } = useFavoris();
     const [refreshKey, setRefreshKey] = useState(0);
+    const { favoris, loading: favLoading, refreshFavoris } = useFavoris(refreshKey);
     const { add } = useAddFavoris();
     const { remove } = useRemoveFavoris();
 

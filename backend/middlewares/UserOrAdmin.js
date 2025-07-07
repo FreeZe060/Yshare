@@ -4,7 +4,7 @@ module.exports = (req, res, next) => {
 
   if (
     loggedUser?.role === 'Administrateur' ||
-    loggedUser?.id === targetUserId
+    Number(loggedUser?.id) === targetUserId
   ) {
     return next();
   }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllFavoris } from "../../services/favorisService";
 import { useAuth } from "../../config/authHeader";
 
-function useFavoris() {
+function useFavoris(refreshKey) {
 	const [favoris, setFavoris] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ function useFavoris() {
 
 	useEffect(() => {
 		fetchFavoris();
-	}, [user?.token]);
+	}, [user?.token, refreshKey]);
 
 	return { favoris, loading, error, refreshFavoris: fetchFavoris };
 }

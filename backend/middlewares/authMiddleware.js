@@ -30,6 +30,8 @@ const authenticateToken = (req, res, next) => {
             lastActivity: now
         };
 
+        console.log("[authenticateToken] decoded.id:", decoded.id);
+        
         const newToken = jwt.sign(newPayload, process.env.JWT_SECRET, { expiresIn: '10h' });
         res.cookie('auth_token', newToken, { httpOnly: true });
 
