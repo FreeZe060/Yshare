@@ -243,7 +243,7 @@ const Profil = () => {
                                                         : "Cet utilisateur n'a pour l'instant créé aucun événement."
                                                     : null
                                             }
-                                            buttonLink={isOwner ? "/event/created" : undefined}
+                                            buttonLink={isOwner ? "/create/event" : undefined}
                                             emptyButtonText={isOwner ? "Créer un événement" : undefined}
                                             emptyButtonClass="bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             {...(createdEvents.length > 0 && {
@@ -264,7 +264,7 @@ const Profil = () => {
                                                 image: favori.image || null
                                             }))}
                                             emptyMessage="Vous n'avez pas encore de favoris."
-                                            buttonLink="/favoris"
+                                            buttonLink="/events"
                                             emptyButtonText="Voir tous les événements"
                                             emptyButtonClass="bg-gradient-to-r from-[#580FCA] to-[#F929BB] text-white rounded-md px-4 py-2 hover:opacity-90 transition"
                                             {...(favoris.length > 0 && {

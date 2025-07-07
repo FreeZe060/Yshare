@@ -108,7 +108,7 @@ export default function EventCreated() {
                             <li>
                                 <i className="fa-angle-right fa-solid"></i>
                             </li>
-                            <li className="current-page">Toutes vos créations</li>
+                            <li className="current-page">Toutes vos Créations</li>
                         </ul>
                     </div>
                 </section>

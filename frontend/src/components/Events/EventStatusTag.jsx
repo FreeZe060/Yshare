@@ -86,7 +86,7 @@ const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
     return (
         <div className="inline-block relative">
             {computedStatus === 'Planifié' && timeLeft !== null && (
-                <div className="-top-4 -right-2 z-10 absolute bg-[#F929BB] shadow px-2 py-[1px] rounded-full font-semibold text-[13px] text-white">
+                <div className="-top-4 -right-2 z-10 absolute bg-[#F929BB] w-auto shadow px-2 py-[1px] rounded-full font-semibold text-[13px] text-white whitespace-nowrap">
                     {formatTimeLeft(timeLeft)}
                 </div>
             )}
@@ -115,7 +115,6 @@ const EventStatusTag = ({ date, status, eventId, onStatusChange }) => {
                         </svg>
                         Terminé
 
-                        {/* 🎉 Confetti effect */}
                         {[...Array(8)].map((_, i) => (
                             <span
                                 key={i}

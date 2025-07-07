@@ -117,7 +117,7 @@ const ProfileCard = ({ user, onUpdateProfileImage, onUpdateProfileField, extraSe
 	// };
 
 	return (
-		<main className="profile-page">
+		<main className="profile-page overflow-hidden">
 			<section className="block relative h-[600px]">
 				<div
 					className="-top-[112px] absolute bg-cover bg-center pt-[112px] w-full h-full"

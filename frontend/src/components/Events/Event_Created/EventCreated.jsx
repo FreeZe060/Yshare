@@ -33,7 +33,7 @@ function Event_Created({
             <div className="mx-auto px-[12px] max-w-[1200px] xl:max-w-full">
                 <div className="mb-[60px] md:mb-[40px] pb-[60px] md:pb-[40px] border-[#8E8E93]/25 border-b">
                     <h6 className="after:top-[46%] after:right-0 after:absolute mx-auto pr-[45px] w-max after:w-[30px] max-w-full after:h-[5px] anim-text et-3-section-sub-title">
-                        Vos créations
+                        Vos Créations
                     </h6>
                     <h2 className="mb-[26px] text-center anim-text et-3-section-title">Événements Créés</h2>
                     <FiltreParticipant
@@ -59,7 +59,7 @@ function Event_Created({
                         </p>
                         <p className="mt-2 text-gray-500 text-sm">Partagez vos idées et créez un nouvel événement dès maintenant !</p>
                         <Link
-                            to="/create-event"
+                            to="/create/event"
                             className="mt-4 inline-block px-6 py-3 rounded-lg bg-gradient-to-tr from-[#580FCA] to-[#F929BB] text-white font-semibold hover:opacity-90 transition"
                         >
                             Créer un Événement
