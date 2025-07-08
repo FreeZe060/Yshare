@@ -4,7 +4,10 @@ const INACTIVITY_LIMIT = 30 * 60 * 1000;
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    const token = req.cookies?.auth_token || (authHeader && authHeader.split(" ")[1]);
+
+    console.log("REEEEEEEEEEQ:", req);
+
+    const token = req.cookies?.auth_token || (authHeader && authHeader.split(" ")[1]) ||;
 
     if (!token) {
         return res.status(401).json({ error: "Accès refusé. Aucun token fourni." });
@@ -31,7 +34,7 @@ const authenticateToken = (req, res, next) => {
         };
 
         console.log("[authenticateToken] decoded.id:", decoded.id);
-        
+
         const newToken = jwt.sign(newPayload, process.env.JWT_SECRET, { expiresIn: '10h' });
         res.cookie('auth_token', newToken, { httpOnly: true });
 
