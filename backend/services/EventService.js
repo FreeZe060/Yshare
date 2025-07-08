@@ -297,15 +297,27 @@ class EventService {
             }
         }
 
-        console.log('[createEvent] ➤ Création de l’événement avec statut "Planifié"...');
+        price = price === '' || price === undefined ? null : parseInt(price);
+        if (isNaN(price)) price = null;
+
+        max_participants = max_participants === '' || max_participants === undefined ? null : parseInt(max_participants);
+        if (isNaN(max_participants)) max_participants = null;
+
+        console.log('[createEvent] ➤ Données finales pour Event.create :', {
+            title, description, date_created: new Date(), id_org, price, max_participants,
+            street, street_number, city, postal_code, start_time: startDate, end_time: endDate,
+            latitude: coordinates ? coordinates.latitude : null,
+            longitude: coordinates ? coordinates.longitude : null,
+            status: 'Planifié'
+        });
 
         const event = await Event.create({
             title,
             description,
             date_created: new Date(),
             id_org,
-            price: price === '' ? null : parseInt(price),
-            max_participants: max_participants === '' ? null : parseInt(max_participants),
+            price,
+            max_participants,
             street,
             street_number,
             city,

@@ -9,7 +9,6 @@ exports.createNews = async (req, res) => {
         const { title, content, event_id } = req.body;
         let categories = [];
 
-        // Parse les catégories si envoyées depuis FormData
         if (req.body.categories) {
             try {
                 categories = JSON.parse(req.body.categories);
@@ -24,7 +23,7 @@ exports.createNews = async (req, res) => {
 
         let image_url = req.body.image_url;
         if (req.file) {
-            image_url = `/news-images/${req.file.filename}`;
+            image_url = `news-images/${req.file.filename}`;
         }
 
         const news = await newsService.createNews({
@@ -110,7 +109,7 @@ exports.updateNews = async (req, res) => {
         const updateData = { ...req.body };
 
         if (req.file) {
-            updateData.image_url = `/news-images/${req.file.filename}`;
+            updateData.image_url = `news-images/${req.file.filename}`;
         }
 
         const updatedNews = await newsService.updateNews(newsId, updateData);

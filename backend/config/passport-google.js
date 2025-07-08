@@ -24,7 +24,7 @@ passport.use(new GoogleStrategy({
 
 			const imageName = uuidv4() + '.jpg';
 			const imagePath = path.join(__dirname, '..', 'media', 'profile-images', imageName);
-			const publicPath = `/profile-images/${imageName}`;
+			const publicPath = `profile-images/${imageName}`;
 
 			fs.mkdirSync(path.dirname(imagePath), { recursive: true });
 			fs.writeFileSync(imagePath, response.data);

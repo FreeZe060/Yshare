@@ -50,7 +50,7 @@ const EventsListEventics = () => {
     useSlideUpAnimation('.rev-slide-up', events);
     useTextAnimation();
 
-    const isFavoris = (eventId) => favoris.some((f) => f.id_event === eventId);
+    const isFavoris = (eventId) => favoris.some((f) => f.id === eventId);
 
     const showToast = (title, icon = 'success') => {
         Swal.fire({
