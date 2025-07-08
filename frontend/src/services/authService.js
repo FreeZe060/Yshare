@@ -2,9 +2,15 @@ const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://loc
 
 export async function checkAuthStatus() {
 	try {
+		const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+
 		const response = await fetch(`${REACT_APP_API_BASE_URL}/auth/check`, {
 			method: 'GET',
 			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				...(token ? { Authorization: `Bearer ${token}` } : {})
+			}
 		});
 
 		if (!response.ok) return { authenticated: false };

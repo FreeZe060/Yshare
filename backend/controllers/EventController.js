@@ -82,11 +82,14 @@ exports.getTotalEventCount = async (req, res) => {
 };
 
 exports.createEvent = async (req, res) => {
+    console.log("[createEvent] ➤ Début de la route createEvent");
     try {
         if (!req.user) {
             console.warn("[createEvent] Accès non autorisé - utilisateur non authentifié.");
             return res.status(403).json({ message: "Utilisateur non authentifié." });
         }
+
+        console.log("[createEvent] ➤ Utilisateur authentifié :", req.user.id);
 
         const {
             title, description, date, price, street, street_number, city, postal_code,
@@ -95,7 +98,10 @@ exports.createEvent = async (req, res) => {
 
         let { categories } = req.body;
 
+        console.log("[createEvent] ➤ Données brutes reçues :", req.body);
+
         if (typeof categories === 'string') {
+            console.log("[createEvent] ➤ Parsing des catégories JSON string");
             try {
                 categories = JSON.parse(categories);
             } catch (err) {
@@ -109,6 +115,8 @@ exports.createEvent = async (req, res) => {
             is_main: index === 0
         })) || [];
 
+        console.log("[createEvent] ➤ Images reçues :", images);
+
         const id_org = req.user.id;
 
         if (!title || !date || !city || !street || !street_number || !postal_code || !start_time || !end_time) {
@@ -118,9 +126,7 @@ exports.createEvent = async (req, res) => {
             return res.status(400).json({ message: "Tous les champs requis doivent être remplis." });
         }
 
-        console.log("📥 Données reçues dans le backend :");
-        console.log("➡️ body:", req.body);
-        console.log("🖼️ files:", req.files);
+        console.log("📥 ➤ Données prêtes à être envoyées au service createEvent");
 
         const event = await eventService.createEvent({
             title, description, date, id_org, price,
@@ -132,8 +138,17 @@ exports.createEvent = async (req, res) => {
         res.status(201).json({ message: "Événement créé avec succès", event });
 
     } catch (error) {
-        console.error("[createEvent] Erreur lors de la création de l'événement :", error);
-        res.status(500).json({ message: "Erreur lors de la création de l'événement", error: error.message });
+        console.error("[createEvent] ❌ Erreur complète :", error);
+
+        if (error.errors) {
+            error.errors.forEach(e => console.error(`- Champ : ${e.path} | Message : ${e.message}`));
+        }
+
+        res.status(500).json({
+            message: "Erreur lors de la création de l'événement",
+            error: error.message,
+            details: error.errors || error
+        });
     }
 };
 

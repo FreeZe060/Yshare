@@ -248,53 +248,46 @@ class EventService {
     }
 
     async createEvent(data, images = []) {
+        console.log('[createEventService] ➤ Début createEvent service');
         let {
             title, description, date_created, id_org, price,
             street, street_number, city, postal_code,
             start_time, end_time, categories, max_participants
         } = data;
 
-        console.log('[createEvent] ➤ Début de la création de l’événement');
-        console.log('[createEvent] ➤ Données reçues :', {
-            title, id_org, price, city, start_time, end_time, categories
-        });
+        console.log('[createEventService] ➤ Données reçues :', data);
 
         const now = new Date();
         const startDate = new Date(start_time);
         const endDate = new Date(end_time);
 
+        console.log('[createEventService] ➤ Dates transformées :', { startDate, endDate });
+
         if (typeof categories === 'string') {
-            console.log('[createEvent] ➤ Parsing des catégories depuis une chaîne JSON');
+            console.log('[createEventService] ➤ Parsing catégories string');
             categories = JSON.parse(categories);
         }
 
-        console.log('[createEvent] ➤ Vérification des dates :');
-        console.log('  - Maintenant      :', now.toISOString());
-        console.log('  - Date de début   :', startDate.toISOString());
-        console.log('  - Date de fin     :', endDate.toISOString());
-
         if (isNaN(startDate) || isNaN(endDate)) {
-            console.error('[createEvent] ❌ Dates invalides');
+            console.error('[createEventService] ❌ Dates invalides');
             throw new Error("Les dates de début ou de fin sont invalides.");
         }
 
         if (startDate < now) {
-            console.error('[createEvent] ❌ La date de début est dans le passé');
+            console.error('[createEventService] ❌ La date de début est dans le passé');
             throw new Error("La date de début ne peut pas être dans le passé.");
         }
 
         if (endDate <= startDate) {
-            console.error('[createEvent] ❌ La date de fin est avant ou égale à la date de début');
+            console.error('[createEventService] ❌ La date de fin est avant ou égale à la date de début');
             throw new Error("La date de fin doit être après la date de début.");
         }
 
-        console.log('[createEvent] ➤ Récupération des coordonnées GPS de la ville...');
+        console.log('[createEventService] ➤ Récupération coordonnées GPS…');
         let coordinates = null;
         if (city) {
             coordinates = await getCoordinatesFromCity(city);
-            if (!coordinates) {
-                console.warn('[createEvent] ⚠️ Coordonnées non trouvées pour la ville:', city);
-            }
+            console.log('[createEventService] ➤ Coordonnées récupérées :', coordinates);
         }
 
         price = price === '' || price === undefined ? null : parseInt(price);
@@ -303,14 +296,15 @@ class EventService {
         max_participants = max_participants === '' || max_participants === undefined ? null : parseInt(max_participants);
         if (isNaN(max_participants)) max_participants = null;
 
-        console.log('[createEvent] ➤ Données finales pour Event.create :', {
-            title, description, date_created: new Date(), id_org, price, max_participants,
+        console.log('[createEventService] ➤ Données finales avant Event.create :', {
+            title, description, id_org, price, max_participants,
             street, street_number, city, postal_code, start_time: startDate, end_time: endDate,
             latitude: coordinates ? coordinates.latitude : null,
             longitude: coordinates ? coordinates.longitude : null,
             status: 'Planifié'
         });
 
+        console.log('[createEventService] ➤ Création Event en cours…');
         const event = await Event.create({
             title,
             description,
@@ -329,26 +323,31 @@ class EventService {
             status: 'Planifié'
         });
 
-        console.log(`[createEvent] ✅ Événement créé avec ID : ${event.id}`);
+        console.log(`[createEventService] ✅ Event créé avec ID : ${event.id}`);
 
         if (categories?.length > 0) {
-            console.log(`[createEvent] ➤ Assignation de ${categories.length} catégorie(s) à l’événement`);
+            console.log(`[createEventService] ➤ Assignation de ${categories.length} catégorie(s)`);
             await event.setCategories(categories);
+            console.log('[createEventService] ✅ Categories assignées');
         } else {
-            console.log('[createEvent] ➤ Aucune catégorie assignée');
+            console.log('[createEventService] ➤ Aucune catégorie assignée');
         }
 
         if (images?.length > 0) {
-            console.log(`[createEvent] ➤ Ajout de ${images.length} image(s) à l’événement`);
-            await EventImage.bulkCreate(
-                images.map(img => ({ ...img, event_id: event.id }))
-            );
+            console.log(`[createEventService] ➤ Ajout de ${images.length} image(s)`);
+            const imagesToInsert = images.map(img => ({ ...img, event_id: event.id }));
+            console.log('[createEventService] ➤ Images à insérer :', imagesToInsert);
+
+            await EventImage.bulkCreate(imagesToInsert);
+            console.log('[createEventService] ✅ Images ajoutées');
         } else {
-            console.log('[createEvent] ➤ Aucune image à ajouter');
+            console.log('[createEventService] ➤ Aucune image à ajouter');
         }
 
-        console.log('[createEvent] ✅ Création terminée. Chargement des détails de l’événement...');
-        return await this.getEventById(event.id);
+        console.log('[createEventService] ➤ Récupération finale getEventById');
+        const finalEvent = await this.getEventById(event.id);
+        console.log('[createEventService] ✅ Récupération finale terminée');
+        return finalEvent;
     }
 
     async updateEventStatus(eventId, newStatus) {
