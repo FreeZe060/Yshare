@@ -5,7 +5,7 @@ const INACTIVITY_LIMIT = 30 * 60 * 1000;
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
-    console.log("REEEEEEEEEEQ:", req);
+    console.log("REEEEEEEEEEQ:", req.headers.authorization);
 
     const token = req.cookies?.auth_token || (authHeader && authHeader.split(" ")[1]);
 
