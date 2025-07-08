@@ -7,7 +7,7 @@ const authenticateToken = (req, res, next) => {
 
     console.log("REEEEEEEEEEQ:", req);
 
-    const token = req.cookies?.auth_token || (authHeader && authHeader.split(" ")[1]) ||;
+    const token = req.cookies?.auth_token || (authHeader && authHeader.split(" ")[1]);
 
     if (!token) {
         return res.status(401).json({ error: "Accès refusé. Aucun token fourni." });
