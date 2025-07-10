@@ -6,8 +6,6 @@ import { motion } from 'framer-motion';
 import MessageSkeleton from '../../SkeletonLoading/MessageSkeleton';
 import useReportDetails from '../../../hooks/Report/useReportDetails';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
     const { user } = useAuth();
     const { messages, loading, refetch } = useReportMessages(reportId);
@@ -60,7 +58,7 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                 ) : report ? (
                     <div className="flex items-start">
                         <img
-                            src={report.reportingUser?.profileImage ? `${REACT_APP_API_BASE_URL}${report.reportingUser.profileImage}` : '/default-avatar.png'}
+                            src={report.reportingUser?.profileImage ? `${report.reportingUser.profileImage}` : '/default-avatar.png'}
                             alt="avatar"
                             className="w-10 h-10 rounded-full mr-3"
                         />
@@ -100,7 +98,7 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                             >
                                 {side === 'left' && (
                                     <img
-                                        src={msg.sender.profileImage ? `${REACT_APP_API_BASE_URL}${msg.sender.profileImage}` : '/default-avatar.png'}
+                                        src={msg.sender.profileImage ? `${msg.sender.profileImage}` : '/default-avatar.png'}
                                         alt="avatar"
                                         className="w-8 h-8 rounded-full mr-2"
                                     />
@@ -124,7 +122,7 @@ const ReportReplies = ({ reportId, limit = 4, disableAutoScroll = false }) => {
                                 </div>
                                 {side === 'right' && (
                                     <img
-                                        src={msg.sender.profileImage ? `${REACT_APP_API_BASE_URL}${msg.sender.profileImage}` : '/default-avatar.png'}
+                                        src={msg.sender.profileImage ? `${msg.sender.profileImage}` : '/default-avatar.png'}
                                         alt="avatar"
                                         className="w-8 h-8 rounded-full ml-2"
                                     />

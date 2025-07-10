@@ -1,8 +1,6 @@
 import React from 'react';
 import { motion } from "framer-motion";
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
-
 function NewsRightColumn({
     categories,
     latestNews,
@@ -89,7 +87,7 @@ function NewsRightColumn({
                             <div key={post.id} className="flex items-center gap-[16px]">
                                 <div className="rounded-[6px] w-[78px] h-[79px] overflow-hidden shrink-0">
                                     <img
-                                        src={`${REACT_APP_API_BASE_URL}${post.image_url}`}
+                                        src={`${post.image_url}`}
                                         alt="Post Image"
                                         className="w-full h-full object-cover"
                                     />

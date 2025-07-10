@@ -11,7 +11,6 @@ import FiltreParticipant from './FiltreParticipant';
 
 function Event_Participated({
     filtered,
-    REACT_APP_API_BASE_URL,
     getFormattedDayAndMonthYear,
     capitalizeFirstLetter,
     formatEuro,
@@ -180,7 +179,7 @@ function Event_Participated({
                     filtered.map((item, index) => {
                         const imageUrl = item.image?.startsWith('http')
                             ? item.image
-                            : `${REACT_APP_API_BASE_URL}${item.image || ''}`;
+                            : `${item.image || ''}`;
                         return (
                             <div key={index} className="mb-[40px]">
                                 <div className="relative flex lg:flex-wrap flex-nowrap items-center gap-[40px] opacity-1 py-[30px] border-[#8E8E93]/25 border-b rev-slide-up">

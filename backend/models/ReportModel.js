@@ -1,4 +1,3 @@
-// models/Report.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/dbManager');
 

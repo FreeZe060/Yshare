@@ -600,7 +600,8 @@ class EventService {
             throw new Error("Accès refusé à cette image.");
         }
 
-        image.image_url = `/event-images/${filename}`;
+        image.image_url = publicUrl; 
+        image.supabase_path = supabasePath;
         await image.save();
 
         return image;

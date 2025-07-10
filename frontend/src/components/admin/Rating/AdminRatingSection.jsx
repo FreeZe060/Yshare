@@ -3,8 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import NotFound from '../../../pages/NotFound';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 const sortIcon = (dir) =>
     dir === 'asc' ? <i className="fas fa-sort-up" /> : <i className="fas fa-sort-down" />;
 
@@ -61,7 +59,7 @@ const AdminRatingSection = ({ loading, error, paginatedItems, sort, pagination, 
 
                                         <Link to={`/profile/${rating.user?.id}`} className="flex items-center space-x-2 hover:underline">
                                             <img
-                                                src={`${REACT_APP_API_BASE_URL}${rating.user?.profileImage || '/default-profile.jpg'}`}
+                                                src={`${rating.user?.profileImage || '/default-profile.jpg'}`}
                                                 alt="pp"
                                                 className="rounded-full w-8 h-8"
                                             />

@@ -1,4 +1,5 @@
 const newsService = require('../services/NewsService');
+const { uploadToSupabase, deleteFromSupabase } = require('../middlewares/upload');
 
 exports.createNews = async (req, res) => {
     try {
@@ -23,13 +24,16 @@ exports.createNews = async (req, res) => {
 
         let image_url = req.body.image_url;
         if (req.file) {
-            image_url = `news-images/${req.file.filename}`;
+            const upload = await uploadToSupabase('news-images', req.file);
+            image_url = upload.publicUrl;
+            supabase_path = upload.path;
         }
 
         const news = await newsService.createNews({
             title,
             content,
             image_url,
+            supabase_path,
             user_id: req.user.id,
             event_id: event_id || null,
             categories, 
@@ -109,7 +113,13 @@ exports.updateNews = async (req, res) => {
         const updateData = { ...req.body };
 
         if (req.file) {
-            updateData.image_url = `news-images/${req.file.filename}`;
+            if (oldNews.supabase_path) {
+                await deleteFromSupabase('news-images', oldNews.supabase_path);
+            }
+
+            const upload = await uploadToSupabase('news-images', req.file);
+            updateData.image_url = upload.publicUrl;
+            updateData.supabase_path = upload.path;
         }
 
         const updatedNews = await newsService.updateNews(newsId, updateData);

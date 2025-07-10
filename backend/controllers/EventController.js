@@ -3,6 +3,7 @@ const eventImageService = require('../services/EventImageService');
 const participantService = require('../services/ParticipantService');
 const userService = require('../services/UserService');
 const notificationService = require('../services/NotificationService');
+const { uploadToSupabase, deleteFromSupabase } = require('../middlewares/upload');
 const sendEmail = require('../utils/email');
 
 exports.getAllEvents = async (req, res) => {
@@ -110,10 +111,18 @@ exports.createEvent = async (req, res) => {
             }
         }
 
-        const images = req.files?.map((file, index) => ({
-            image_url: `event-images/${file.filename}`,
-            is_main: index === 0
-        })) || [];
+        const images = [];
+        if (req.files && req.files.length > 0) {
+            for (let i = 0; i < req.files.length; i++) {
+                const file = req.files[i];
+                const { publicUrl, path } = await uploadToSupabase('event-images', file);
+                images.push({
+                    image_url: publicUrl,
+                    supabase_path: path, 
+                    is_main: i === 0
+                });
+            }
+        }
 
         console.log("[createEvent] ➤ Images reçues :", images);
 
@@ -213,11 +222,22 @@ exports.updateEventImages = async (req, res) => {
             return res.status(400).json({ message: "Aucune image fournie." });
         }
 
-        const updatedImage = await eventService.updateImageById(imageId, req.file.filename, req.user);
+        const oldImage = await eventImageService.getImageById(imageId);
+        if (!oldImage) {
+            return res.status(404).json({ message: "Image non trouvée." });
+        }
+
+        if (oldImage.supabase_path) {
+            await deleteFromSupabase('event-images', oldImage.supabase_path);
+        }
+
+        const { publicUrl, path } = await uploadToSupabase('event-images', req.file);
+
+        const updatedImage = await eventService.updateImageById(imageId, publicUrl, req.user, path);
 
         res.status(200).json({ message: "Image mise à jour avec succès.", image: updatedImage });
     } catch (error) {
-        console.error("[updateSingleImage] ❌ Erreur :", error);
+        console.error("[updateEventImages] ❌ Erreur :", error);
         res.status(500).json({ message: "Erreur lors de la mise à jour de l'image", error: error.message });
     }
 };
@@ -359,11 +379,16 @@ exports.addImagesToEvent = async (req, res) => {
             return res.status(400).json({ message: "Aucune image reçue." });
         }
 
-        const images = req.files.map((file, index) => ({
-            event_id: eventId,
-            image_url: `event-images/${file.filename}`,
-            is_main: false
-        }));
+        const images = [];
+        for (const file of req.files) {
+            const { publicUrl, path } = await uploadToSupabase('event-images', file);
+            images.push({
+                event_id: eventId,
+                image_url: publicUrl,
+                supabase_path: path, 
+                is_main: false
+            });
+        }
 
         const result = await eventImageService.addImages(eventId, images);
         res.status(201).json({ message: "Images ajoutées.", images: result });
@@ -398,10 +423,24 @@ exports.getMyEvents = async (req, res) => {
 exports.deleteImageFromEvent = async (req, res) => {
     try {
         const { imageId } = req.params;
+
+        const image = await eventImageService.getImageById(imageId);
+        if (!image) {
+            return res.status(404).json({ message: "Image non trouvée ou déjà supprimée." });
+        }
+
+        if (image.supabase_path) {
+            await deleteFromSupabase('event-images', image.supabase_path);
+        }
+
         const deleted = await eventImageService.deleteImage(imageId);
-        if (!deleted) return res.status(404).json({ message: "Image non trouvée ou déjà supprimée." });
+        if (!deleted) {
+            return res.status(404).json({ message: "Échec de suppression en BDD." });
+        }
+
         res.status(200).json({ message: "Image supprimée avec succès." });
     } catch (error) {
+        console.error("[deleteImageFromEvent] ❌ Erreur :", error);
         res.status(500).json({ message: "Erreur lors de la suppression de l'image", error: error.message });
     }
 };

@@ -6,6 +6,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { uploadToSupabase } = require('../middlewares/upload');
 
 passport.use(new GoogleStrategy({
 	clientID: process.env.GOOGLE_CLIENT_ID,
@@ -20,15 +21,16 @@ passport.use(new GoogleStrategy({
 
 		if (!user && profile.photos?.[0]?.value) {
 			const imageUrl = profile.photos[0].value;
-			const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+            const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
 
-			const imageName = uuidv4() + '.jpg';
-			const imagePath = path.join(__dirname, '..', 'media', 'profile-images', imageName);
-			const publicPath = `profile-images/${imageName}`;
+            const file = {
+                originalname: uuidv4() + '.jpg',
+                mimetype: 'image/jpeg',
+                buffer: Buffer.from(response.data)
+            };
 
-			fs.mkdirSync(path.dirname(imagePath), { recursive: true });
-			fs.writeFileSync(imagePath, response.data);
-			profileImagePath = publicPath;
+            const { publicUrl, path } = await uploadToSupabase('profile-images', file);
+            profileImagePath = path; 
 		}
 
 		if (!user) {

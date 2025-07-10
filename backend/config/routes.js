@@ -31,8 +31,7 @@ const isReportOwnerOrAdmin = require('../middlewares/isReportOwnerOrAdmin');
 const isRatingOwnerOrAdmin = require('../middlewares/isRatingOwnerOrAdmin');
 const { extractUserFromToken } = require('../middlewares/authOptional');
 const hateoas = require('../middlewares/hateoas');
-const { profileUpload, eventUpload, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
-
+const { profileUpload, eventUpload, eventUploads, newsUpload, reportUpload, bannerUpload } = require('../middlewares/upload');
 
 //////// LOGS ROUTES ////////
 
@@ -63,11 +62,11 @@ router.post('/log-suspicious', (req, res) => {
 router.get('/events', hateoas('event'), eventController.getAllEvents);
 router.get('/events/mine', hateoas('event'), authenticateToken, eventController.getMyEvents);
 router.get('/events/:id', hateoas('event'), extractUserFromToken, eventController.getEventById);
-router.post('/events', hateoas('event'), eventUpload.array('images'), authenticateToken, eventController.createEvent);
+router.post('/events', hateoas('event'), eventUpload, authenticateToken, eventController.createEvent);
 router.put('/events/:eventId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.updateEvent);
-router.put('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.single('image'), eventController.updateEventImages);
+router.put('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUploads, eventController.updateEventImages);
 router.delete('/events/:eventId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteEvent);
-router.post('/events/:eventId/images', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload.array('images'), eventController.addImagesToEvent);
+router.post('/events/:eventId/images', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventUpload, eventController.addImagesToEvent);
 router.put('/events/:eventId/images/:imageId/main', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.setMainImage);
 router.delete('/events/images/:imageId', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.deleteImageFromEvent);
 router.patch('/events/:eventId/status', hateoas('event'), authenticateToken, isEventOwnerOrAdmin, eventController.updateEventStatus);
@@ -78,11 +77,11 @@ router.get('/admin/stats', hateoas('event'), authenticateToken, isAdmin, eventCo
 
 //////// USER ROUTES ////////
 
-router.post('/register', profileUpload.single('profileImage'), userController.register);
+router.post('/register', profileUpload, userController.register);
 router.post('/login', userController.login);
 router.get('/profile/:userId', extractUserFromToken, userController.getProfile);
-router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload.single('profileImage'), userController.updateProfile);
-router.put('/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload.single('bannerImage'), userController.updateProfile);
+router.put('/profile/:userId', authenticateToken, UserOrAdmin, profileUpload, userController.updateProfile);
+router.put('/profile/banner/:userId', authenticateToken, UserOrAdmin, bannerUpload, userController.updateProfile);
 router.delete('/users/:userId', authenticateToken, UserOrAdmin, userController.deleteUser);
 router.patch('/status/:userId', authenticateToken, isAdmin, userController.updateUserStatus);
 router.get('/users/:userId/event-history', authenticateToken, UserOrAdmin, userController.getEventHistory);
@@ -170,12 +169,12 @@ router.get('/favoris/:eventId', authenticateToken, favorisController.getFavorisB
 
 //////// NEWS ROUTES ////////
 
-router.post('/news', authenticateToken, newsUpload.single('image'), newsController.createNews);
+router.post('/news', authenticateToken, newsUpload, newsController.createNews);
 router.get('/news', newsController.getAllNews);
 router.get('/news/:newsId/details', newsController.getNewsDetails);
 router.get('/news/event/:eventId', newsController.getNewsByEventId);
 router.get('/news/my', authenticateToken, newsController.getNewsByUserId);
-router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload.single('image'), newsController.updateNews);
+router.put('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsUpload, newsController.updateNews);
 router.delete('/news/:newsId', authenticateToken, isNewsOwnerOrAdmin, newsController.deleteNews);
 router.post('/news/:newsId/category', authenticateToken, isNewsOwnerOrAdmin, newsController.addCategoryToNews);
 router.delete('/news/:newsId/category/:categoryId', authenticateToken, isNewsOwnerOrAdmin, newsController.removeCategoryFromNews);
@@ -214,7 +213,7 @@ router.get('/ratings/mine', authenticateToken, ratingController.getAllRatingsByU
 
 //////// REPORT ROUTES ////////
 
-router.post('/reports', authenticateToken, reportUpload.array('files', 6), reportController.createReport);
+router.post('/reports', authenticateToken, reportUpload, reportController.createReport);
 router.get('/reports', authenticateToken, isAdmin, reportController.getReports);
 router.get('/reports/mine', authenticateToken, reportController.getMyReports);
 router.get('/reports/:reportId', authenticateToken, isReportOwnerOrAdmin, reportController.getReportDetails);

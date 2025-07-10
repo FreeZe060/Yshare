@@ -6,8 +6,6 @@ import NotFound from '../../../pages/NotFound';
 import RowSkeleton from '../../SkeletonLoading/RowSkeleton';
 import AssignParticipantModal from './AssignParticipantModal';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 const sortIcon = (direction) =>
     direction === 'asc'
         ? <i className="text-gray-800 fas fa-sort-up" />
@@ -173,7 +171,7 @@ const ParticipantSection = ({
                                 >
                                     <td className="flex items-center space-x-2 px-2 py-3">
                                         <img
-                                            src={`${REACT_APP_API_BASE_URL}${p.profileImage || '/default-avatar.png'}`}
+                                            src={`${p.profileImage || '/default-avatar.png'}`}
                                             alt={p.name}
                                             className="rounded-full w-8 h-8 object-cover cursor-pointer"
                                             onClick={() => navigate(`/profile/${p.userId}`)}

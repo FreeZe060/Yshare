@@ -7,6 +7,7 @@ class EventImageService {
         const result = await EventImage.bulkCreate(
             images.map(img => ({
                 event_id: eventId,
+                supabase_path: img.supabase_path,
                 image_url: img.image_url,
                 is_main: !!img.is_main
             }))
@@ -14,6 +15,17 @@ class EventImageService {
 
         console.log(`[addImages] ✅ Images ajoutées avec succès`);
         return result;
+    }
+
+    async getImageById(imageId) {
+        console.log(`[getImageById] ➤ Récupération de l'image ID=${imageId}`);
+        const image = await EventImage.findByPk(imageId);
+        if (image) {
+            console.log(`[getImageById] ✅ Image trouvée : ${image.id}`);
+        } else {
+            console.log(`[getImageById] ⚠️ Image non trouvée`);
+        }
+        return image;
     }
 
     async setMainImage(eventId, imageId) {

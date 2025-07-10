@@ -28,6 +28,14 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         defaultValue: 'Utilisateur'
     },
+    profile_supabase_path: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    banner_supabase_path: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     profileImage: {
         type: DataTypes.TEXT,
         allowNull: true,

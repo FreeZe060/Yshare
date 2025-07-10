@@ -12,9 +12,9 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
     const mainImageUrl = event.image
         ? (event.image.startsWith('http')
             ? event.image
-            : `${REACT_APP_API_BASE_URL}${event.image}`)
+            : `${event.image}`)
         : event.EventImages?.find(img => img.is_main)?.image_url
-            ? `${REACT_APP_API_BASE_URL}${event.EventImages.find(img => img.is_main).image_url}`
+            ? `${event.EventImages.find(img => img.is_main).image_url}`
             : '/default.jpg'; 
 
     const [localStatus, setLocalStatus] = useState(event.status);

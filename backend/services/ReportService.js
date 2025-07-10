@@ -1,4 +1,5 @@
 const { Report, ReportFile, ReportMessage, User, Event, Comment, EventImage } = require('../models');
+const { uploadToSupabase } = require('../middlewares/upload');
 
 class ReportService {
     async createReport(userId, { id_event, id_reported_user, id_comment, message }, files = []) {
@@ -23,14 +24,18 @@ class ReportService {
 
             if (files.length > 0) {
                 console.log(`[createReport] ➤ ${files.length} fichier(s) à associer`);
-                const uploads = files.map(file =>
-                    ReportFile.create({
+
+                const uploads = await Promise.all(files.map(async (file) => {
+                    const { publicUrl, path } = await uploadToSupabase('report-files', file);
+
+                    return ReportFile.create({
                         report_id: report.id,
-                        file_path: `/report-files/${file.filename}`
-                    })
-                );
-                await Promise.all(uploads);
-                console.log(`[createReport] ✅ Fichiers associés au signalement ID ${report.id}`);
+                        file_path: publicUrl,
+                        supabase_path: path
+                    });
+                }));
+
+                console.log(`[createReport] ✅ ${uploads.length} fichier(s) uploadé(s) et associé(s) au report ID ${report.id}`);
             } else {
                 console.log('[createReport] Aucun fichier joint au signalement');
             }

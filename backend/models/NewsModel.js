@@ -19,6 +19,10 @@ const News = sequelize.define('News', {
     type: DataTypes.TEXT,
     allowNull: true,
   },
+  supabase_path: {   
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
   date_posted: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

@@ -2,8 +2,6 @@ import React from 'react';
 import SkeletonEventCard from '../../SkeletonLoading/SkeletonEventCard';
 import NotFound from '../../../pages/NotFound';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 const LastEventSection = ({ events, loading, error, Link }) => {
 
 	if (loading) {
@@ -30,7 +28,7 @@ const LastEventSection = ({ events, loading, error, Link }) => {
 						<div key={event.id} className="bg-white shadow-md hover:shadow-lg rounded-lg text-sm sm:text-base transition duration-200">
 							<div className="flex flex-col h-full">
 								<img
-									src={`${REACT_APP_API_BASE_URL}${image || '/default-event.jpg'}`}
+									src={`${image || '/default-event.jpg'}`}
 									alt={event.title}
 									className="rounded-t-lg w-full h-36 sm:h-40 object-cover"
 								/>

@@ -14,7 +14,6 @@ import FiltreParticipant from '../Participant/FiltreParticipant';
 import CardEvent from '../Events/CardEvent';
 
 function Favoris({
-	REACT_APP_API_BASE_URL,
 	user,
 	favoris,
 	loading,

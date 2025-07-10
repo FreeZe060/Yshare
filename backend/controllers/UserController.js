@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const ParticipantService = require('../services/ParticipantService');
 const reportService = require('../services/ReportService');
+const { uploadToSupabase, deleteFromSupabase } = require('../middlewares/upload');
 
 const generateToken = (user) => {
     const payload = {
@@ -51,8 +52,14 @@ exports.register = async (req, res) => {
         const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
         console.log(`[register] Mot de passe hashé : ${hashedPassword ? '✔️' : 'Aucun mot de passe fourni'}`);
 
-        let profileImage = req.file ? `profile-images/${req.file.filename}` : null;
-        console.log(`[register] Image de profil : ${profileImage}`);
+        let profileImage = null;
+        let supabase_path = null;
+
+        if (req.file) {
+            const uploadResult = await uploadToSupabase('profile-images', req.file);
+            profileImage = uploadResult.publicUrl;
+            supabase_path = uploadResult.path;
+        }
 
         const newUser = await userService.createUser({
             name,
@@ -61,6 +68,7 @@ exports.register = async (req, res) => {
             password: hashedPassword,
             gender,
             profileImage,
+            supabase_path,
             provider: null,
             bio: bio || null,
             city: city || null,
@@ -258,21 +266,22 @@ exports.updateProfile = async (req, res) => {
         console.log(`[updateProfile] Données à mettre à jour :`, updates);
 
         if (req.file) {
-            const fileField = req.file.fieldname === 'bannerImage' ? 'bannerImage' : 'profileImage';
-            const uploadPath = fileField === 'profileImage' ? 'profile-images' : 'banner-images';
-            const oldFile = currentUser[fileField];
+            const fileField = req.file.fieldname === 'banner' ? 'bannerImage' : 'profileImage';
+            const supabasePathField = fileField === 'profileImage' ? 'profile_supabase_path' : 'banner_supabase_path';
+            const bucket = fileField === 'profileImage' ? 'profile-images' : 'banner-images';
 
             console.log(`[updateProfile] Nouvelle image détectée pour ${fileField}`);
 
-            if (oldFile) {
-                const oldPath = path.join(__dirname, '..', 'media', uploadPath, path.basename(oldFile));
-                if (fs.existsSync(oldPath)) {
-                    fs.unlinkSync(oldPath);
-                    console.log(`[updateProfile] Ancienne image supprimée : ${oldPath}`);
-                }
+            if (currentUser[supabasePathField]) {
+                await deleteFromSupabase(bucket, currentUser[supabasePathField]);
+                console.log(`[updateProfile] Ancienne image Supabase supprimée : ${currentUser[supabasePathField]}`);
             }
 
-            updates[fileField] = `${uploadPath}/${req.file.filename}`;
+            const uploadResult = await uploadToSupabase(bucket, req.file);
+
+            updates[fileField] = uploadResult.publicUrl;
+            updates[supabasePathField] = uploadResult.path;
+
             console.log(`[updateProfile] Nouvelle image enregistrée : ${updates[fileField]}`);
         }
 

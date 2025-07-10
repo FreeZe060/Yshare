@@ -67,7 +67,7 @@ function CalendarEventSection({ events }) {
                             const mainImage = event.EventImages?.find(img => img.is_main) || event.EventImages?.[0];
                             const imageUrl = mainImage?.image_url?.startsWith('http')
                                 ? mainImage.image_url
-                                : `${REACT_APP_API_BASE_URL}${mainImage?.image_url || ''}`;
+                                : `${mainImage?.image_url || ''}`;
 
                             return (
                                 <SwiperSlide
@@ -105,15 +105,6 @@ function CalendarEventSection({ events }) {
                                                             {capitalizeFirstLetter(event.city)}, {event.street_number} {event.street}
                                                         </h6>
                                                     </div>
-
-                                                    {/* <p className="mt-3 text-[16px] text-gray-600">
-                                                        Participants : {event.nb_participants} / {event.max_participants}
-                                                    </p>
-
-
-                                                    <p className="text-[16px] text-gray-600">
-                                                        Commentaires : {event.comments?.length || 0}
-                                                    </p> */}
 
                                                     <Link to={`/event/${event.id}`} className="mt-3 cursor-pointer et-3-btn">
                                                         Voir l'event

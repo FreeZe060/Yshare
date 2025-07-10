@@ -8,7 +8,6 @@ import useTextAnimation from '../../hooks/Animations/useTextAnimation';
 
 function EventRating({
     filtered,
-    REACT_APP_API_BASE_URL,
     capitalizeFirstLetter,
     formatEuro,
     statusFilter,
@@ -69,7 +68,7 @@ function EventRating({
                     filtered.map((item, index) => {
                         const imageUrl = item.event.mainImage?.startsWith('http')
                             ? item.event.mainImage
-                            : `${REACT_APP_API_BASE_URL}${item.event.mainImage || ''}`;
+                            : `${item.event.mainImage || ''}`;
 
                         return (
                             <div key={index} className="mb-[40px]">

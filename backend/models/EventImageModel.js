@@ -15,6 +15,10 @@ const EventImage = sequelize.define('EventImage', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  supabase_path: {
+    type: DataTypes.STRING, 
+    allowNull: true,
+  },
   is_main: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
