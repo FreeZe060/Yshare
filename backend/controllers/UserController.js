@@ -266,9 +266,17 @@ exports.updateProfile = async (req, res) => {
         console.log(`[updateProfile] Données à mettre à jour :`, updates);
 
         if (req.file) {
-            const fileField = req.file.fieldname === 'banner' ? 'bannerImage' : 'profileImage';
-            const supabasePathField = fileField === 'profileImage' ? 'profile_supabase_path' : 'banner_supabase_path';
-            const bucket = fileField === 'profileImage' ? 'profile-images' : 'banner-images';
+            let fileField, supabasePathField, bucket;
+
+            if (req.file.fieldname === 'bannerImage') {
+                fileField = 'bannerImage';
+                supabasePathField = 'banner_supabase_path';
+                bucket = 'banner-images';
+            } else {
+                fileField = 'profileImage';
+                supabasePathField = 'profile_supabase_path';
+                bucket = 'profile-images';
+            }
 
             console.log(`[updateProfile] Nouvelle image détectée pour ${fileField}`);
 

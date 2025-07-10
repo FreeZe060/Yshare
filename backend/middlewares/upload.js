@@ -15,12 +15,12 @@ const fileFilterReport = (req, file, cb) => {
     else cb(new Error('Seuls les fichiers image ou PDF sont autorisés.'), false);
 };
 
-const profileUpload = multer({ storage, fileFilter: fileFilterImage }).single('profile');
+const profileUpload = multer({ storage, fileFilter: fileFilterImage }).single('profileImage');
 const eventUpload = multer({ storage, fileFilter: fileFilterImage }).array('images');
 const eventUploads = multer({ storage, fileFilter: fileFilterImage }).single('image');
 const newsUpload = multer({ storage, fileFilter: fileFilterImage }).single('news');
 const reportUpload = multer({ storage, fileFilter: fileFilterReport }).array('files');
-const bannerUpload = multer({ storage, fileFilter: fileFilterImage }).single('banner');
+const bannerUpload = multer({ storage, fileFilter: fileFilterImage }).single('bannerImage');
 
 async function uploadToSupabase(bucket, file) {
     try {
