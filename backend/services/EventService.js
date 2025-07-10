@@ -589,7 +589,6 @@ class EventService {
         return await this.getEventById(eventId);
     }
 
-
     async updateImageById(imageId, filename, user) {
         const image = await EventImage.findByPk(imageId);
         if (!image) throw new Error("Image non trouvée.");

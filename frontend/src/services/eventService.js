@@ -153,25 +153,14 @@ export async function createEvent(eventData, token) {
  * PUT /events/:eventId (multipart/form-data)
  */
 export async function updateEvent(eventId, eventData, token) {
-	const formData = new FormData();
-
-	for (const key in eventData) {
-		if (key === 'images') {
-			eventData.images.forEach(file => formData.append('images', file));
-		} else if (Array.isArray(eventData[key])) {
-			formData.append(key, JSON.stringify(eventData[key]));
-		} else {
-			formData.append(key, eventData[key]);
-		}
-	}
-
 	const response = await fetch(`${REACT_APP_API_BASE_URL}/events/${eventId}`, {
 		method: 'PUT',
 		credentials: 'include',
 		headers: {
+			'Content-Type': 'application/json',
 			Authorization: `Bearer ${token}`,
 		},
-		body: formData,
+		body: JSON.stringify(eventData),
 	});
 
 	const result = await response.json();
