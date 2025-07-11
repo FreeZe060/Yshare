@@ -12,7 +12,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null); 
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
                 const { authenticated, user } = await checkAuthStatus();
                 if (authenticated) {
                     const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-                    setUser({...user, token});
+                    setUser({ ...user, token });
                 } else {
                     setUser({});
                 }
@@ -77,6 +77,8 @@ export const AuthProvider = ({ children }) => {
 
     const logoutUser = async () => {
         await logout();
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         setUser({});
     };
 
@@ -84,7 +86,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
-                isAuthenticated: !!user?.id, 
+                isAuthenticated: !!user?.id,
                 login,
                 logout: logoutUser,
                 loading
