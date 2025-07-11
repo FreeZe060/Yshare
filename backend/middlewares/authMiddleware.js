@@ -17,15 +17,15 @@ const authenticateToken = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const now = Date.now();
 
-        // if (!decoded?.lastActivity) {
-        //     console.warn("[Auth] Le token ne contient pas de champ 'lastActivity'.");
-        // }
+        if (!decoded?.lastActivity) {
+            console.warn("[Auth] Le token ne contient pas de champ 'lastActivity'.");
+        }
 
-        // if (now - decoded.lastActivity > INACTIVITY_LIMIT) {
-        //     console.warn(`[Auth] Inactivité détectée. Dernière activité : ${new Date(decoded.lastActivity).toISOString()}`);
-        //     console.warn(`[Auth] Token supprimé pour inactivité de plus de ${INACTIVITY_LIMIT / (60 * 1000)} minutes.`);
-        //     return res.status(401).json({ error: "Session expirée, veuillez vous reconnecter." });
-        // }
+        if (now - decoded.lastActivity > INACTIVITY_LIMIT) {
+            console.warn(`[Auth] Inactivité détectée. Dernière activité : ${new Date(decoded.lastActivity).toISOString()}`);
+            console.warn(`[Auth] Token supprimé pour inactivité de plus de ${INACTIVITY_LIMIT / (60 * 1000)} minutes.`);
+            return res.status(401).json({ error: "Session expirée, veuillez vous reconnecter." });
+        }
 
         const newPayload = {
             id: decoded.id,

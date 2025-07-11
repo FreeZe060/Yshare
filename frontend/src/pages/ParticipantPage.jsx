@@ -12,8 +12,6 @@ import useUpdateParticipantStatus from '../hooks/Participant/useUpdateParticipan
 import Swal from 'sweetalert2';
 import { useAuth } from '../config/authHeader';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 const ParticipantPage = () => {
     const { eventId } = useParams();
     const { participants, loading } = useParticipantsByEvent(eventId);
@@ -151,7 +149,7 @@ const ParticipantPage = () => {
                                         <div key={participant.participantId} className="group et-member">
                                             <div className="rounded-[16px] h-[280px] overflow-hidden et-member__img">
                                                 <img
-                                                    src={`${REACT_APP_API_BASE_URL}${participant.user.profileImage}`}
+                                                    src={`${participant.user.profileImage}`}
                                                     alt="Participant"
                                                     className="w-full h-full object-cover group-hover:scale-110 duration-[400ms]"
                                                 />

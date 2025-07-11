@@ -85,7 +85,7 @@ export default function EventCreated() {
     const onDeleteEvent = async (eventId) => {
         try {
             await handleDeleteEvent(eventId);
-            window.location.reload(); 
+            setFiltered((prev) => prev.filter(e => e.id !== eventId)); 
         } catch (error) {
             console.error("Erreur suppression :", error);
         }

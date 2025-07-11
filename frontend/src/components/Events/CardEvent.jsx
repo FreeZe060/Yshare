@@ -5,6 +5,8 @@ import { getFormattedDayAndMonthYear, capitalizeFirstLetter, formatEuro } from '
 import ParticipantAvatars from '../Home/ParticipantAvatars';
 import EventStatusTag from './EventStatusTag';
 import EventCategoryTag from './EventCategoryTag';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris, onDeleteEvent }) => {
     const mainImageUrl = event.image
@@ -13,7 +15,7 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris, onDeleteE
             : `${event.image}`)
         : event.EventImages?.find(img => img.is_main)?.image_url
             ? `${event.EventImages.find(img => img.is_main).image_url}`
-            : '/default.jpg'; 
+            : '/default.jpg';
 
     const [localStatus, setLocalStatus] = useState(event.status);
 
@@ -21,12 +23,37 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris, onDeleteE
         setLocalStatus(newStatus);
     };
 
+    const MySwal = withReactContent(Swal);
+
     const handleDeleteClick = async () => {
-        if (onDeleteEvent) {
+        if (!onDeleteEvent) return;
+
+        const result = await MySwal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: "Cette action est irréversible !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler'
+        });
+
+        if (result.isConfirmed) {
             try {
                 await onDeleteEvent(event.id);
+                await MySwal.fire(
+                    'Supprimé !',
+                    'L’événement a été supprimé.',
+                    'success'
+                );
             } catch (error) {
                 console.error("Erreur suppression événement :", error);
+                await MySwal.fire(
+                    'Erreur',
+                    "La suppression a échoué. Veuillez réessayer.",
+                    'error'
+                );
             }
         }
     };
@@ -102,14 +129,23 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris, onDeleteE
 
             <div className="flex flex-col justify-center items-center pt-0 md:pt-4 pl-[40px] md:pl-0 border-[#8E8E93]/25 border-t-0 md:border-t border-l md:border-l-0 text-center shrink-0">
                 <ParticipantAvatars eventId={event.id} />
-                <Link to={`/event/${event.id}`} className="mt-4 md:mt-2 w-auto md:w-full et-3-btn">
+                <Link to={`/event/${event.id}`} className="mt-4 md:mt-2 w-auto md:w-full et-3-btn min-w-[230px]">
                     Voir l'événement
                 </Link>
+
+                {event.participants && event.participants.length >= 1 && (
+                    <Link
+                        to={`/event/${event.id}/participants`}
+                        className="mt-2 md:mt-2 w-auto md:w-full et-3-btn min-w-[230px]"
+                    >
+                        Voir tous les participants
+                    </Link>
+                )}
 
                 {onDeleteEvent && (
                     <button
                         onClick={handleDeleteClick}
-                        className="mt-2 inline-block px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
+                        className="mt-4 md:mt-2 w-auto md:w-full et-3-btn min-w-[230px]"
                     >
                         Supprimer
                     </button>

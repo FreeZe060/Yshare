@@ -331,23 +331,36 @@ const Header = () => {
                             <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-calendar-days" />
                         </Link>
                         {isAuthenticated && user ? (
-                            <div className="relative">
-                                <span
-                                    ref={notifButtonRef}
-                                    onClick={() => setShowNotif(!showNotif)}
-                                    className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
-                                >
-                                    <i className="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
-                                    {!notifLoading && notifications?.filter(n => !n.read_status).length > 0 && (
-                                        <span className="-top-2 -left-0 absolute size-3.5">
-                                            <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
-                                            <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
-                                                {notifications.filter(n => !n.read_status).length}
+                            <>
+                                <div className="relative">
+                                    <span
+                                        ref={notifButtonRef}
+                                        onClick={() => setShowNotif(!showNotif)}
+                                        className="relative px-1 w-8 hover:text-white transition-all duration-300 cursor-pointer"
+                                    >
+                                        <i className="bg-gray-800 p-2 rounded-full w-8 text-gray-300 hover:text-gray-100 transition-all duration-300 cursor-pointer fa-solid fa-bell"></i>
+                                        {!notifLoading && notifications?.filter(n => !n.read_status).length > 0 && (
+                                            <span className="-top-2 -left-0 absolute size-3.5">
+                                                <span className="inline-flex absolute bg-red-500 opacity-75 rounded-full w-full h-full animate-ping"></span>
+                                                <span className="absolute flex justify-center items-center bg-red-500 rounded-full w-3.5 h-3.5 font-bold text-[11px] text-white text-center">
+                                                    {notifications.filter(n => !n.read_status).length}
+                                                </span>
                                             </span>
-                                        </span>
+                                        )}
+                                    </span>
+                                </div>
+                                <Link to={`/profile/${user.id}`}>
+                                    {user.profileImage ? (
+                                        <img
+                                            src={`${user.profileImage}`}
+                                            alt="Profil"
+                                            className="border border-gray-700 rounded-full w-10 h-10 object-cover"
+                                        />
+                                    ) : (
+                                        <i className="bg-gray-800 p-2 rounded-full w-8 fa-solid fa-user text-white" />
                                     )}
-                                </span>
-                            </div>
+                                </Link>
+                            </>
                         ) : (
                             <Link
                                 to="/login"
