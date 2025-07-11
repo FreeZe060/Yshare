@@ -260,7 +260,31 @@ router.delete('/auth/delete-account', authenticateToken, async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-	res.clearCookie('auth_token');
+	if (req.session) {
+		req.session.destroy(err => {
+			if (err) {
+				console.error("Erreur lors de la destruction de la session :", err);
+			}
+		});
+	}
+
+	res.clearCookie('auth_token', {
+		httpOnly: true,
+		secure: true, 
+		sameSite: 'None',
+		path: '/',
+		domain: 'yshare-production.up.railway.app' 
+	});
+
+	res.clearCookie('connect.sid', {
+		httpOnly: true,
+		secure: true,
+		sameSite: 'None',
+		path: '/',
+		domain: 'yshare-production.up.railway.app' 
+	});
+
+	console.log("✅ Utilisateur déconnecté et cookies supprimés.");
 	res.status(200).json({ message: 'Déconnexion réussie' });
 });
 
