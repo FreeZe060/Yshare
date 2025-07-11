@@ -1,7 +1,5 @@
 import React from 'react';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 const Sidebar = ({
 	user,
 	active,
@@ -49,7 +47,7 @@ const Sidebar = ({
 				>
 					<img
 						className="rounded-full w-16 h-16 object-cover"
-						src={user.profileImage ? `${REACT_APP_API_BASE_URL}${user.profileImage}` : "https://via.placeholder.com/40"}
+						src={user.profileImage ? `${user.profileImage}` : "https://via.placeholder.com/40"}
 						alt={user?.name}
 					/>
 					<div className="text-center">

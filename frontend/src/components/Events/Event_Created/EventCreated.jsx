@@ -23,7 +23,8 @@ function Event_Created({
     statuses,
     events,
     inputProps,
-    toggleFavoris
+    toggleFavoris,
+    onDeleteEvent
 }) {
     useSlideUpAnimation('.rev-slide-up', filtered);
     useTextAnimation();
@@ -72,6 +73,7 @@ function Event_Created({
                             event={event}
                             isAuthenticated={true}
                             toggleFavoris={toggleFavoris}
+                            onDeleteEvent={onDeleteEvent}
                         />
                     ))
                 )}

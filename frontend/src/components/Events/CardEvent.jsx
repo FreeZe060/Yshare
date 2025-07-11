@@ -6,9 +6,7 @@ import ParticipantAvatars from '../Home/ParticipantAvatars';
 import EventStatusTag from './EventStatusTag';
 import EventCategoryTag from './EventCategoryTag';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
-const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
+const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris, onDeleteEvent }) => {
     const mainImageUrl = event.image
         ? (event.image.startsWith('http')
             ? event.image
@@ -21,6 +19,16 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
 
     const handleStatusChange = (newStatus) => {
         setLocalStatus(newStatus);
+    };
+
+    const handleDeleteClick = async () => {
+        if (onDeleteEvent) {
+            try {
+                await onDeleteEvent(event.id);
+            } catch (error) {
+                console.error("Erreur suppression événement :", error);
+            }
+        }
     };
 
     console.log('CardEvent rendered for event:', event);
@@ -97,6 +105,15 @@ const CardEvent = ({ event, isAuthenticated, isFavoris, toggleFavoris }) => {
                 <Link to={`/event/${event.id}`} className="mt-4 md:mt-2 w-auto md:w-full et-3-btn">
                     Voir l'événement
                 </Link>
+
+                {onDeleteEvent && (
+                    <button
+                        onClick={handleDeleteClick}
+                        className="mt-2 inline-block px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
+                    >
+                        Supprimer
+                    </button>
+                )}
             </div>
         </div>
     );

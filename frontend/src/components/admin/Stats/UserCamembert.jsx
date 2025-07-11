@@ -4,8 +4,6 @@ import { Pie } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import { motion } from 'framer-motion';
 
-const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/';
-
 Chart.register(ArcElement, Tooltip, Legend);
 
 const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, statsError, usersLoading, statsLoading, onSuspend,
@@ -42,7 +40,7 @@ const UserCamembert = ({ setActiveSection, Link, users, stats, usersError, stats
 							<div className="flex items-center space-x-3">
 								<Link to={`/profile/${user.id}`}>
 									<img
-										src={`${REACT_APP_API_BASE_URL}${user.profileImage || '/default-avatar.png'}`}
+										src={`${user.profileImage || '/default-avatar.png'}`}
 										alt={`${user.name}`}
 										className="w-10 h-10 rounded-full object-cover"
 									/>

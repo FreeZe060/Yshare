@@ -7,6 +7,7 @@ import Footer from '../components/Partials/Footer';
 import Event_Created from '../components/Events/Event_Created/EventCreated';
 import vector1 from "../assets/img/et-3-event-vector.svg";
 import { formatEuro, getFormattedDayAndMonthYear, capitalizeFirstLetter } from '../utils/format';
+import useDeleteEvent from '../hooks/Events/useDeleteEvent';
 
 const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
@@ -79,6 +80,17 @@ export default function EventCreated() {
         className: 'w-full md:w-72 p-2 border rounded shadow-sm',
     };
 
+    const { handleDeleteEvent, loading: deleting, error: deleteError } = useDeleteEvent();
+
+    const onDeleteEvent = async (eventId) => {
+        try {
+            await handleDeleteEvent(eventId);
+            window.location.reload(); 
+        } catch (error) {
+            console.error("Erreur suppression :", error);
+        }
+    };
+
     return (
         <>
             <Header />
@@ -132,6 +144,7 @@ export default function EventCreated() {
                         statuses={statuses}
                         events={events}
                         inputProps={inputProps}
+                        onDeleteEvent={onDeleteEvent}
                     />
                 )}
             </main>
